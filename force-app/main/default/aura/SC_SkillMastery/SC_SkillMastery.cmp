@@ -1,0 +1,44 @@
+<aura:component controller="SC_SkillMasteryController" access="GLOBAL">
+
+
+    <!--
+        Show the skill mastery progress for a given initiative and user.
+        Provide a user id and initiative id
+        invoke a method that looks for the latest assessment for that initiative
+    -->
+
+    <aura:attribute name="userId"
+                    type="String" />
+    <aura:attribute name="initiativeId"
+                    type="String" />
+    <aura:attribute name="assessment"
+                    type="SC_Assessment__c"
+                    description="The assessment object representing the user's skill mastery" />
+    <aura:attribute name="progressItems"
+                    type="Object[]"
+                    description="List of progress items representing number of total skills and which have been mastered" />
+
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler name="change" value="{!v.userId}" action="{!c.handleUserIdChange}" />
+    <aura:handler name="change" value="{!v.initiativeId}" action="{!c.handleInitIdChange}" />
+
+
+
+    <section>
+
+        <div class="progress">
+            <aura:iteration items="{!v.progressItems}" var="item">
+                <div class="{!'progress-item ' + (item.isComplete ? 'progress-item--complete' : '')}"></div>
+            </aura:iteration>
+        </div>
+
+
+        <p class="{!empty(v.progressItems) ? '' : 'slds-hide'}">
+            There are no skills associated with this initiative
+        </p>
+
+    </section>
+
+</aura:component>

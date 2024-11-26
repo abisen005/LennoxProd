@@ -1,0 +1,27 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="title" type="String" />   
+    <aura:attribute name="childAttrLSAForm" type="String" />
+    <div class="container">
+        <img src="{!$Resource.lennox_logo}" alt="" style="margin-top:20px;"/>
+
+    
+    <aura:if isTrue="{!v.childAttrLSAForm == 'LSAForm'}" >
+
+    
+        <div class="inputLab">{!v.title}</div>
+        <div class="thankYou">
+        <img src="{!$Resource.check_icon}" alt="" width="65"/>
+        <h2 class="heading">Thank you for contacting Lennox Industries Inc. </h2>
+        <p class="heading">Your request for payment has been successfully submitted.</p>
+        </div>
+         <aura:set attribute="else">
+          <div class="inputLab">{!v.title}</div>
+        <div class="thankYou">
+        <img src="{!$Resource.check_icon}" alt="" width="65"/>
+        <h2 class="heading">Thank you for contacting Lennox Industries Inc. </h2>
+        <p class="heading">Your form has been successfully submitted. Please allow 2 – 4 weeks for processing.</p>
+        </div>
+        </aura:set>
+        </aura:if>
+    </div>   
+</aura:component>

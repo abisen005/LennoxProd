@@ -1,0 +1,10 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" controller="LightningButtons">
+	<aura:attribute name="AccountOpportunty" type="Account_Opportunty__c" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    
+    <aura:attribute name="errorTitle" type="String"/>
+    <aura:attribute name="errorMessage" type="String"/>
+    <div class="slds-text-heading_small">{!v.errorTitle}</div><br />
+    {!v.errorMessage}
+</aura:component>

@@ -1,0 +1,52 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,lightning:isUrlAddressable"
+                controller="SC_ContainerController"
+                access="GLOBAL">
+    
+    <aura:attribute name="coachingSessionWizard" type="Aura.Component[]" access="GLOBAL" />
+    <aura:attribute name="CoachingSessionId" type="String" default='000'/>
+    <aura:attribute name="redirect" type="Boolean" default='false'/>
+    
+    <!--  <ltng:require styles="{!$Resource.SC_LightningDesignSystem + '/styles/salesforce-lightning-design-system.min.css'}"
+                      scripts="{!$Resource.SC_vendor}"/> -->
+    
+    <ltng:require scripts="{!$Resource.SC_vendor}"/>
+    
+    <aura:registerEvent name="coachingInfoResponse" type="c:SC_CoachingInfoResponse" />
+     <aura:registerEvent name="routeChangeAttempt" type="c:routeChangeAttempt" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler event="c:SC_CoachingInfoRequest" action="{!c.handleCoachingInfoRequest}" />
+    <aura:handler event="c:SC_StartNewCoachingSession" action="{!c.handleStartNewCoachingSession}" />
+    
+    <aura:attribute name="useNegativeMargins"
+                    type="Boolean"
+                    default="false"
+                    description="Set to true if this component is referenced in the Lightning Page Builder" />
+    
+    <aura:attribute name="coachingInfo"
+                    type="CoachingInfo"
+                    description="An object with information about the current user's coaching role and related data." />
+            
+    
+   <div class="{!'slds ' + (v.useNegativeMargins ? 'negative-margin' : '')}">
+         <c:Router >
+             <aura:if isTrue="{!!v.redirect}">
+                 <c:Route name="Coaching Console" path="/" component="c:SC_ConsoleContainer" />
+            </aura:if>
+             
+             <c:Route name="Initiative" path="/initiative/:initiativeId" component="c:SC_InitiativeDetail" />
+             <c:Route name="InitiativeUser" path="/initiative-user/:initiativeId/:userId" component="c:SC_InitiativeUserDetail" />
+             <c:Route name="Coachee" path="/coachee/:userId" component="c:SC_CoacheeDetail" />
+            <c:Route name="Assignment" path="/assignment/:assignmentId" component="c:SC_Assignment" />
+            <c:Route name="CoachingSession" path="/session/:id" component="c:SC_CoachingSession" />
+            <c:Route name="Assessment" path="/assessment/:assessmentId" component="c:SC_AssessmentDetail" />
+        </c:Router>
+    </div>
+    
+    
+    
+    {!v.coachingSessionWizard}
+
+
+
+</aura:component>

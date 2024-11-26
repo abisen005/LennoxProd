@@ -1,0 +1,82 @@
+<apex:page sidebar="false" controller="VendavoLandingPageController" cache="false">
+    <html>
+        <head>
+            <meta charset="utf-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="cache-control" content="no-cache" />
+            <meta http-equiv="expires" content="0" />
+            <meta http-equiv="pragma" content="no-cache" />
+            <title>Vendavo Agreements</title>
+            <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" />
+            <link rel="stylesheet" href="{!URLFOR($Resource.VendavoApp, 'css/main.css')}" charset="utf-8" />
+            <apex:variable var="isClassicUI" value="{!$User.UIThemeDisplayed == 'Theme3'}" />
+            <script>
+                var accessToken = '{!$API.Session_Id}';
+            	var accountOpps = (function() {
+                    var data = [
+                        <apex:repeat value="{!accountOpps}" var="ao">
+                        {
+                        Id: '{!ao.Id}',
+                        AccountId__c: '{!ao.AccountId__c}',
+                        isApproved__c: {!ao.isApproved__c},
+                        isRejected__c: {!ao.isRejected__c},
+                        Connected_to_Deal__c: {!ao.Connected_to_Deal__c},
+                        Pending_Approval__c: {!ao.Pending_Approval__c},
+                        Dealer_Account_Plan__r: {
+                        	Dealer__r: {
+                        		Id: '{!ao.Dealer_Account_Plan__r.Dealer__r.Id}',
+                        		Vendavo__AgreementType__c: '{!ao.Dealer_Account_Plan__r.Dealer__r.Vendavo__AgreementType__c}'
+                        	}
+                        },
+                        Name: '{!ao.Name}',
+                        Dealer__c: '{!JSENCODE(ao.Dealer__c)}',
+                        Opportunity_Status__c: '{!JSENCODE(ao.Opportunity_Status__c)}',
+                        Opportunity_Notes__c: '{!JSENCODE(ao.Opportunity_Notes__c)}'
+                        }{!IF(accountOpps[accountOpps.size - 1].Id = ao.Id, '', ',')}
+                        </apex:repeat>
+                        ];
+                    return {
+                   		get: function() {
+                    		return data;
+                		}
+            		}
+                })();
+            	var agreements = (function() {
+                    	var data = [
+                            <apex:repeat value="{!deals}" var="d">
+                            {
+                            Id: '{!d.Id}',
+                            Vendavo__EndCustomer__c: '{!JSENCODE(d.Vendavo__EndCustomer__c)}',
+                            Name: '{!JSENCODE(d.Name)}',
+                            SAP_Sales_Group__c: '{!d.SAP_Sales_Group__c}',
+                            SAP_Sales_Office__c: '{!d.SAP_Sales_Office__c}',
+                            ProjectNumber__c: '{!d.ProjectNumber__c}',
+                            CDQ_Type__c: '{!d.CDQ_Type__c}',
+                            Vendavo__Status__c: '{!d.Vendavo__Status__c}',
+                            Impact__c: '{!d.Impact__c}',
+                            Vendavo__TotalRevenue__c: '{!d.Vendavo__TotalRevenue__c}',
+                            Builder__c: '{!JSENCODE(d.Builder__c)}',
+                            Workflow_Owner__c: '{!JSENCODE(d.Workflow_Owner__c)}',
+                            Vendavo__Description__c: '{!JSENCODE(d.Vendavo__Description__c)}',
+                            Vendavo__StartDate__c: new Date('{!TEXT(MONTH(d.Vendavo__StartDate__c)) + '/' + TEXT(DAY(d.Vendavo__StartDate__c)) + '/' + TEXT(YEAR(d.Vendavo__StartDate__c))}'),
+                            Vendavo__EndDate__c: new Date('{!TEXT(MONTH(d.Vendavo__EndDate__c)) + '/' + TEXT(DAY(d.Vendavo__EndDate__c)) + '/' + TEXT(YEAR(d.Vendavo__EndDate__c))}')
+                            }{!IF(deals[deals.size - 1].Id = d.Id, '', ',')}
+                            </apex:repeat>
+                        ];
+                        return {
+                        	get: function() {
+                    			return data;
+                    		}
+               	 		}
+                    })();
+            </script>
+            <style>
+            	.btn-group, .btn.btn-primary.pull-right {display:none !important;}
+            </style>
+        </head>
+        <body>
+            <div id="agreementsapp" class=" sf1" style="margin: -10px"></div>
+            <script src="{!URLFOR($Resource.VendavoApp, 'js/bundle.min.js')}"></script>
+        </body>
+    </html>
+</apex:page>

@@ -1,0 +1,22 @@
+<aura:component >
+
+    <aura:attribute name="userId" type="String" />
+
+
+    <c:Tabs ulClass="slds-p-horizontal--small">
+
+        <c:Tab title="Incomplete" tabClass="test" >
+
+            <c:SC_UserAssignments userId="{!v.userId}" />
+
+        </c:Tab>
+
+        <c:Tab title="Completed" tabClass="test" >
+
+            <c:SC_UserAssignments userId="{!v.userId}" showCompleted="TRUE" />
+
+        </c:Tab>
+
+    </c:Tabs>
+
+</aura:component>

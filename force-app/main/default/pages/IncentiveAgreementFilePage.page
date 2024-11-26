@@ -1,0 +1,826 @@
+<apex:page sidebar="false" standardController="Opportunity" extensions="MergeTemplatesControllerPDF" showHeader="false" standardStylesheets="false" applyBodyTag="false" title="District Incentive Agreement" action="{!getData}"> 
+    
+    <html>   
+        <head>
+            <apex:stylesheet value="{!URLFOR($Resource.toastr, 'toastr.min.css')}"/>
+            <apex:stylesheet value="{!URLFOR($Resource.duallistbox, 'css/multi-select.css')}"/>
+            <apex:includeScript value="{!$Resource.jquery}"/>    
+            <apex:includeScript value="{!URLFOR($Resource.toastr, 'toastr.min.js')}"/>
+            <apex:includeScript value="{!URLFOR($Resource.duallistbox, 'js/jquery.multi-select.js')}"/>
+            <style>
+                * {font-size:10px;}
+                .btnDiv{display:none;}
+                .pdf-header-title,  .header-yr-info span {font-size:22px; font-weight:bold;}
+                .container {max-width:1300px; margin:0 auto; padding:20px;}
+                .header-table {table-layout:fixed; width:100%;}
+                .header-yr-info {text-align:right;}
+                .title-text {font-size:14px; font-weight:700;}
+                .vspace {margin-top:10px; margin-bottom:10px;}
+                .tableStyle tr th { background: #A80C35; color: #fff; padding: 8px 5px; font-size: 15px; }
+                .tableStyle2 tr th { background: #f8eff3; color: #1d1b1b; padding: 8px 5px; font-size: 15px; }
+                .tableStyle tr td { padding: 8px 5px; font-weight: bold; }
+                .header { margin-bottom: 20px;    margin-top: 15px; }
+                .bigSpace {height:30px;}
+                h2.title-text > u { font-size: 14px; }
+                ul.list-view { list-style-position: inside; }
+                .footer {margin-top: 30px;}
+                table.header-table tr td, table.footer-table tr td { padding: 8px 5px; }
+                button { line-height: 25px; padding: 0 10px; border: 1px solid #ccc; }
+                #ms-my-select{width:100%;}
+                #ms-my-select-user{width:100%;}
+                
+                
+                @media all{
+                .container *{font-family:  sans-serif !important; font-size:13px;}
+                .loader {display: flex; align-items: center; justify-content: center;width: 100%; height: 100%;background: rgba(255,255,255,0.8);}
+                .bgBlack{position:fixed; top:0; bottom:0 ;left:0;bottom:0; z-index: 9002;width:100%;height:100%;}  
+                .pageBreak {display:none;}
+                .signPdf {display:none;}
+                .pdf-header-title,  .header-yr-info span {font-size:22px; font-weight:bold;}
+                
+                .btnDiv{display:block;}
+                .pageBreak {display:none;}
+                .signPdf {display:none;}
+                .pull-right {float:left; margin-right:15px;}
+                
+                .richTextFormat ol {
+                display:inline-block;
+                text-align: center !important;
+                }
+                
+                .richTextFormat ul {
+                display:inline-block;
+                text-align: initial !important;
+                }
+                .richTextFormat p { 
+                text-align: center !important;
+                
+                }
+                .richTextFormat li { 
+                text-align: left !important;
+                
+                }
+                
+                }
+                .hide {display:none;}
+                @media print{
+                @page {
+                margin-top:20%;
+                margin: 10mm 7mm 10mm;  
+                @top-center {content: element(header);}
+                @bottom-left {content: element(footer);}
+                }
+                
+                .container *{font-family: sans-serif !important; font-size:10px;}
+                h2.title-text > u, .title-text, .tableStyle tr th { font-size: 12px; }
+                .tableStyle2 tr th { font-size: 12px; }
+                .tableStyle tr th  {border:1px solid #ddd;}
+                .pdf-header-title, .header-yr-info span {font-size:15px;}
+                img.logoDoc{display:block; width:100px!important ;} 
+                div.header { padding: 10px; position: running(header); } 
+                div.footer { display: block; padding: 5px; position: running(footer); } 
+                .pagenumber:before { content: counter(page); } 
+                .pagecount:before { content: counter(pages); }
+                .page-break { page-break-after:always; } 
+                table{page-break-inside:auto;} 
+                .pagenumber:before { content: counter(page); } 
+                .pagecount:before { content: counter(pages); }
+                .page-break {  page-break-after:always; }
+                .slds-modal, .print-btn, .slds-backdrop.slds-backdrop--open {display: none;}
+                td {font-size: 11px; }
+                }
+                ul li {
+                
+                list-style-type: disc;
+                
+                }
+               
+            </style>
+        </head>      
+        
+        
+        <body>
+            <div>
+                <div class="header" > 
+                    <table class="header-table" cellspacing="0" cellpadding="8" width="100%" border="0" style="table-layout:fixed;margin-top:25px;">
+                        <tr>
+                            <td style="border-bottom:2px solid #8a8a8a;" width="150">
+                                <div class="logo-image">
+                                    <img src="https://lennox--dev1.my.salesforce.com/servlet/servlet.ImageServer?id=015740000004r9H&oid=00D740000008aLh&lastMod=1645020530000" width="135" height="45" />
+                                </div>
+                            </td>
+                            <td class="pdf-header-title" style="border-bottom:2px solid #8a8a8a; border-right:2px solid #8a8a8a;" align="center">Lennox Incentive Agreement</td>
+                            <td class="header-yr-info" width="100" style="border-bottom:2px solid #8a8a8a; text-align:center;"><apex:outputText value="{0,date, yyyy}" style=" "> <apex:param value="{!NOW()}" /> </apex:outputText></td>
+                        </tr>
+                    </table>
+                </div> 
+                
+                <div class="content">
+                    <div class="account-info"> 
+                        <p class="dateStyle"><apex:outputText value="{0,date, MM/dd/yyyy}" style=""> <apex:param value="{!NOW()}" /></apex:outputText></p>
+                        <p style="">{!opportunity.Account.SAP_Customer_Number__c}</p>
+                        <p style="">{!opportunity.Account.Name}</p>
+                        <p style="">
+                            {!opportunity.Account.ShippingStreet}<br/>
+                            {!opportunity.Account.ShippingCity}, {!opportunity.Account.ShippingState} {!opportunity.Account.ShippingPostalCode}<br/>
+                            {!opportunity.Account.ShippingCountry}<br/>
+                            
+                        </p>
+                    </div>
+                    <!--<h2 class="title-text">2019 Market Leader Agreement:  «OPPORTUNITY_TYPE»</h2>-->
+                    <!--Display Proposal Type-->
+                    
+                    <!-- <b> {!opportunity.Type}:</b> -->
+                    
+                    
+                    
+                    <apex:outputpanel rendered="{!IF((opportunity.Type == 'New Customer') ||  (opportunity.Type =='New Customer - District VR') ||( opportunity.Type =='New Customer - Rebate')|| (opportunity.Type == 'New Customer - Full Force') , true ,false)}" > 
+                        
+                        <div class="paragraph vspace" style=""> 
+                            Thank you for selecting Lennox products, we look forward to our partnership. Lennox
+                            is offering the following Incentives based on your purchase agreement as follows:
+                        </div>
+                    </apex:outputpanel>
+                    
+                    <apex:outputpanel rendered="{!IF((opportunity.Type == 'Existing Dealer') ||  (opportunity.Type =='Existing Customer - Lennox Partner Incentive') ||  (opportunity.Type =='Existing Dealer - VR') || (opportunity.Type == 'Existing Dealer - Full Force') , true ,false)}" > 
+                        
+                        <div class="paragraph vspace" style=""> 
+                            Thank you for selecting Lennox products, we look forward to our continued partnership. Lennox
+                            is offering the following Incentives based on your purchase agreement as follows:
+                        </div>
+                    </apex:outputpanel>
+                    
+                    <apex:outputpanel rendered="{!IF(opportunity.Type == 'Existing Dealer - Market Leader', true ,false)}" >
+                        <div class="paragraph vspace" style=""> 
+                            Thank you for purchasing&nbsp;<apex:outputText value="{0,number,$###,###,###,###}"> <apex:param value="{!opportunity.PY_Total_Sales__c}" /> </apex:outputText> of Lennox product last year. We look forward to working with you this year and in the future.  
+                            Based on recent competitive activity we are pleased to extend the following Market Leader incentives.These incentives are offered for an agreed purchase goal of&nbsp;<apex:outputText value="{0,number,$###,###,###,###}"> <apex:param value="{!opportunity.Amount}"/> </apex:outputText>.  
+                            The agreement will be reviewed on a quarterly basis. Lennox reserves the right to cancel this agreement.
+                            <br/><br/>        
+                            
+                            <b>Market Leader Incentives Agreement Basis</b>
+                            <ul >
+                                <li>{!opportunity.Account.Name} agrees to keep their credit account current</li>
+                                <li>Incentives may be available beyond the initial twelve month period of this program</li>
+                                <li>Performance to the agreed purchase amounts will be evaluated quarterly</li>
+                                <li>Market Leader Incentives are not available on equipment sold via Costco or Home Depot and Residential New Construction</li>
+                                <li>Market leader start date is <apex:outputText value="{0, date, MMMM d','  yyyy}"><apex:param value="{!opportunity.Market_Leader_Load_Date__c}" /></apex:outputText>. Market leader end date is <apex:outputText value="{0, date, MMMM d','  yyyy}"><apex:param value="{!opportunity.ML_Expiration_Date__c}" /></apex:outputText></li>
+                            </ul>
+                            <b>Market Leader Rebates</b>
+                            <ul >
+                                <li> Lennox will pay rebates in the amount shown for the products indicated in the schedule below</li>
+                                <li> Rebates will be paid monthly in the form of a lump sum credit to the dealers account</li>
+                                <li> Rebates will be paid on products purchased at the price established for your account </li>
+                                <li> Dealer must sign a Market Leader Rebate Agreement Form   </li>
+                            </ul>
+                            
+                        </div>
+                        
+                    </apex:outputpanel>
+                    
+                    
+                    <apex:outputpanel rendered="{!IF(opportunity.Type == 'New Customer - Lennox Partner Incentive', true ,false)}" >
+                        <div class="paragraph vspace" style=""> 
+                            Thank you for selecting Lennox products. We look forward to working with you this year and in the future.  Based on your  purchase agreement for&nbsp;<apex:outputText value="{0,number,$###,###,###,###}">
+                            <apex:param value="{!opportunity.Amount}"/>
+                            </apex:outputText>
+                            in total annual residential purchases from Lennox, Lennox is offering the following partner incentives.  The term of this Lennox Partner Incentive Agreement 
+                            (this “<b>Agreement</b>”) is effective from <apex:outputText value="{0, date, MMMM d','  yyyy}"><apex:param value="{!opportunity.Lennox_Partner_Incentive_Load_Date__c}" /></apex:outputText> through
+                            <apex:outputText value="{0, date, MMMM d','  yyyy}"><apex:param value="{!opportunity.Lennox_Partner_Incentive_Expiration_Date__c}" /></apex:outputText> (the “<b>Agreement Time Period</b>”).  
+                            *These dates follow the Lennox fiscal months.*  It does not automatically renew at the expiration of the Agreement Time Period; however, based on Dealer achieving 
+                            its performance objectives, the parties may mutually agree to extend the Agreement Time Period for an additional twelve (12) months on written agreement of the parties. 
+                            The parties will review this Agreement quarterly with representatives of both parties to monitor the progress on the performance objectives agreed upon.  
+                            
+                        </div>
+                    </apex:outputpanel>
+                    
+                    
+                    
+                    <h2 class="title-text" style=" margin-bottom:15px;font-size: 14px;text-align: center">Agreement Purchase Amount </h2>
+                           <h2  style=" margin-bottom:15px;font-size: 16px;text-decoration: underline;text-align:center">
+                        <u style="font-weight:bold;" class="title-text;font-size: 13px"> 
+                            <apex:outputText value="{0,number,$###,###,###,###}">
+                                <apex:param value="{!opportunity.Amount}" />
+                            </apex:outputText></u></h2>
+                    
+                    
+                    <apex:outputpanel rendered="{!if(AND(opportunity.NC_CAP_Consumer_Promotional_Program__c == true  && contains(opportunity.Type, 'New Customer')), true, false)}" >
+                        <h2 class="title-text" style=" margin-bottom:15px;font-size: 14px;text-align: center">CAP Promotional Period:&nbsp;
+                            <b  style="font-size: 14px;text-align: right;">{!opportunity.Promotional_Periods_Requested__c} </b>
+                        </h2>
+                    </apex:outputpanel>
+                    
+                    
+           
+                        <apex:outputpanel rendered="{!IF(opportunity.Type == 'New Customer - Lennox Partner Incentive', true ,false)}" >
+                            <div class="paragraph vspace" style=""> 
+                            <ul>
+                                <li>During the Agreement Time Period, Dealer will earn rebates in the amounts shown below for each listed 
+                                    product tier for each product Dealer purchases from Lennox: 
+                                </li>
+                            </ul>
+                             </div><br/>
+                        </apex:outputpanel>
+                   
+                    
+                    
+                    <!-- NC LPI Incentives -->
+                    <apex:outputpanel rendered="{!if(AND(lpiIncentiveList.size > 0 ,lpiTotal > 0), true ,false)}" > 
+                        
+                        <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                            <tr>
+                                <th colspan="3" style="background:#A80C35; border:1px solid #ddd;  color:#fff;text-align: center">Lennox Partner Incentives</th>
+                            </tr>
+                            
+                            <tr> 
+                                <td colspan="2" style="border:px solid #ddd;  width:70%;border-top:none; font-weight:bold;text-align: left;">Product Line</td>
+                                <td colspan="1" style="border:px solid #ddd;  width:40%;border-top:none;font-weight:bold;text-align: right;">Rebates</td>
+                            </tr>
+                            <apex:repeat value="{!lpiIncentiveList}" var="lpi"> 
+                                <tr> 
+                                    <td colspan="2" style="border:px solid #ddd;  width:70%;border-top:none;font-weight: 500;"> <apex:outputlabel >
+                                        <apex:outputField style="border:px solid #ddd;  width:70%;border-top:none;font-weight: 500;" value="{!lpi.Product_Line__c}"/></apex:outputlabel>
+                                    </td>
+                                    <td colspan="1" style="border:px solid #ddd;  width:30%;border-top:none;font-weight: 500;text-align:right;">
+                                        <apex:outputText value="{0,number,$#,###.##}">
+                                            <apex:param value="{!lpi.LPI_New_Customer_Rebates__c + lpi.LPI_District_Rebates__c}" />
+                                        </apex:outputText>
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                        </table>
+                        <!-- NC LPI Verbiage -->
+                        
+                        <apex:outputpanel rendered="{!if(ISBLANK(opportunity.Lennox_Partner_Incentives_Proposal_PDF__c), false, true)}" >
+                            <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                                <tr>
+                                    <td colspan="3" style="font: size 9px; text-align: center;border:3px solid #ddd; width:15%;font-weight: 600;">
+                                        <apex:outputText styleClass="richTextFormat" value="{!opportunity.Lennox_Partner_Incentives_Proposal_PDF__c}" escape="false"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                        
+                        <br/>   <br/>  
+                    </apex:outputpanel>
+                    
+                    
+                    
+                    
+                    <!-- New Customer Incentives  -->
+                    <apex:outputpanel rendered="{!if(AND(newCustomerIncentiveList.size > 0,newCustomerAllTotal > 0) , true ,false)}" > 
+                 
+                        <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                            <tr>
+                                <th colspan="3" style="background:#A80C35; border:1px solid #ddd;  color:#fff;text-align: center;">New Customer Incentives</th>
+                            </tr>
+                            <tr>
+                                <td style="border:0px solid #ddd;  width:30%;border-top:none; font-weight:bold;text-align: left;">Funding Type</td>
+                                <td style="border:0px solid #ddd;  width:70%;border-top:none;font-weight:bold;text-align: left;">Incentive Description</td>
+                                <td style="border:0px solid #ddd;  width:25%;border-top:none;font-weight:bold;text-align: right;">Funding Amount</td>
+                            </tr>
+                            <apex:repeat value="{!newCustomerIncentiveList}" var="dfi"> 
+                                <tr> 
+                                    <td  style="border:0px solid #ddd;  width:30%;border-top:none;font-weight: 500;">{!dfi.Funding_Type__c}</td>
+                                    <td  style="border:0px solid #ddd; width:70%;border-top:none;font-weight: 500;text-align: left;">{!dfi.Incentive_Description__c}</td>
+                                    <td  style="border:0px solid #ddd;  width:25%;border-top:none;font-weight: 500;text-align:right;">
+                                        <apex:outputText value="{0,number,$#,###.##}">
+                                            <apex:param value="{!dfi.Funding_Amount__c}"/>
+                                        </apex:outputText>
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                            
+                            <tr >  
+                                <td colspan="2" style=" width:15%;font-weight: 600;"><b>Total New Customer Funding</b></td>
+                                <td style="border:0px solid #ddd;  width:15%;font-weight: 600;text-align: right;">
+                                    <apex:outputText value="{0,number,$#,###.##}">
+                                        <!--<apex:param value="{!ncTotal}" />-->
+                                        <apex:param value="{!newCustomerAllTotal}" />
+                                    </apex:outputText>
+                                </td>
+                            </tr>     
+                        </table> 
+                        <!-- NC Verbiage -->
+                        <apex:outputpanel rendered="{!if(ISBLANK(opportunity.New_Customer_Proposal_Payout_Info__c) , false ,true)}" > 
+                            <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                                
+                                <td class="edit-cell" style="display:{if(ISBLANK(opportunity.New_Customer_Proposal_Payout_Info__c), false, true)}" >
+                                    <tr style="display:{if(ISBLANK(opportunity.New_Customer_Proposal_Payout_Info__c), false, true)}">
+                                        <td colspan="10" style="font: size 9px; text-align: center;border:3px solid #ddd; ;font-weight: 600; display:{if(ISBLANK(opportunity.New_Customer_Proposal_Payout_Info__c), false, true)}">
+                                            <apex:outputText styleClass="richTextFormat" value="{!opportunity.New_Customer_Proposal_Payout_Info__c}" escape="false"/>
+                                        </td>
+                                    </tr>
+                                </td>
+                            </table>
+                        </apex:outputpanel>
+                        
+                    </apex:outputpanel>
+                    
+                    
+                    
+                    <!--New Customer Payout Plan Incentive -->
+                     <apex:outputpanel rendered="{!if(AND(newCustomerPayoutPlanList.size > 0 , newCustomerPayoutIncentiveTotal > 0) , true ,false)}" > 
+                    
+                        <table class="content-table tableStyle2" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                            
+                            <tr>
+                                <th colspan="4" style=" background:##f8eff3;font-color:#1d1b1b;text-align: center ">New Customer Payout Plan Incentives</th>
+                            </tr>
+                            <tr>
+                                <td style="border:px solid #ddd;  width:70%;border-top:none; font-weight:bold;text-align: left;">Type</td>
+                                <td style="border:px solid #ddd;  width:70%;border-top:none; font-weight:bold;text-align: left;">Payout Level</td>
+                                
+                                <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight:bold;text-align: right;">Payout-Sales Threshold</td>
+                                <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight:bold;text-align: right;">Payout Amount</td>
+                            </tr>
+                            <apex:repeat value="{!newCustomerPayoutPlanList}" var="d"> 
+                                <tr> 
+                                    <td style="border:px solid #ddd;  width:70%;border-top:none;font-weight: 500;">{!d.Type_of_Incentive__c}</td>
+                                    <td style="border:px solid #ddd;  width:70%;border-top:none;font-weight: 500;">{!d.Payout_Type__c}</td>
+                                    
+                                    <td style="border:px solid #ddd; width:15%;border-top:none;font-weight: 500;text-align:right">
+                                        <apex:outputText value="{0,number,$#,###.##}">
+                                            <apex:param value="{!d.Payout_Sales_Threshold__c}"/>
+                                        </apex:outputText>
+                                    </td>
+                                    
+                                    <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight: 500;text-align:right;">
+                                        <apex:outputText value="{0,number,$#,###.##}">
+                                            <apex:param value="{!d.Payout_Amount__c}" />
+                                        </apex:outputText>
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                            
+                            <tr >  
+                                <td colspan="3" style="border:0px solid #ddd; width:15%;font-weight: 600;"><b>Total New Customer Payout Incentives</b></td>
+                                <td style="border:0px solid #ddd;  width:15%;font-weight: 600;text-align: right;">
+                                    <apex:outputText value="{0,number,$#,###.##}">
+                                        <!--<apex:param value="{!ncTotal}" />-->
+                                        <apex:param value="{!newCustomerPayoutIncentiveTotal}" />
+                                    </apex:outputText>
+                                </td>
+                            </tr>  
+                        </table>
+                    </apex:outputpanel>
+                    <br/>
+                    
+                    <!-- Market Leader Incentives -->
+                   <apex:outputpanel rendered="{!if(AND(marketLeaderIncentiveList.size > 0 ,marketLeaderTotal > 0), true ,false)}" > 
+                        <div class="page-break"></div>
+                        <table class="content-table tableStyle4 " cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded;">
+                            <thead class="tableHead-break">
+                                <tr>
+                                    <th colspan="3" style="background:#A80C35; border:1px solid #ddd;  color:#fff;text-align: center;">Market Leader Incentives</th>
+                                </tr>
+                                <tr>
+                                    <th style="border:px solid #ddd;  width:33%;border-top:none; font-weight:bold;text-align: left;">Market Leader Product</th>
+                                    <th style="border:px solid #ddd;  width:33%;border-top:none;font-weight:bold;text-align: left;">Payout Level</th>
+                                    <th style="border:px solid #ddd;  width:33%;border-top:none;font-weight:bold;text-align: right;">Payout Per Unit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <apex:repeat value="{!marketLeaderIncentiveList}" var="ml"> 
+                                    
+                                    <tr> 
+                                        <td style="border:px solid #ddd;  width:33%;border-top:none;font-weight: 500;">{!ml.Market_Leader_Product__c}</td>
+                                        <td style="border:px solid #ddd; width:33%;border-top:none;font-weight: 500;">{!ml.Payment_Type__c}</td>
+                                        <td style="border:px solid #ddd;  width:33%;border-top:none;font-weight: 500;text-align:right;">
+                                            <apex:outputText value="{0,number,$#,###.##}">
+                                                <apex:param value="{!ml.Rebate_per_Unit__c}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    
+                                    
+                                </apex:repeat>
+                            </tbody>
+                        </table>
+                        <!-- Market Leader Verbiage -->
+                        
+                        <apex:outputpanel rendered="{!if(ISBLANK(opportunity.Market_Leader_Information__c), false, true)}" >
+                            <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                                
+                                <tr>
+                                    <td colspan="3" style="font: size 9px; text-align: center;border:3px solid #ddd; width:15%;font-weight: 600;">
+                                        <apex:outputText styleClass="richTextFormat" value="{!opportunity.Market_Leader_Information__c}" escape="false"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                        
+                        
+                        
+                    </apex:outputpanel>
+                    
+                    <br/>
+                    
+                    
+                    <!-- District/Existing Customer Incentives -->
+                      <apex:outputpanel rendered="{!if(AND(districtOnlyIncentiveList.size > 0 ,districtIncentiveTotal > 0) , true ,false)}" >
+                        <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                            <tr>
+                                <th colspan="3" style="background:#A80C35; border:1px solid #ddd;  color:#fff;text-align: center;">District Incentives</th>
+                            </tr>
+                            <tr>
+                                <td style="border:px solid #ddd;  width:30%;border-top:none; font-weight:bold;text-align: left;">Funding Type</td>
+                                <td style="border:px solid #ddd;  width:70%;border-top:none;font-weight:bold;text-align: left;">Incentive Description</td>
+                                <td style="border:px solid #ddd;  width:25%;border-top:none;font-weight:bold;text-align: right;">Funding Amount</td>
+                            </tr>
+                            <apex:repeat value="{!districtOnlyIncentiveList}" var="dfi"> 
+                                <tr> 
+                                    <td style="border:px solid #ddd;  width:30%;border-top:none;font-weight: 500;">{!dfi.Funding_Type__c}</td>
+                                    <td style="border:px solid #ddd; width:70%;border-top:none;font-weight: 500;">{!dfi.Incentive_Description__c}</td>
+                                    <td style="border:px solid #ddd;  width:25%;border-top:none;font-weight: 500;text-align:right;">
+                                        <apex:outputText value="{0,number,$#,###.##}">
+                                            <apex:param value="{!dfi.Funding_Amount__c}" />
+                                        </apex:outputText>
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                            
+                            <tr >  
+                                <td colspan="2" style="border:px solid #ddd; width:15%;border-top:1;font-weight: 600;"><b>Total District Incentives</b></td>
+                                <td style="border:px solid #ddd;  width:15%;font-weight: 600;text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###.##}">
+                                        <apex:param value="{!districtIncentiveTotal}" />
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                        </table>
+                        
+                        <!-- District Only Verbiage -->
+                        
+                        <apex:outputpanel rendered="{!if(ISBLANK(opportunity.District_Funds_Proposal_Payout_Info__c), false, true)}" >
+                            <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                                
+                                <tr>
+                                    <td colspan="3" style="font: size 9px; text-align: center;border:3px solid #ddd; width:15%;font-weight: 600;">
+                                        <apex:outputText styleClass="richTextFormat" value="{!opportunity.District_Funds_Proposal_Payout_Info__c}" escape="false"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>
+                        
+                        
+                    </apex:outputpanel>
+                    
+                    
+                    
+                    
+                    <!--District Payout Plan Incentive -->
+                    <apex:outputpanel rendered="{!if(AND(districtPayoutPlanList.size > 0, districtPayoutIncentiveTotal > 0 ) , true ,false)}" > 
+                        <table class="content-table tableStyle2" cellspacing="0" cellpadding="8" width="100%" border=""  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                            <tr>
+                                <th colspan="4" style="background:#c7bbc0;font-color:#1d1b1b; text-align: center; ">District Payout Plan Incentives</th>
+                            </tr>
+                            <tr>
+                                <td style="border:px solid #ddd;  width:70%;border-top:none; font-weight:bold;text-align: left;">Type</td>
+                                <td style="border:px solid #ddd;  width:70%;border-top:none; font-weight:bold;text-align: left;">Payout Level</td>
+                                <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight:bold;text-align: right;">Payout-Sales Threshold</td>
+                                <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight:bold;text-align: right;">Payout Amount</td>
+                                
+                            </tr>
+                            
+                            <apex:repeat value="{!districtPayoutPlanList}" var="d"> 
+                                <tr> 
+                                    <td style="border:px solid #ddd;  width:70%;border-top:none;font-weight: 500;">{!d.Type_of_Incentive__c}</td>
+                                    <td style="border:px solid #ddd;  width:70%;border-top:none;font-weight: 500;">{!d.Payout_Type__c}</td>
+                                    <td style="border:px solid #ddd; width:15%;border-top:none;font-weight: 500;text-align:right;">
+                                        <apex:outputText value="{0,number,$#,###.##}">
+                                            <apex:param value="{!d.Payout_Sales_Threshold__c}" />
+                                        </apex:outputText></td>
+                                    
+                                    <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight: 500;text-align:right;">
+                                        <apex:outputText value="{0,number,$#,###.##}">  <apex:param value="{!d.Payout_Amount__c}" /> </apex:outputText>
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                            
+                            <tr >  
+                                <td colspan="3" style="border:px solid #ddd; width:15%;font-weight: 600;"><b>Total District Payout Incentives</b></td>
+                                <td style="border:px solid #ddd;  width:15%;font-weight: 600;text-align: right;">
+                                    <apex:outputText value="{0,number,$#,###.##}">
+                                        <!--<apex:param value="{!ncTotal}" />-->
+                                        <apex:param value="{!districtPayoutIncentiveTotal}" />
+                                    </apex:outputText>
+                                </td>
+                            </tr>                   
+                        </table>
+                        <br/>                        <br/>
+                        
+                    </apex:outputpanel>
+                    
+                    
+             <!-- District Mktg Funds PDF Component Incentives  -->
+                         <apex:outputpanel rendered="{!if(districtMktgFundsIncentiveList.size > 0  , true ,false)}" >
+                        <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                            <tr>
+                                <th colspan="3" style="background:#A80C35; border:1px solid #ddd;  color:#fff;text-align:center;">District Marketing Funds</th>
+                            </tr>
+                            <tr>
+                                <td style="border:px solid #ddd;  width:30%;border-top:none; font-weight:bold;text-align: left;">Product Line</td>
+                                <td style="border:px solid #ddd;  width:70%;border-top:none;font-weight:bold;text-align: center;">% of purchases</td>
+                                <td style="border:px solid #ddd;  width:25%;border-top:none;font-weight:bold;text-align: right;">District Marketing Funds Earned</td>
+                                
+                            </tr>
+                            <apex:repeat value="{!districtMktgFundsIncentiveList}" var="dfi"> 
+                                <tr> 
+                                    <td style="border:px solid #ddd;  width:30%;border-top:none;font-weight: 500;">{!dfi.Product_Line__c}</td>
+                                    <td style="border:px solid #ddd;  width:70%;border-top:none;font-weight: 500;text-align:center;">{!dfi.of_purchases__c}</td>
+                                    <td style="border:px solid #ddd; width:25%;border-top:none;font-weight: 500;text-align:right;">
+                                        <apex:outputText value="{0,number,$#,###.##}">
+                                            <apex:param value="{!dfi.District_Marketing_Funds_Earned__c}" />
+                                        </apex:outputText>
+                                    </td>
+                                    
+                                </tr>
+                            </apex:repeat>
+                            <tr >  
+                                <td colspan="2" style="border:0px solid #ddd; width:15%;font-weight: 600;"><b>Total District Marketing Funds Earned</b></td>
+                                <td style="border:px solid #ddd;  width:15%;font-weight: 600;text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###.##}">
+                                        <apex:param value="{!districtMktgFundsIncentiveTotal}" />
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                        </table>
+                        <!-- District Marketing Funds Verbiage -->
+                     <apex:variable var="v" value="1" rendered="{!if(ISBLANK(opportunity.District_Mktg_Funds_Proposal_PDF__c), false, true)}">
+                            <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                                
+                                <tr>
+                                    <td colspan="3" style="font: size 9px; text-align: center;border:3px solid #ddd; width:15%;font-weight: 600;">
+                                        <apex:outputText styleClass="richTextFormat" value="{!opportunity.District_Mktg_Funds_Proposal_PDF__c}" escape="false"/> 
+                                    </td> 
+                                </tr>
+                            </table>
+                        </apex:variable>
+                        
+                        <br/> <br/>
+                    </apex:outputpanel>
+               
+                    
+                    <!-- Special Incentives Component   -->
+                   <apex:outputpanel rendered="{!if(AND(specialIncentiveList.size > 0,specialIncentivesTotal > 0 ), true ,false)}" > 
+                        <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border-collapse:collapse; table-layout:fixed;page-break-inside:avoid;">
+                            <tr>
+                                <th colspan="3" style="background:#A80C35; border:1px solid #ddd;  color:#fff;text-align:center;">Special Incentives</th>
+                            </tr>
+                            <tr>
+                                <td style="border:px solid #ddd;  width:70%;border-top:none; font-weight:bold;text-align: left;">Funding Type</td>
+                                <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight:bold;text-align: right;">Funding Amount</td>
+                                <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight:bold;text-align: left;">Description</td>
+                            </tr>
+                            <apex:repeat value="{!specialIncentiveList}" var="spcl"> 
+                                <tr> 
+                                    <td style="border:px solid #ddd;  width:70%;border-top:none;font-weight: 500;">{!spcl.Funding_Type__c}</td>
+                                    <td style="border:px solid #ddd; width:15%;border-top:none;font-weight: 500;text-align:right;">
+                                        <apex:outputText value="{0,number,$#,###.##}">
+                                            <apex:param value="{!spcl.Funding_Amount__c}" />
+                                        </apex:outputText>
+                                    </td>
+                                    <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight: 500;">{!spcl.Incentive_Description__c}</td>
+                                </tr>
+                            </apex:repeat>
+                            <tr >  
+                                <td colspan="2" style="border:px solid #ddd; width:15%;font-weight: 600;"><b>Total Special Marketing Funds Earned</b></td>
+                                <td style="border:3px solid #ddd;  width:15%;font-weight: 600;text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###.##}">
+                                        <apex:param value="{!specialIncentivesTotal}" />
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                        </table>                            
+                        <!--Special Incentives Verbiage -->
+                        <apex:variable var="v" value="1" rendered="display:{!if(ISBLANK(opportunity.Special_Incentives_PDF__c), false, true)}" > 
+                            <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                                
+                                <tr> <td colspan="3" style="font: size 9px; text-align: center;border:3px solid #ddd; width:15%;font-weight: 600;">
+                                    <apex:outputText styleClass="richTextFormat" value="{!opportunity.Special_Incentives_PDF__c}" escape="false"/>
+                                    </td></tr>
+                            </table>
+                        </apex:variable>
+                        
+                        <br/><br/>
+                    </apex:outputpanel>
+                    
+                    
+                    <!-- District Marketing Matrix:  -->
+                    <apex:outputpanel rendered="{!if(districtMktgFundsMatrixList.size > 0, true ,false)}" >
+                        <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                            <tr>
+                                <th colspan="3" style="background:#A80C35; border:1px solid #ddd;  color:#fff;text-align:center">District Marketing Matrix</th>
+                            </tr>
+                            <tr>
+                                <td style="border:px solid #ddd;  width:70%;border-top:none; font-weight:bold;text-align: center;"></td>
+                                <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight:bold;text-align: center;">District Marketing Funds (%) </td>
+                                <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight:bold;text-align: right;"> Potential Marketing Funds ($)  </td>
+                            </tr>
+                            <apex:repeat value="{!districtMktgFundsMatrixList}" var="matrix"> 
+                                <apex:variable var="v" value="1" rendered="{!if(matrix.District_Marketing_Funds_on_DLSC_Prod__c > 0 , true ,false)}" > 
+                                    <tr> 
+                                        <td style="border:px solid #ddd;  width:60%;border-top:none;font-weight: 500;">
+                                            Dave Lennox Signature Collection Products
+                                        </td>
+                                        <td style="border:0px solid #ddd; width:20%;border-top:none;font-weight: 500;text-align:center;">
+                                            <apex:outputText value="{0, number,###.0} %">
+                                                <apex:param value="{!matrix.District_Marketing_Funds_on_DLSC_Prod__c}"/>
+                                            </apex:outputText>   
+                                        </td>  
+                                        <td style="border:px solid #ddd;  width:20%;border-top:none;font-weight: 500;text-align:right;">
+                                            <apex:outputText value="{0,number,$#,###.##}">
+                                                <apex:param value="{!matrix.District_Marketing_Funds_Earned_DLSC__c}" />
+                                            </apex:outputText>     
+                                        </td>
+                                    </tr>
+                                </apex:variable>
+                                <apex:variable var="v" value="2" rendered="{!if(matrix.District_Marketing_Funds_on_Elite_Prod__c > 0 , true ,false)}" >
+                                    <tr> 
+                                        <td style="border:px solid #ddd;  width:70%;border-top:none;font-weight: 500;">
+                                            Elite Products
+                                        </td>
+                                        <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight: 500;text-align:center;">
+                                            <apex:outputText value="{0, number,###.0} %">
+                                                <apex:param value="{!matrix.District_Marketing_Funds_on_Elite_Prod__c}"/>
+                                            </apex:outputText>   
+                                        </td>
+                                        <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight: 500;text-align:right;">
+                                            <apex:outputText value="{0,number,$#,###.##}">
+                                                <apex:param value="{!matrix.District_Marketing_Funds_Earned_Elite__c}"/>
+                                            </apex:outputText>   
+                                        </td>   
+                                    </tr>
+                                </apex:variable>
+                                <apex:variable var="v"  value="3" rendered="{!if(AND(NOT(ISBLANK(matrix.District_Marketing_Funds_on_Merit_Prod__c)),matrix.District_Marketing_Funds_on_Merit_Prod__c > 0) , true ,false)}" >                                
+                                    <tr> 
+                                        <td style="border:px solid #ddd;  width:70%;border-top:none;font-weight: 500;">
+                                            Merit Products
+                                        </td>
+                                        <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight: 500;text-align:center;">
+                                            <apex:outputText value="{0, number,###.0} %">
+                                                <apex:param value="{!matrix.District_Marketing_Funds_on_Merit_Prod__c}"/>
+                                            </apex:outputText>      
+                                        </td>
+                                        <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight: 500;text-align:right;">
+                                            <apex:outputText value="{0,number,$#,###.##}">
+                                                <apex:param value="{!matrix.District_Marketing_Funds_Earned_Merit__c}" />
+                                            </apex:outputText>   
+                                        </td>
+                                    </tr>
+                                </apex:variable>
+                                <apex:variable var="v"  value="4" rendered="{!if(AND(NOT(ISBLANK(matrix.District_Marketing_Funds_on_P_S__c)),matrix.District_Marketing_Funds_on_P_S__c > 0) , true ,false)}" >    
+                                    
+                                    <tr> 
+                                        <td style="border:px solid #ddd;  width:70%;border-top:none;font-weight: 500;">
+                                            Parts and Supplies
+                                        </td>
+                                        <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight: 500;text-align:center;">
+                                            <apex:outputText value="{0, number,###.0} %">
+                                                <apex:param value="{!matrix.District_Marketing_Funds_on_P_S__c}"/>
+                                            </apex:outputText>
+                                            
+                                        </td>
+                                        <td style="border:px solid #ddd;  width:15%;border-top:none;font-weight: 500;text-align:right;">
+                                            <apex:outputText value="{0,number,$#,###.##}">
+                                                <apex:param value="{!matrix.District_Marketing_Funds_Earned_P_S__c}" />
+                                            </apex:outputText> 
+                                        </td> 
+                                    </tr>
+                                </apex:variable>   
+                            </apex:repeat>
+                            
+                        </table>
+                        <!-- District Marketing Matrix Verbiage -->
+                        
+                        <apex:outputpanel rendered="{!if(ISBLANK(opportunity.District_Mktg_Funds_Proposal_PDF__c), false, true)}" >
+                            <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border:8px solid#f4eded; table-layout:fixed;page-break-inside:avoid;">
+                                
+                                <tr>                                    
+                                    <td colspan="3" style="font: size 9px; text-align: center;border:3px solid #ddd; width:15%;font-weight: 600;">
+                                        <apex:outputText styleClass="richTextFormat" value="{!opportunity.District_Mktg_Funds_Proposal_PDF__c}" escape="false"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </apex:outputpanel>    
+                        
+                        <br/>                        <br/> 
+                    </apex:outputpanel>
+                    <!-- TOTAL INCENTIVES -->
+                    
+                    <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border-collapse:collapse; table-layout:fixed;page-break-inside:avoid;">
+                        <tr>
+                            <th colspan="3" style="background:#A80C35; border:1px solid #ddd;  color:#fff;text-align:center;font-size:15px">Total Incentives</th>
+                        </tr>
+                        <tr>                                    
+                            <td colspan="3" style="text-align: center;border:3px solid #ddd; width:15%;font-weight: 600;text-align:center;">
+                                <apex:outputText value="{0,number,$#,###.##}">
+                                    <apex:param value="{!totalOfAllIncentives}" />
+                                </apex:outputText>
+                            </td>
+                        </tr>                            
+                    </table> 
+                    <br/> 
+                    
+                    
+                </div>
+                  <apex:outputpanel rendered="{!IF(opportunity.Type !='Existing Dealer - Market Leader',true,false)}">
+                    <center><span style="font-size:16px;text-decoration: underline;">Incentives Agreement Basis </span> </center>
+                    <div style="margin-left:15%;">
+                       
+
+                        <li>{!opportunity.Account.Name} agrees to keep their credit account current</li>
+                        <li>Performance to the agreed purchase amounts will be evaluated quarterly</li>
+                       
+
+
+ <apex:outputText rendered="{!IF((opportunity.Type =='New Customer')  || (opportunity.Type =='New Customer - Full Force') ||        
+                                                    (opportunity.Type =='Market Leader - New Customer') || (opportunity.Type =='New Customer - Growth') ||
+                                                    (opportunity.Type =='New Customer - District VR') || (opportunity.Type =='New Customer - Rebate'), true ,false)}" > <li>This agreement is valid 12 calendar months from date of signature</li> </apex:outputText>
+                                                    
+                                                      <apex:outputText rendered="{!IF(
+                                                    (opportunity.Type =='New Customer - Lennox Partner Incentive') , true ,false)}" > <li>All incentives not related to, “Lennox Partner Incentives” will be valid for 12 months from the date of signature.</li> </apex:outputText>
+                       
+                        <!-- <apex:outputpanel rendered="{!IF(NOT(opportunity.Type =='New Customer'|| opportunity.Type =='New Customer - VR'|| opportunity.Type =='New Customer - Rebate'|| opportunity.Type =='Existing Customer - Lennox Partner Incentive'), true ,false)}" > 
+<li>This document will expire within 7 business days if not returned with signature</li>
+</apex:outputpanel>-->
+                        <apex:outputText rendered="{!IF(contains(opportunity.Type , 'Existing Customer') || contains(opportunity.Type , 'Existing Dealer')  ,true,false)}">
+                            <li>This document will terminate on <apex:outputText value="{0, date, MMMM d','  yyyy}"><apex:param value="{!opportunity.Expiration_Date__c}" /></apex:outputText></li>
+                        </apex:outputText>
+                    </div> 
+                </apex:outputpanel>
+               
+                
+                <apex:outputpanel rendered="{!IF(opportunity.Type == 'New Customer - Lennox Partner Incentive', true ,false)}" >
+                    <ul >
+                        <li>The following purchases do not count toward the rebate:  Residential New Construction purchases and/or 
+                            business done through Home Depot, Costco or any other retail program.  The rebate will be given in the 
+                            form of a monthly lump sum credit memo to Dealer’s account based on the purchases made in the previous month 
+                            by Dealer and may be forfeited if Dealer’s account balance is not current pursuant to the customer records of 
+                            Lennox at any time during the Agreement Time Period.  </li>
+                        <li>Rebates will be paid on products purchased from Lennox at the price established for Dealer’s account pursuant to 
+                            Lennox’s standard Terms and Conditions of Sale. </li>
+                        <li>Dealer must sign this Agreement to qualify for the rebates hereunder.</li>
+                    </ul>
+                    <c><b>General Terms and Conditions</b></c>
+                    <ul >
+                        <li> Lennox and Dealer each has the right to terminate this Agreement upon thirty (30) days written notice to the other party.  
+                            Notwithstanding the foregoing, upon termination, Lennox will pay all undisputed rebates earned hereunder and owed to Dealer under this Agreement.</li>
+                        <li> This Agreement is governed by and construed in accordance with the laws of the State of Texas.  Any litigation filed and related to the subject matter of this Agreement will be filed in a court having jurisdiction located in Dallas, Texas.  In no event will Lennox be liable to Dealer hereunder for loss of profits, loss of use, indirect, incidental, consequential, punitive or special damages, whether or not foreseeable. Dealer will hold all confidential information that it obtains from Lennox in confidence, including the terms of this Agreement.  The parties may not assign this Agreement without the express written consent of the other party, and any assignment in violation of this provision is null and void.  The parties do not intend to create, and have not created by this Agreement, any partnership, joint venture, master servant, employer-employee or similar business relationship.  This Agreement shall be deemed to have been jointly drafted by all parties.  If any provision of this Agreement shall be held by a court of competent jurisdiction to be illegal, invalid or unenforceable, the remaining provisions shall 
+                            remain in full force and effect, and the illegal, invalid or unenforceable parts shall be severed therefrom.  This Agreement may be executed in two or more counterparts, each of which shall be an original and all of which together shall constitute one and the same instrument.  This Agreement may be executed using electronically scanned signatures, and such signatures shall be given the authority of original signatures for purposes of executing and enforcing the validity of this Agreement.</li>    
+                    </ul>
+                </apex:outputpanel>
+                
+                
+                <apex:outputpanel id="signerlist" >
+                    <table class="content-table tableStyle" cellspacing="0" cellpadding="8" width="100%" border="0"  style="border-collapse:collapse; table-layout:fixed;page-break-inside:avoid;">
+                        <tr>
+                            <td style="background:#A80C35; border:1px solid #ddd;  color:#fff;width:5%;text-align: center;">Sr. No</td>
+                            <td style="background:#A80C35; border:1px solid #ddd;  color:#fff;width:40%;text-align: center;">Signer</td>
+                            <td style="background:#A80C35; border:1px solid #ddd;  color:#fff;width:30%;text-align: center;">Signatures</td>
+                            <td style="background:#A80C35; border:1px solid #ddd;  color:#fff;width:25%;text-align: center;">Sign Date</td>
+                        </tr>
+                        <apex:variable value="{!1}" var="rowNum"/>
+                        <apex:repeat value="{!userList}" var="userName" id="signerlist1111">
+                            <tr> 
+                                <td style="text-align:center;border:1px solid #ddd;  width:5%;border-top:none; font-weight:bold;">
+                                    {!FLOOR(rowNum)})
+                                </td>
+                                <td style="border:1px solid #ddd;  width:30%;border-top:none; font-weight:bold;">
+                                    {!userName}
+                                </td>
+                                <td style="border:1px solid #ddd;  width:30%;border-top:none;font-weight:bold;">
+                                    
+                                </td>
+                                <td style="border:1px solid #ddd;  width:25%;border-top:none;font-weight:bold;">
+                                </td>
+                            </tr>
+                            <apex:variable var="rowNum" value="{!rowNum + 1}"/>
+                        </apex:repeat>
+                    </table>
+                </apex:outputpanel>
+                <div class="footer">
+                    <table class="footer-table" cellspacing="0" cellpadding="0" width="100%" border="0">
+                        <tr>
+                            <td class="page-number" style="border-top:2px solid #8a8a8a; border-right:2px solid #8a8a8a;" width="80"><span class="pagenumber" style=""/></td>
+                            <td class="footer-text" style="border-top:2px solid #8a8a8a; ">
+                                CONFIDENTIALITY NOTICE: This agreement is considered confidential and privileged 
+                                information for the use of the designated recipient only.  Additional review, distribution, 
+                                or copying of it or its contents beyond the designated recipient is prohibited. 
+                            </td>
+                        </tr>
+                    </table>            
+                </div> 
+                
+                <div class="bgBlack" id="loader" style="display:none;">
+                    <div class="loader"><img src="{!$Resource.spinnerBrand}" width="55" /></div>
+                </div>
+            </div>
+            
+        </body>
+        <script>
+        document.title = "District Incentive Agreement";
+        </script>
+    </html>
+    
+</apex:page>

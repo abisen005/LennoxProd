@@ -1,0 +1,65 @@
+<aura:component controller="SC_CoachingSessionAssessmentSkillsCtrl">
+   
+    <aura:attribute name="Editable" type="boolean"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+	<aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <aura:attribute name="CoachingSessionId" type="String"/>
+    <aura:attribute name="listSC_Assessment_Skill" type="object"/>
+    <aura:attribute name="ShowSaveBtn" type="boolean" default="false"/>
+    
+    <aura:handler name="change" value="{!v.CoachingSessionId}" action="{!c.doInit}"/>
+
+    <lightning:card variant="Narrow" title="Assessment Skills" iconName="custom:custom15" class="slds-card slds-m-around--small">        
+        <p class="slds-p-horizontal_small">
+           
+            <table class="slds-table slds-table_bordered slds-max-medium-table_stacked-horizontal hover stripe assignment-table">
+                <thead>
+                    
+                    <tr class="slds-text-title_caps">
+                        <th class="slds-cell-shrink" scope="col">
+                            <div class="slds-truncate" title="Description">Description</div>
+                        </th>
+                        <th class="slds-cell-shrink" scope="col">
+                            <div class="slds-truncate" title="Name">Name</div>
+                        </th>
+                        <th class="slds-cell-shrink" scope="col">
+                            <div class="slds-truncate" title="Mastery">Mastery</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.listSC_Assessment_Skill}" var="record">
+                        <tr>
+                            <td data-label="Description">{!record.Description__c}</td>
+                            <td data-label="Name">{!record.Assessment__r.Coachee__r.Name}</td>
+                            <td data-label="Mastery">
+                               <lightning:input type="checkbox" label="" variant="label-hidden" onchange="{!c.handleCompleteChange}"
+                                                checked="{!record.Complete__c}" disabled="{!not(v.Editable)}"/>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+            <aura:if isTrue="{!v.ShowSaveBtn}">
+                <div class="slds-align_absolute-center" style="height:5rem">
+                    <lightning:button variant="brand" label="Save" title="Save" onclick="{! c.save }" />
+                    <lightning:button label="Cancel" title="Cancel" onclick="{! c.cancel }"/>
+                </div>
+            </aura:if>
+        </p>
+    </lightning:card>
+    
+    
+    <!--loading spinner -->
+    <aura:if isTrue="{!v.Spinner}">
+        <div class="slds-spinner_container slds-is-fixed ">
+            <div role="status" class="slds-spinner slds-spinner--medium slds-spinner--brand">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,1246 @@
+<apex:component allowDml="true" controller="printPDFController">
+    
+    <apex:slds />
+    <apex:attribute name="name" type="String" description="The name of this report (used for attachment name, event info)" />
+    <apex:attribute name="orientation" type="String" description="Portrait or Landscape" />
+    <apex:attribute name="border" type="String" description="border for page" />
+    <apex:attribute name="accountId" type="String" description="Id of the Account in scope" />
+    <apex:attribute name="buttonClass" type="String" description="Class name(s) to be applied to the print button." />
+    <apex:attribute name="loadAngular" type="Boolean" default="true" description="Default is true.  Set to false if Angular is already loaded on the page." />
+    <apex:attribute name="angularAppName" type="String" default="pdfApp" description="If provided, pdf controller will be added to existing Angular application." />
+    
+    <apex:outputPanel rendered="{!loadAngular}">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.min.js"></script>
+        </apex:outputPanel>
+        <style> 
+            html2pdf().set({
+            pagebreak: {avoid: 'tr'}
+        }); 
+        
+        @media print{
+            table.tableStyle tr  {page-break-inside:avoid;   page-break-after: always; size: 220mm 300mm; display:table; width:100%; table-layout:fixed; -fs-table-paginate: paginate;}
+            thead {display: table-header-group;}
+            
+        }
+        
+         .slds-button--brand{
+                background-color:#0070d2 !important; 
+                border: 1px solid #0070d2 !important; 
+                 font-weight:normal !important;
+    color: #fff !important;
+            }
+        
+        .slds-button--neutral{
+           font-weight:normal !important;
+   color: #0070d2 !important;
+        }
+        
+           .slds-form-element{
+            text-align: left;
+        }
+        
+        
+        @page:first {
+            margin-top: 0.5cm;
+            margin-bottom: 0.5cm;
+            margin-left: 0.5cm;
+            margin-right: 0.5cm;
+            size: 220mm 300mm;
+        }
+        </style>
+        
+        <script type="text/javascript">
+            
+            // don't let salesforce add slds-scope to the body element
+            // this prevents the lightning design system from interfering with styles
+            // set on the page where this component is referenced (ie, bootstrap)
+            window.onload = function() {
+            
+            removeClass(document.body, 'slds-scope');
+            
+            function hasClass(el, className) {
+                if (el.classList)
+                    return el.classList.contains(className)
+                    else
+                        return !!el.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'))
+                        }
+            
+            function removeClass(el, className) {
+                if (el.classList)
+                    el.classList.remove(className)
+                    else if (hasClass(el, className)) {
+                        var reg = new RegExp('(\\s|^)' + className + '(\\s|$)')
+                        el.className=el.className.replace(reg, ' ')
+                    }
+            }
+        };
+        
+        <apex:outputPanel rendered="{!angularAppName == 'pdfApp'}" layout="none">
+            var app = angular.module('{!angularAppName}', []);
+        </apex:outputPanel>
+        
+        (function() {
+            
+            app.controller('pdfCtrl', function($scope, $q, $http, $timeout) {
+                
+                var INTERNAL_ONLY_CLASS_NAME = '.js-hide-dealer-view';
+                
+                $scope.showGeneratePdf = false;
+                $scope.isLoading = false;
+                $scope.state = 'GENERATE';
+                $scope.hasAccountId = {! !ISBLANK(accountId)};
+                
+                
+                $scope.contacts = [];
+                $scope.canSendEmail = false;
+                
+                $scope.email = {
+                    recipientType: $scope.hasAccountId ? 'contacts' : 'users',
+                    toContacts: [],
+                    toUsers: [],
+                    subject: '',
+                    body: 'Please see the attached document. Regards,\n\n{!JSENCODE($User.FirstName)} {!JSENCODE($User.LastName)}',
+                    copyMyself: false,
+                    isSending: false,
+                    isSent: false,
+                    errorMessage: ''
+                };
+                
+                $scope.isSearching = false;
+                
+                $scope.showUsersMenu = false;
+                $scope.users = [];
+                $scope.userQuery = '';
+                
+                $scope.showContactsMenu = false;
+                $scope.contactQuery = '';
+                
+                $scope.contact = getDefaultContact();
+                $scope.newContactErrorMsg = '';
+                $scope.addEmailErrorMsg = '';
+                
+                $scope.autoShowGeneratePdf = getUrlParameter('autoShowGeneratePdf') === 'false';
+                
+                
+                /* KEYCODE MAP FOR KEY EVENTS */
+                var keyCodeMap = {
+                    38: 'ARROW_UP',
+                    40: 'ARROW_DOWN',
+                    13: 'ENTER'
+                };
+                
+                
+                function getDefaultContact() {
+                    return {
+                        AccountId: '{!accountId}',
+                        Contact_Type__c: 'Dealer',
+                        FirstName: '',
+                        LastName: '',
+                        Role__c: '',
+                        Email: '',
+                        Title: '',
+                        Secondary_Roles__c: '',
+                        Phone: '',
+                        MobilePhone: '',
+                        secondaryRoles: {}
+                    };
+                }
+                
+                $scope.handleEmailInputChange = function() {
+                    canSendEmail();
+                }
+                
+                $scope.handleRemoveEmail = function(recipient) {
+                    console.log('removing an email: ');
+                    var recipients = $scope.email.recipientType === 'users' ? $scope.email.toUsers : $scope.email.toContacts;
+                    for(var i = 0; i < recipients.length; i++) {
+                        if(recipient.Id === recipients[i].Id) {
+                            recipients.splice(i, 1);
+                            break;
+                        }
+                    }
+                    canSendEmail();
+                }
+                
+                function canSendEmail() {
+                    
+                    $timeout(function() {
+                        if($scope.email.recipientType === 'contacts') {
+                            if($scope.email.toContacts.length === 0) {
+                                $scope.canSendEmail = false;
+                                return;
+                            } else {
+                                var missingEmail = $scope.email.toContacts.some(function(contact) {
+                                    return !contact.Email;
+                                });
+                                if(missingEmail) {
+                                    $scope.canSendEmail = false;
+                                    return;
+                                }
+                            }
+                        }
+                        if($scope.email.toUsers.length === 0 && $scope.email.recipientType === 'users') {
+                            $scope.canSendEmail = false;
+                            return;
+                        }
+                        if($scope.email.subject.length === 0) {
+                            $scope.canSendEmail = false;
+                            return;
+                        }
+                        if($scope.email.body.length === 0) {
+                            $scope.canSendEmail = false;
+                            return;
+                        }
+                        $scope.canSendEmail = true;
+                    });
+                    
+                }
+                
+                
+                $scope.cancelClickHandler = function cancelClickHandler() {
+                    $scope.showGeneratePdf = false;
+                }
+                
+                $scope.close = function() {
+                    document.location.reload();
+                }
+                
+                $scope.emailPdf = function() {
+                    $scope.email.isSending = true;
+                    $scope.errorMessage = '';
+                    if(typeof onBeforePrint !== 'undefined') onBeforePrint();
+                    var htmlString = getHtmlString(),
+                        toList = $scope.email.recipientType === 'users' ? $scope.email.toUsers : $scope.email.toContacts,
+                        toEmails = toList.map(function(to) { return to.Email; });
+                    
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.printPDFController.sendEmail}',
+                        htmlString,
+                        toEmails,
+                        $scope.email.subject,
+                        $scope.email.body,
+                        $scope.email.copyMyself,
+                        '{!IF(orientation != NULL, orientation, "landscape")}',
+                        '{!IF(border != NULL, border, "0")}',
+                        function(result, event){
+                            $scope.email.isSending = false;
+                            if (event.status) {
+                                $scope.email.isSent = true;
+                                saveEvent();
+                            } else if (event.type === 'exception') {
+                                $scope.email.errorMessage = event.message;
+                            } else {
+                                $scope.email.errorMessage = event.message;
+                            }
+                            $scope.$apply();
+                        },
+                        {escape: true}
+                    );
+                }
+                
+                
+                $scope.createPDF = function() {
+                    //window.print();
+                    
+                    if(typeof onBeforePrint !== 'undefined') onBeforePrint();
+                    
+                    var API_ENDPOINT = 'https://www.ventastools.com/api/html2pdf',
+                        pdfOptions = {
+                            orientation: '{!IF(orientation != NULL, orientation, "landscape")}',
+                            base: document.location.origin,
+                            type: 'pdf',
+                            border: '{!IF(border != NULL, border, "0")}'
+                            
+                            
+                        };
+                    
+                    
+                    
+                    
+                    var htmlString = getHtmlString();
+                     console.log('htmlString: ', htmlString);
+                    // Setup promise
+                    var deferred = $q.defer();
+                    
+                    
+                    // Compile form then convert to pdf
+                    $http.post(API_ENDPOINT, {
+                        html: htmlString,
+                        options: pdfOptions
+                    }, {
+                        headers: {
+                            accept: 'application/pdf'
+                        },
+                        responseType: 'arraybuffer',
+                        cache: true
+                    })
+                    .then(function(response) {
+                        
+                        // Resolve promise with pdf binary response (arraybuffer)
+                        console.log('response: ', response);
+                        deferred.resolve(response.data);
+                    })
+                    .catch(function(error) {
+                        console.log('API Error: ', error);
+                        // Reject error
+                        
+                        if(window.confirm('There was a problem creating the pdf. Do you want to use the standard browser print functionality?')) {
+                            window.print();
+                        }
+                        deferred.reject(error);
+                    });
+                    
+                    // Return promise
+                    return deferred.promise;
+                    // };
+                    
+                };
+                
+                $scope.savePDF = function() {
+                    $scope.isLoading = true;
+                    $scope.createPDF().then(function(data) {
+                        $scope.isLoading = false;
+                        console.log('then...', data);
+                        var file = new Blob([data], {
+                            type: 'application/pdf'
+                        });
+                        var fileURL = URL.createObjectURL(file);
+                        if (window.navigator && window.navigator.msSaveOrOpenBlob) { //if in IE, use msSaveOrOpenBlob instead of window.open(fileURL, '_blank');
+                            window.navigator.msSaveOrOpenBlob(file);
+                        } else {
+                            // Render a close button and a frame with the pdf embedded
+                            var closeBtnEl = document.createElement('button'),
+                                frameContainerEl = document.createElement('div')
+                            frameEl = document.createElement('iframe');
+                            
+                            closeBtnEl.type = 'button';
+                            closeBtnEl.style = 'position: fixed; width: 100%;cursor:pointer; color: white; font-size: 12px;background: #c9002d !important; padding:15px;font-weight: bold; border: none; top: 0; z-index: 99999999;right: 0px;page-break-inside:avoid';
+                            closeBtnEl.appendChild(document.createTextNode('Close'));
+                            closeBtnEl.addEventListener('click', function() {
+                                
+                                document.location.reload();
+                            });
+                            
+                            frameContainerEl.style = 'position: fixed; width: 100%; height: 100vh; z-index: 99999999; top: 40px;font-size: 100%;display: inline-block";page-break-inside:avoid;   page-break-after: always; ';
+                            
+                            frameEl.type = 'application/pdf';
+                            frameEl.width = '100%';
+                            frameEl.height = '100%';
+                            frameEl.style = 'overflow: auto; border: 0;page-break-inside:avoid;   page-break-after: always; ';
+                            frameEl.src = fileURL;
+                            frameContainerEl.appendChild(frameEl);
+                            document.body.appendChild(frameContainerEl);
+                            document.body.appendChild(closeBtnEl);
+                        }
+                    })
+                };
+                
+                $scope.showGeneratePdfModal = function() {
+                    $scope.showGeneratePdf = true;
+                };
+                
+                $scope.setState = function(newState) {
+                    $scope.state = newState;
+                    if(newState === 'COMPOSE_EMAIL') {
+                        canSendEmail();
+                    }
+                };
+                
+                var inputChanges = 0;
+                $scope.searchUsers = function() {
+                    var query = $scope.userQuery;
+                    if(query.length < 3) {
+                        $scope.users = [];
+                        return;
+                    }
+                    $scope.isSearching = true;
+                    inputChanges = inputChanges + 1;
+                    $timeout(function() {
+                        inputChanges = inputChanges - 1;
+                        if(inputChanges === 0) {
+                            queryUsers(query);
+                        }
+                    }, 1000);
+                    
+                };
+                
+                function queryUsers(query) {
+                    if(query.length > 0) {
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.printPDFController.searchUsers}',
+                            query,
+                            function(result, event) {
+                                $scope.isSearching = false;
+                                if (event.status) {
+                                    console.log(result);
+                                    $scope.users = result;
+                                } else if (event.type === 'exception') {
+                                    console.log('it failed: ', event.message, event.where);
+                                } else {
+                                    console.log('it failed: ', event.message);
+                                }
+                                $scope.$apply();
+                            },
+                            {escape: true}
+                        );
+                    }
+                }
+                
+                $scope.searchContacts = function() {
+                    var query = $scope.contactQuery;
+                    if(query.length < 3) {
+                        $scope.contacts = [];
+                        return;
+                    }
+                    $scope.isSearching = true;
+                    inputChanges = inputChanges + 1;
+                    $timeout(function() {
+                        inputChanges = inputChanges - 1;
+                        if(inputChanges === 0) {
+                            queryContacts(query);
+                        }
+                    }, 1000);
+                    
+                };
+                
+                
+                $scope.handleContactSearchKeydown = function(evt) {
+                    if(keyCodeMap[evt.keyCode] === 'ENTER') {
+                        $scope.isSearching = true;
+                        queryContacts($scope.contactQuery);
+                    }
+                    if(keyCodeMap[evt.keyCode] === 'ARROW_DOWN') {
+                        var el = document.getElementById('to-contacts-menu');
+                        var focusEl = angular.element(el).find('li')[1].firstElementChild;
+                        focusEl.focus();
+                    }
+                };
+                $scope.handleUserSearchKeydown = function(evt) {
+                    if(keyCodeMap[evt.keyCode] === 'ENTER') {
+                        $scope.isSearching = true;
+                        queryUsers($scope.contactQuery);
+                    }
+                    if(keyCodeMap[evt.keyCode] === 'ARROW_DOWN') {
+                        if($scope.users.length > 0) {
+                            var el = document.getElementById('to-users-menu');
+                            var focusEl = angular.element(el).find('li')[1].firstElementChild;
+                            focusEl.focus();
+                        }
+                    }
+                };
+                
+                //Search contacts based on query
+                function queryContacts(query) {
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.printPDFController.searchContacts}',
+                        query,
+                        '{!accountId}',
+                        function(result, event){
+                            $scope.isSearching = false;
+                            if (event.status) {
+                                console.log(result);
+                                $scope.contacts = result;
+                            } else if (event.type === 'exception') {
+                                console.log('it failed: ', event.message, event.where);
+                            } else {
+                                console.log('it failed: ', event.message);
+                            }
+                            $scope.$apply();
+                        },
+                        {escape: true}
+                    );
+                }
+                
+                
+                $scope.addToContactRecipients = function(obj) {
+                    var contactInList = $scope.email.toContacts.some(function(contact) {
+                        return obj.Id === contact.Id;
+                    });
+                    if(!contactInList) {
+                        $scope.email.toContacts.push(obj);
+                    }
+                    $scope.contacts = [];
+                    $scope.contactQuery = '';
+                    document.getElementById('to-contacts').focus();
+                    canSendEmail();
+                };
+                
+                $scope.addToUserRecipients = function(obj) {
+                    var userInList = $scope.email.toUsers.some(function(user) {
+                        return obj.Id === user.Id;
+                    });
+                    if(!userInList) {
+                        $scope.email.toUsers.push(obj);
+                    }
+                    $scope.users = [];
+                    $scope.userQuery = '';
+                    document.getElementById('to-users').focus();
+                    canSendEmail();
+                }
+                
+                
+                $scope.handleRecipientKeyup = function(evt, obj) {
+                    var keyCode = evt.keyCode;
+                    var el = evt.target;
+                    var pressedKey = keyCodeMap[keyCode];
+                    switch (pressedKey) {
+                        case 'ARROW_DOWN':
+                            if(el.parentElement.nextElementSibling) el.parentElement.nextElementSibling.firstElementChild.focus();
+                            break;
+                        case 'ARROW_UP':
+                            if(el.parentElement.previousElementSibling) el.parentElement.previousElementSibling.firstElementChild.focus();
+                            break;
+                        case 'ENTER':
+                            if($scope.email.recipientType === 'users') {
+                                $scope.addToUserRecipients(obj);
+                            } else {
+                                $scope.addToContactRecipients(obj);
+                            }
+                            break;
+                        default:
+                            
+                    }
+                };
+                
+                $scope.handleContactSearchFocus = function() {
+                    $scope.showContactsMenu = true;
+                };
+                $scope.handleContactSearchBlur = function() {
+                    $timeout(function() {
+                        $scope.showContactsMenu = false;
+                    }, 250);
+                };
+                
+                $scope.handleUserSearchFocus = function() {
+                    $scope.showUsersMenu = true;
+                };
+                $scope.handleUserSearchBlur = function() {
+                    $timeout(function() {
+                        $scope.showUsersMenu = false;
+                    }, 250);
+                };
+                
+                
+                $scope.showAddEmailForm = function(contact) {
+                    $scope.missingEmailContact = contact;
+                    $scope.setState('ADD_EMAIL');
+                }
+                
+                
+                
+                $scope.saveNewContact = function() {
+                    var insertContact = angular.copy($scope.contact);
+                    insertContact.Secondary_Roles__c = getSecondaryRoleValue();
+                    delete insertContact.secondaryRoles;
+                    $scope.isLoading = true;
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.printPDFController.saveContact}',
+                        insertContact,
+                        function(result, event){
+                            $scope.isLoading = false;
+                            if (event.status) {
+                                insertContact.Id = result;
+                                $scope.newContactErrorMsg = '';
+                                $scope.email.toContacts.push(insertContact);
+                                console.log('before set pristine:', $scope.newContactForm);
+                                $scope.newContactForm.$setPristine();
+                                $scope.newContactForm.$setUntouched();
+                                $scope.contact = getDefaultContact();
+                                console.log('after set pristine:', $scope.newContactForm);
+                                $scope.setState('COMPOSE_EMAIL');
+                            } else if (event.type === 'exception') {
+                                $scope.newContactErrorMsg = event.message;
+                                console.log('it failed: ', event.message, event.where);
+                            } else {
+                                $scope.newContactErrorMsg = event.message;
+                                console.log('it failed: ', event.message);
+                            }
+                            $scope.$apply();
+                        },
+                        {escape: true}
+                    );
+                    
+                };
+                
+                $scope.addEmail = function() {
+                    var updateContact = $scope.missingEmailContact;
+                    $scope.isLoading = true;
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.printPDFController.addEmail}',
+                        updateContact.Id,
+                        updateContact.Email,
+                        function(result, event){
+                            $scope.isLoading = false;
+                            if (event.status) {
+                                var updatedContact = $scope.email.toContacts.find(function(contact) {
+                                    return contact.Id === result.Id;
+                                });
+                                updatedContact.Email = result.Email;
+                                $scope.addEmailFormErrorMsg = '';
+                                $scope.addEmailForm.$setPristine();
+                                $scope.addEmailForm.$setUntouched();
+                                $scope.missingEmailContact = {};
+                                $scope.setState('COMPOSE_EMAIL');
+                            } else if (event.type === 'exception') {
+                                $scope.addEmailFormErrorMsg = event.message;
+                                console.log('it failed: ', event.message, event.where);
+                            } else {
+                                $scope.addEmailFormErrorMsg = event.message;
+                                console.log('it failed: ', event.message);
+                            }
+                            $scope.$apply();
+                        },
+                        {escape: true}
+                    );
+                    
+                };
+                
+                
+                function saveEvent() {
+                    var whatId = '{!accountId}',
+                        subject = 'Emailed {!IF(ISBLANK(name), "a printable report", JSENCODE(name))}',
+                        documentType = '{!IF(ISBLANK(name), '', JSENCODE(name))}',
+                            recipients = $scope.email.recipientType === 'users' ? $scope.email.toUsers : $scope.email.toContacts,
+                            description = 'The following recipients were emailed: \n\n';
+                    description += recipients.map(function(recipient) {
+                        if($scope.email.recipientType === 'users') {
+                            return recipient.Name;
+                        } else {
+                            return recipient.FirstName + ' ' + recipient.LastName;
+                        }
+                    }).join('\n');
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.printPDFController.saveEvent}',
+                        whatId,
+                        subject,
+                        description,
+                        documentType,
+                        function(result, event){
+                            $scope.isLoading = false;
+                            if(event.status) {
+                                console.log('created an event: ', result);
+                            } else if (event.type === 'exception') {
+                                console.log('it failed: ', event.message, event.where);
+                            } else {
+                                console.log('it failed: ', event.message);
+                            }
+                        },
+                        {escape: true}
+                    );
+                }
+                
+                
+                function getSecondaryRoleValue() {
+                    var secondaryRoleValuesStr = '{!picklistValuesMap['Secondary_Roles__c']}';
+                    var secondaryRoleValuesArr = secondaryRoleValuesStr.substring(1, secondaryRoleValuesStr.length - 1).split(', ');
+                    var parsedSecondaryRoleValue = '';
+                    for(var prop in $scope.contact.secondaryRoles) {
+                        var isChecked = $scope.contact.secondaryRoles[prop];
+                        var secondaryRoleValuesIndex = prop.substring('secondaryRoles'.length, prop.length);
+                        if(isChecked) {
+                            parsedSecondaryRoleValue += secondaryRoleValuesArr[secondaryRoleValuesIndex] + ';';
+                        }
+                    }
+                    return parsedSecondaryRoleValue.substr(0, parsedSecondaryRoleValue.length - 1);
+                }
+                
+                
+                function getHtmlString() {
+                    
+                    // hide the internal content if emailing/printing for dealer contacts
+                    if($scope.state !== 'GENERATE' && $scope.email.recipientType === 'contacts') {
+                        console.log('hide internal stuff');
+                        var hideEls = document.querySelectorAll(INTERNAL_ONLY_CLASS_NAME);
+                        for(var i = 0; i < hideEls.length; i++) {
+                            hideEls[i].style.setProperty('display', 'none', 'important');
+                        }
+                        
+                        // // Create the <style> tag
+                        // var style = document.createElement('style');
+                        // // WebKit hack
+                        // style.appendChild(document.createTextNode(''));
+                        // // Add the <style> element to the page
+                        // document.head.appendChild(style);
+                        // style.sheet.insertRule(INTERNAL_ONLY_CLASS_NAME + ' {display: none !important;}', 0);
+                        
+                    }
+                    
+                    var bodyClone = document.body.cloneNode(true);
+                    
+                    var styleEl = document.createElement('style');
+                    
+                    //create style element with document styles and append to body clone
+                    var styleSheets = document.styleSheets,
+                        inlineStyleStr = '';
+                    
+                    if(styleSheets) {
+                        for(var i = 0; i < styleSheets.length; i++) {
+                            try {
+                                var classes = styleSheets[i].rules || styleSheets[i].cssRules;
+                                if(classes !== null) {
+                                    for(var x = 0; x < classes.length; x++) {
+                                        var type = classes[x].type;
+                                        if(type !== 7) {
+                                            var cssText = classes[x].cssText;
+                                            if(cssText) inlineStyleStr += classes[x].cssText;
+                                        }
+                                    };
+                                }
+                            } catch(e) {
+                                console.log('error: ', e);
+                            }
+                        }
+                    }
+                    styleEl.innerHTML = inlineStyleStr;
+                    bodyClone.appendChild(styleEl);
+                    
+                    //Remove script and link tags
+                    forEachDOMElement(bodyClone, function (node) {
+                        var nodeName = node.nodeName.toUpperCase();
+                        //for script tags that show as text
+                        if(nodeName === 'TEXT') {
+                            if(node.getAttribute('type') === 'text/javascript') { node.textContent = '' };
+                        }
+                        if(nodeName === 'SCRIPT' || nodeName === 'LINK') {
+                            node.textContent= '';
+                            if(node.getAttribute('src')) node.setAttribute('src', '');
+                            if(node.getAttribute('href')) node.setAttribute('href', '');
+                        }
+                    });
+                    
+                    //store html as string and remove all unnecssary white space
+                    var htmlString = bodyClone.innerHTML;
+                    // remove newline / carriage return
+                    htmlString = htmlString.replace(/\n/g, "");
+                    // remove whitespace (space and tabs) before tags
+                    htmlString = htmlString.replace(/[\t ]+\</g, "<");
+                    // remove whitespace between tags
+                    htmlString = htmlString.replace(/\>[\t ]+\</g, "><");
+                    // remove whitespace after tags
+                    htmlString = htmlString.replace(/\>[\t ]+$/g, ">");
+                    
+                    return htmlString;
+                    
+                    
+                    function forEachDOMElement(node, func) {
+                        func(node);
+                        node = node.firstChild;
+                        while (node) {
+                            forEachDOMElement(node, func);
+                            node = node.nextSibling;
+                        }
+                    }
+                    
+                    
+                    
+                }
+                
+                function getUrlParameter(name) {
+                    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+                    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+                    var results = regex.exec(location.search);
+                    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+                }
+                
+                
+                if($scope.autoShowGeneratePdf) {
+                    $scope.showGeneratePdfModal();
+                }
+                
+                
+                
+            })
+        })();
+        if(!('remove' in Element.prototype)) {
+            Element.prototype.remove = function() {
+                if (this.parentNode) {
+                    this.parentNode.removeChild(this);
+                }
+            };
+        }
+        </script>
+        <style media="screen">
+            html {
+            font-size: 100% !important;
+            
+            }
+            .slds-scope .generating-pdf {
+            opacity: 1 !important;
+            }
+            .slds-scope .slds-backdrop--open, .slds-scope .slds-backdrop_open {
+            background: rgba(126,140,153,1)  !important;
+            opacity: .7;
+            }
+            .slds-scope .slds-form-element__label {
+            font-weight: normal;
+            }
+            .email-selected {
+            font-weight: bold;
+            }
+            tr, th, td{page-break-inside: avoid !important;} 
+        </style>
+        <span ng-app="pdfApp" ng-controller="pdfCtrl">
+            
+            <button type="button" ng-click="showGeneratePdfModal()" class="{!buttonClass}">
+                Print or Email
+            </button>
+            
+            <div class="slds-scope">
+                <div role="dialog" tabindex="-1" class="slds-modal"  ng-class="{'slds-fade-in-open': showGeneratePdf}">
+                    <div class="slds-modal__container">
+                        <div class="slds-modal__header">
+                            <h2 class="slds-text-heading--medium">
+                                <span ng-show="state == 'GENERATE'">Generate PDF</span>
+                                <span ng-show="state == 'COMPOSE_EMAIL'">Email PDF</span>
+                                <span ng-show="state == 'NEW_CONTACT'">New Contact</span>
+                                <span ng-show="state == 'ADD_EMAIL'">Add Email Address</span>
+                            </h2>
+                        </div>
+                        <div class="slds-modal__content slds-p-around--medium">
+                            
+                            <div ng-show="state == 'GENERATE'">
+                                <p ng-show="!isLoading">Use the buttons below to save or email a pdf version of this page.</p>
+                                <p ng-show="isLoading">Generating PDF. Please wait.</p>
+                            </div>
+                            
+                            
+                            <div ng-show="state == 'ADD_EMAIL'" class="slds-is-relative">
+                                
+                                <div class="slds-spinner_container" ng-show="isLoading">
+                                    <div role="status" class="slds-spinner slds-spinner--medium">
+                                        <span class="slds-assistive-text">Loading</span>
+                                        <div class="slds-spinner__dot-a"></div>
+                                        <div class="slds-spinner__dot-b"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="slds-box slds-theme--error slds-m-bottom--medium" ng-show="addEmailErrorMsg.length > 0">
+                                    <p>{{addEmailErrorMsg}}</p>
+                                </div>
+                                
+                                <ng-form name="addEmailForm" ng-hide="newContactForm.$submitted">
+                                    <div class="slds-form-element slds-m-bottom--medium" ng-class="{'slds-has-error' : addEmailForm.Email.$invalid && addEmailForm.Email.$touched}">
+                                        <label class="slds-form-element__label" for="Email"><abbr class="slds-required" title="required">*</abbr> Email</label>
+                                        <div class="slds-form-element__control">
+                                            <input type="email" id="Email" name="Email" class="slds-input" placeholder="Email" ng-model="missingEmailContact.Email" required="true" />
+                                        </div>
+                                        <div id="error-message" class="slds-form-element__help" ng-show="addEmailForm.Email.$invalid">A valid email address is required</div>
+                                    </div>
+                                </ng-form>
+                                
+                            </div>
+                            
+                            <div ng-show="state == 'NEW_CONTACT'" class="slds-is-relative">
+                                
+                                <div class="slds-spinner_container" ng-show="isLoading">
+                                    <div role="status" class="slds-spinner slds-spinner--medium">
+                                        <span class="slds-assistive-text">Loading</span>
+                                        <div class="slds-spinner__dot-a"></div>
+                                        <div class="slds-spinner__dot-b"></div>
+                                    </div>
+                                </div>
+                                
+                                
+                                
+                                <div class="slds-box slds-theme--success slds-m-bottom--medium" ng-show="newContactForm.$submitted">
+                                    Success! {{contact.FirstName}} {{contact.LastName}} was added. <a href="javscript:void(0)" ng-click="setState('COMPOSE_EMAIL')">Click here to continue</a>.
+                                </div>
+                                
+                                
+                                
+                                <ng-form name="newContactForm" ng-hide="newContactForm.$submitted">
+                                    
+                                    <div class="slds-box slds-theme--error slds-m-bottom--medium" ng-show="newContactErrorMsg.length > 0">
+                                        <p>{{newContactErrorMsg}}</p>
+                                    </div>
+                                    
+                                    <div class="slds-form--stacked">
+                                        <div class="slds-form-element slds-m-bottom--medium" ng-class="{'slds-has-error' : newContactForm.FirstName.$invalid && newContactForm.FirstName.$touched}">
+                                            <label class="slds-form-element__label" for="FirstName"><abbr class="slds-required" title="required">*</abbr> First Name</label>
+                                            <div class="slds-form-element__control">
+                                                <input type="text" id="FirstName" name="FirstName" class="slds-input" placeholder="First Name" ng-model="contact.FirstName" required="true" />
+                                            </div>
+                                            <div id="error-message" class="slds-form-element__help" ng-show="newContactForm.FirstName.$invalid && newContactForm.FirstName.$touched">This field is required</div>
+                                        </div>
+                                        
+                                        <div class="slds-form-element slds-m-bottom--medium" ng-class="{'slds-has-error' : newContactForm.LastName.$invalid && newContactForm.LastName.$touched}">
+                                            <label class="slds-form-element__label" for="LastName"><abbr class="slds-required" title="required">*</abbr> Last Name</label>
+                                            <div class="slds-form-element__control">
+                                                <input type="text" id="LastName" name="LastName" class="slds-input" placeholder="First Name" ng-model="contact.LastName" required="true" />
+                                            </div>
+                                            <div id="error-message" class="slds-form-element__help" ng-show="newContactForm.LastName.$invalid && newContactForm.LastName.$touched">This field is required</div>
+                                        </div>
+                                        
+                                        <div class="slds-form-element slds-m-bottom--medium">
+                                            <label class="slds-form-element__label" for="Email">Title</label>
+                                            <div class="slds-form-element__control">
+                                                <input type="text" id="Title" class="slds-input" placeholder="Title" ng-model="contact.Title" />
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="slds-form-element slds-m-bottom--medium" ng-class="{'slds-has-error' : newContactForm.Email.$invalid && newContactForm.Email.$touched}">
+                                            <label class="slds-form-element__label" for="Email"><abbr class="slds-required" title="required">*</abbr> Email</label>
+                                            <div class="slds-form-element__control">
+                                                <input type="email" id="Email" name="Email" class="slds-input" placeholder="Email" ng-model="contact.Email" required="true" />
+                                            </div>
+                                            <div id="error-message" class="slds-form-element__help" ng-show="newContactForm.Email.$invalid && newContactForm.Email.$touched">A valid email address is required</div>
+                                        </div>
+                                        
+                                        <div class="slds-form-element slds-m-bottom--medium">
+                                            <label class="slds-form-element__label" for="Phone">Phone</label>
+                                            <div class="slds-form-element__control">
+                                                <input type="phone" id="Phone" class="slds-input" placeholder="(000) 000-0000" ng-model="contact.Phone" />
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="slds-form-element slds-m-bottom--medium">
+                                            <label class="slds-form-element__label" for="Mobile">Mobile</label>
+                                            <div class="slds-form-element__control">
+                                                <input type="phone" id="Mobile" class="slds-input" placeholder="(000) 000-0000" ng-model="contact.MobilePhone" />
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="slds-form-element slds-m-bottom--medium" ng-class="{'slds-has-error' : newContactForm.ContactType.$invalid && newContactForm.ContactType.$touched}">
+                                            <label class="slds-form-element__label" for="ContactType"><abbr class="slds-required" title="required">*</abbr> Contact Type</label>
+                                            <div class="slds-form-element__control">
+                                                <div class="slds-select_container">
+                                                    <select id="ContactType" name="ContactType" class="slds-select" ng-model="contact.Contact_Type__c" required="true">
+                                                        <option>Select a Value</option>
+                                                        <apex:repeat value="{!picklistValuesMap['Contact_Type__c']}" var="optionVal">
+                                                            <option value="{!optionVal}">{!optionVal}</option>
+                                                        </apex:repeat>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div id="error-message" class="slds-form-element__help" ng-show="newContactForm.ContactType.$invalid && newContactForm.ContactType.$touched">This field is required</div>
+                                        </div>
+                                        
+                                        <div class="slds-form-element slds-m-bottom--medium" ng-class="{'slds-has-error' : newContactForm.PrimaryRole.$invalid && newContactForm.PrimaryRole.$touched}">
+                                            <label class="slds-form-element__label" for="PrimaryRole"><abbr class="slds-required" title="required">*</abbr> Primary Role</label>
+                                            <div class="slds-form-element__control">
+                                                <div class="slds-select_container">
+                                                    <select id="PrimaryRole" name="PrimaryRole" class="slds-select" ng-model="contact.Role__c" required="true">
+                                                        <apex:repeat value="{!picklistValuesMap['Role__c']}" var="optionVal">
+                                                            <option value="{!optionVal}">{!optionVal}</option>
+                                                        </apex:repeat>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div id="error-message" class="slds-form-element__help" ng-show="newContactForm.PrimaryRole.$invalid && newContactForm.PrimaryRole.$touched">This field is required</div>
+                                        </div>
+                                        
+                                        <fieldset class="slds-form-element slds-m-bottom--medium">
+                                            <legend class="slds-form-element__legend slds-form-element__label">Secondary Role</legend>
+                                            <div class="slds-form-element__control">
+                                                <apex:variable value="{!0}" var="indexVar" />
+                                                <apex:repeat value="{!picklistValuesMap['Secondary_Roles__c']}" var="optionVal">
+                                                    <span class="slds-checkbox">
+                                                        <input type="checkbox" name="options" id="Secondary_Roles__c{!indexVar}" ng-model="contact.secondaryRoles.secondaryRoles{!indexVar}" />
+                                                        <label class="slds-checkbox__label" for="Secondary_Roles__c{!indexVar}">
+                                                            <span class="slds-checkbox--faux"></span>
+                                                            <span class="slds-form-element__label">{!optionVal}</span>
+                                                        </label>
+                                                    </span>
+                                                    <apex:variable value="{!indexVar + 1}" var="indexVar" />
+                                                </apex:repeat>
+                                            </div>
+                                        </fieldset>
+                                        
+                                    </div>
+                                </ng-form>
+                                
+                            </div>
+                            
+                            <div ng-show="state == 'COMPOSE_EMAIL'" class="slds-is-relative">
+                                
+                                <div class="slds-spinner_container" ng-show="email.isSending">
+                                    <div role="status" class="slds-spinner slds-spinner--medium">
+                                        <span class="slds-assistive-text">Loading</span>
+                                        <div class="slds-spinner__dot-a"></div>
+                                        <div class="slds-spinner__dot-b"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="slds-box slds-theme--error slds-m-bottom--medium" ng-show="email.errorMessage.length > 0">
+                                    <p>{{email.errorMessage}}</p>
+                                </div>
+                                
+                                
+                                <div class="slds-box slds-theme--success slds-m-bottom--medium" ng-show="email.isSent">
+                                    <p>Success! Your email was delivered!</p>
+                                </div>
+                                
+                                <div ng-hide="email.isSent">
+                                    
+                                    <fieldset class="slds-form-element slds-m-bottom--medium" ng-show="">
+                                        <legend class="slds-form-element__legend slds-form-element__label">Email Recipients</legend>
+                                        <div class="slds-form-element__control">
+                                            <span class="slds-radio">
+                                                <input type="radio" id="contacts" name="options" ng-model="email.recipientType" value="contacts" />
+                                                <label class="slds-radio__label" for="contacts">
+                                                    <span class="slds-radio--faux"></span>
+                                                    <span class="slds-form-element__label">Dealer Contacts</span>
+                                                </label>
+                                            </span>
+                                            <span class="slds-radio">
+                                                <input type="radio" id="users" name="options" ng-model="email.recipientType" value="users" />
+                                                <label class="slds-radio__label" for="users">
+                                                    <span class="slds-radio--faux"></span>
+                                                    <span class="slds-form-element__label">Users</span>
+                                                </label>
+                                            </span>
+                                        </div>
+                                    </fieldset>
+                                    
+                                    <div class="slds-box slds-theme--shade slds-m-bottom--medium" ng-show="email.recipientType == 'contacts'">
+                                        <p>Dealer contacts will not see internal only content on attachments</p>
+                                    </div>
+                                    
+                                    <div class="slds-form-element slds-lookup slds-is-open slds-m-bottom--medium" data-select="multiple" ng-show="email.recipientType == 'users'">
+                                        <label class="slds-form-element__label" for="to-users">
+                                            <abbr class="slds-required" title="required">*</abbr> To (Users)</label>
+                                        
+                                        <div class="slds-box slds-theme--shade">
+                                            
+                                            <div class="slds-pill_container slds-show slds-m-bottom--small">
+                                                <div ng-show="email.toUsers == 0" class="slds-m-left--small slds-p-top--xx-small">No email recipients are selected</div>
+                                                <span ng-repeat="user in email.toUsers" class="slds-pill">
+                                                    <span class="slds-icon_container slds-pill__icon_container">
+                                                        <img src="{{user.SmallPhotoUrl}}" alt="{{user.Name}}" />
+                                                    </span>
+                                                    <span class="slds-pill__label slds-m-around--none" title="{{user.Name}}">{{user.Name}}</span>
+                                                    <button type="button" class="slds-button slds-button--icon slds-pill__remove" title="Remove" ng-click="handleRemoveEmail(user)">
+                                                        X
+                                                    </button>
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="slds-form-element__control">
+                                                <input type="search"
+                                                       id="to-users"
+                                                       class="slds-lookup__search-input slds-input"
+                                                       placeholder="Search Users"
+                                                       aria-owns="to-users"
+                                                       role="combobox"
+                                                       aria-activedescendant=""
+                                                       aria-expanded="true"
+                                                       aria-autocomplete="list"
+                                                       ng-model="userQuery"
+                                                       ng-change="searchUsers()"
+                                                       ng-keydown="handleUserSearchKeydown($event)"
+                                                       ng-focus="handleUserSearchFocus()"
+                                                       ng-blur="handleUserSearchBlur()" />
+                                            </div>
+                                            
+                                            <div class="slds-lookup__menu" id="to-users-menu" ng-show="showUsersMenu || users.length > 0">
+                                                <ul class="slds-lookup__list" role="listbox">
+                                                    
+                                                    <li role="presentation">
+                                                        <span class="slds-lookup__item-action slds-lookup__item-action--label" role="option">
+                                                            <span class="slds-truncate" ng-show="userQuery.length == 0">
+                                                                Enter a user's name to search.
+                                                            </span>
+                                                            <span class="slds-truncate" ng-show="userQuery.length > 0">
+                                                                <span ng-show="isSearching">Searching</span>
+                                                                <span ng-show="!isSearching && users.length > 0">Results for</span>
+                                                                <span ng-show="!isSearching && users.length == 0">There are no results for</span>
+                                                                &quot;{{userQuery}}&quot; in users
+                                                            </span>
+                                                        </span>
+                                                    </li>
+                                                    
+                                                    <li role="presentation" ng-repeat="user in users">
+                                                        <span class="slds-lookup__item-action slds-media slds-media--center"
+                                                              id=""
+                                                              role="option"
+                                                              tabindex="0"
+                                                              ng-click="addToUserRecipients(user)"
+                                                              ng-keydown="handleRecipientKeyup($event, user)">
+                                                            <div class="slds-icon slds-icon--small slds-media__figure">
+                                                                <img src="{{user.SmallPhotoUrl}}" alt="{{user.Name}}" />
+                                                            </div>
+                                                            <div class="slds-media__body">
+                                                                <div class="slds-lookup__result-text" >
+                                                                    {{user.Name}}
+                                                                </div>
+                                                                <span class="slds-lookup__result-meta slds-text-body--small"></span>
+                                                            </div>
+                                                        </span>
+                                                    </li>
+                                                    
+                                                </ul>
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                    
+                                    <div class="slds-form-element slds-lookup slds-is-open slds-m-bottom--medium" data-select="multiple" ng-show="email.recipientType == 'contacts'">
+                                        <label class="slds-form-element__label" for="to-contacts">
+                                            <abbr class="slds-required" title="required">*</abbr> To (Contacts)</label>
+                                        
+                                        <div class="slds-box slds-theme--shade">
+                                            
+                                            <div class="slds-pill_container slds-show slds-m-bottom--small">
+                                                <div ng-show="email.toContacts == 0" class="slds-m-left--small slds-p-top--xx-small">No email recipients are selected</div>
+                                                <span ng-repeat="contact in email.toContacts" class="slds-pill" ng-class="{'slds-has-error' : !contact.Email}">
+                                                    <span ng-if="contact.Email"
+                                                          class="slds-pill__label slds-m-around--none"
+                                                          title="{{contact.FirstName}} {{contact.LastName}}">
+                                                        {{contact.FirstName}} {{contact.LastName}}
+                                                    </span>
+                                                    <a ng-if="!contact.Email"
+                                                       href="#"
+                                                       ng-click="showAddEmailForm(contact)"
+                                                       class="slds-pill__label slds-m-around--none"
+                                                       title="{{contact.FirstName}} {{contact.LastName}}"
+                                                       ng-class="{'slds-type-focus' : !contact.Email}">
+                                                        {{contact.FirstName}} {{contact.LastName}}
+                                                    </a>
+                                                    <button type="button" class="slds-button slds-button--icon slds-pill__remove" title="Remove" ng-click="handleRemoveEmail(contact)">
+                                                        X
+                                                    </button>
+                                                </span>
+                                            </div>
+                                            
+                                            <div class="slds-form-element__control">
+                                                <input type="search"
+                                                       id="to-contacts"
+                                                       class="slds-lookup__search-input slds-input"
+                                                       placeholder="Search Contacts"
+                                                       aria-owns="to-contacts"
+                                                       role="combobox"
+                                                       aria-activedescendant=""
+                                                       aria-expanded="true"
+                                                       aria-autocomplete="list"
+                                                       ng-model="contactQuery"
+                                                       ng-change="searchContacts()"
+                                                       ng-keydown="handleContactSearchKeydown($event)"
+                                                       ng-focus="handleContactSearchFocus()"
+                                                       ng-blur="handleContactSearchBlur()" />
+                                            </div>
+                                            
+                                            <div class="slds-lookup__menu" id="to-contacts-menu" ng-show="showContactsMenu || contacts.length > 0">
+                                                <ul class="slds-lookup__list" role="listbox">
+                                                    
+                                                    <li role="presentation">
+                                                        <span class="slds-lookup__item-action slds-lookup__item-action--label" role="option">
+                                                            <span class="slds-truncate" ng-show="contactQuery.length == 0">
+                                                                Enter a contact's name to search.
+                                                            </span>
+                                                            <span class="slds-truncate" ng-show="contactQuery.length > 0">
+                                                                <span ng-show="isSearching">Searching</span>
+                                                                <span ng-show="!isSearching && contacts.length > 0">Results for</span>
+                                                                <span ng-show="!isSearching && contacts.length == 0">There are no results for</span>
+                                                                &quot;{{contactQuery}}&quot; in contacts
+                                                            </span>
+                                                        </span>
+                                                    </li>
+                                                    
+                                                    <li role="presentation" ng-repeat="contact in contacts">
+                                                        <span class="slds-lookup__item-action slds-media"
+                                                              id=""
+                                                              role="option"
+                                                              tabindex="0"
+                                                              ng-click="addToContactRecipients(contact)"
+                                                              ng-keydown="handleRecipientKeyup($event, contact)">
+                                                            <div class="slds-media__body">
+                                                                <div class="slds-lookup__result-text">
+                                                                    {{contact.FirstName}} {{contact.LastName}}
+                                                                </div>
+                                                                <span class="slds-lookup__result-meta slds-text-body--small">
+                                                                    {{contact.Title}} <span ng-show="contact.Title && contact.Role__c">&bull;</span> {{contact.Role__c}}
+                                                                </span>
+                                                            </div>
+                                                        </span>
+                                                    </li>
+                                                    
+                                                    <li role="presentation">
+                                                        <span class="slds-lookup__item-action slds-lookup__item-action--label" role="option" ng-click="setState('NEW_CONTACT')">
+                                                            <span class="slds-truncate" >+ New Contact</span>
+                                                        </span>
+                                                    </li>
+                                                    
+                                                </ul>
+                                            </div>
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                    
+                                    <div class="slds-form-element slds-m-bottom--medium">
+                                        <label class="slds-form-element__label" for="subject">
+                                            <abbr class="slds-required" title="required">*</abbr> Subject</label>
+                                        <div class="slds-form-element__control">
+                                            <input type="text" id="subject" class="slds-input" placeholder="Subject" ng-model="email.subject" ng-change="handleEmailInputChange()" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="slds-form-element slds-m-bottom--medium">
+                                        <label class="slds-form-element__label" for="body">
+                                            <abbr class="slds-required" title="required">*</abbr> Body</label>
+                                        <div class="slds-form-element__control">
+                                            <textarea id="body" class="slds-textarea" style="height: 13rem" placeholder="Your message..." ng-model="email.body" ng-change="handleEmailInputChange()"></textarea>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="slds-form-element">
+                                        <div class="slds-form-element__control slds-m-bottom--medium">
+                                            <span class="slds-checkbox">
+                                                <input type="checkbox" name="options" id="copyMyself" ng-model="email.copyMyself" />
+                                                <label class="slds-checkbox__label" for="copyMyself">
+                                                    <span class="slds-checkbox--faux"></span>
+                                                    <span class="slds-form-element__label">Copy Myself</span>
+                                                </label>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="slds-modal__footer">
+                            
+                            <div ng-show="state == 'GENERATE'">
+                                <button type="button" class="slds-button slds-button--neutral" ng-click="cancelClickHandler()" ng-disabled="isLoading">Cancel</button>
+                                <button type="button" class="slds-button slds-button--brand" ng-click="savePDF()" ng-disabled="isLoading">View PDF</button>
+                                <button type="button" class="slds-button slds-button--brand" ng-click="setState('COMPOSE_EMAIL')" ng-disabled="isLoading">Email PDF</button>
+                            </div>
+                            
+                            <div ng-show="state == 'EMAIL'">
+                                <button type="button" class="slds-button slds-button--neutral" ng-click="cancelClickHandler()" ng-disabled="isLoading">Cancel</button>
+                                <button type="button" class="slds-button slds-button--neutral" ng-click="setState('GENERATE')" ng-disabled="isLoading">Back</button>
+                                <button type="button" class="slds-button slds-button--brand"
+                                        ng-click="setState('COMPOSE_EMAIL')"
+                                        ng-disabled="isLoading || email.to.length == 0">Compose Email</button>
+                            </div>
+                            
+                            <div ng-show="state == 'COMPOSE_EMAIL'" >
+                                <button type="button" class="slds-button slds-button--neutral" ng-click="setState('GENERATE')" ng-disabled="isLoading" ng-hide="email.isSent">Back</button>
+                                <button type="button" class="slds-button slds-button--neutral" ng-click="cancelClickHandler()" ng-disabled="isLoading" ng-hide="email.isSent">Cancel</button>
+                                
+                                <button type="button" class="slds-button slds-button--brand" ng-click="emailPdf()" ng-disabled="isLoading || !canSendEmail" ng-hide="email.isSent">Send</button>
+                                <button type="button" class="slds-button slds-button--neutral" ng-click="close()" ng-disabled="isLoading" ng-show="email.isSent">Close</button>
+                            </div>
+                            
+                            <div ng-show="state == 'NEW_CONTACT'">
+                                <button type="button" class="slds-button slds-button--neutral" ng-click="setState('COMPOSE_EMAIL')" ng-disabled="isLoading" >Back</button>
+                                <button type="button" class="slds-button slds-button--neutral" ng-click="cancelClickHandler()" ng-disabled="isLoading" >Cancel</button>
+                                <button type="button" class="slds-button slds-button--brand" ng-click="saveNewContact()" ng-disabled="isLoading || newContactForm.$invalid" ng-hide="newContactForm.$submitted" >Save</button>
+                            </div>
+                            
+                            <div ng-show="state == 'ADD_EMAIL'">
+                                <button type="button" class="slds-button slds-button--neutral" ng-click="setState('COMPOSE_EMAIL')" ng-disabled="isLoading" >Back</button>
+                                <button type="button" class="slds-button slds-button--neutral" ng-click="cancelClickHandler()" ng-disabled="isLoading" >Cancel</button>
+                                <button type="button" class="slds-button slds-button--brand" ng-click="addEmail()" ng-disabled="isLoading || addEmailForm.$invalid" >Save</button>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-backdrop" ng-class="{'slds-backdrop--open': showGeneratePdf, 'generating-pdf': isLoading || email.isSending || email.isSent}"></div>
+            </div>
+            
+        </span>
+    </apex:component>

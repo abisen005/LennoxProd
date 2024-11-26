@@ -1,0 +1,42 @@
+<apex:page showHeader="true" sidebar="false">
+
+	<style media="screen">
+        /*#coaching-app {
+			margin: -10px;
+        
+		}
+		ul li, ol li {
+			margin-left: inherit;
+        }*/
+	</style>
+
+	<apex:includeLightning />
+
+	 <div id="coaching-app" /> 
+    
+	<script>
+		/* Deal with content flying way off the page in IE11 by setting a fixed width on the container div */
+		(function() {
+
+			if(isIE11()) {
+				var bodyDiv = document.querySelector('.bodyDiv'),
+					coachingApp = document.querySelector('#coaching-app');
+
+				coachingApp.style.width = bodyDiv.clientWidth + 'px';
+			}
+
+			function isIE11() {
+				return !(window.ActiveXObject) && "ActiveXObject" in window;
+			}
+
+		})();
+	</script>
+	<script type="text/javascript">
+
+		$Lightning.use('c:SC_ContainerLightningOut', function() {
+			$Lightning.createComponent('c:SC_Container', {}, 'coaching-app', function(cmp) {});
+		});
+
+	</script>
+
+</apex:page>

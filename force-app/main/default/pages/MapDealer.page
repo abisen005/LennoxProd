@@ -1,0 +1,53 @@
+<apex:page sidebar="false" showHeader="false" standardStylesheets="false">
+    
+    <link href="https://api.tiles.mapbox.com/mapbox.js/v3.3.1/mapbox.css" rel="stylesheet" />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+    
+    
+    <div id="map">
+    </div>
+    
+    <script src="https://api.tiles.mapbox.com/mapbox.js/v3.3.1/mapbox.js"></script>
+    <script>
+        (function() {
+            var ADDRESS = '{!$CurrentPage.parameters.address}',
+                ACCESS_TOKEN = 'pk.eyJ1IjoiZ3JlZ2xvdmVsaWRnZTg1IiwiYSI6IlVIcm9qM2sifQ.e7iTHJ1dCyeBgcSFewIvzQ',
+                MAP;
+            
+            function addMarker(latlng) {
+                L.mapbox.featureLayer({
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [
+                            latlng[1],
+                            latlng[0]
+                        ]
+                    }
+                }).addTo(MAP);
+            }
+            
+            var init = function() {
+                L.mapbox.accessToken = ACCESS_TOKEN;
+                //MAP = L.mapbox.map('map', 'greglovelidge85.i296091b')
+                MAP = L.mapbox.map('map', 'mapbox.streets')
+                var geocoder = L.mapbox.geocoder('mapbox.places');
+                if(ADDRESS.length > 0) {
+                    geocoder.query(ADDRESS, function(err, data) {
+                        if(err) return alert('There was a problem: \n\n' + err);
+                        if(data.latlng) addMarker(data.latlng);
+                        if(data.lbounds) {
+                            MAP.fitBounds(data.lbounds);
+                        } else if(data.latlng) {
+                            MAP.setView([data.latlng[0], data.latlng[1]], 13);
+                        }
+                    });
+                }
+            }();
+            
+        })();
+    </script>
+</apex:page>

@@ -1,0 +1,88 @@
+<aura:component access="GLOBAL">
+
+
+
+    <aura:attribute name="isOpen" type="Boolean" default="false" />
+    <aura:attribute name="header" type="Aura.Component[]" description="Modal/Overlay header" />
+    <aura:attribute name="headerTheme" type="String" description="error, success, warning" />
+    <aura:attribute name="footer" type="Aura.Component[]" description="Modal/Overlay footer" />
+
+    <aura:attribute name="isMobile" type="Boolean" default="{!$Browser.formFactor != 'DESKTOP'}" access="PRIVATE" />
+
+
+
+    <aura:method name="toggleIsOpen" action="{!c.handleToggleIsOpen}" description="Toggle Open/Close." />
+
+
+    <aura:if isTrue="{!!v.isMobile}">
+
+        <div role="dialog" tabindex="-1"  class="{!'slds-modal ' + (v.isOpen ? 'slds-fade-in-open' : '')}">
+
+            <div class="slds-modal__container">
+
+                <div class="{!'slds-modal__header slds-theme--' + v.headerTheme}">
+
+                    <lightning:buttonIcon iconName="utility:close"
+                                          class="slds-modal__close"
+                                          variant="bare-inverse"
+                                          size="large"
+                                          alternativeText="Close"
+                                          onclick="{!c.handleClosePress}" />
+
+                    <h2 class="slds-text-heading--medium">{!v.header}</h2>
+
+                </div>
+
+                <div class="slds-modal__content slds-p-around--medium">
+
+                    {!v.body}
+
+                </div>
+
+                <div class="slds-modal__footer">
+
+                    {!v.footer}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+         <div class="{!'slds-backdrop ' + (v.isOpen ? 'slds-backdrop--open' : '')}"></div>
+
+
+        <aura:set attribute="else">
+
+            <div class="{!'sc-overlay sc-overlay--' + (v.isOpen ? 'open' : 'closed')}">
+
+                <div class="slds-grid slds-wrap">
+
+                    <div class="slds-size--1-of-1">
+                        <div class="{!'slds-text-align--center slds-p-around--small slds-text-heading--small slds-theme--' + (empty(v.headerTheme) ? 'shade' : v.headerTheme)}">
+                            {!v.header}
+                        </div>
+                    </div>
+
+                    <div class="slds-size--1-of-1 slds-p-around--small">
+                        {!v.body}
+                    </div>
+
+                    <div class="slds-size--1-of-1 slds-align-bottom slds-p-around--small">
+                        <div class="slds-grid slds-grid--align-end">
+                            {!v.footer}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </aura:set>
+
+
+    </aura:if>
+
+</aura:component>

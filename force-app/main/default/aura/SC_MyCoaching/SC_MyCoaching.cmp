@@ -1,0 +1,170 @@
+<aura:component controller="SC_MyCoachingController" access="GLOBAL">
+    
+    
+    
+    <aura:attribute name="userId" type="String" description="User id of the Coachee" />
+    <aura:attribute name="user" type="User" description="Coachee" />
+    <aura:attribute name="showNewSessions" type="Boolean" default="true" />
+    <aura:attribute name="showCompletedAssignments" type="Boolean" default="false" />
+    <aura:attribute name="coachingInfo"
+                    type="CoachingInfo"
+                    description="An object with information about the current user's coaching role and related data." />
+    
+    
+    
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler name="change" value="{!v.userId}" action="{!c.handleUserIdChange}" />
+    <aura:handler event="c:SC_CoachingInfoResponse" action="{!c.handleCoachingInfoResponse}" />
+    
+    
+    
+    <aura:registerEvent name="coachingInfoRequest" type="c:SC_CoachingInfoRequest" />
+    
+    
+    <section>
+        
+        
+        <div class="slds-grid">
+            <div class="slds-col slds-has-flexi-truncate slds-p-around--small">
+                <div class="slds-media slds-no-space slds-grow slds-media--center">
+                    <div class="slds-media__figure">
+                        <img src="{!v.user.SmallPhotoUrl}"
+                             class="slds-avatar slds-avatar--circle slds-avatar--large" />
+                    </div>
+                    <div class="slds-media__body">
+                        <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate"
+                            title="{!v.user.Name}">{!v.user.Name}</h1>
+                        <p>{!v.user.Title}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        <!-- stat dashboard - # completed sessions? # mastered skills? -->
+        
+        
+        
+        <aura:if isTrue="{!v.coachingInfo.isCoach}">
+            
+            <!-- Coachee Sessions -->
+            <article class="slds-card slds-m-around--small">
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                        <div class="slds-media__figure">
+                            <lightning:icon iconName="custom:custom15" size="small" alternativeText="Session icon"/>
+                        </div>
+                        <div class="slds-media__body slds-truncate">
+                            <h2>
+                                
+                                <span class="slds-text-heading--small">Sessions I'm Coaching</span>
+                                
+                            </h2>
+                        </div>
+                    </header>
+                </div>
+                
+                <aura:if isTrue="{!v.showNewSessions}">
+                    <div class="slds-card__body">
+                        <c:SC_UserSessions ownerId="{!v.coachingInfo.userId}" newSessions="true" />
+                    </div>
+                </aura:if>   
+                <aura:if isTrue="{!!v.showNewSessions}">
+                    <div class="slds-card__body">
+                        <c:SC_UserSessions ownerId="{!v.coachingInfo.userId}" newSessions="false" />
+                    </div>
+                </aura:if>
+                
+                
+                <div class="slds-card__footer">
+                    
+                </div>
+            </article>
+            
+        </aura:if> 
+        
+        
+        <!-- Coachee Sessions -->
+        <aura:if isTrue="{!v.coachingInfo.isCoachee}">
+            <article class="slds-card slds-m-around--small">
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                        <div class="slds-media__figure">
+                            <lightning:icon iconName="custom:custom15" size="small" alternativeText="Session icon"/>
+                        </div>
+                        <div class="slds-media__body slds-truncate">
+                            <h2>
+                                
+                                <span class="slds-text-heading--small">My {!v.showNewSessions ? 'Upcoming' : 'Past'} Sessions</span>
+                                
+                            </h2>
+                        </div>
+                    </header>
+                </div>
+                <div class="slds-card__body">
+                    
+                    <c:SC_UserSessions userId="{!v.userId}" newSessions="{!v.showNewSessions}" />
+                </div>
+                <div class="slds-card__footer">
+                    <a href="#" class="slds-button" onclick="{!c.handleToggleShowNewSessions}">
+                        {!v.showNewSessions ? 'View Past Sessions' : 'View New Sessions'}
+                    </a>
+                </div>
+            </article>
+            
+            
+            
+            <!-- Assignments -->
+            <article class="slds-card slds-m-around--small">
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                        <div class="slds-media__figure">
+                            <lightning:icon iconName="custom:custom83" size="small" alternativeText="Assignment icon"/>
+                        </div>
+                        <div class="slds-media__body slds-truncate">
+                            <h2>
+                                
+                                <span class="slds-text-heading--small">My {!v.showCompletedAssignments ? 'Completed' : 'Incomplete'} Assignments</span>
+                                
+                            </h2>
+                        </div>
+                    </header>
+                </div>
+                <div class="slds-card__body">
+                    <c:SC_UserAssignments userId="{!v.userId}" showCompleted="{!v.showCompletedAssignments}" />
+                </div>
+                <div class="slds-card__footer">
+                    <a href="#" class="slds-button" onclick="{!c.handleToggleShowCompletedAssignments}">
+                        {!v.showCompletedAssignments ? 'View Incomplete Assignments' : 'View Completed Assignments'}
+                    </a>
+                </div>
+            </article>
+        </aura:if>
+        
+        
+        <!-- Badges -->
+        <article class="slds-card slds-m-around--small">
+            <div class="slds-card__header slds-grid">
+                <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                    <div class="slds-media__figure">
+                        <lightning:icon iconName="custom:custom48" size="small" alternativeText="Badge icon"/>
+                    </div>
+                    <div class="slds-media__body slds-truncate">
+                        <h2>
+                            <a href="javascript:void(0);" class="slds-text-link--reset">
+                                <span class="slds-text-heading--small">My Badges</span>
+                            </a>
+                        </h2>
+                    </div>
+                </header>
+            </div>
+            <div class="slds-card__body">
+                <c:SC_UserBadges userId="{!v.userId}" />
+            </div>
+        </article>
+        
+    </section>
+    
+    
+</aura:component>

@@ -1,0 +1,502 @@
+<apex:page cache="false" applyBodyTag="false" applyHtmlTag="false" standardController="Event" standardStylesheets="false" doctype="html-5.0" sidebar="false" showHeader="false">
+    <html ng-app="CoachingSessionPlanner">
+        <head>
+            <title>Coaching Session Planner</title>
+            <meta charset="utf-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+            <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+            <link rel="stylesheet" href="{!$Resource.CoachingSessionPlannerStyle}" />
+            <link href="{!URLFOR($Resource.PlannerAssets, 'css/style.css')}" rel="stylesheet" />
+            <style type="text/css">
+                @media print {
+                .hide-for-print {
+                display: none;
+                }
+                body {
+                font-size: 65%;
+                }
+                h1 {
+                font-size: 9pt;
+                }
+                h3.panel-title,
+                h4,
+                label {
+                font-size: 7pt !important;
+                }
+                input.form-control {
+                height: auto;
+                }
+                input.form-control,
+                textarea.form-control {
+                font-size: 6pt;
+                }
+                ul {
+                list-style: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                }
+                li {
+                list-style-type: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                }
+                .panel-heading,
+                .pandel-heading h3 {
+                padding: 0;
+                margin: 0;
+                }
+                img {
+                display: inline !important;
+                }
+                }
+            </style>
+            <script>
+            var __sfdcSessionId = '{!GETSESSIONID()}';
+            </script>
+            <script src="../../soap/ajax/30.0/connection.js" type="text/javascript"></script>
+            <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+            <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
+            <script>
+                var serverValuesModule = (function() {
+                    var p = {};
+                    p.serverValues = {
+                        eventId: '{!Event.Id}',
+                        attendeeAdded: '{!Event.Coaching_Plan_Attendee_Added2__c}',
+                        attendeeName: '{!Event.Coaching_Session_Attendee__c}',
+                        userProfile: '{!$Profile.Name}',
+                        userName: '{!$User.FirstName + ' ' + $User.LastName}',
+                        isTMCompleted: '{!Event.TM_Coaching_Planner_Locked__c}',
+                        coachingCategory: '{!Event.Coaching_Session_Category__c}',
+                        ownerId: '{!$User.Id}',
+                        Activities_TM_Input__c: '{!JSENCODE(Event.Activities_TM_Input__c)}',
+                        Current_Challenges_TM_Input__c: '{!JSENCODE(Event.Current_Challenges_TM_Input__c)}',
+                        Expectations_TM_Input__c: '{!JSENCODE(Event.Expectations_TM_Input__c)}',
+                        Job_Related_TM_Input__c: '{!JSENCODE(Event.Job_Related_TM_Input__c)}',
+                        Personal_Development_TM_Input__c: '{!JSENCODE(Event.Personal_Development_TM_Input__c)}',
+                        Activities_DM_Input__c: '{!JSENCODE(Event.Activities_DM_Input__c )}',
+                        Current_Challenges_DM_Input__c: '{!JSENCODE(Event.Current_Challenges_DM_Input__c)}',
+                        Expectations_DM_Input__c: '{!JSENCODE(Event.Expectations_DM_Input__c)}',
+                        Job_Related_DM_Input__c: '{!JSENCODE(Event.Job_Related_DM_Input__c)}',
+                        Personal_Development_DM_Input__c: '{!JSENCODE(Event.Personal_Development_DM_Input__c)}',
+                        Manager_Notes_and_Follow_Up_Actions_1__c: '{!JSENCODE(Event.Manager_Notes_and_Follow_Up_Actions_1__c)}',
+                        Manager_Notes_and_Follow_Up_Actions_2__c: '{!JSENCODE(Event.Manager_Notes_and_Follow_Up_Actions_2__c)}',
+                        Manager_Notes_and_Follow_Up_Actions_3__c: '{!JSENCODE(Event.Manager_Notes_and_Follow_Up_Actions_3__c)}'
+
+                    };
+                    p.getServerValue = function(serverVal) {
+                        return serverValuesModule.serverValues[serverVal];
+                    };
+                    p.getAssigneeName = function(){
+                        var result = sforce.connection.query("SELECT FirstName, LastName FROM User WHERE Id = '{!Event.OwnerId}' LIMIT 1");
+                        var userName = result.getArray('records')[0].FirstName + ' ' + result.getArray('records')[0].LastName;
+                        return userName;
+                    };
+                    p.getAssigneeEmail = function(){
+                        var result = sforce.connection.query("SELECT Email FROM User WHERE Id = '{!Event.OwnerId}' LIMIT 1");
+                        var email = result.getArray('records')[0].Email;
+                        return email;
+                    };
+                    p.isAttendeeAdded = function(){
+                        var result = sforce.connection.query("SELECT Status FROM EventRelation WHERE EventId = '{!Event.Id}' AND Status = 'Accepted' LIMIT 1");
+                        var resultLen = result.getArray('records').length;
+                        if(resultLen > 0) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    };
+                    return p;
+                })();
+
+            </script>
+
+            <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+            <script src="{!$Resource.CoachingSessionPlannerUsers}"></script>
+            <script src="{!$Resource.CoachingSessionPlannerApp}"></script>
+            <c:TrackPageView lenPageName="Coaching Planner" />
+                </head>
+            <body>
+                <apex:pageBlock rendered="{!IF(Event.WhatId = NULL, TRUE, FALSE)}">
+                    <script>
+                    $(document).ready(function() {
+                    (function($) {
+                        $.QueryString = (function(a) {
+                            if (a == "") return {};
+                            var b = {};
+                            for (var i = 0; i < a.length; ++i)
+                            {
+                                var p=a[i].split('=');
+                                if (p.length != 2) continue;
+                                b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+                            }
+                            return b;
+                        })(window.location.search.substr(1).split('&'))
+                    })(jQuery);
+                    var wId = $.QueryString['wid'];
+                    if(typeof wId !== 'undefined') {
+                        var eventResult = sforce.connection.query("SELECT Id FROM Event WHERE WhatId = " + "'" + wId + "'" + " ORDER BY CreatedDate DESC LIMIT 1");
+                        var eventRecord = eventResult.getArray('records');
+                        var eId = eventRecord[0].Id;
+                        window.location = '/apex/{!$CurrentPage.Name}?id=' + eId;
+                    }
+                });
+            </script>
+        </apex:pageBlock>
+
+        <apex:pageBlock rendered="{!IF(Event.WhatId != NULL, TRUE, FALSE)}" id="coaching-plan">
+
+            <div class="container" ng-controller="CoachingPlan as cpCtrl">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h1 class="pull-right">Coaching for Peak Performance Agreement</h1>
+                        <apex:image url="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SHOW ADD ATTENDEE LOOKUP IF ONE HASN'T BEEN ADDED YET -->
+                <apex:form html-ng-hide="isUserSaved || mode == 'TMSM'" styleClass="hide-for-print">
+                    <div ng-controller="SelectUser as UserCtrl" class="select-user">
+
+                        <div class="alert alert-danger" ng-show="UserCtrl.isError">{{UserCtrl.errorMsg}}</div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Coaching Session Category</h4>
+                                <apex:inputField html-ng-model="UserCtrl.coachingCategory" styleClass="hidden coaching-category" value="{!Event.Coaching_Session_Category__c}" required="true" />
+                                <div class="btn-group coaching-category-values" data-toggle="buttons">
+                                    <label class="btn btn-default" ng-repeat="val in UserCtrl.multiSelectVals">{{val}}
+                                        <input value="{{val}}" type="checkbox" />
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Select the individual for the coaching session below.  The selected individual will be notified via email to complete their section of the coaching planner.</h4>
+
+                                <div class="input-group col-md-4 select-user__container" ng-class="{'selected' : UserCtrl.isUserSelected}" ng-mouseover="UserCtrl.showRemoveUser()" ng-mouseleave="UserCtrl.hideRemoveUser()">
+                                    <input type="text" class="form-control" ng-disabled="UserCtrl.isUserSelected" ng-model="UserCtrl.selectedUserName" ng-enter="UserCtrl.searchUsers(UserCtrl.selectedUserName)" />
+                                    <span class="input-group-addon user-added" ng-mouseover="UserCtrl.showRemoveUser()" ng-mouseleave="UserCtrl.hideRemoveUser()" >
+                                        <i class="glyphicon glyphicon-ok success" ng-show="UserCtrl.showSuccess"></i>
+                                        <a href="javascript:void(0)" class="remove-user" ng-show="UserCtrl.showRemove" ng-click="UserCtrl.removeUser()"><i class="glyphicon glyphicon-remove"></i></a></span>
+                                    <span class="input-group-btn search-user" >
+                                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#user-modal" ng-click="UserCtrl.searchUsers(UserCtrl.selectedUserName)"><i class="glyphicon glyphicon-search"></i></button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="user-modal" tabindex="-1" role="dialog" >
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                        <h4 class="modal-title">Select A User</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                                            <input type="text" class="form-control" ng-model="UserCtrl.userSearchVal" />
+                                        </div><br />
+                                        <div class="list-group">
+                                            <a href="javascript:void(0)" class="list-group-item" ng-repeat="user in UserCtrl.selUsers | filter : UserCtrl.userSearchVal" ng-click="UserCtrl.selectUser(user.name, user.id, user.email)">{{user.name}}</a>
+                                        </div>
+                                        <p class="text-danger" ng-hide="(UserCtrl.selUsers | filter : UserCtrl.userSearchVal).length">No matches were found!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <apex:inputHidden value="{!Event.Coaching_Session_Attendee__c}" html-ng-value="UserCtrl.selectedUserName" />
+                        <button type="button" class="btn btn-primary select-user__submit" ng-show="UserCtrl.isUserSelected" ng-click="UserCtrl.createNotifyAttendee(UserCtrl.selectedUserId, '{!Event.Id}', '{!$User.Email}', '{!$CurrentPage.URL}')">Continue</button>
+
+                    </div>
+                </apex:form>
+
+                <!--SHOW THE FORM IF THE ATTENDEE HAS BEEN ADDEDD -->
+                <apex:form html-ng-show="isUserSaved" styleClass="coaching-plan ">
+                    <apex:actionFunction name="save" action="{!QuickSave}" />
+                    <br class="hide-for-print" />
+                    <div class="alert alert-info hide-for-print" ng-hide="cpCtrl.isTMCompleted == 'Yes'" >
+                        <h4>Instructions</h4>
+                        The purpose of this form is to maximize our time together to ensure a great coaching experience.  Please complete this form prior to our meeting. Think "Quality" over "Quantity" as you fill in the Info.
+                    </div>
+                    <div class="alert alert-warning hide-for-print" ng-show="cpCtrl.isTMCompleted == 'Yes'">
+                        <h4>This Plan is Locked</h4>
+                        The DM has locked this plan and it can no longer be edited.
+                    </div>
+                    <div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Coaching Session for {{attendeeName}} with {{assignee}}</h3>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="row form-horizontal">
+                                    <div class="col-xs-6 col-pr-6">
+
+                                        <div class="form-group">
+                                            <label class="col-xs-6 control-label">Meeting Date/Time</label>
+                                            <div class="col-xs-6 output-text">
+                                                <!--<c:FormatDateTime date_Timevalue="{!Event.StartDateTime}"/>-->
+                                                <apex:outputfield value="{!Event.StartDateTime}" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-xs-6 control-label">Meeting Length</label>
+                                            <div class="col-xs-6 output-text">
+                                                {!Event.DurationInMinutes} Minutes
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-xs-6 col-pr-6">
+
+                                        <div class="form-group">
+                                            <label class="col-xs-6 control-label">Subject</label>
+                                            <div class="col-xs-6 output-text">
+                                                {!Event.Subject}
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-xs-6 control-label">Coaching Session Category</label>
+                                            <div class="col-xs-6 output-text">
+                                                {{coachingCategoryOutput}}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hide-for-web">
+                        <br /><br /><br /><br />
+                    </div>
+
+                    <div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Achievements</h3>
+                            </div>
+
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <h4>Job Related</h4>
+                                    <span ng-hide="cpCtrl.isTMCompleted == 'Yes' || mode == 'DM'"><textarea id="job-related" class="form-control" ng-model="cpCtrl.Job_Related_TM_Input__c" ng-blur="cpCtrl.updateFields('TMSM')" ></textarea></span>
+                                    <div ng-show="cpCtrl.isTMCompleted == 'Yes' || mode == 'DM'"><apex:outputField styleClass="block" value="{!Event.Job_Related_TM_Input__c}"  /></div>
+                                    <label for="job-related-dm">DM Input</label>
+                                    <textarea ng-hide="mode == 'TMSM'" id="job-related-dm" class="form-control" ng-model="cpCtrl.Job_Related_DM_Input__c" ng-blur="cpCtrl.updateFields('DM')" ></textarea>
+                                    <div ng-show="mode == 'TMSM'"><apex:outputField styleClass="block" value="{!Event.Job_Related_DM_Input__c}" /></div>
+                                </li>
+                                <li class="list-group-item">
+                                    <h4>Personal Development</h4>
+
+                                    <span ng-hide="cpCtrl.isTMCompleted == 'Yes' || mode == 'DM'"><textarea id="personal-development" class="form-control" ng-model="cpCtrl.Personal_Development_TM_Input__c" ng-blur="cpCtrl.updateFields('TMSM')"></textarea></span>
+                                    <div ng-show="cpCtrl.isTMCompleted == 'Yes' || mode == 'DM'"><apex:outputField styleClass="block" value="{!Event.Personal_Development_TM_Input__c}" /></div>
+                                    <label for="personal-development-dm">DM Input</label>
+                                    <textarea ng-hide="mode == 'TMSM'" id="personal-development-dm" class="form-control" ng-model="cpCtrl.Personal_Development_DM_Input__c" ng-blur="cpCtrl.updateFields('DM')"></textarea>
+                                    <div ng-show="mode == 'TMSM'"><apex:outputField styleClass="block" value="{!Event.Personal_Development_DM_Input__c}" /></div>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="page-break"></div>
+
+                    <div class="row visible-print">
+                        <div class="col-sm-12">
+                            <h1 class="pull-right">Coaching for Peak Performance Agreement</h1>
+                            <img src="{!URLFOR($Resource.logo150)}" />
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <hr />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Expectations</h3>
+                        </div>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <h4>Identify your expectations from this coaching session. What are the things you'd like us both to take away from this session?</h4>
+
+                                <span ng-hide="cpCtrl.isTMCompleted == 'Yes' || mode == 'DM'"><textarea id="expectations" class="form-control" ng-model="cpCtrl.Expectations_TM_Input__c" ng-blur="cpCtrl.updateFields('TMSM')"></textarea></span>
+                                <div ng-show="cpCtrl.isTMCompleted == 'Yes' || mode == 'DM'"><apex:outputField styleClass="block" value="{!Event.Expectations_TM_Input__c}" /></div>
+                                <label for="expectations-dm">DM Input</label>
+                                <textarea ng-hide="mode == 'TMSM'" id="expectations-dm" class="form-control" ng-model="cpCtrl.Expectations_DM_Input__c" ng-blur="cpCtrl.updateFields('DM')"></textarea>
+                                <div ng-show="mode == 'TMSM'"><apex:outputField styleClass="block" value="{!Event.Expectations_DM_Input__c}" /></div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Current Challenges</h3>
+                        </div>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <h4>What current challenges are you experiencing in your role? This could be customer specific or company specific</h4>
+                                <span ng-hide="cpCtrl.isTMCompleted == 'Yes' || mode == 'DM'"><textarea id="challenges" class="form-control" ng-model="cpCtrl.Current_Challenges_TM_Input__c" ng-blur="cpCtrl.updateFields('TMSM')"></textarea></span>
+                                <div ng-show="cpCtrl.isTMCompleted == 'Yes' || mode == 'DM'"><apex:outputField styleClass="block" value="{!Event.Current_Challenges_TM_Input__c}"  /></div>
+                                <label for="expectations-dm">DM Input</label>
+                                <textarea ng-hide="mode == 'TMSM'" id="challenges-dm" class="form-control" ng-model="cpCtrl.Current_Challenges_DM_Input__c" ng-blur="cpCtrl.updateFields('DM')"></textarea>
+                                <div ng-show="mode == 'TMSM'"><apex:outputField styleClass="block" value="{!Event.Current_Challenges_DM_Input__c}" /></div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="page-break"></div>
+
+                    <div class="row visible-print">
+                        <div class="col-sm-12">
+                            <h1 class="pull-right">Coaching for Peak Performance Agreement</h1>
+                            <img src="{!URLFOR($Resource.logo150)}" />
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <hr />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Activities</h3>
+                        </div>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <h4>What activities do you focus on to achieve your daily goals and objectives?</h4>
+                                <span ng-hide="cpCtrl.isTMCompleted == 'Yes' || mode == 'DM'"><textarea id="activities" class="form-control" ng-model="cpCtrl.Activities_TM_Input__c" ng-blur="cpCtrl.updateFields('TMSM')"></textarea></span>
+                                <div ng-show="cpCtrl.isTMCompleted == 'Yes' || mode == 'DM'"><apex:outputField styleClass="block" value="{!Event.Activities_TM_Input__c}" /></div>
+                                <label for="activities-dm">DM Input</label>
+                                <textarea ng-hide="mode == 'TMSM'" id="activities-dm" class="form-control" ng-model="cpCtrl.Activities_DM_Input__c" ng-blur="cpCtrl.updateFields('DM')"></textarea>
+                                <div ng-show="mode == 'TMSM'"><apex:outputField styleClass="block" value="{!Event.Activities_DM_Input__c}" /></div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="page-break"></div>
+
+                    <div class="row visible-print">
+                        <div class="col-sm-12">
+                            <h1 class="pull-right">Coaching for Peak Performance Agreement</h1>
+                            <img src="{!URLFOR($Resource.logo150)}" />
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <hr />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Manager Notes and Follow Up Actions</h3>
+                        </div>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <label for="notes1">1.</label>
+                                <textarea ng-hide="mode == 'TMSM'" id="notes1" class="form-control" ng-model="cpCtrl.Manager_Notes_and_Follow_Up_Actions_1__c" ng-blur="cpCtrl.updateFields('DM')"></textarea>
+                                <div ng-show="mode == 'TMSM'"><apex:outputField styleClass="block" value="{!Event.Manager_Notes_and_Follow_Up_Actions_1__c}" /></div>
+                                <label for="notes2">2.</label>
+                                <textarea ng-hide="mode == 'TMSM'" id="notes2" class="form-control" ng-model="cpCtrl.Manager_Notes_and_Follow_Up_Actions_2__c" ng-blur="cpCtrl.updateFields('DM')"></textarea>
+                                <div ng-show="mode == 'TMSM'"><apex:outputField styleClass="block" value="{!Event.Manager_Notes_and_Follow_Up_Actions_2__c}" /></div>
+                                <label for="notes3">3.</label>
+                                <textarea ng-hide="mode == 'TMSM'" id="notes3" class="form-control" ng-model="cpCtrl.Manager_Notes_and_Follow_Up_Actions_3__c" ng-blur="cpCtrl.updateFields('DM')"></textarea>
+                                <div ng-show="mode == 'TMSM'"><apex:outputField styleClass="block" value="{!Event.Manager_Notes_and_Follow_Up_Actions_3__c}" /></div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <br /><br /><br /><br />
+
+                    <div class="navbar navbar-default navbar-fixed-bottom hide-for-print" role="navigation">
+                        <div class="container">
+                            <a href="javascript:void(0)" class="btn btn-primary hidden-print" ng-click="cpCtrl.saveReturn()"><i class="glyphicon glyphicon-floppy-disk"></i> Save &amp; Return to Event</a>
+                            <c:printPDF buttonClass="btn btn-info hidden-print" name="Coaching Planner" angularAppName="CoachingSessionPlanner" loadAngular="false" />
+                            <span ng-hide="mode == 'TMSM'">
+                                <a href="javascript:void(0)" class="btn btn-danger hidden-print" ng-hide="cpCtrl.isTMCompleted == 'Yes'" ng-click="cpCtrl.toggleLock('Yes')"><i class="glyphicon glyphicon-lock"></i> Lock for TM</a>
+                                <a href="javascript:void(0)" class="btn btn-default hidden-print" ng-show="cpCtrl.isTMCompleted == 'Yes'" ng-click="cpCtrl.toggleLock('No')"><i class="glyphicon glyphicon-lock"></i> Locked - Unlock for TM</a>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="modal fade acceptDeny hide-for-print" ng-controller="AcceptDenyInvite as adi">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form name="responseForm" novalidate="true">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Respond to Coaching Session Invite</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="alert alert-danger" ng-show="adi.isError">{{adi.errorMsg}}</div>
+
+                                        <p>You've been invited to a coaching session with {{assigneeName}}.  Please respond to the invitiation.</p>
+                                        <label for="response">Enter Your Response (Required)</label>
+                                        <textarea name="response" class="form-control" required="true" ng-model="adi.response"></textarea>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-success accept" data-loading-text="Loading..." ng-click="adi.respond('Accepted', adi.response, '{!$User.Email}')">Accept</button>
+                                        <button type="button" class="btn btn-danger decline" data-loading-text="Loading..." ng-click="adi.respond('Declined', adi.response, '{!$User.Email}')">Deny</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </apex:form>
+            </div>
+
+            <div class="notification">
+                <p class="notification__msg">Saved!</p>
+            </div>
+
+
+
+            <script>
+
+            $(document).ready(function() {
+
+                //Save record when an input is edited
+                /*var inputVal;
+                    var editedInpuVal;
+                    $('.coaching-plan input, .coaching-plan textarea').focus(function() {
+                        inputVal = $(this).val();
+                    })
+                    $('.coaching-plan input, .coaching-plan textarea').focusout(function() {
+                        editedInputVal = $(this).val();
+                        if(inputVal !== editedInputVal) {
+                            save();
+                        }
+                    })*/
+
+                //print
+                $('.print').click(function() {
+                    window.print();
+                })
+
+            });
+
+            </script>
+        </apex:pageBlock>
+
+    </body>
+</html>
+</apex:page>

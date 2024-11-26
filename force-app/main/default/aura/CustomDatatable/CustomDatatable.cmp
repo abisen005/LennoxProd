@@ -1,0 +1,101 @@
+<aura:component implements="lightning:availableForFlowScreens,lightning:availableForFlowActions,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global"    controller ="CustomDTController">
+    
+    <!-- attributes -->
+    <aura:attribute name="canPause" type="Boolean" />
+    <aura:attribute name="canBack" type="Boolean" default ='true'/>
+    <aura:attribute name="canNext" type="Boolean" />
+    <aura:attribute name="canFinish" type="Boolean" />  
+    <aura:attribute name="mydata" type="Object[]"/>
+    <aura:attribute name="mySelectedData" type="Object[]"/>
+    
+    <aura:attribute name="mycolumns" type="Object[]"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="myOrderHeaderdata" type="Object"/>
+    
+    <aura:attribute name="type" type="String"/>
+    <aura:attribute name="stringResponseRFC" type="String"  access="global" />
+    <aura:attribute name="searchName" type="String"  access="global" />
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="selectedRowsCount" type="Integer" default="0"/>
+    <aura:attribute name="maxRowSelection" type="Integer" default="5"/>
+    <aura:attribute name="isDataSelected" type="Boolean" default="false"/>
+    
+    <aura:attribute name="myOrderHeaderdataisTrue" type="Boolean" default="false"/>
+    <aura:attribute name="showPrint" type="Boolean" default="false"/>
+    <aura:attribute name="orderNumber" type="String"/>
+    
+    <aura:attribute name="orderHeader" type="String"/>
+    
+    <!-- Account Name and Customer Number -->
+    <aura:attribute name="accName" type="String" access="global"/>
+    <aura:attribute name="custNumber" type="String" access="global" />
+        <aura:attribute name="orderHeaderInfo" type="String" access="global"/>
+    <aura:attribute name="orderItemInfo" type="String" access="global" />
+    
+    <aura:attribute name="navigateURL" type="String" default="Hello"/>
+    <aura:attribute name="hideSelectableDT" type="Boolean" default="false" />
+    
+    <lightning:flow aura:id="flowData"/>
+    <aura:attribute name="selectedRows" type="List" access="PRIVATE"/>
+    <!-- handlers-->
+    <aura:handler name="init" value="{!this }" action="{!c.init }"/> 
+    <aura:attribute name="vfHost" type="String"
+                    default="lennox--mule--c.visualforce.com"/>
+ 
+    <aura:if isTrue="{!v.myOrderHeaderdataisTrue}">
+        <th class="textSize" scope="col" style="text-align: center;" >
+            <div class="slds-truncate" title="Header Title"><lightning:icon iconName="standard:orders" alternativeText="Approved" title="SAP Sales Document Number" /> SAP Sales Document Number: {!v.orderNumber}  </div>
+        </th>
+        <lightning:datatable data="{! v.mydata }" 
+                             columns="{!v.mycolumns }" 
+                             keyField="id"
+                             showRowNumberColumn="false" 
+                             selectedRows = 'false'
+                             hideCheckboxColumn="true"
+                             ></lightning:datatable>
+        <th class="textSize" scope="col" style="text-align: center;" >
+            
+        </th>      
+    </aura:if>
+    
+    <aura:if isTrue="{!not(v.myOrderHeaderdataisTrue)}">
+        <th class="textSize" scope="col" style="text-align: center;" >
+            <div  class="slds-card__body" title="Header Title">List of SAP Sales Documents</div>
+        </th>
+        <div class="slds-scrollable" >
+            <aura:if isTrue="{!v.isDataSelected}">
+                <lightning:datatable data="{! v.mySelectedData }" 
+                                     columns="{!v.mycolumns }" 
+                                     keyField="id"
+                                     onrowselection="{! c.updateSelectedText }"  
+                                     showRowNumberColumn="true" 
+                                     ></lightning:datatable>
+                
+                <aura:set attribute="else">
+                    <lightning:datatable data="{! v.mydata }" 
+                                         columns="{!v.mycolumns }" 
+                                         keyField="id"
+                                         onrowselection="{! c.updateSelectedText }"  
+                                         showRowNumberColumn="true"
+                                         hideCheckboxColumn="{!v.hideSelectableDT }"
+                                         >
+                    </lightning:datatable>
+                </aura:set>
+            </aura:if>
+        </div>
+        
+        <br></br>
+        <aura:if isTrue= "{!v.showPrint}">
+            <div aura:id="actionButtonBar" class="slds-clearfix slds-p-top_medium">
+                <!-- If Previous is available, display to the left -->
+                
+                <aura:if isTrue="{!v.canBack}">
+                    <!--  <a href = '{!v.navigateURL}' target='_blank'>View PDF</a>-->
+                    <lightning:button  class="slds-float_right"  variant="destructive" label="View PDF" title="Destructive action" onclick="{! c.handleClick }"/>
+                    <lightning:button class="slds-float_right" aura:id="BACK" label="Previous"
+                                      variant="destructive" onclick="{!c.onButtonPressed}" />
+                </aura:if>
+            </div>
+        </aura:if>          
+    </aura:if>  
+</aura:component>

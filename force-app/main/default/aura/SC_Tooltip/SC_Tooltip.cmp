@@ -1,0 +1,16 @@
+<aura:component >
+
+    <aura:attribute name="content" type="String" />
+    <aura:attribute name="class" type="String" />
+
+    <div class="{!'slds-show--inline-block ' + v.class}">
+        <div class="slds-form-element">
+            <div class="slds-form-element__icon slds-align-middle">
+                <lightning:buttonIcon iconName="utility:info" variant="bare" size="medium" />
+            </div>
+        </div>
+        <div class="slds-popover slds-popover--tooltip slds-nubbin--top-left" role="tooltip" id="help">
+            <div class="slds-popover__body">{!v.content}</div>
+        </div>
+    </div>
+</aura:component>

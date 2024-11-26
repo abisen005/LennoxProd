@@ -1,0 +1,99 @@
+<aura:component controller="TMDMConsoleControllerV2" extends="c:ConsoleComponentV2">
+    
+    <aura:handler name="change" value="{!v.account}" action="{!c.handleAccountChange}"/>
+    
+    <aura:set attribute="accessLevel" value="1" />
+    
+    <aura:attribute name="isModalOpen" type="Boolean" />
+    <aura:attribute name="newEvent" type="Event" default="{sobjectType: 'Event'}" />
+    <aura:attribute name="eventCreated" type="Boolean" />
+    
+    <c:ConsoleMetric title="Credit Escalation">
+        
+        <div class="slds-text-heading--large">
+            <span class="{!v.status}">
+                {!v.account.Escalation_Code__c}
+            </span>
+        </div>
+        
+        <aura:set attribute="actionArea">
+            <ui:button class="slds-button" label="Contact Dealer" press="{!c.handleContactDealerPress}" />
+        </aura:set>
+        
+    </c:ConsoleMetric>
+    
+    <c:ModalV2 isOpen="{!v.isModalOpen}" header="Contact Dealer">
+        <aura:if isTrue="{!!v.eventCreated}">
+            
+            <div class="slds-form--stacked slds-m-around--medium">
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label">Start Date/Time</label>
+                    <div class="slds-form-element__control">
+                        <ui:inputDateTime aura:id="startDateTime" 
+                                          class="slds-input required required-date" 
+                                          value="{!v.newEvent.StartDateTime}" 
+                                          displayDatePicker="true" 
+                                          required="true"
+                                          disabled="{!v.isLoading}" />
+                    </div>
+                </div>
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label">
+                        Duration (minutes) 
+                    </label>
+                    <div class="slds-form-element__control">
+                        <ui:inputNumber aura:id="duration" 
+                                        class="slds-input required" 
+                                        value="{!v.newEvent.DurationInMinutes}" 
+                                        maxLength="3"
+                                        required="true"
+                                        disabled="{!v.isLoading}" />
+                    </div>
+                </div>
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label">Subject</label>
+                    <div class="slds-form-element__control">
+                        <ui:inputText aura:id="subject" 
+                                      value="{!v.newEvent.Subject}" 
+                                      class="slds-input required required-string"
+                                      disabled="{!v.isLoading}" />
+                    </div>
+                </div>
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label">Event Type</label>
+                    <div class="slds-form-element__control">
+                        {!v.newEvent.Event_Type__c}
+                    </div>
+                </div>
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label">Event Topic</label>
+                    <div class="slds-form-element__control">
+                        {!v.newEvent.Event_Topic__c}
+                    </div>
+                </div>
+                
+            </div>
+            
+            <aura:set attribute="else">
+                
+                <p class="slds-m-around--medium">
+                    Event successfully scheduled for <ui:outputDateTime value="{!v.newEvent.StartDateTime}" />
+                </p>
+                
+            </aura:set>
+            
+        </aura:if>
+        <aura:set attribute="footer">
+            <ui:button class="slds-button slds-button--neutral" 
+                       press="{!c.handleCloseModalPress}" 
+                       label="Cancel"
+                       disabled="{!v.isLoading}" />
+            <ui:button class="slds-button slds-button--neutral slds-button--brand" 
+                       press="{!c.handleSavePress}" 
+                       label="Save"
+                       disabled="{!v.isLoading}" />
+        </aura:set>
+        
+    </c:ModalV2>
+	
+</aura:component>

@@ -1,0 +1,275 @@
+<aura:component implements="force:appHostable" controller="SignatureSalesAppController">
+    
+    <ltng:require styles="/resource/LightningDesignSystem/styles/salesforce-lightning-design-system-ltng.min.css,
+                          /resource/TMDMStyle" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    
+    <aura:registerEvent name="navigateToURL" type="force:navigateToURL"/>
+    
+    <aura:attribute name="navItems" type="List" />
+    <aura:attribute name="isSf1" type="Boolean" />
+    <aura:attribute name="isLoading" type="Boolean" default="true" />
+    <aura:attribute name="showDashboards" type="Boolean" /> 
+    <aura:attribute name="showReports" type="Boolean" /> 
+    <aura:attribute name="showSearchDealers" type="Boolean" />
+    <aura:attribute name="showMainConsole" type="Boolean" default="true" />
+    <aura:attribute name="showIframe" type="Boolean" />
+    <aura:attribute name="iframeSrc" type="String" />
+    <aura:attribute name="iframeTitle" type="String" />
+    <aura:attribute name="dashboards" type="Dashboard[]" />
+    <aura:attribute name="reports" type="Report[]" />
+    <aura:attribute name="userMode" type="String" description="The value of user mode will change various elements of the
+                                                               signature sales app.  Values are Territory, District, Region and 
+                                                               Executive." />
+    <aura:attribute name="consoleSetting" 
+                    type="Signature_Sales_Console_Settings__c" 
+                    description="The console setting contains details specific to the userMode value.  For example, the dashboard folder,
+                                 report folder and roll-up report page name are different based on user mode." />
+    
+    
+    <div class="slds">
+        <aura:if isTrue="{!!v.isLoading}">
+            
+            <div class="{!'ss-body fade-in lds-scrollable--y ' + (!v.showMainConsole ? 'slds-hide' : '')}">
+                <nav class="ss-nav slds-p-around--small">
+                    <ul class="slds-grid slds-wrap slds-grid--pull-padded slds-text-align--center slds-grid--vertical-stretch">
+                        
+                        <li class="slds-col--padded slds-grid slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--1-of-2 slds-m-bottom--small">
+                            <ui:button press="{!c.handleNavChange}" aura:id="oasisSales">
+                                    <span class="slds-icon__container">
+                                        <c:svgIcon class="slds-icon slds-icon--medium oasis-sales" 
+                                                   xlinkHref="/resource/LightningDesignSystem/icons/utility-sprite/svg/symbols.svg#chart" />
+                                    </span>
+                                    <div>Oasis Sales</div>
+                            </ui:button>
+                        </li>
+                        
+                        <li class="slds-col--padded slds-grid slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--1-of-2 slds-m-bottom--small">
+                            <ui:button press="{!c.handleNavChange}" aura:id="salesGoals" >
+                                <span class="slds-icon__container">
+                                    <c:svgIcon class="slds-icon slds-icon--medium sales-goals" 
+                                               xlinkHref="/resource/LightningDesignSystem/icons/action-sprite/svg/symbols.svg#goal" />
+                                </span>
+                                <div>Sales Goals</div>
+                            </ui:button>
+                        </li>
+                        
+                        <li class="slds-col--padded slds-grid slds-size--1-of-1 slds-size--1-of-2 slds-large-size--1-of-4 slds-m-bottom--small">
+                            <ui:button press="{!c.handleViewCalendarPress}" >
+                                <span class="slds-icon__container">
+                                    <c:svgIcon class="slds-icon slds-icon--medium view-calendar" 
+                                               xlinkHref="/resource/LightningDesignSystem/icons/utility-sprite/svg/symbols.svg#event" />
+                                </span>
+                                <div>View Calendar</div>
+                            </ui:button>
+                        </li>
+                        
+                        <li class="slds-col--padded slds-grid slds-size--1-of-1 slds-size--1-of-2 slds-large-size--1-of-4 slds-m-bottom--small">
+                            <ui:button press="{!c.handleViewTasksPress}" >
+                                <span class="slds-icon__container">
+                                    <c:svgIcon class="slds-icon slds-icon--medium view-open-tasks" 
+                                               xlinkHref="/resource/LightningDesignSystem/icons/utility-sprite/svg/symbols.svg#check" />
+                                </span>
+                                <div>View Open Tasks</div>
+                            </ui:button>
+                        </li>
+                        
+                        <li class="slds-col--padded slds-grid slds-size--1-of-1 slds-size--1-of-2 slds-large-size--1-of-4 slds-m-bottom--small">
+                            <ui:button press="{!c.handleSearchDealersPress}" >
+                                <span class="slds-icon__container">
+                                    <c:svgIcon class="slds-icon slds-icon--medium search-dealers" 
+                                               xlinkHref="/resource/LightningDesignSystem/icons/utility-sprite/svg/symbols.svg#search" />
+                                </span>
+                                <div>Search Dealers</div>
+                            </ui:button>
+                        </li>
+                        
+                        <li class="slds-col--padded slds-grid slds-size--1-of-1 slds-size--1-of-2 slds-large-size--1-of-4 slds-m-bottom--small">
+                            <ui:button press="{!c.handleUpdateForecastsPress}" >
+                                <span class="slds-icon__container">
+                                    <c:svgIcon class="slds-icon slds-icon--medium update-forecasts" 
+                                               xlinkHref="/resource/LightningDesignSystem/icons/action-sprite/svg/symbols.svg#new_custom17" />
+                                </span>
+                                <div>Update Forecasts</div>
+                            </ui:button>
+                        </li>
+                        
+                        <li class="slds-col--padded slds-grid slds-size--1-of-1 slds-size--1-of-2 slds-large-size--1-of-4 slds-m-bottom--small">
+                            <ui:button press="{!c.handleTerritoryRollupPress}" aura:id="rollupReport" >
+                                <span class="slds-icon__container">
+                                    <c:svgIcon class="slds-icon slds-icon--medium territory-roll-up" 
+                                               xlinkHref="/resource/LightningDesignSystem/icons/action-sprite/svg/symbols.svg#web_link" />
+                                </span>
+                                <div>Roll-Up Report</div>
+                            </ui:button>
+                        </li>
+                        
+                        <li class="slds-col--padded slds-grid slds-size--1-of-1 slds-size--1-of-2 slds-large-size--1-of-4 slds-m-bottom--small">
+                            <ui:button press="{!c.handleLaunchMapPress}" >
+                                <span class="slds-icon__container">
+                                    <c:svgIcon class="slds-icon slds-icon--medium launch-map-tool" 
+                                               xlinkHref="/resource/LightningDesignSystem/icons/action-sprite/svg/symbols.svg#map" />
+                                </span>
+                                <div>Launch Map Tool</div>
+                            </ui:button>
+                        </li>
+                        
+                        <li class="slds-col--padded slds-grid slds-size--1-of-1 slds-size--1-of-2 slds-large-size--1-of-4 slds-m-bottom--small">
+                            <ui:button press="{!c.handleViewDashboardsPress}" >
+                                <span class="slds-icon__container">
+                                    <c:svgIcon class="slds-icon slds-icon--medium use-dashboards" 
+                                               xlinkHref="/resource/LightningDesignSystem/icons/utility-sprite/svg/symbols.svg#metrics" />
+                                </span>
+                                <div>Use Dashboards</div>
+                            </ui:button>
+                        </li>
+                        
+                        <li class="slds-col--padded slds-grid slds-size--1-of-1 slds-size--1-of-2 slds-large-size--1-of-4 slds-m-bottom--small">
+                            <ui:button press="{!c.handleUseReportsPress}" >
+                                <span class="slds-icon__container">
+                                    <c:svgIcon class="slds-icon slds-icon--medium use-reports" 
+                                               xlinkHref="/resource/LightningDesignSystem/icons/action-sprite/svg/symbols.svg#record" />
+                                </span>
+                                <div>Use Reports</div>
+                            </ui:button>
+                        </li>
+                        
+                        <li class="slds-col--padded slds-grid slds-size--1-of-1 slds-size--1-of-2 slds-large-size--1-of-4 slds-m-bottom--small">
+                            <ui:button press="{!c.handleScanBusinessCardPress}" >
+                                <span class="slds-icon__container">
+                                    <c:svgIcon class="slds-icon slds-icon--medium scan-bc" 
+                                               xlinkHref="/resource/LightningDesignSystem/icons/utility-sprite/svg/symbols.svg#phone_portrait" />
+                                </span>
+                                <div>Scan Business Card</div>
+                            </ui:button>
+                        </li>
+                        
+                    </ul>
+                </nav>
+            </div>
+            
+            <aura:if isTrue="{!v.showDashboards}">
+                <div class="slds-page-header" role="banner">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <ui:button class="slds-button slds-button--small slds-button--neutral"
+                                       label="Back"
+                                       press="{!c.handleCloseDashboardsPress}" />
+                            <p class="slds-page-header__title slds-truncate slds-align-middle slds-show--inline-block slds-m-left--small">Dashboards</p>
+                        </div>
+                    </div>
+                </div>
+                <aura:if isTrue="{!v.dashboards.length > 0}">
+                    <ul class="slds-list--vertical slds-has-dividers--bottom-space slds-has-block-links--space" >
+                        <aura:iteration items="{!v.dashboards}" var="d">
+                            <li class="slds-list__item">
+                                <c:button label="" class="slds-button slds-p-around--x-small" param="{!d.Id}" press="{!c.handleNavigateToRecordPress}">
+                                    <div class="slds-media slds-media--center">
+                                        <div class="slds-media__figure">
+                                                <span class="slds-icon_container slds-icon-standard-dashboard">
+                                                    <c:svgIcon class="slds-icon slds-icon--medium" xlinkHref="/resource/LightningDesignSystem/icons/standard-sprite/svg/symbols.svg#dashboard" />
+                                                </span>
+                                        </div>
+                                        <div class="slds-media__body">
+                                            <div class="slds-text-heading--label slds-text-align--left">{!d.Title}</div>
+                                        </div>
+                                    </div>
+                                </c:button>
+                            </li>
+                        </aura:iteration>
+                    </ul>
+                    <aura:set attribute="else">
+                        <p class="slds-m-around--large">There are no dashboards in {!v.consoleSetting.Dashboard_Folder_Name__c}.</p>
+                    </aura:set>
+                </aura:if>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.showReports}">
+                <div class="slds-page-header" role="banner">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <ui:button class="slds-button slds-button--small slds-button--neutral"
+                                       label="Back"
+                                       press="{!c.handleCloseReportsPress}" />
+                            <p class="slds-page-header__title slds-truncate slds-align-middle slds-show--inline-block slds-m-left--small">Reports</p>
+                        </div>
+                    </div>
+                </div>
+                <aura:if isTrue="{!v.reports.length > 0}">
+                    <ul class="slds-list--vertical slds-has-dividers--bottom-space slds-has-block-links--space" >
+                        <aura:iteration items="{!v.reports}" var="r">
+                            <li class="slds-list__item">
+                                <c:button label="" class="slds-button slds-p-around--x-small" param="{!r.Id}" press="{!c.handleNavigateToRecordPress}">
+                                    <div class="slds-media slds-media--center">
+                                        <div class="slds-media__figure">
+                                            <span class="slds-icon_container slds-icon-standard-report slds-p-around--xxx-small">
+                                                <c:svgIcon class="slds-icon slds-icon--medium" xlinkHref="/resource/LightningDesignSystem/icons/standard-sprite/svg/symbols.svg#contact" />
+                                            </span>
+                                        </div>
+                                        <div class="slds-media__body">
+                                            <div class="slds-text-heading--label slds-text-align--left">{!r.Name}</div>
+                                        </div>
+                                    </div>
+                                </c:button>
+                            </li>
+                        </aura:iteration>
+                    </ul>
+                    <aura:set attribute="else">
+                    	<p class="slds-m-around--large">There are no reports in {!v.consoleSetting.Report_Folder_Name__c}.</p>
+                    </aura:set>
+                </aura:if>
+            </aura:if>
+            
+            
+            <aura:if isTrue="{!v.showSearchDealers}">
+                
+                <div class="slds-theme--shade slds-p-around--small">
+                    <ui:button class="slds-button slds-button--small slds-button--neutral"
+                               label="Back"
+                               press="{!c.handleCloseSearchDealersPress}" />
+                </div>
+                
+                
+                <c:SearchDealers isSf1="{!v.isSf1}" />
+                
+            </aura:if>
+            
+            <aura:set attribute="else">
+                
+                <div class="slds-spinner_container">
+                    <div class="slds-spinner--brand slds-spinner slds-spinner--large" aria-hidden="false" role="alert">
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            
+            </aura:set>
+            
+        </aura:if>
+        
+        <div class="{!'slds-page-header ' + (v.showIframe ? '' : 'slds-hide')}" role="banner">
+            <div class="slds-media">
+                <div class="slds-media__body">
+                    <ui:button class="slds-button slds-button--small slds-button--neutral"
+                               label="Back"
+                               press="{!c.handleCloseIframePress}" />
+                    <p class="slds-page-header__title slds-truncate slds-align-middle slds-show--inline-block slds-m-left--small">{!v.iframeTitle}</p>
+                </div>
+            </div>
+        </div>
+
+        <aura:if isTrue="{!v.iframeTitle == 'Sales Goals' &amp;&amp; v.showIframe}">
+            <c:button label="View Sales Goal Report"
+                      class="{!'slds-button slds-p-around--medium ' + (v.consoleSetting.Sales_Goals_Report_Id__c ? '' : 'slds-hide')}" 
+                      param="{!v.consoleSetting.Sales_Goals_Report_Id__c}"
+                      press="{!c.handleNavigateToRecordPress}" />
+        </aura:if>
+        
+        <iframe src="{!v.iframeSrc}"
+                class="{!(v.showIframe ? '' : 'slds-hide')}"
+                frameBorder="0" />
+      
+
+    </div>
+</aura:component>

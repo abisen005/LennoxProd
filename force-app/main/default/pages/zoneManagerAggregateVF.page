@@ -1,0 +1,741 @@
+<apex:page docType="html-5.0" Controller="zoneManagerAggregate" standardStylesheets="false" showHeader="false" sidebar="false">
+    <c:TrackPageView lenPageName="District Rollup Summary" />
+    <style type="text/css">  @media print { a[href]:after { content: none !important;}} .customPopup { background-color: white; border: 2px solid #CC0000; z-index: 10001; left: 50%; padding:10px; position: absolute; width: 500px; margin-left: -250px; top:50px; } .customForm { background-color: white; border: 2px solid #CC0000; z-index: 9999; left: 50%; padding:10px; position: absolute; width: 500px; margin-left: -250px; top:50px; } .popupBackground { background-color:black; opacity: 0.20; filter: alpha(opacity = 30); position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 9990; } </style>
+    
+    <apex:form >
+        <apex:outputPanel styleClass="customPopup" layout="block" rendered="{!invalidProfile}">
+            <div class="bPageTitle" style="width:100%;">
+                <div class="ptBody secondaryPalette" style="width:100%;">
+                    <div class="content" style="width:100%;"> Zone not specified!<br/>Please &nbsp;<apex:commandLink value="click here" action="{!cancel}"></apex:commandLink>&nbsp; to close the window.
+                        <div class="blank"></div>
+                    </div>
+                </div>
+            </div>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!invalidProfile == false}">
+            <head>
+                <title>Zone Roll-Up Summary</title>
+                <apex:stylesheet value="{!$Resource.bootstrap}" />
+                <apex:stylesheet value="{!$Resource.AccountPlanStyle}" />
+                <style type="text/css"> @media all { .page-break { display: none; } } @media print { .page-break { display: block; page-break-before: always; } } @page { margin: 1cm } </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="row hidden-print">
+                        <c:printPDF invokedVFpageOrientation="Landscape" buttonClass="btn btn-small print pull-right" name="Zone Rollup Summary" border="20px"/>
+                    </div>
+                    <div class="header"> 
+                        <h1 class="pull-right pad-right">Zone Roll-Up Summary - {!year}</h1> 
+                        <apex:image url="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" styleClass="header__logo pad-left" />
+                    </div>
+                    <apex:messages style="font-size:20px;color:white;background-color:red;"/>
+                    <table class="table table-condensed highlight content-block">
+                        <tr>
+                            <td class="span9">
+                                <h3 class="tm-header">
+                                {!zone} - {!managerName}</h3>
+                                <span style="tm-subheader"></span>
+                            </td>
+                            <td class="span3">
+                                <h3 class="text-right pad-right"> <span class="text-callout">
+                                    <apex:outputText value="Report as of : {0,date,MM'/'dd'/'yyyy}">
+                                        <apex:param value="{!lastSalesHistoryUpdate}" />
+                                    </apex:outputText>
+                                    </span></h3>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <table class="content-block" width="100%" style="margin-top: 10px;margin-bottom: 25px">
+                        <tr>
+                            <td class="span6 print5" styleClass ="vfpage">
+                                <table class="table table-bordered table-hover print-tbl">
+                                    <tr>
+                                        <th class="highlight" colspan="2">Zone Sales History</th>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preThreeYear} Sales</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previousThreeYearsTotalSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preTwoYear} Sales</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previousTwoYearsTotalSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preYear} Sales </th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###.##}">
+                                                <apex:param value="{!previousYearTotalSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td class="span6 print7">
+                                <!--<h3 class="chart-title">Product Hierarchy</h3>-->
+                                <div id="barchartTotal" align="right"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    <table class="content-block" width="100%" style="margin-top: 5px;margin-bottom: 25px">
+                        <tr>
+                            <td class="span6 print5">
+                                <table class="table table-bordered table-hover print-tbl">
+                                    <tr>
+                                        <th class="highlight" colspan="2">YTD Sales Comparison</th>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>{!year}</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preYear}</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previousYearsYTDSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>YoY Change</th>
+                                        <td class="text-right js-change-amt">
+                                            <apex:outputText value="{0,number,$#,###.##}">
+                                                <apex:param value="{!ytdSalesChange}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td class="span6 print7">
+                                <!--<h3 class="chart-title">Product Hierarchy</h3>-->
+                                <div id="barchart" align="right"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="content-block" width="100%">
+                        <tr>
+                            <td class="span6 print5"> 
+                                <table class="table table-bordered ytd table-hover print-tbl">
+                                    <tr>
+                                        <th colspan="3" class="highlight">YTD Total Sales - Product Hierarchy</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="print8"><div style="width:10px; height:10px; background-color:#e74c3c;display:inline-block;" />&nbsp;&nbsp;Res Equipment </th>
+                                        <td class="print4 text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdResEquipment}" />
+                                            </apex:outputText>
+                                        </td> 
+                                        <td class="text-right">
+                                            <span class="resEquipSales"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><div style="width:10px; height:10px; background-color:#2ECC71;display:inline-block;" />&nbsp;&nbsp;Commercial  </th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdCommercials}" />
+                                            </apex:outputText>
+                                        </td>
+                                        <td class="text-right">
+                                            <span class="comSales"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><div style="white-space:nowrap;"><div style="width:10px; height:10px; background-color:#F1C40F;display:inline-block;" />&nbsp;&nbsp;P&amp;S, Mini-splits, and Others  </div></th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdPartsndSupplies}" />
+                                            </apex:outputText>
+                                        </td>
+                                        <td class="text-right"><span class="PSSales"></span></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td class="span6 print7">
+                                <!--<h3 class="chart-title">YTD Sales</h3>-->
+                                <div id="piechart" align="right"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <th colspan="6" class="highlight">YTD Sales - Product Tier</th>
+                        </tr>
+                        <tr>
+                            <th style="width:25%">Product Tier</th>
+                            <th style="width:15%" class="text-center">{!year}</th>
+                            <th style="width:15%" class="text-center">% of Sales</th>
+                            <th style="width:15%" class="text-center">{!preYear}</th>
+                            <th style="width:15%" class="text-center">% of Sales</th>
+                            <th style="width:15%" class="text-center">Change</th>
+                        </tr>
+                        <tr>
+                            <td>DLSC</td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!currentYearDLSC}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                    <apex:param value="{!currentYearDLSCPercent*100.00}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!previousYearDLSC}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                    <apex:param value="{!previousYearDLSCPercent*100.00}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right js-change-amt" data-amt="{!changeDLSC}">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!changeDLSC}" />
+                                </apex:outputText>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Elite</td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!currentYearElite}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                    <apex:param value="{!currentYearElitePercent*100.00}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!previousYearElite}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                    <apex:param value="{!previousYearElitePercent*100.00}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right js-change-amt" data-amt="{!changeElite}">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!changeElite}" />
+                                </apex:outputText>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Merit</td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!currentYearMerit}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                    <apex:param value="{!currentYearMeritPercent*100.00}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!previousYearMerit}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                    <apex:param value="{!previousYearMeritPercent*100.00}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right js-change-amt" data-amt="{!changeMerit}">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!changeMerit}" />
+                                </apex:outputText>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Other</td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!currentYearOther}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                    <apex:param value="{!currentYearOtherPercent*100.00}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!previousYearOther}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                    <apex:param value="{!previousYearOtherPercent*100.00}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right js-change-amt" data-amt="{!changeOther}">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!changeOther}" />
+                                </apex:outputText>
+                            </td>
+                        </tr>
+                    </table>                                           
+                    <div class="page-break" style="page-break-after:always;"></div>
+                    <div class="hide-for-web" style="height:30px"></div>
+                    <div class="hide-for-web" style="height:30px"></div>
+                </div>
+                
+                
+                
+                <div class="container"> <!-- ------------------------------------------------YTD Sales by Store -------------------------------------------------- -->
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                        <tr >
+                            <td class="highlight" colspan="8" style="text-align:left;">
+                                <h3 class="pad-left">YTD Sales by Store</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="col" style="text-align:center;vertical-align: middle;width:25%">Stores </th>
+                            <th scope="col" style="text-align:center;vertical-align: middle;width:15%">{!year}</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle;width:15%">% of Sales</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle;width:15%">{!preYear}</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle;width:15%">% of Sales</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle;width:15%">Change</th>
+                            
+                        </tr>
+                        <apex:repeat var="store" value="{!allStoreRecords}">
+                            <tr>
+                                <td style="text-align:left;">
+                                    <apex:outputLink rendered="{!store.URLText!=''}" target="_blank" value="{!store.URLText}">{!store.store}</apex:outputLink>
+                                    <apex:outputText rendered="{!store.URLText==''}" value="{!store.store}"></apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!store.CYYTDSales}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,##0.0}%">
+                                        <apex:param value="{!IF(OR(ISNULL(ytdSales),ytdSales=0),0,(store.CYYTDSales/ytdSales)*100)}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!store.PYYTDSales}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,##0.0}%">
+                                        <apex:param value="{!IF(OR(ISNULL(previousYearsYTDSales),previousYearsYTDSales=0),0,(store.PYYTDSales/previousYearsYTDSales)*100)}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;" class="js-change-amt">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!store.CYYTDSales-store.PYYTDSales}" />
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                        </apex:repeat>
+                        <tr>
+                            <td style="text-align:left;">
+                                <b>Total</b>
+                            </td>
+                            <td style="text-align:right;">
+                                <b><apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!ytdSales}" /> 
+                                    </apex:outputText></b>
+                            </td>
+                            <td style="text-align:right;"></td>
+                            <td style="text-align:right;">
+                                <b><apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!previousYearsYTDSales}" />
+                                    </apex:outputText></b>
+                            </td>
+                            <td style="text-align:right;"></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    
+                    <div class="page-break" style="page-break-after:always;"></div>
+                    <div class="hide-for-web" style="height:30px"></div>
+                </div>
+
+                <div class="container">  
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                        <tr >
+                            <td class="highlight" colspan="4" style="text-align:left;">
+                                <h3 class="pad-left">KPI's</h3>
+                            </td>
+                        </tr>
+                        <tr> 
+                            <th width="22%" scope="col" style="text-align:left;vertical-align: middle">Store</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Oppportunity Scorecard</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Contacts</th> 
+                            <th scope="col" style="text-align:center;vertical-align: middle">Outbound Phone Calls</th> 
+                        </tr> 
+                        <apex:repeat var="kpi" value="{!storeKPIList}">
+                            <tr> 
+                                <td scope="col" style="text-align:left;vertical-align: middle">
+                                    <apex:outputLink rendered="{!kpi.URLText!=''}" target="_blank" value="{!kpi.URLText}">{!kpi.store}</apex:outputLink>
+                                    <apex:outputText rendered="{!kpi.URLText==''}" value="{!kpi.store}"></apex:outputText>
+                                </td> 
+                                <td style="text-align:center;">{!kpi.opportunityScoreCard}</td> 
+                                <td style="text-align:center;">{!kpi.contacts}</td>
+                                <td style="text-align:center;">{!kpi.outboundPhoneCalls}</td>  
+                            </tr>                            
+                        </apex:repeat>
+                            <tr> 
+                            <td scope="col" style="text-align:left;vertical-align: middle">
+                                <b>Total</b>
+                            </td> 
+                            <td style="text-align:center;"><b>{!totalKPIScoreCards}</b></td> 
+                            <td style="text-align:center;"><b>{!totalKPIContacts}</b></td>
+                            <td style="text-align:center;"><b>{!totalKPIPhoneCalls}</b></td>  
+                        </tr>                        
+                    </table>
+                </div>                 
+
+                <div class="page-break"></div>                    
+                <div class="container"> 
+                    <div class="page-break" style="page-break-after:always;"></div>
+                    <div class="hide-for-web" style="height:30px"></div>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                        <tr>
+                            <td class="highlight" colspan="4" style="text-align:left;">
+                                <h3 class="pad-left">Reports/Dashboards</h3>
+                            </td>
+                        </tr>
+                        <ul class="favorites-content">
+                            <apex:repeat var="fav" value="{!favoritesList}">
+                                <tr>
+                                    <td width="40%" style="text-align:left;">
+                                        <apex:outputLink target="_blank" value="{!fav.Favorites_URL__c}">{!fav.name} </apex:outputLink>
+                                    </td>
+                                    
+                                </tr>
+                            </apex:repeat>   
+                        </ul>                         
+                    </table>    
+                </div>                                
+                
+                <!------------------------------------------------------------------------------
+                <!-- ------------------------------------------------YoY Sales Comparison by Store - TSA -------------------------------------------------- --
+                <div class="container">  
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                        <tr >
+                            <td class="highlight" colspan="8" style="text-align:left;">
+                                <h3 class="pad-left">YoY Sales Comparison by Store - TSA</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Store</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">{!year}</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">{!preYear}</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">YoY Change</th>
+                       </tr>
+                        <apex:repeat var="store" value="{!allTSAStoreRecords}"> 
+                            <tr>
+                                <td style="text-align:left;">
+                                    <apex:outputLink target="_blank" value="{!store.URLText}">{!store.Region}</apex:outputLink>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!store.CYYTDSales}" />
+                                    </apex:outputText>
+                                </td>
+                                
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!store.PYYTDSales}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;" class="js-change-amt">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!store.CYYTDSales-store.PYYTDSales}" />
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                        </apex:repeat>
+                        <tr>
+                            <td style="text-align:left;">
+                                <b>Total</b>
+                            </td>
+                            <td style="text-align:right;">
+                                <b><apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!ytdSalesTSA}" />
+                                    </apex:outputText>
+                                </b>
+                            </td>
+                            <td style="text-align:right;">
+                                <b><apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!previousYearsYTDSalesTSA}" />
+                                    </apex:outputText></b>
+                            </td>
+                            <td style="text-align:right;"></td>
+                            
+                        </tr>
+                        
+                    </table>
+                    <div class="page-break" style="page-break-after:always;"></div>
+                    <div class="hide-for-web" style="height:30px"></div>
+                </div>
+                <!------------------------------------------------------------------------------------------------------
+                
+                <!-- ------------------------------------------------Opportunity Scorecards -------------------------------------------------- --
+                <div class="container">  
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                        <tr >
+                            <td class="highlight" colspan="3" style="text-align:left;">
+                                <h3 class="pad-left">Opportunity Scorecards</h3>
+                            </td>
+                        </tr>
+                        <tr> 
+                            <th width="22%" scope="col" style="text-align:left;vertical-align: middle">Associate</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Scorecards Updated This Month</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Scorecards Updated This Year</th> 
+                        </tr> 
+                        <apex:repeat var="user" value="{!userOppScoreWrapList}">
+                            <tr> 
+                                <td scope="col" style="text-align:left;vertical-align: middle">
+                                    <apex:outputLink styleClass="hide-for-print" target="_blank" value="/apex/storeAccountPlanAggregateVF?year={!year}&u={!user.scorecardUserId}">{!user.scorecardUserName}</apex:outputLink>
+                                </td> 
+                                <td style="text-align:center;">{!user.scorecardMonthUpdatedCount}</td> 
+                                <td style="text-align:center;">{!user.scorecardYearUpdatedCount}</td> 
+                            </tr>
+                        </apex:repeat>
+                    </table>
+                </div>
+                <div class="page-break"></div>
+                <!------------------------------------------------------------------------------------------------------
+                <!-- ------------------------------------------------Contacts -------------------------------------------------- --
+                <div class="container"> 
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                        <tr >
+                            <td class="highlight" colspan="5" style="text-align:left;">
+                                <h3 class="pad-left">Contacts</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th width="22%" scope="col" style="text-align:left;vertical-align: middle">Associate </th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Contacts Updated This Month</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Contacts  Updated This Year</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Contacts Created This Month</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Contacts  Created This Year</th>
+                        </tr>
+                        <apex:repeat var="user" value="{!userContactWrapList}">
+                            <tr>
+                                <td scope="col" style="text-align:left;vertical-align: middle">
+                                    <apex:outputLink styleClass="hide-for-print" target="_blank" value="/apex/storeAccountPlanAggregateVF?year={!year}&u={!user.contactUserId}">{!user.contactUserName}</apex:outputLink>
+                                </td> 
+                                <td style="text-align:center;">{!user.contactMonthUpdatedCount}</td> 
+                                <td style="text-align:center;">{!user.contactYearUpdatedCount}</td> 
+                                <td style="text-align:center;">{!user.contactMonthCreatedCount}</td> 
+                                <td style="text-align:center;">{!user.contactYearCreatedCount}</td> 
+                            </tr>
+                        </apex:repeat>
+                    </table>    
+                </div>
+                <div class="page-break"></div>
+                <!------------------------------------------------------------------------------------------------------
+                 <!-- ------------------------------------------------Outbound Phone Calls -------------------------------------------------- --
+                <div class="container"> 
+                    
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                        <tr >
+                            <td class="highlight" colspan="3" style="text-align:left;">
+                                <h3 class="pad-left">Outbound Phone Calls</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th width="22%" scope="col" style="text-align:left;vertical-align: middle">Associate </th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Outbound Calls This Month</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Outbound Calls This Year</th>
+                        </tr>
+                        <apex:repeat var="user" value="{!userEventWrapList}">
+                            <tr>
+                                <td scope="col" style="text-align:left;vertical-align: middle">
+                                    <apex:outputLink styleClass="hide-for-print" target="_blank" value="/apex/storeAccountPlanAggregateVF?year={!year}&u={!user.eventUserId}">{!user.eventUserName}</apex:outputLink>
+                                </td>
+                                <td style="text-align:center;">{!user.eventMonthCreatedCount}</td> 
+                                <td style="text-align:center;">{!user.eventYearCreatedCount}</td>  
+                            </tr>
+                        </apex:repeat>
+                    </table>   
+                </div>
+                <div class="page-break"></div>                    
+                <div class="container"> 
+                    <apex:outputPanel >
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td colspan="2" style="background-color:#F9F3DF;">
+                                    <span style="font-size:12px;text-align:left;"><b>Report Link</b></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="20%" scope="col" style="text-align:left;vertical-align: middle">Report Name </th>
+                                <th width="80%" scope="col" style="text-align:left;vertical-align: middle">Link</th>
+                            </tr>
+                            <apex:repeat var="fab" value="{!favoritesList}">
+                                <tr>
+                                    <td width="20%" style="text-align:left;">{!fab.Name}</td>
+                                    <td width="80%" style="text-align:left;"><apex:outputLink target="_blank" value="{!fab.Favorites_URL__c}">{!fab.Favorites_URL__c}</apex:outputLink></td>
+                                </tr>
+                            </apex:repeat>
+                        </table>
+                    </apex:outputPanel>
+                </div>
+                <!------------------------------------------------------------------------------------------------------>
+                
+                <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+                <script src="https://www.google.com/jsapi"></script>
+                <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
+                <script>
+                    $(document).ready(function()
+                                      { $('.js-change-amt').each(function()
+                                                                 {
+                                                                     var amt = $(this).text().replace('$','');
+                                                                     amt = amt.replace(',','');
+                                                                     amt = Number(amt.replace(',',''));
+                                                                     if(amt > 0) { $(this).prepend('+').addClass('pos-value'); }
+                                                                     else { $(this).addClass('neg-value'); };
+                                                                 });
+                                       window.onBeforePrint = function() {
+                                           printing = true;
+                                           drawPieChart();
+                                           drawBarChart();
+                                           drawBarTotalChart();
+                                       };
+                                       
+                                       function convertToPercent(dec) {
+                                           var perc = (dec * 100);
+                                           return perc.toFixed(1) + '%'; };
+                                       
+                                       var totSales = {!ytdCommercials} + {!ytdPartsndSupplies} + {!ytdResEquipment};
+                                       var comSales = convertToPercent({!ytdCommercials} / totSales);
+                                                                       var PSSales = convertToPercent({!ytdPartsndSupplies} / totSales);
+                                                                       var resEquipSales = convertToPercent({!ytdResEquipment} / totSales);
+                                                                       $('.comSales').text(comSales);
+                                       $('.PSSales').text(PSSales);
+                                       $('.resEquipSales').text(resEquipSales);
+                                      });
+                
+                var printing = false,
+                    chartWidth = '100%',
+                    chartHeight = '100%',
+                    formatTreshold = 800080,
+                    printChartWidth = 350;
+                // Load the Visualization API and the piechart package.
+                google.load('visualization', '1.0', {'packages':['corechart']});
+                // Set a callback to run when the Google Visualization API is loaded.
+                google.setOnLoadCallback(drawPieChart);
+                google.setOnLoadCallback(drawBarChart);
+                google.setOnLoadCallback(drawBarTotalChart);
+                
+                function drawBarChart() {
+                    if(printing) {
+                        chartWidth = printChartWidth;
+                        chartHeight = 200;
+                        formatTreshold = 300000 }
+                    
+                    function formatVAxis(formatTreshold) {
+                        var ytdSales = ({!ISBLANK(ytdSales)}) ? 0 : {!ytdSales};
+                        var previousYearsYTDSales = ({!ISBLANK(previousYearsYTDSales)}) ? 0 : {!previousYearsYTDSales};
+                        if(ytdSales > formatTreshold || previousYearsYTDSales > formatTreshold) {
+                            return '$####.##M';
+                        } else {
+                            return '$#,###'; }
+                    }
+                    
+                    function formatSales(num, formatTreshold) {
+                        var ytdSales = ({!ISBLANK(ytdSales)}) ? 0 : {!ytdSales};
+                        var previousYearsYTDSales = ({!ISBLANK(previousYearsYTDSales)}) ? 0 : {!previousYearsYTDSales};
+                        if(ytdSales > formatTreshold || previousYearsYTDSales > formatTreshold) {
+                            return num / 1000000; }
+                        else { return num; }
+                    }
+                    
+                    var chartData = new google.visualization.DataTable();
+                    chartData.addColumn('string', 'Year');
+                    chartData.addColumn('number', 'Sales');
+                    chartData.addColumn({type: 'string', role: 'tooltip'});
+                    chartData.addRows([ ['YTD Sales', formatSales({!ytdSales}, formatTreshold), '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!ytdSales}" /></apex:outputText>'], ['Previous Year YTD Sales', formatSales({!previousYearsYTDSales}, formatTreshold), '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!previousYearsYTDSales}" /></apex:outputText>'] ]);
+                    
+                    var data = google.visualization.arrayToDataTable([ ['Year', 'Sales'], ['A', 123456], ['B', 234567] ]);
+                    var options = { 'width':chartWidth, 'height':chartHeight, 'fontName':'Verdana', vAxis: {baseline: 0, format: formatVAxis(formatTreshold) }, colors: ['#3498db'], legend: {position: 'none'} };
+                    var barChart = new google.visualization.ColumnChart(document.getElementById('barchart'));
+                    barChart.draw(chartData, options);
+                }
+                
+                
+                function drawBarTotalChart() {
+                    if(printing) {
+                        chartWidth = printChartWidth;
+                        chartHeight = 200}
+                        //formatTreshold = 300000 }
+                    
+                    function formatVAxis(formatTreshold) {
+                        var previousThreeYearsTotalSales = ({!ISBLANK(previousThreeYearsTotalSales)}) ? 0 : {!previousThreeYearsTotalSales};
+                        var previousTwoYearsTotalSales = ({!ISBLANK(previousTwoYearsTotalSales)}) ? 0 : {!previousTwoYearsTotalSales};
+                        var previousYearTotalSales = ({!ISBLANK(previousYearTotalSales)}) ? 0 : {!previousYearTotalSales};
+                        if(previousThreeYearsTotalSales > formatTreshold || previousTwoYearsTotalSales > formatTreshold || previousYearTotalSales > formatTreshold){
+                            return '$####.##M'; }
+                        else { return '$#,###'; }
+                    }
+                    
+                    function formatTotalSales(num, formatTreshold) {
+                        var previousThreeYearsTotalSales = ({!ISBLANK(previousThreeYearsTotalSales)}) ? 0 : {!previousThreeYearsTotalSales};
+                        var previousTwoYearsTotalSales = ({!ISBLANK(previousTwoYearsTotalSales)}) ? 0 : {!previousTwoYearsTotalSales};
+                        var previousYearTotalSales = ({!ISBLANK(previousYearTotalSales)}) ? 0 : {!previousYearTotalSales};
+                        if(previousThreeYearsTotalSales > formatTreshold || previousTwoYearsTotalSales > formatTreshold || previousYearTotalSales > formatTreshold){
+                            return num / 1000000; }
+                        else { return num; }
+                    }
+                    
+                    var chartData2 = new google.visualization.DataTable();
+                    chartData2.addColumn('string', 'Year');
+                    chartData2.addColumn('number', 'Sales');
+                    chartData2.addColumn({type: 'string', role: 'tooltip'});
+                    chartData2.addRows([ ['{!preThreeYear} Sales', formatTotalSales({!previousThreeYearsTotalSales}, formatTreshold), '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!previousThreeYearsTotalSales}" /></apex:outputText>'], ['{!preTwoYear} Sales', formatTotalSales({!previousTwoYearsTotalSales}, formatTreshold), '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!previousTwoYearsTotalSales}" /></apex:outputText>'], ['{!preYear} Sales', formatTotalSales({!previousYearTotalSales}, formatTreshold), '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!previousYearTotalSales}" /></apex:outputText>'] ]);
+                    
+                    var data = google.visualization.arrayToDataTable([ ['Year', 'Sales'], ['A', 123456], ['B', 234567] ]);
+                    var options = { 'width':chartWidth, 'height':chartHeight, 'fontName':'Verdana', vAxis: {baseline: 0, format: formatVAxis(formatTreshold) }, colors: ['#3498db'], legend: {position: 'none'}, lineWidth:4, pointShape:'square', pointSize:8};
+                    var barChartTotal = new google.visualization.LineChart(document.getElementById('barchartTotal'));
+                    barChartTotal.draw(chartData2, options);
+                }
+                
+                
+                // Callback that creates and populates a data table, // instantiates the pie chart, passes in the data and // draws it.
+                function drawPieChart() { if(printing) { chartWidth = printChartWidth; chartHeight = 200; }
+                                         // Create the data table.
+                                         var data = new google.visualization.DataTable();
+                                         data.addColumn('string', 'Product');
+                                         data.addColumn('number', 'Sales');
+                                         data.addRows([ ['YTD - Commercial Sales', {!ytdCommercials}], ['YTD - P&S Sales', {!ytdPartsndSupplies}], ['YTD - Res Equip Sales', {!ytdResEquipment}] ]);
+                                         // Set chart options
+                                         var options = { 'width':chartWidth, 'height':chartHeight, 'fontName':'Verdana', 'colors':['#e74c3c','#F1C40F','#2ECC71'], 'tooltip':{text: 'percentage', showColorCode: true}, 'reverseCategories': true, 'pieStartAngle': 180, legend: {position: 'none'}};
+                                         // Instantiate and draw our chart, passing in some options.
+                                         var pieChart = new google.visualization.PieChart(document.getElementById('piechart')); pieChart.draw(data, options); }
+                </script>
+            </body>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

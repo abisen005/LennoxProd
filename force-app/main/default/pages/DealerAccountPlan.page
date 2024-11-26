@@ -1,0 +1,394 @@
+<!--
+  @description       : 
+  @author            : Ventas Consulting
+  @group             : 
+  @last modified on  : 03-24-2023
+  @last modified by  : Ventas Consulting
+-->
+<apex:page docType="html-5.0" standardController="Account_Planning__c" extensions="DealerAccountPlanExtension" standardStylesheets="false" showHeader="false" sidebar="false">
+    <head>
+        <title>Dealer Sales Summary</title>
+        <apex:stylesheet value="{!$Resource.bootstrap}" />
+        <apex:stylesheet value="{!$Resource.AccountPlanStyle}" />
+        <c:TrackPageView lenPageName="Dealer Sales Summary" />
+    </head>
+    <style type="text/css"> @media all { .page-break { display: none; } } @media print { .page-break { display: block; page-break-before: always; }  
+      
+                 } @page { margin: 1cm } </style>
+    
+    <script>
+    function nthYearForecast(year) {
+        return 'Account_Planning__c.X'+year+'_Sales_Forecast__c';
+    }
+    
+    </script>
+    <body>
+
+        <div class="container">
+            <div class="row hidden-print">
+                <c:printPDF invokedVFpageOrientation="Landscape" buttonClass="btn btn-small print pull-right" name="{! Account_Planning__c.Dealer__r.AccountNumber + ' - ' + Account_Planning__c.Dealer__r.Name + ' - ' + 'Dealer Sales Summary' }" accountId="{!Account_Planning__c.Dealer__r.Id}" />
+            </div>
+            <div class="header">
+
+                <h1 class="pull-right pad-right">Dealer Sales Summary - {!Account_Planning__c.Current_Year__c}</h1>
+                <apex:image url="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" styleClass="header__logo pad-left" />
+            </div>
+
+            <table class="table table-condensed highlight content-block">
+                <tr>
+                    <td class="span6">
+                        <h3 class="pad-left">{!Account_Planning__c.Dealer__r.Name} - {!Account_Planning__c.Dealer_Number__c}</h3>
+                    </td>
+                    <td class="span6">
+                         <h3 class="text-right pad-right">Report as of: <span class="text-callout">{!MONTH(Account_Planning__c.Last_Sales_History_Update__c)}/{!DAY(Account_Planning__c.Last_Sales_History_Update__c)}/{!YEAR(Account_Planning__c.Last_Sales_History_Update__c)}</span></h3>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="content-block" width="100%"  style="margin-top: 0px;margin-bottom: 0px">
+                <tr>
+                    <td class="span6 col-pr-6">
+                        <table class="table table-bordered table-hover content-block print-tbl">
+                            <tr>
+                                <th colspan="2" class="highlight">
+                                    Dealer Sales History
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="text-left">{!Account_Planning__c.PY3_Year__c} Sales</th>
+                                <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.PY3_Sales__c}" /></apex:outputText></td>
+                            </tr>
+                            <tr>
+                                <th class="text-left">{!Account_Planning__c.PY2_Year__c} Sales</th>
+                                <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.PY2_Sales__c}" /></apex:outputText></td>
+                            </tr>
+                            <tr>
+                                <th class="text-left">{!Account_Planning__c.PY_Year__c} Sales</th>
+                                <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.PY_Sales__c}" /></apex:outputText></td>
+                            </tr>
+                        </table>
+                    </td>
+                     <td class="span6 col-pr-6">
+                                <!--<h3 class="chart-title">Product Hierarchy</h3>-->
+                                <div id="barchartTotal"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="content-block" width="100%"  style="margin-top: 0px;margin-bottom: 0px">
+                <tr>
+                    <td class="span6 col-pr-6">
+                        <table class="table table-bordered table-hover  print-tbl">
+                            <tr>
+                                <th class="highlight" colspan="2">YTD Sales Comparison</th>
+                            </tr>
+
+                            <tr>
+                                <th>{!Account_Planning__c.Current_Year__c} Sales Forecast</th>
+                                <td class="text-right">
+                                    <!--<apex:pageBlock rendered="{!Account_Planning__c.Current_Year__c == '2016'}">
+                                        <apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Account_Planning__c.X2021_Sales_Forecast__c}" /></apex:outputText>
+                                    </apex:pageBlock>
+                                    <apex:pageBlock rendered="{!Account_Planning__c.Current_Year__c == '2017'}">
+                                        <apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Account_Planning__c.X2017_Sales_Forecast__c}" /></apex:outputText>
+                                    </apex:pageBlock>
+                                    <apex:pageBlock rendered="{!Account_Planning__c.Current_Year__c == '2018'}">
+                                        <apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Account_Planning__c.X2018_Sales_Forecast__c}" /></apex:outputText>
+                                    </apex:pageBlock>
+                                    <apex:pageBlock rendered="{!Account_Planning__c.Current_Year__c == '2019'}">
+                                        <apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Account_Planning__c.X2019_Sales_Forecast__c}" /></apex:outputText>
+                                    </apex:pageBlock>
+                                    <apex:pageBlock rendered="{!Account_Planning__c.Current_Year__c == '2020'}">
+                                        <apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Account_Planning__c.X2020_Sales_Forecast__c}" /></apex:outputText>
+                                    </apex:pageBlock>
+                                    <apex:pageBlock rendered="{!Account_Planning__c.Current_Year__c == '2021'}">
+                                        <apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Account_Planning__c.X2021_Sales_Forecast__c}" /></apex:outputText>
+                                    </apex:pageBlock>-->
+                                    <apex:pageBlock >
+                                        <apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!salesForecast}" /></apex:outputText>
+                                    </apex:pageBlock>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>{!Account_Planning__c.Current_Year__c}</th>
+                                <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_Sales__c}" /></apex:outputText></td>
+                            </tr>
+                            <tr>
+                                <th>{!Account_Planning__c.PY_Year__c}</th>
+                                <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.PY_YTD_Sales__c}" /></apex:outputText></td>
+                            </tr>
+                            <tr>
+                                <th>YoY Change</th>
+                                <td class="text-right js-change-amt"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Account_Planning__c.YTD_Sales_Change__c}" /></apex:outputText></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="span6 col-pr-6">
+                        <!--<h3 class="chart-title">Product Hierarchy</h3>-->
+                        <div id="barchart"></div>
+                    </td>
+                </tr>
+            </table>
+ <!--div class="page-break" style="page-break-after:always"></div-->
+            <table class="content-block" width="100%">
+                <tr>
+                    <td class="span6 col-pr-6">
+                        <table class="table table-bordered ytd table-hover print-tbl">
+                            <tr>
+                                <th colspan="3" class="highlight">
+                                    <div class="highlight">
+                                        YTD Sales - Product Hierarchy
+                                    </div>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="print8">Res Equipment</th>
+                                <td class="print3 text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_Res_Equip_Sales__c}" /></apex:outputText></td>
+                                <td class="print1 text-right"><span class="resEquipSales"></span></td>
+                            </tr>
+                            <tr>
+                                <th>Commercial</th>
+                                <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_Commercial_Sales__c}" /></apex:outputText></td>
+                                <td class="text-right"><span class="comSales"></span></td>
+                            </tr>
+                            <tr>
+                                <th>P&amp;S | Mini-Splits | Other</th>
+                                <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_P_S_Sales__c}" /></apex:outputText></td>
+                                <td class="text-right"><span class="PSSales"></span></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="span6 col-pr-6">
+                        <!--<h3 class="chart-title">YTD Sales</h3>-->
+                        <div id="piechart"></div>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="table table-bordered table-hover" style="margin-top: 15px;">
+                <tr>
+                    <th colspan="6" class="highlight">YTD Sales - Product Tier</th>
+                </tr>
+                <tr>
+                    <th>Product Tier</th>
+                    <th class="text-center">{!Account_Planning__c.Current_Year__c}</th>
+                    <th class="text-center">% of Sales</th>
+                    <th class="text-center">{!Account_Planning__c.PY_Year__c}</th>
+                    <th class="text-center">% of Sales</th>
+                    <th class="text-center">Change</th>
+                </tr>
+
+                <tr>
+                    <td>DLSC</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_DLSC_Sales__c}" /></apex:outputText></td>
+                    <td class="text-center">{!Account_Planning__c.YTD_DLSC_Sales_Percent__c}%</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.PY_YTD_DLSC_Sales__c}" /></apex:outputText></td>
+                    <td class="text-center">{!Account_Planning__c.PY_YTD_DLSC_Sales_Percent__c}%</td>
+                    <td class="text-right js-change-amt"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_DLSC_Sales_Change__c}" /></apex:outputText></td>
+                </tr>
+
+                <tr>
+                    <td>Elite</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_Elite_Sales__c}" /></apex:outputText></td>
+                    <td class="text-center">{!Account_Planning__c.YTD_Elite_Sales_Percent__c}%</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.PY_YTD_Elite_Sales__c}" /></apex:outputText></td>
+                    <td class="text-center">{!Account_Planning__c.PY_YTD_Elite_Sales_Percent__c}%</td>
+                    <td class="text-right js-change-amt"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_Elite_Sales_Change__c}" /></apex:outputText></td>
+                </tr>
+
+                <tr>
+                    <td>Merit</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_Merit_Sales__c}" /></apex:outputText></td>
+                    <td class="text-center">{!Account_Planning__c.YTD_Merit_Sales_Percent__c}%</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.PY_YTD_Merit_Sales__c}" /></apex:outputText></td>
+                    <td class="text-center">{!Account_Planning__c.PY_YTD_Merit_Sales_Percent__c}%</td>
+                    <td class="text-right js-change-amt"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_Merit_Sales_Change__c}" /></apex:outputText></td>
+                </tr>
+
+                <tr>
+                    <td>Aire-Flo</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_Aire_Flo_Sales__c}" /></apex:outputText></td>
+                    <td class="text-center">{!Account_Planning__c.YTD_Aire_Flo_Sales_Percent__c}%</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.PY_YTD_Aire_Flo_Sales__c}" /></apex:outputText></td>
+                    <td class="text-center">{!Account_Planning__c.PY_YTD_Aire_Flo_Sales_Percent__c}%</td>
+                    <td class="text-right js-change-amt"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_Aire_Flo_Sales_Change__c}" /></apex:outputText></td>
+                </tr>
+
+                 <tr>
+                    <td>Other</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_Other_Sales__c}" /></apex:outputText></td>
+                    <td class="text-center">{!Account_Planning__c.YTD_Other_Sales_Percent__c}%</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.PY_YTD_Other_Sales__c}" /></apex:outputText></td>
+                    <td class="text-center">{!Account_Planning__c.PY_YTD_Other_Sales_Percent__c}%</td>
+                    <td class="text-right js-change-amt"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!Account_Planning__c.YTD_Other_Sales_Change__c}" /></apex:outputText></td>
+                </tr>
+
+            </table>
+
+        </div>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="https://www.google.com/jsapi"></script>
+        <script>
+
+        $(document).ready(function() {
+
+            $('.js-change-amt').each(function() {
+                var amt = $(this).text().replace('$','');
+                amt = Number(amt.split(',').join(''));
+                if(amt > 0) {
+                    $(this).prepend('+').addClass('pos-value');
+                } else {
+                    $(this).addClass('neg-value');
+                };
+            });
+
+            window.onBeforePrint = function() {
+                console.log('execute onBeforePrint');
+                printing = true;
+                drawPieChart();
+                drawBarChart();
+                drawBarTotalChart();
+            }
+
+            function convertToPercent(dec) {
+                var perc = (dec * 100);
+                return perc.toFixed(2) + '%';
+            };
+            var totSales = {!Account_Planning__c.YTD_Commercial_Sales__c} + {!Account_Planning__c.YTD_P_S_Sales__c} + {!Account_Planning__c.YTD_Res_Equip_Sales__c};
+            var comSales = convertToPercent({!Account_Planning__c.YTD_Commercial_Sales__c} / totSales);
+            var PSSales = convertToPercent({!Account_Planning__c.YTD_P_S_Sales__c} / totSales);
+            var resEquipSales = convertToPercent({!Account_Planning__c.YTD_Res_Equip_Sales__c} / totSales);
+            $('.comSales').text(comSales);
+            $('.PSSales').text(PSSales);
+            $('.resEquipSales').text(resEquipSales);
+
+        });
+
+        var printing = false,
+            chartWidth = '100%',
+            chartHeight = '100%',
+            formatTreshold = 800080,
+            printChardWidth = 400;
+
+          // Load the Visualization API and the piechart package.
+          google.load('visualization', '1.0', {'packages':['corechart']});
+
+          // Set a callback to run when the Google Visualization API is loaded.
+          google.setOnLoadCallback(drawPieChart);
+          google.setOnLoadCallback(drawBarChart);
+          google.setOnLoadCallback(drawBarTotalChart);
+
+          function drawBarChart() {
+            if(printing) {
+                chartWidth = printChardWidth;
+                chartHeight = 200;
+            }
+
+            var chartData = new google.visualization.DataTable();
+                chartData.addColumn('string', 'Year');
+                chartData.addColumn('number', 'Sales');
+                chartData.addColumn({type: 'string', role: 'tooltip'});
+                chartData.addRows([
+                    ['Current Year', {!IF(ISBLANK(Account_Planning__c.YTD_Sales__c), 0, IF( Account_Planning__c.YTD_Sales__c > 800080 || Account_Planning__c.PY_YTD_Sales__c > 800080, Account_Planning__c.YTD_Sales__c / 1000000, ROUND(Account_Planning__c.YTD_Sales__c,2) ) )}, '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Account_Planning__c.YTD_Sales__c}" /></apex:outputText>'],
+                    ['Previous Year', {!IF(ISBLANK(Account_Planning__c.PY_YTD_Sales__c), 0, IF( Account_Planning__c.YTD_Sales__c > 800080 || Account_Planning__c.PY_YTD_Sales__c > 800080, Account_Planning__c.PY_YTD_Sales__c / 1000000, ROUND(Account_Planning__c.PY_YTD_Sales__c,2) ) )}, '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Account_Planning__c.PY_YTD_Sales__c}" /></apex:outputText>']
+                ]);
+
+            var data = google.visualization.arrayToDataTable([
+                ['Year', 'Sales'],
+                ['A', 123456],
+                ['B', 234567]
+            ]);
+
+            var options = {
+              'width':chartWidth,
+              'height':chartHeight,
+              vAxis: {baseline: 0, format: '{!IF( IF(ISBLANK(Account_Planning__c.YTD_Sales__c), 0, Account_Planning__c.YTD_Sales__c) > 800080 || IF(ISBLANK(Account_Planning__c.PY_YTD_Sales__c), 0, Account_Planning__c.PY_YTD_Sales__c) > 800080, '$####.##M', '$#,###' )}' },
+              colors: ['#3498db'],
+              legend: {position: 'none'}
+            };
+
+            var barChart = new google.visualization.ColumnChart(document.getElementById('barchart'));
+            barChart.draw(chartData, options);
+          }
+
+          function drawBarTotalChart() {
+              if(printing) {
+                  chartWidth = printChardWidth;
+                  chartHeight = 200;
+                  formatTreshold = 300000
+              }
+
+              function formatVAxis(formatTreshold) {
+                  var previousThreeYearsTotalSales = ({!ISBLANK(Account_Planning__c.PY3_Sales__c)}) ? 0 : {!Account_Planning__c.PY3_Sales__c};
+                  var previousTwoYearsTotalSales = ({!ISBLANK(Account_Planning__c.PY2_Sales__c)}) ? 0 : {!Account_Planning__c.PY2_Sales__c};
+                  var previousYearTotalSales = ({!ISBLANK(Account_Planning__c.PY_Sales__c)}) ? 0 : {!Account_Planning__c.PY_Sales__c};
+                  if(previousThreeYearsTotalSales > formatTreshold || previousTwoYearsTotalSales > formatTreshold || previousYearTotalSales > formatTreshold){
+                      return '$####.##M'; }
+                  else { return '$#,###'; }
+              }
+
+              function formatTotalSales(num, formatTreshold) {
+                  var previousThreeYearsTotalSales = ({!ISBLANK(Account_Planning__c.PY3_Sales__c)}) ? 0 : {!Account_Planning__c.PY3_Sales__c};
+                  var previousTwoYearsTotalSales = ({!ISBLANK(Account_Planning__c.PY2_Sales__c)}) ? 0 : {!Account_Planning__c.PY2_Sales__c};
+                  var previousYearTotalSales = ({!ISBLANK(Account_Planning__c.PY_Sales__c)}) ? 0 : {!Account_Planning__c.PY_Sales__c};
+                  if(previousThreeYearsTotalSales > formatTreshold || previousTwoYearsTotalSales > formatTreshold || previousYearTotalSales > formatTreshold){
+                      return num / 1000000; }
+                  else { return num; }
+              }
+
+              var chartData2 = new google.visualization.DataTable();
+              chartData2.addColumn('string', 'Year');
+              chartData2.addColumn('number', 'Sales');
+              chartData2.addColumn({type: 'string', role: 'tooltip'});
+              chartData2.addRows([ ['{!Account_Planning__c.PY3_Year__c} Sales', formatTotalSales({!Account_Planning__c.PY3_Sales__c}, formatTreshold), '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Account_Planning__c.PY3_Sales__c}" /></apex:outputText>'], ['{!Account_Planning__c.PY2_Year__c} Sales', formatTotalSales({!Account_Planning__c.PY2_Sales__c}, formatTreshold), '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Account_Planning__c.PY2_Sales__c}" /></apex:outputText>'], ['{!Account_Planning__c.PY_Year__c} Sales', formatTotalSales({!Account_Planning__c.PY_Sales__c}, formatTreshold), '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Account_Planning__c.PY_Sales__c}" /></apex:outputText>'] ]);
+
+              var data = google.visualization.arrayToDataTable([ ['Year', 'Sales'], ['A', 123456], ['B', 234567] ]);
+                                  var options = { 'width':chartWidth, 'height':chartHeight, 'fontName':'Verdana', vAxis: {baseline: 0 ,format: formatVAxis(formatTreshold) }, colors: ['#3498db'], legend: {position: 'bottom'}, lineWidth:4, pointShape:'square', pointSize:8};
+
+              //var options = { 'width':chartWidth, 'height':chartHeight, vAxis: {baseline: 0, format: formatVAxis(formatTreshold) }, colors: ['#3498db'], legend: {position: 'none'}, lineWidth:4, pointShape:'square', pointSize:8};
+              var barChartTotal = new google.visualization.LineChart(document.getElementById('barchartTotal'));
+              barChartTotal.draw(chartData2, options);
+          }
+
+          // Callback that creates and populates a data table,
+          // instantiates the pie chart, passes in the data and
+          // draws it.
+          function drawPieChart() {
+
+            if(printing) {
+                chartWidth = printChardWidth;
+                chartHeight = 200;
+            }
+
+            // Create the data table.
+            var data = new google.visualization.arrayToDataTable([
+                ['Product', 'Sales'],
+                ['YTD - Commercial Sales', {!Account_Planning__c.YTD_Commercial_Sales__c}],
+                ['YTD - P&S | Mini-Splits | Other Sales', {!Account_Planning__c.YTD_P_S_Sales__c}],
+                ['YTD - Res Equip Sales', {!Account_Planning__c.YTD_Res_Equip_Sales__c}]
+
+            ]);
+
+
+            // Set chart options
+            var options = {
+                           'width':chartWidth,
+                           'height':chartHeight,
+                           //'colors':['#e74c3c','#F1C40F','#2ECC71'],
+                           'tooltip':{text: 'percentage', showColorCode: true},
+                            slices: {0:{color: '#e74c3c'},1:{color: '#F1C40F'},2:{color: '#2ECC71'}}
+                          };
+
+            // Instantiate and draw our chart, passing in some options.
+            var pieChart = new google.visualization.PieChart(document.getElementById('piechart'));
+            pieChart.draw(data, options);
+          }
+
+
+        </script>
+
+
+    </body>
+
+
+</apex:page>

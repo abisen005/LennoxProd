@@ -1,0 +1,24 @@
+<apex:page showHeader="false"
+           standardStylesheets="false"
+           sidebar="false"
+           docType="html-5.0"
+           applyBodyTag="False"
+           applyHtmlTag="False">
+ 
+ <apex:slds />
+<body class="slds-scope">   
+<style type="text/css">
+.slds-tabs--scoped__content {
+    display: none;
+}
+    .slds-scope .slds-tabs--scoped__content {
+        padding: 0;
+    }
+</style>
+    
+<apex:iframe src="https://qlik.lennoxintl.com/adfs/single/?appid=b0eed323-064c-4021-bce0-848116e98d48&obj=5ea57b6a-3986-4bac-8634-2f8f73732e6e&opt=ctxmenu&select=$::Parts%20Plus%20Region,LPP%20NORTH%20REGION,LPP%20SOUTH%20REGION" />
+
+
+
+</body>
+</apex:page>

@@ -1,0 +1,84 @@
+.THIS {
+    background-color: white;
+}
+.THIS .uiLegend-top > .required {color: #ea1c1c;position: absolute; left: 0; top: 0; margin-left: -8px;}
+.THIS .slds-button.tmdm-button {
+    line-height: 1;
+    width: auto;
+    height: auto;
+    border: none;
+}
+
+
+.THIS .slds-button.tmdm-button1 {
+    line-height: 1;
+  
+    border: none;
+}
+.THIS .slds-button.tmdm-button .slds-icon {
+	margin: .75rem;   
+}
+
+.THIS .slds-modal__container {
+    /*margin-top: 160px!important; */
+    /*max-height: 460px !important;*/
+    height: 100%;
+     border: 5px solid acacac;
+        width: 70%;
+    max-width: 840px;
+    min-width: 480px;
+    text-align: left;
+
+}
+
+.THIS .slds-modal__content {
+    overflow: auto;
+    overflow-y: auto;
+}
+.THIS .uiButton--default{box-shadow:none !important;}
+.THIS .uiButton--default .label {
+    white-space: unset !important;
+}
+.THIS .slds-button.tmdm-button .icon-update-scorecard {
+    background-color: #43B5B5;
+}
+
+.THIS .slds-button.tmdm-button .icon-update-forecast {
+    background-color: #81B4D6;
+}
+
+.THIS .slds-button.tmdm-button .icon-map-dealer {
+    background-color: #76C6EE;
+}
+
+.THIS .slds-button.tmdm-button .icon-new-contact {
+    background-color: #A094ED;
+}
+
+.THIS .slds-button.tmdm-button .icon-lowes-scorecard {
+    background-color: #004990;
+}
+.THIS .slds-button.tmdm-button .icon-costco-scorecard {
+	background-color: #ED3D40;
+}
+.THIS .slds-button.tmdm-button .icon-pre-call-planner {
+    background-color: #88C651;
+}
+
+.THIS .slds-button.tmdm-button .icon-cy-dbr {
+    background-color: #699BE1;
+}
+
+.THIS .slds-button.tmdm-button .icon-py-dbr {
+    background-color: #699BE1;
+}
+
+.THIS .slds-button.tmdm-button .icon-sales-summary {
+    background-color: #f2cf5b;
+}
+
+.THIS .slds-icon-standard-call.call-icon-override {
+    background-color: #0ABD74;
+    height:54.13px;
+    width:54.13px;
+}

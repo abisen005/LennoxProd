@@ -1,0 +1,18 @@
+<apex:page standardController="Home_Owners__c" >
+<apex:emailPublisher entityId="{!Home_Owners__c.id}"
+
+emailBodyFormat="textAndHTML"
+fromAddresses="consumeraffairs@lennoxind.com"
+subjectVisibility="readOnly"
+ccVisibility="hidden"
+bccVisibility="hidden"
+subject="Change to Homeowner Info - {!Home_Owners__c.name}"
+toVisibility="readOnly"
+toAddresses="rob.short@lennoxind.com"
+emailBody="  "/>
+
+
+<br/>
+
+
+</apex:page>

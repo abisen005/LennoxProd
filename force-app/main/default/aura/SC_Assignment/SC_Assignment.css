@@ -1,0 +1,42 @@
+.THIS .description {
+  border-top: 1px solid token(colorBorder);
+  border-bottom: 1px solid token(colorBorder);
+  display: inline-block;
+  margin: token(spacingMedium) 0;
+  padding: token(spacingMedium) token(spacingSmall) token(spacingLarge) token(spacingSmall); }
+
+.THIS .status {
+  font-weight: bold; }
+  .THIS .status--incomplete {
+    color: #ffb75d; }
+  .THIS .status--complete {
+    color: #028048; }
+
+.THIS .label {
+  margin-top: .75rem;
+  display: block; }
+
+.THIS .input {
+  background-color: #fff;
+  color: #16325c;
+  border: 1px solid #d8dde6;
+  border-radius: .25rem;
+  width: 100%;
+  transition: border .1s linear,background-color .1s linear;
+  display: inline-block;
+  padding: 0 1rem 0 .75rem;
+  line-height: 1.875rem;
+  min-height: calc(1.875rem + (1px * 2)); }
+
+.THIS .textarea {
+  background-color: #fff;
+  color: #16325c;
+  border: 1px solid #d8dde6;
+  border-radius: .25rem;
+  width: 100%;
+  transition: border .1s linear,background-color .1s linear;
+  resize: vertical;
+  padding: .5rem .75rem; }
+
+.THIS input[type=checkbox] {
+  display: block; }

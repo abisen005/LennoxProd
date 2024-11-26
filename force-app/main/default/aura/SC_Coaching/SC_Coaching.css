@@ -1,0 +1,5 @@
+.THIS .slds-tabs--default__content {
+  padding: 0; }
+
+.THIS .slds-tabs--default__nav .slds-tabs--default__item:only-child {
+  display: none; }

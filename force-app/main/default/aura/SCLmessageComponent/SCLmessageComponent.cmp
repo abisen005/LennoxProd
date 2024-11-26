@@ -1,0 +1,17 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global"
+                controller="FindSCL" >
+    <aura:handler name="init" value="{!this}" action="{!c.fetchSCLDetails}"/>
+    
+    <aura:attribute type="SupplyChainUpdate__c[]" name="SCLList"/>
+    <aura:attribute name="tableCol" type="List"/>
+    <aura:attribute name="sortedBy" type="String" default="Name"/>
+    <aura:attribute name="sortedDirection" type="String" default="asc"/>
+    
+    <lightning:datatable data="{! v.SCLList }" 
+                         columns="{! v.tableCol }"
+                         keyField="id"
+   onsort="{!c.updateColumnSorting}"
+                         sortedBy="{!v.sortedBy}"  
+                         sortedDirection="{!v.sortedDirection}"
+                         hideCheckboxColumn="true"/>
+</aura:component>

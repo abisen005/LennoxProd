@@ -1,0 +1,171 @@
+<apex:page cache="false" standardController="Event" extensions="PrecallPlannerExtension" standardStylesheets="false" doctype="html-5.0" sidebar="false" showHeader="false">
+    <head>
+        <title>TM Outbound Phone Call Inline Event Page</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="{!URLFOR($Resource.PlannerAssets, 'css/bootstrap.min.css')}" rel="stylesheet" />
+        <link href="{!URLFOR($Resource.PlannerAssets, 'css/style.css')}" rel="stylesheet" />
+    </head>
+    <body>
+        	<apex:pageBlock rendered="{!IF(Event.WhatId != NULL, TRUE, FALSE)}">
+            <apex:form >
+  				<div class="container">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Objectives</h3>
+                            </div>
+
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <label for="primary">Primary</label>
+                                    <apex:outputField id="primary" styleClass="form-control" value="{!precallPlannerObj.Primary_Objective__c}" />
+                                </li>
+                                <li class="list-group-item">
+                                    <label for="secondary">Secondary</label>
+                                    <apex:outputField id="secondary" styleClass="form-control" value="{!precallPlannerObj.Secondary_Objective__c}" />
+                                </li>
+                            </ul>
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Questions for the Call</h3>
+                            </div>
+                            <ul class="list-group">                
+                                <li class="list-group-item">
+                                    <label for="situation">Situation</label> <i>(Finding out facts about the dealer's situation - What questions do you not have the answer for already?)</i>:
+                                    <apex:outputField id="situation" styleClass="form-control" value="{!precallPlannerObj.Situation_Questions__c}" />
+                                </li>
+                                <li class="list-group-item">
+                                    <label for="problem">Problem</label> <i>(Asking about problems, difficulties, or dissatisfactions that exist which we can solve.)</i>:
+                                    <apex:outputField id="problem" styleClass="form-control" value="{!precallPlannerObj.Problem_Questions__c}" />
+                                </li>
+                                <li class="list-group-item">
+                                    <label for="implication">Implication</label> <i>(Asking about the effects or consequences of their problems if they don't take action.)</i>:
+                                    <apex:outputField id="implication" styleClass="form-control" value="{!precallPlannerObj.Implication_Questions__c}" />
+                                </li>
+                                <li class="list-group-item">
+                                    <label for="need-playoff">Need/Payoff</label> <i>(Asking about the value or usefulness of our proposed solution to their needs.)</i>:
+                                    <apex:outputField id="need-playoff" styleClass="form-control" value="{!precallPlannerObj.Need_Payoff_Questions__c}" />
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="page-break"></div>
+
+                        <div class="row visible-print">
+                            <div class="col-sm-12">
+                                <h1 class="pull-right">TM Outbound Phone Call Planner</h1>
+                                <img src="{!URLFOR($Resource.logo150)}" />
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <hr />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h2 class="panel-title">Potential Objections and Concerns</h2>
+                            </div>
+
+                            <table class="table">
+                                <tr>
+                                    <td class="col-xs-6"><label for="primary-objections">Objections to Primary Objective</label>:
+                                        <apex:outputField id="primary-objections" styleClass="form-control" value="{!precallPlannerObj.Objections_to_Primary_Objective__c}" /></td>
+                                    <td class="col-xs-6"><label for="primary-response">Our Response</label>:
+                                        <apex:outputField id="primary-response" styleClass="form-control" value="{!precallPlannerObj.Response_to_Primary_Objections__c}" /></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="secondary-objections">Objections to Secondary Objective</label>:
+                                    <apex:outputField id="secondary-objections" styleClass="form-control" value="{!precallPlannerObj.Objections_to_Secondary_Objective__c}" /></td>
+                                    <td><label for="secondary-response">Our Response</label>:
+                                    <apex:outputField id="secondary-response" styleClass="form-control" value="{!precallPlannerObj.Response_to_Secondary_Objections__c}" /></td>
+                                </tr>
+                            </table>
+                        </div>
+            
+                        <!--<div class="panel panel-default" style="{!If(Event.Event_Type__c == 'Phone Call - Outbound', 'display:none', 'display:block')}">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Meeting 
+                                </h3>
+                            </div>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <label for="key-dealer-participants">Key Dealer Participants</label> <i>(Name/Role)</i>:
+                                    <apex:outputField id="key-dealer-participants" styleClass="form-control" value="{!precallPlannerObj.Key_Dealer_Participants__c}" />
+                                </li>
+                                <li class="list-group-item">
+                                    <label for="key-lennox-participants">Key Lennox Participants</label> <i>(Name/Role)</i>:
+                                    <apex:outputField id="key-lennox-participants" styleClass="form-control" value="{!precallPlannerObj.Key_Lennox_Participants__c}" />
+                                </li>
+                            </ul>
+                        </div>-->
+
+                        <div class="page-break"></div>
+                        <div class="row visible-print">
+                            <div class="col-sm-12">
+                                <h1 class="pull-right">TM Outbound Phone Call Planner</h1>
+                                <img src="{!URLFOR($Resource.logo150)}" />
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <hr />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h2 class="panel-title">Agenda Outline</h2>
+                            </div>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <label for="agenda-outline">Agenda Outline</label>:
+                                    <apex:outputField id="agenda-outline" styleClass="form-control long-textarea" value="{!precallPlannerObj.Meeting_Agenda__c}" />
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="page-break"></div>
+
+                        <div class="row visible-print">
+                            <div class="col-sm-12">
+                                <h1 class="pull-right">TM Outbound Phone Call Planner</h1>
+                                <img src="{!URLFOR($Resource.logo150)}" />
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <hr />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Insight Reference Material</h3>
+                            </div>
+                            <ul class="list-group">
+                                <!--<li class="list-group-item">
+                                    <label for="key-reference-insights">Key Reference Insights</label> <i>(What unique insight or strength does Lennox bring to the topic at hand?)</i>:
+                                    <apex:outputField id="key-reference-insights" styleClass="form-control" value="{!precallPlannerObj.Key_Reference_Insights__c}"/>
+                                </li>-->
+                                <li class="list-group-item">
+                                    <label for="supporting-insight-materials">Supporting Insight Materials</label> <i>(What reference materials will be needed to support the insight topic?)</i>:
+                                    <apex:outputField id="supporting-insight-materials" styleClass="form-control" value="{!precallPlannerObj.Supporting_Insight_Materials__c}" />
+                                </li>
+                            </ul>
+                        </div>
+            
+                        <div class="panel panel-default last-panel">
+                            <div class="panel-heading">
+                                <h2 class="panel-title">Next Steps | Follow-Up</h2>
+                            </div>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <apex:outputField styleClass="form-control long-textarea" value="{!precallPlannerObj.Next_Steps__c}" />
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+              </apex:form>
+        </apex:pageBlock>
+    </body>
+</apex:page>

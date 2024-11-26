@@ -1,0 +1,5 @@
+.THIS.container {width:1000px; margin:0 auto;}
+.THIS .thankYou{border-radius: 3px; margin-top: 24px; padding-top: 9px;text-align: center;}
+.THIS .heading{margin-left:21px;margin-top: 10px; font-size:20px; color:#000; font-weight:bold;}
+.THIS .para{ margin-top: 20px; font-size: 14px; margin-bottom: 22px; margin-left: 20px; margin-right: 20px;color: #000;text-align: left;}
+.THIS .inputLab{background: #a21919;padding: 6px 20px; text-align: center;margin-top:10px; color: #fff; font-size: 14px;border: 1px solid #8e1212; border-radius:5px;font-weight: bold;margin-bottom:14px;}

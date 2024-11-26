@@ -1,0 +1,38 @@
+<aura:component implements="force:appHostable,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickAction" 
+                access="global" controller="AddToCalendarController">
+    <aura:attribute name="Event" type="Object" default = "{ 'sobjectType': 'Event',
+                                                          'Type': '',
+                                                          'Subject': '',
+                                                          'StartDateTime': '',
+                                                          'EndDateTime': '',
+                                                          }"/>
+    <aura:attribute name="confirmationModel" type="Boolean" default = "false"/>
+     <aura:attribute name="redirectURL" Type ="string"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    
+    <!-- Confirmation Model --> 
+    <aura:if isTrue="{!v.confirmationModel}">
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon  slds-modal__close slds-button_icon-inverse" title="Close" onclick="{!c.closeConfirmationModel}">
+                        <lightning:icon class="close" iconName="utility:close" alternativeText="close!" title="close" />
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Add to Calendar</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <p>Click Add Now to add this event to Outlook or Remind Me Later to add at another time. The Dismiss Reminder button will remove future notifications for this event.</p>
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" data-addtocal="false" onclick="{!c.addToCalendar}" >Dismiss Reminder</button>
+                    <button class="slds-button slds-button_neutral" onclick="{!c.closeConfirmationModel}" >Remind Me Later</button>
+                    <button class="slds-button slds-button_brand" data-addtocal="true" onclick="{!c.addToCalendar}">Add Now</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+</aura:component>

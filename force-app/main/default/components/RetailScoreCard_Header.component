@@ -1,0 +1,38 @@
+<apex:component controller="RetailScorecard_HeaderController" layout="none">
+    
+    <apex:attribute name="level" type="String" description="Report level - Dealer, Territory, District, etc." required="true" assignTo="{!headerLevel}" />
+    <apex:attribute name="scorecardId" type="String" description="Relevant id based on level (account id, district id, etc.)" required="true" assignTo="{!headerId}" />
+    <apex:attribute name="img" type="String" description="Image url for retail logo." required="true" />
+    <apex:attribute name="retailType" type="String" description="Retail type (lowes, homeDepot, costsco)" required="true" assignTo="{!headerRetailType}" />
+    <apex:attribute name="retailLabel" type="String" description="Retail type (Lowe's, Home Depot, Costsco)" required="true" />
+    <apex:attribute name="headerData" type="List" description="List of relevant data displayed in header" required="false" />
+    <apex:attribute name="lastUpdated" type="String" description="Formatted last updated dates" required="false" />
+    <apex:attribute name="subHeader" type="String" description="Smaller text beneath main header." required="false" />
+    <div class="header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-6 col-sm-3 col-pr-3">
+                    <apex:image url="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" />
+                </div>
+                <div class="col-xs-6 col-sm-3 col-sm-push-6 col-pr-3 col-pr-push-6">
+                    <apex:image styleClass="pull-right" url="{!img}" height="30" />
+                </div>
+                <div class="col-xs-12 col-sm-6 col-sm-pull-3 col-pr-6 col-pr-pull-3">
+                    <h1 class="text-center header__h1">{!retailLabel} Performance Scorecard</h1>
+                    <apex:outputText rendered="{!!ISBLANK(subHeader)}">
+                        <div class="text-center">
+                            <apex:outputText value="{!subHeader}" escape="false" />
+                        </div>
+                    </apex:outputText>
+                </div>
+            </div>
+            <div class="content-block content-block--{!retailType}">
+                <apex:repeat value="{!scorecardData}" var="item">
+                    <div class="content-block__item">
+                        {!item}
+                    </div>
+                </apex:repeat>
+            </div>
+        </div>
+    </div>
+</apex:component>

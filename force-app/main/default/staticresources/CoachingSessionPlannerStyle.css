@@ -1,0 +1,235 @@
+.user-added {
+	display: none;
+}
+.selected .user-added {
+    display: table-cell;
+}
+.selected .search-user {
+	display: none;
+}
+.user-added .success {
+	color: #5CB85C;
+}
+.user-added .remove-user {
+	color: #D9534F;
+}
+.panel h4 {
+    border-bottom: 1px solid #CCC;
+	margin-bottom: 15px;
+    font-size: 16px;
+}
+.select-user .row {
+	margin-top: 20px;   
+}
+.select-user h4 {
+    margin-bottom: 5px;
+}
+.select-user .requiredInput {
+    display: none;
+}
+.select-user__submit {
+    margin: 20px 0;
+}
+span.form-control {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+.panel label {
+    padding-top: 10px;
+}
+.block {
+    display: block;
+}
+.hide-for-web {
+    display: none;
+}
+@media print {
+    h1 {
+        font-size: 15pt;
+    }
+    body {
+        font-size: 12pt;
+    }
+    textarea.form-control {
+        box-shadow: none;
+        -webkit-box-shadow: none;
+    }
+    label {
+        font-weight: bold;
+    }
+    .panel {
+        margin-top: 0;
+    }
+    .output-text {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 3px;
+    }
+    .form-group {
+        margin-bottom: 0;
+    }
+    .hide-for-print {
+        display:none;
+    }
+    .hide-for-web {
+        display: block;
+    }
+    .col-pr-1, .col-pr-2, .col-pr-3, .col-pr-4, .col-pr-5, .col-pr-6, .col-pr-7, .col-pr-8, .col-pr-9, .col-pr-10, .col-pr-11, .col-pr-12 {
+        float: left;
+    }
+    .col-pr-12 {
+        width: 100%;
+    }
+    .col-pr-11 {
+        width: 91.66666667%;
+    }
+    .col-pr-10 {
+        width: 83.33333333%;
+    }
+    .col-pr-9 {
+        width: 75%;
+    }
+    .col-pr-8 {
+        width: 66.66666667%;
+    }
+    .col-pr-7 {
+        width: 58.33333333%;
+    }
+    .col-pr-6 {
+        width: 50%;
+    }
+    .col-pr-5 {
+        width: 41.66666667%;
+    }
+    .col-pr-4 {
+        width: 33.33333333%;
+    }
+    .col-pr-3 {
+        width: 25%;
+    }
+    .col-pr-2 {
+        width: 16.66666667%;
+    }
+    .col-pr-1 {
+        width: 8.33333333%;
+    }
+    .col-pr-pull-12 {
+        right: 100%;
+    }
+    .col-pr-pull-11 {
+        right: 91.66666667%;
+    }
+    .col-pr-pull-10 {
+        right: 83.33333333%;
+    }
+    .col-pr-pull-9 {
+        right: 75%;
+    }
+    .col-pr-pull-8 {
+        right: 66.66666667%;
+    }
+    .col-pr-pull-7 {
+        right: 58.33333333%;
+    }
+    .col-pr-pull-6 {
+        right: 50%;
+    }
+    .col-pr-pull-5 {
+        right: 41.66666667%;
+    }
+    .col-pr-pull-4 {
+        right: 33.33333333%;
+    }
+    .col-pr-pull-3 {
+        right: 25%;
+    }
+    .col-pr-pull-2 {
+        right: 16.66666667%;
+    }
+    .col-pr-pull-1 {
+        right: 8.33333333%;
+    }
+    .col-pr-pull-0 {
+        right: auto;
+    }
+    .col-pr-push-12 {
+        left: 100%;
+    }
+    .col-pr-push-11 {
+        left: 91.66666667%;
+    }
+    .col-pr-push-10 {
+        left: 83.33333333%;
+    }
+    .col-pr-push-9 {
+        left: 75%;
+    }
+    .col-pr-push-8 {
+        left: 66.66666667%;
+    }
+    .col-pr-push-7 {
+        left: 58.33333333%;
+    }
+    .col-pr-push-6 {
+        left: 50%;
+    }
+    .col-pr-push-5 {
+        left: 41.66666667%;
+    }
+    .col-pr-push-4 {
+        left: 33.33333333%;
+    }
+    .col-pr-push-3 {
+        left: 25%;
+    }
+    .col-pr-push-2 {
+        left: 16.66666667%;
+    }
+    .col-pr-push-1 {
+        left: 8.33333333%;
+    }
+    .col-pr-push-0 {
+        left: auto;
+    }
+    .col-pr-offset-12 {
+        margin-left: 100%;
+    }
+    .col-pr-offset-11 {
+        margin-left: 91.66666667%;
+    }
+    .col-pr-offset-10 {
+        margin-left: 83.33333333%;
+    }
+    .col-pr-offset-9 {
+        margin-left: 75%;
+    }
+    .col-pr-offset-8 {
+        margin-left: 66.66666667%;
+    }
+    .col-pr-offset-7 {
+        margin-left: 58.33333333%;
+    }
+    .col-pr-offset-6 {
+        margin-left: 50%;
+    }
+    .col-pr-offset-5 {
+        margin-left: 41.66666667%;
+    }
+    .col-pr-offset-4 {
+        margin-left: 33.33333333%;
+    }
+    .col-pr-offset-3 {
+        margin-left: 25%;
+    }
+    .col-pr-offset-2 {
+        margin-left: 16.66666667%;
+    }
+    .col-pr-offset-1 {
+        margin-left: 8.33333333%;
+    }
+    .col-pr-offset-0 {
+        margin-left: 0%;
+    }
+}
+}

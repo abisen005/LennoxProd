@@ -1,0 +1,19 @@
+<aura:event type="APPLICATION" description="Events fired by the Scan Business Card app">
+
+    <!--
+        ACCOUNT_SELECTED
+            PAYLOAD: {
+                        account: Account object
+                     }
+    -->
+
+
+    <aura:attribute name="type"
+                    type="String"
+                    description="ACCOUNT_SELECTED: Fired when an account is selected." />
+
+
+    <aura:attribute name="payload"
+                    type="Object"
+                    description="An object representing the event payload." />
+</aura:event>

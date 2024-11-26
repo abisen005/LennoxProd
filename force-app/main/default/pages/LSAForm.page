@@ -1,0 +1,48 @@
+<apex:page sidebar="false" showHeader="false">
+    
+    <apex:includeLightning />
+    
+    <div id ="LSAFormdiv"/>  
+    
+    <!--<script>
+      // Here 'VfApp' Is Lightning Application Name
+        $Lightning.use("c:LSAFormltngOutApp", 
+        function() {
+            $Lightning.createComponent("c:LSAForm",
+            { 
+              // Set Lightning Component Attributes Property before creating Lightning Component In Visualforce page 
+            },
+           "LSAFormdiv",
+            function(component) {
+            // create component Callback, Lightning Component has been Created,
+            // Now you can set more lightning Component attributes here,
+            // and do more cool stuff here
+            //component.set("v.accId" , '{!$CurrentPage.parameters.recId}');
+            });
+     });
+ </script> -->
+ 
+ <script src="{!$Label.SiteBaseURL}/LSAReportingForm/lightning/lightning.out.js">  </script>
+<!-- <script src="{!$Label.SiteBaseURL}/LSAReportingForm/lightning/lightning.out.js">  </script> -->
+    
+    
+    
+    <script>
+    $Lightning.use("c:LSAFormltngOutApp",    // name of the Lightning app
+                   function() {                  // Callback once framework and app loaded
+                       $Lightning.createComponent(
+                           "c:LSAForm", // top-level component of your app
+                           { },                  // attributes to set on the component when created
+                           "LSAFormdiv",   // the DOM location to insert the component
+                           function(cmp) {
+                               //colsole.log(JSON.stringify(cmp));
+                               // callback when component is created and active on the page
+                           }
+                       );
+                   },
+                   '{!$Label.SiteBaseURL}/LSAReportingForm'  // Community endpoint 
+                  );
+    </script>
+    
+    
+</apex:page>

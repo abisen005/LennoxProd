@@ -1,0 +1,12 @@
+.THIS .progress {
+  width: 100%;
+  display: table; }
+
+.THIS .progress-item {
+  display: table-cell;
+  background-color: #D8DDE6;
+  height: 15px;
+  border: 1px solid white;
+  border-radius: .25rem; }
+  .THIS .progress-item--complete {
+    background-color: #4BCA81; }

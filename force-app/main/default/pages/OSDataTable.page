@@ -1,0 +1,466 @@
+<apex:page standardStylesheets="false" sideBar="false" applyHtmlTag="false" showHeader="false"
+           Controller="OSDataTableController" renderAs=""  Title="OS Data">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+    <apex:variable var="c" value="{!type}" />
+    <apex:slds />
+    <html>   
+        <head>
+            <style type="text/css">
+                @page {
+                margin:50%;
+                
+                @top-left {
+                content: counter(page);
+                }
+                }
+                
+            </style>
+            <style>    
+                /*VF page*/
+                body {
+                font-family: sans-serif;
+                font-weight:normal;
+                text-align: -webkit-center;
+                
+                }
+                
+                .vfPage *{
+                border:0px solid #ddd;  width:4px !Important;border-top:none; font-weight:bolder;font-family: sans-serif; text-align: center;cell-padding:8;
+                }
+                
+                .btnDiv {
+                display: none;
+                }
+                
+                .pdf-header-title
+                {
+                font-size: 20px;
+                font-weight: bold;
+                border-bottom:2px solid #8a8a8a; 
+                border-right:2px solid #8a8a8a;
+                }
+                
+                .container {
+                max-width: 1300px;
+                margin: 0 auto;
+                padding: 20px;
+                }
+                
+                .header-table {
+                table-layout: fixed;
+                width: 100%;
+                
+                }
+                
+                .header-yr-info {
+                text-align: right;
+                }
+                
+                .title-text {
+                font-size: 18px;
+                font-weight: 700;
+                }
+                
+                .vspace {
+                margin-top: 10px;
+                margin-bottom: 10px;
+                }
+                
+                .tableStyle tr th {
+                background: #A80C35;
+                color: #fff;
+                padding: 8px 5px;
+                font-size: 15px;
+                -fs-table-paginate: paginate;
+                }
+                
+                .tableStyle2 tr th {
+                background: #f8eff3;
+                color: #1d1b1b;
+                padding: 8px 5px;
+                font-size: 15px;
+                }
+                
+                .tableStyle tr td {
+                padding: 8px 5px;
+                font-weight: bold;
+                -fs-table-paginate: paginate;
+                }
+                
+                .page-break {
+                page-break-after: always;
+                }
+                
+                .header {
+                margin-bottom: 20px;
+                margin-top: 15px;
+                }
+                
+                .bigSpace {
+                height: 30px;
+                }
+                
+                h2.title-text>u {
+                font-size: 18px;
+                }
+                
+                ul.list-view {
+                list-style-position: inside;
+                }
+                
+                .footer {
+                margin-top: 30px;
+                }
+                
+                table.header-table tr td,
+                table.footer-table tr td {
+                padding: 8px 5px;
+                }
+                
+                button {
+                line-height: 25px;
+                padding: 0 10px;
+                border: 1px solid #ccc;
+                }
+                
+                #ms-my-select {
+                width: 100%;
+                }
+                
+                #ms-my-select-user {
+                width: 100%;
+                }
+                
+                
+                @media all {
+                
+                /* NOT NEEDED
+                .container * {
+                font-family: 'Open Sans', sans-serif !important;
+                font-size: 1px;
+                }
+                
+                .loader {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.8);
+                }
+                
+                .bgBlack {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                bottom: 0;
+                z-index: 9002;
+                width: 100%;
+                height: 100%;
+                }
+                
+                .pageBreak {
+                display: none;
+                }
+                
+                .signPdf {
+                display: none;
+                }
+                
+                
+                .pageBreak {
+                display: none;
+                }
+                
+                .signPdf {
+                display: none;
+                }
+                
+                .pull-right {
+                float: left;
+                margin-right: 15px;
+                }
+                */
+                
+                .btnDiv {
+                display: block;
+                }
+                }
+                
+                .addOnClass{
+                font-size:20px !important;
+                }
+                
+                
+                
+                @media print {
+                
+                
+                
+                .pdf-header-title{
+                font-size: 10px !important;
+                
+                padding-left: 100px !important;
+                }
+                
+                .tableHead-break {
+                display: table-header-group;
+                
+                
+                }
+                
+                .table {
+                page-break-inside: auto -fs-table-paginate: paginate;
+                
+                }
+                
+                @page {
+                margin: 20mm 7mm 20mm;  
+                @top-center {
+                content: element(header); 
+                }
+                
+                @bottom-left {
+                content: element(footer);
+                }
+
+                }
+ 
+                table, tr, td, th, tbody, thead, tfoot {
+                page-break-inside: avoid !important;
+                }
+                
+                /* PDF Column Font Size*/
+                .btn {
+                font-size: 9px ;
+                width:1px !important;   
+                }
+                
+                /* PDF Rows Font Size*/
+                .vfPage {
+                font-size: 8px !important;
+                font-weight:700;
+                text-align: center;
+                }
+                
+                p{
+                font-weight:bold;
+                font-size: 10px !important;
+                font-weight:solid;
+                text-align: center;
+                }
+                
+                .pdf-header-title{
+                font-size: 10px ;
+                text-align: center;
+                }
+ 
+                .container * {
+                font-family: sans-serif !important;
+                text-align: center;
+                width: 2px;
+                }
+                
+                h2.title-text>u,
+                .title-text,
+                .tableStyle tr th {
+                -fs-table-paginate: paginate;
+                font-size: 2px;
+                }
+                
+                .tableStyle2 tr th {
+                font-size: 2px;
+                }
+                
+                .tableStyle tr th {
+                border: 1px solid #ded8d8;
+                -fs-table-paginate: paginate;
+                
+                }
+  
+                img.logoDoc {
+                display: block;
+                width: 100px !important;
+                }
+                
+                div.header {
+                padding: 0px;
+                position: running(header);
+                font-size: 2px;
+                }
+                
+                div.footer {
+                display: block;
+                padding: 0px;
+                position: running(footer);
+                }
+                
+                .pagenumber:before {
+                content: counter(page);
+                }
+                
+                .pagecount:before {
+                content: counter(pages);
+                }
+                
+                .page-break {
+                display: block;
+                page-break-after: always;
+                }
+                
+                *table {
+                fs-table-paginate: paginate;
+                width: 2px;
+                text-align: center;
+                }
+                
+                .pagenumber:before {
+                content: counter(page);
+                }
+                
+                .pagecount:before {
+                content: counter(pages);
+                }
+                
+                .page-break {
+                display: block;
+                page-break-after: always;
+                }
+                
+                .slds-modal,
+                .print-btn,
+                .slds-backdrop.slds-backdrop--open {
+                display: none;
+                font-family: 'Open Sans', sans-serif !important;
+                font-size: 10px;
+                page-break-after: always;
+                }
+      
+                }
+                
+                ul li {
+                
+                list-style-type: disc;
+                
+                text-align: left;
+                
+                }
+                
+                .alignleft {
+                float: left;
+                }
+                
+                .alignright {
+                float: right;
+                }
+                
+                .btn {
+                text-decoration: none;
+                color: black;
+                }
+                .headerRow {background-color:#A80C35;color:#FFFFFF;
+                
+                }
+                
+                tr, th, td{page-break-inside: avoid !important;
+                padding-bottom: 15px;
+                text-align: center;
+                }
+            </style>
+            <script> 
+            var previousOnload = window.onload;
+            window.onload = function() { 
+                if (previousOnload) { previousOnload(); } alert('loading...');
+            } 
+            </script>
+            <script>
+            
+            window.onload = function () {
+                console.log('type---',{!c});
+                alert({!c});
+                
+                document.getElementsClassName("dataTable td").className = ' addOnClass';
+            };
+            </script>
+        </head>   
+        <apex:form >  
+            <table width="100%" cellspacing="0" cellpadding="0" border="0" class="btnDiv" >
+                <td>
+                    <div class="print-btn" ><!---->
+                        <!--   <button type="button" onclick="sendViaDocuSign(event);" class="docuSign">
+Select Dealer Contacts To Send via Docusign
+</button> -->
+                        <c:MulesoftPrintPDF buttonClass="btn btn-small print pull-right"   name="Lennox Incentive Agreement" border="20px"/> 
+                    </div> 
+                </td>
+            </table>
+  
+            <div class="header" > 
+                <table class="header-table" cellspacing="0" cellpadding="8" width="100%" border="0" style="table-layout:fixed;">
+                    <tr>
+                        <td style="border-bottom:2px solid #8a8a8a;" width="10">
+                            <div class="logo-image"> 
+                                <img src="data:image/png;base64,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
+                                          " width="135" height="45" />   
+                            </div> 
+                        </td>
+                        <td class="pdf-header-title" align="center"><b>
+                            <p title="Sample Title">
+                                <apex:repeat value="{!headingMap}" var="key" rendered="{!IF(headingMap != null, true, false)}"> 
+                                    {!key} - {!headingMap[key]}
+                                </apex:repeat>
+                            </p>
+                            </b></td>
+                        <td class="header-yr-info" width="100" style="font-weight: bold;;font-size:20px;border-bottom:2px solid #8a8a8a; text-align:center;"><apex:outputText value="{0,date, yyyy}" style=" "> <apex:param value="{!NOW()}" /> </apex:outputText></td>
+                    </tr>
+                </table>
+            </div> 
+         <apex:outputPanel rendered="{!if(type=='Warranty' , true ,false)}">  
+                <apex:variable var="warrantyNum" value="{!warrantyNumber}" />
+                
+                <p title="Sample Title" style="font-weight: bold">Warranty Claim - {!warrantyNum}</p>
+            </apex:outputPanel>
+
+            <apex:outputPanel rendered="{!if(type=='Items' , true ,false)}">  
+                <apex:variable var="orderNum" value="{!orderNumber}" />
+                
+                <p title="Sample Title" style="font-weight: bold">Order Number - {!orderNum}</p>
+            </apex:outputPanel>
+            
+            <apex:pageBlock >  
+                <apex:pageBlockSection columns="2" >
+                    <apex:pageBlockTable value="{!data2}" var="r" cellspacing="0" cellpadding="8" width="100%"   >
+                        
+                        
+                        <apex:repeat value="{!columns1}" var="fld"  >
+                            {!fld}
+                            <apex:column value="{!r[fld]}"  styleClass="vfPage"   >
+                                <apex:facet name="header">
+                                    <apex:commandLink styleClass="btn"  value="{!fld}"  style="background:#A80C35; border:1px  #ddd;  color:#fff;text-align: center; text-align-last: center;" >        
+                                    </apex:commandLink>
+                                </apex:facet>
+                            </apex:column>   
+                        </apex:repeat>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>
+                
+                <apex:pageBlockSection columns="1" >
+                    <apex:pageBlockTable value="{!data}" var="r" cellspacing="0" cellpadding="8" width="100%"   >
+                        <apex:repeat value="{!columns}" var="fld">
+                            {!fld}
+                            <apex:column value="{!r[fld]}" styleClass="vfPage"   >
+                                <apex:facet name="header">
+                                    <apex:commandLink styleClass="btn"  value="{!fld}" style="background:#A80C35; border:1px  #ddd;  color:#fff;text-align: center; text-align-last: center;" >        
+                                    </apex:commandLink>
+                                </apex:facet>
+                            </apex:column>   
+                        </apex:repeat>
+                    </apex:pageBlockTable>
+                </apex:pageBlockSection>    
+            </apex:pageBlock>
+        </apex:form>
+        
+    </html>
+</apex:page>

@@ -1,0 +1,785 @@
+<apex:page cache="false" standardController="Event" extensions="PrecallPlannerExtension" standardStylesheets="false" doctype="html-5.0" sidebar="false" showHeader="false">
+    <head>
+        <title>Outbound Phone Call request</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="{!URLFOR($Resource.PlannerAssets, 'css/bootstrap.min.css')}" rel="stylesheet" />
+        <link href="{!URLFOR($Resource.PlannerAssets, 'css/style.css')}" rel="stylesheet" />
+        <script src="https://code.jquery.com/jquery.js"></script>
+        <script src="{!URLFOR($Resource.PlannerAssets, 'js/bootstrap.min.js')}"></script>
+        <script src="{!URLFOR($Resource.PlannerAssets, 'js/jquery.number.min.js')}"></script>
+        <script type="text/javascript">
+            var __sfdcSessionId = '{!GETSESSIONID()}';
+        </script>
+        <script src="../../soap/ajax/29.0/connection.js"></script>
+        <c:TrackPageView lenPageName="Outbound Phone Call" />
+            <style>
+                @media print{
+                    .panel-default {border:0 none;}
+                    li.list-group-item {border:1px solid black !important;}
+                    .topSpace {margin-top: 2em;}
+                    .row.visible-print {margin-top:15px;}
+                }
+            </style>
+        </head>
+        <body>
+            
+            <apex:pageBlock rendered="{!IF(Event.WhatId = NULL, TRUE, FALSE)}">
+                <script>
+                $(document).ready(function() {
+                (function($) {
+                    $.QueryString = (function(a) {
+                        if (a == "") return {};
+                        var b = {};
+                        for (var i = 0; i < a.length; ++i)
+                        {
+                            var p=a[i].split('=');
+                            if (p.length != 2) continue;
+                            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+                        }
+                        return b;
+                    })(window.location.search.substr(1).split('&'))
+                })(jQuery);
+                var aId = $.QueryString['aid'];
+                if(typeof aId !== 'undefined') {
+                    var eventResult = sforce.connection.query("SELECT Id FROM Event WHERE WhatId = " + "'" + aId + "'" + " ORDER BY CreatedDate DESC LIMIT 1");
+                    var eventRecord = eventResult.getArray('records');
+                    var eId = eventRecord[0].Id;
+                    window.location = '/apex/TMPreCallPlanner?id=' + eId;
+                }
+            });
+        </script>
+    </apex:pageBlock>
+    <apex:pageBlock rendered="{!IF(Event.WhatId != NULL, TRUE, FALSE)}">
+        <apex:form >
+            <apex:actionFunction name="save" action="{!QuickSave}" rerender="planner-details" />
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h1 class="pull-right ">Call Agenda</h1>
+                        <img src="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Customer Information</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row form-horizontal">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-xs-6 control-label">Dealer Name</label>
+                                    <div class="col-xs-6 output-text">
+                                        <span class="name"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-6 control-label">Phone Call Date/Time</label>
+                                    <div class="col-xs-6 output-text">
+                                        <c:FormatDateTime date_Timevalue="{!Event.StartDateTime}"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-6 control-label">Phone Call Location</label>
+                                    <div class="col-xs-6 output-text">
+                                        {!Event.Location}
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-xs-6 control-label">Phone Call Length</label>
+                                    <div class="col-xs-6 output-text">
+                                        {!Event.DurationInMinutes} Minutes
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="col-xs-6 control-label">Customer Number</label>
+                                    <div class="col-xs-6 output-text">
+                                        
+                                        <span class="cnum"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group js-hide-dealer-view">
+                                    <label class="col-xs-6 control-label">YTD Sales</label>
+                                    <div class="col-xs-6 output-text">
+                                        <span class="ytds"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group js-hide-dealer-view">
+                                    <label class="col-xs-6 control-label">Prior Year YTD Sales</label>
+                                    <div class="col-xs-6 output-text">
+                                        <span class="pytds"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group js-hide-dealer-view">
+                                    <label class="col-xs-6 control-label">YTD Sales Delta</label>
+                                    <div class="col-xs-6 output-text">
+                                        <span class="delta"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--
+                <apex:outputPanel rendered="{!showRetention}" layout="none">
+                    <div class="panel panel-default js-hide-dealer-view">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Customer Retention Index (CRI) Metrics</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row form-horizontal">
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">CRI Score</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="cris"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">E-Invoice</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="einv"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">HVAC LS Participation</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="hvac"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">DaveNet R12 Range</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="davenet"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">DLPD</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="dlpd"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">Premier Dealer (FP/FS)</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="prem"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">Product Profile</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="prod"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">CAP Package</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="cap"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">Spiffs</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="spiff"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">Rebates</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="rebate"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">Marketing Roll-off</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="mark"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">Stocking (Product Benefits)</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="stock"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">Marketing Benefit Range</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="markben"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-xs-6 control-label">Marketing Program Benefits</label>
+                                        <div class="col-xs-6 output-text">
+                                            <span class="markpro"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </apex:outputPanel>--> 
+                <div class="page-break js-hide-dealer-view" style="page-break-after:always;"></div>
+                
+                <div class="row visible-print js-hide-dealer-view">
+                    <div class="col-sm-12">
+                        <h1 class="pull-right">Call Agenda</h1>
+                        <img src="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel panel-default js-hide-dealer-view">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Objectives</h3>
+                    </div>
+                    
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <label for="primary">Primary</label>
+                            <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Primary_Objective__c}" styleClass="" /></span>
+                            <span class="hidden-print"><apex:inputField id="primary" styleClass="form-control " value="{!precallPlannerObj.Primary_Objective__c}" /></span>
+                        </li>
+                        <li class="list-group-item">
+                            <label for="secondary">Secondary</label>
+                            <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Secondary_Objective__c}" styleClass="" /></span>
+                            <span class="hidden-print"><apex:inputField id="secondary" styleClass="form-control " value="{!precallPlannerObj.Secondary_Objective__c}" /></span>
+                        </li>
+                    </ul>
+                    
+                    
+                    <div class="page-break js-hide-dealer-view" style="page-break-after:always;"></div>
+                    <div class="row visible-print js-hide-dealer-view">
+                        <div class="col-sm-12">
+                            <h1 class="pull-right">Call Agenda</h1>
+                            <img src="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" />
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <hr />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-heading topSpace">
+                        <h3 class="panel-title">Questions for Call</h3>
+                    </div>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <label for="situation">Situation</label> <i>(Finding out facts about the dealer's situation - What questions do you not have the answer for already?)</i>
+                            <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Situation_Questions__c}" styleClass="" /></span>
+                            <span class="hidden-print"><apex:inputField id="situation" styleClass="form-control " value="{!precallPlannerObj.Situation_Questions__c}" /></span>
+                        </li>
+                        <li class="list-group-item">
+                            <label for="problem">Problem</label> <i>(Asking about problems, difficulties, or dissatisfactions that exist which we can solve.)</i>
+                            <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Problem_Questions__c}" styleClass="" /></span>
+                            <span class="hidden-print"><apex:inputField id="problem" styleClass="form-control " value="{!precallPlannerObj.Problem_Questions__c}" /></span>
+                        </li>
+                        <li class="list-group-item">
+                            <label for="implication">Implication</label> <i>(Asking about the effects or consequences of their problems if they don't take action.)</i>
+                            <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Implication_Questions__c}" styleClass="" /></span>
+                            <span class="hidden-print"><apex:inputField id="implication" styleClass="form-control " value="{!precallPlannerObj.Implication_Questions__c}" /></span>
+                        </li>
+                        <div class="page-break js-hide-dealer-view" style="page-break-after:always;"></div>
+                        <div class="row visible-print js-hide-dealer-view">
+                            <div class="col-sm-12">
+                                <h1 class="pull-right">Call Agenda</h1>
+                                <img src="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" />
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <hr />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <li class="list-group-item" style="margin-top: 2em;">
+                            <label for="need-playoff">Need/Payoff</label> <i>(Asking about the value or usefulness of our proposed solution to their needs.)</i>
+                            <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Need_Payoff_Questions__c}" styleClass="" /></span>
+                            <span class="hidden-print"><apex:inputField id="need-playoff" styleClass="form-control " value="{!precallPlannerObj.Need_Payoff_Questions__c}" /></span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="page-break js-hide-dealer-view" style="page-break-after:always;"></div>
+				
+                
+                <div class="row visible-print js-hide-dealer-view">
+                    <div class="col-sm-12">
+                        <h1 class="pull-right">Call Agenda</h1>
+                        <img src="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel panel-default js-hide-dealer-view">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Potential Objections and Concerns</h3>
+                    </div>
+                    
+                    
+                    <table class="table">
+                        <tr>
+                            <td class="col-xs-6"><label for="primary-objections">Objections to Primary Objective</label>
+                                <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Objections_to_Primary_Objective__c}" styleClass="" /></span>
+                                <span class="hidden-print"><apex:inputField id="primary-objections" styleClass="form-control " value="{!precallPlannerObj.Objections_to_Primary_Objective__c}" /></span></td>
+                            <td class="col-xs-6"><label for="primary-response">Our Response</label>
+                                <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Response_to_Primary_Objections__c}" styleClass="" /></span>
+                                <span class="hidden-print"><apex:inputField id="primary-response" styleClass="form-control " value="{!precallPlannerObj.Response_to_Primary_Objections__c}" /></span></td>
+                        </tr>
+                    </table>
+                    <div class="page-break js-hide-dealer-view" style="page-break-after:always;"></div>
+                    <div class="row visible-print js-hide-dealer-view">
+                        <div class="col-sm-12">
+                            <h1 class="pull-right">Call Agenda</h1>
+                            <img src="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" />
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <hr />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <tr>
+                            <td class="col-xs-6"><label for="secondary-objections">Objections to Secondary Objective</label>
+                                <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Objections_to_Secondary_Objective__c}" styleClass="" /></span>
+                                <span class="hidden-print"><apex:inputField id="secondary-objections" styleClass="form-control" value="{!precallPlannerObj.Objections_to_Secondary_Objective__c}" /></span>
+                            </td>
+                            <td class="col-xs-6"><label for="secondary-response">Our Response</label>
+                                <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Response_to_Secondary_Objections__c}" styleClass="" /></span>
+                                <span class="hidden-print"><apex:inputField id="secondary-response" styleClass="form-control" value="{!precallPlannerObj.Response_to_Secondary_Objections__c}" /></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <!--<div class="page-break js-hide-dealer-view" style="page-break-after:always;"></div>
+                <div class="row visible-print js-hide-dealer-view">
+                    <div class="col-sm-12">
+                        <h1 class="pull-right">Call Agenda</h1>
+                        <img src="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+                
+                <!--<div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Call Agenda</h3>
+                    </div>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <label for="key-dealer-participants"><span class="js-hide-dealer-view">Key </span>Dealer Participants</label> <i class="js-hide-dealer-view">(Name/Role)</i>
+                            <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Key_Dealer_Participants__c}" styleClass="visible-print" /></span>
+                            <span class="hidden-print"><apex:inputField id="key-dealer-participants" styleClass="form-control " value="{!precallPlannerObj.Key_Dealer_Participants__c}" /></span>
+                        </li>
+                        <li class="list-group-item">
+                            <label for="key-lennox-participants"><span class="js-hide-dealer-view">Key </span>Lennox Participants</label> <i class="js-hide-dealer-view">(Name/Role)</i>
+                            <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Key_Lennox_Participants__c}" styleClass="visible-print" /></span>
+                            <span class="hidden-print"><apex:inputField id="key-lennox-participants" styleClass="form-control " value="{!precallPlannerObj.Key_Lennox_Participants__c}" /></span>
+                        </li>
+                    </ul>
+                </div>-->
+                
+                <div class="page-break" style="page-break-after:always;"></div>
+                
+                <div class="row visible-print">
+                    <div class="col-sm-12">
+                        <h1 class="pull-right">Call Agenda</h1>
+                        <img src="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Agenda Outline</h3>
+                    </div>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <label for="agenda-outline hidden">Agenda Outline</label>
+                            <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Meeting_Agenda__c}" styleClass="" /></span>
+                            <span class="hidden-print"><apex:inputField id="agenda-outline" styleClass="form-control  long-textarea" value="{!precallPlannerObj.Meeting_Agenda__c}" /></span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="page-break js-hide-dealer-view" style="page-break-after:always;"></div>
+                
+                <div class="row visible-print js-hide-dealer-view">
+                    <div class="col-sm-12">
+                        <h1 class="pull-right">Call Agenda</h1>
+                        <img src="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel panel-default js-hide-dealer-view">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Insight Reference Material</h3>
+                    </div>
+                    <ul class="list-group">
+                        <!--<li class="list-group-item">
+                            <label for="key-reference-insights">Key Reference Insights</label> <i>(What unique insight or strength does Lennox bring to the topic at hand?)</i>
+                            <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Key_Reference_Insights__c}" styleClass="visible-print" /></span>
+                            <span class="hidden-print"><apex:inputField id="key-reference-insights" styleClass="form-control " value="{!precallPlannerObj.Key_Reference_Insights__c}" /></span>
+                        </li>-->
+                        <li class="list-group-item">
+                            <label for="supporting-insight-materials">Supporting Insight Materials</label> <i>(What reference materials will be needed to support the insight topic?)</i>
+                            <span class="visible-print print-output" style="height:360px;"><apex:outputField value="{!precallPlannerObj.Supporting_Insight_Materials__c}" styleClass="" /></span>
+                            <span class="hidden-print"><apex:inputField id="supporting-insight-materials" styleClass="form-control " value="{!precallPlannerObj.Supporting_Insight_Materials__c}" /></span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="panel panel-default last-panel js-hide-dealer-view">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Next Steps | Follow-Up</h3>
+                    </div>
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <span class="visible-print print-output"><apex:outputField value="{!precallPlannerObj.Next_Steps__c}" styleClass="" /></span>
+                            <span class="hidden-print"><apex:inputField styleClass="form-control long-textarea " value="{!precallPlannerObj.Next_Steps__c}" /></span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+                    <div class="container">
+                        <div class="pull-left">
+                            <apex:commandLink action="{!saveAndReturnToEvt}" styleClass="btn btn-primary hidden-print"><i class="glyphicon glyphicon-floppy-disk"></i> Save &amp; Return to Event</apex:commandLink>
+                            <a href="#" class="btn btn-primary hidden-print" id="js-select-template">Select Template</a>
+                            <!-- <a href="#" class="btn btn-info hidden-print print"><i class="glyphicon glyphicon-print"></i> Print Pre-Call Planner</a> -->
+                            <apex:commandLink action="{!saveAndRefreshOutboundPhoneCall}" styleClass="btn btn-info hidden-print" style="margin-left: 5px" value="Print or Email" /> 
+                            <c:printPDF accountId="{!acc.Id}" buttonClass="btn btn-info hidden-print hidden" />
+                        </div>
+                        <div class="pull-right">
+                            <!--<a href="#" class="btn btn-default pull-right js-dealer-view">Show Dealer View</a> -->
+                            <a href="#" class="btn btn-default pull-right hidden js-internal-view">Show Internal View</a>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            <apex:pageBlock id="planner-details">
+                <script>
+                //notify user that event is saved
+                if(typeof $ !== 'undefined') {
+                    $('.notification').fadeIn('slow', function() {
+                        window.setTimeout( hideNot, 1000 );
+                    });
+                    function hideNot() {
+                        $('.notification').fadeOut();
+                    }
+                }
+                </script>
+            </apex:pageBlock>
+        </apex:form>
+        
+        <div class="notification hidden-print">
+            <p class="notification__msg ">Event Saved!</p>
+        </div>
+        
+        
+        <apex:includeLightning />
+        
+        <div id="OutboundPhoneCallrequest" />
+        
+        <script>
+        
+        (function() {
+            var hasBeenTemplatePrompted = {!precallPlannerObj.hasBeenTemplatePrompted__c};
+            
+            var preCallPlanner = {
+                sobjectType: 'PreCallPlanner__c',
+                Id: '{!precallPlannerObj.Id}',
+                Dealer_Name__c: '{!precallPlannerObj.Dealer_Name__c}',
+                Retention__c: '{!precallPlannerObj.Retention__c}',
+                Event_Id__c: '{!eId}'
+            };
+            
+            var selectTemplateEl = document.getElementById('js-select-template');
+            
+            selectTemplateEl.addEventListener('click', selectTemplateElClickHandler, false);
+            
+            if(!hasBeenTemplatePrompted) {
+                launchSelectPreCallPlannerScenarioApp(false);
+            }
+            
+            function selectTemplateElClickHandler(evt) {
+                evt.preventDefault();
+                launchSelectPreCallPlannerScenarioApp( true );
+                //launchSelectPreCallPlannerScenarioApp( false );
+            }
+            
+            /*function launchSelectPreCallPlannerScenarioApp() {
+                $Lightning.use('c:selectPreCallPlannerScenarioApp', function() {
+                    $Lightning.createComponent(
+                        'c:selectPrecallPlannerScenario',
+                        {preCallPlanner: preCallPlanner, isOpen: true, selectedTemplateId: '{!precallPlannerObj.Pre_Call_Planner_Scenario__c}'},
+                        'selectPrecallPlannerScenario',
+                        function(cmp) {
+                            console.log('created cmp: ', cmp);
+                            $A.eventService.addHandler({
+                                'event': 'c:selectPrecallPlannerScenarioEvent',
+                                'handler': handleSelectPrecallPlannerScenarioEvent
+                            });
+                        }
+                    )
+                });
+            }*/
+            
+            function launchSelectPreCallPlannerScenarioApp( isselecteTempBtn ) {
+                
+                var templateId = '';
+                var state = '';
+                if( isselecteTempBtn == false ){
+                    /*var defaultTemplateId = '{!defaultTemplateId}';
+                       
+                    if(defaultTemplateId){
+                        templateId = defaultTemplateId;
+                    }else{
+                        templateId = '{!precallPlannerObj.Pre_Call_Planner_Scenario__c}';
+                    }
+                    console.log( 'Pre_Call_Planner_Scenario__c: ','{!precallPlannerObj.Pre_Call_Planner_Scenario__c}', 'defaultTemplateId: ',defaultTemplateId );*/
+                    if( '{!evt.Event_Type__c}' == 'Phone Call - Outbound' ) {
+                        console.log( 'defaultTemplateId: ', '{!$Setup.OutboundPhoneCalltemplate__c.Template_Id__c}' );
+                        //templateId = '{!$Setup.OutboundPhoneCalltemplate__c.Template_Id__c}';
+                    } else {
+                        //templateId = '{!precallPlannerObj.Pre_Call_Planner_Scenario__c}';
+                    }
+                } else { //if select template clicked
+                    //if Pre-Call Planner Template of event is "Outbound Phone Call" then keep template selected and navigate to next step else keep template id blabk to display tiles
+                    console.log( 'Type::', '{!evt.Event_Type__c}', 'scenario name: ','{!precallPlannerObj.Pre_Call_Planner_Scenario__r.Name}' );
+                    
+                    if( '{!evt.Event_Type__c}' == 'Phone Call - Outbound' ) {
+                        console.log( 'defaultTemplateId: ', '{!$Setup.OutboundPhoneCalltemplate__c.Template_Id__c}' );
+                        //templateId = '{!$Setup.OutboundPhoneCalltemplate__c.Template_Id__c}';
+                    }
+                    if( '{!precallPlannerObj.Pre_Call_Planner_Scenario__r.Name}' == 'Outbound Phone Call' ) {
+                        //templateId = '{!precallPlannerObj.Pre_Call_Planner_Scenario__c}';
+                        state = 'SELECT_OBJECTIVES';
+                    }  
+                }
+                var componentAttrs = {preCallPlanner: preCallPlanner, isOpen: true, selectedTemplateId: templateId, selectedTemplateName : '{!precallPlannerObj.Pre_Call_Planner_Scenario__r.Name}' };
+                if( state != '' ) {
+                	componentAttrs['state'] = state;
+                }
+                // templateId = '';
+                console.log( 'precallPlannerObj scenario id : ','{!precallPlannerObj.Pre_Call_Planner_Scenario__c}', 'Name: ','{!precallPlannerObj.Pre_Call_Planner_Scenario__r.Name}' );
+                console.log( 'isselecteTempBtn ', isselecteTempBtn, 'preCallPlanner: ', preCallPlanner, 'selectedTemplateId: ', templateId, 'componentAttrs: ', componentAttrs ) ; 
+                $Lightning.use('c:OutboundPhoneCallrequestApp', function() {
+                    $Lightning.createComponent(
+                        'c:OutboundPhoneCallrequest',
+                        componentAttrs,
+                        'OutboundPhoneCallrequest',
+                        function(cmp) {
+                            console.log('created cmp: ', cmp);
+                            $A.eventService.addHandler({
+                                'event': 'c:selectPrecallPlannerScenarioEvent',
+                                'handler': handleSelectPrecallPlannerScenarioEvent
+                            });
+                        }
+                    )
+                });
+            }
+            
+            
+            function handleSelectPrecallPlannerScenarioEvent(evt) {
+                var shouldRefresh = evt.getParam('shouldRefresh');
+                if(shouldRefresh) document.location.reload();
+            }
+            
+        })();
+        
+        
+        
+        </script>
+        
+        
+        
+        <script>
+        
+        $(document).ready(function() {
+            
+            //query account fields, create account object and populate planner
+            var accResult = sforce.connection.query("SELECT Name, SAP_Customer_Number__c, SAP_YTD_Sales__c, Prior_Year_YTD_Sales__c, Delta_YTD_Sales_Year_to_Year__c, Id from Account WHERE Id = '{!Event.WhatId}' LIMIT 1");
+            var accRecord = accResult.getArray("records");
+            
+            var acc = {
+                name: accRecord[0].Name,
+                cnum: accRecord[0].SAP_Customer_Number__c,
+                ytds: parseFloat(accRecord[0].SAP_YTD_Sales__c),
+                pytds: parseFloat(accRecord[0].Prior_Year_YTD_Sales__c),
+                delta: parseFloat(accRecord[0].Delta_YTD_Sales_Year_to_Year__c)
+            }
+            for(var prop in acc) {
+                propSel = '.' + prop;
+                propVal = acc[prop];
+                if(typeof(propVal) === 'number') {
+                    propVal = '$' + $.number(propVal, 2);
+                    $(propSel).text(propVal);
+                } else {
+                    $(propSel).text(propVal);
+                }
+            }
+            
+            //query retention fields, create retention object and populate planner
+            var retResult = sforce.connection.query("SELECT CRI_Score__c, E_Invoice__c, HVAC_LS_Part_Y_N__c, DaveNet_Range__c, Premier_Dealer_Type_Code__c, Product_Mix__c, CAP_Package__c, Spiffs__c, Rebates_Total__c, Marketing_Rolloff__c, Stocking__c, Mktg_Program_Benefit_Range__c, Mktg_Program_Benefit__c, DLPD__c FROM Retention__c WHERE Account__c = '{!Event.WhatId}' LIMIT 1");
+            var retRecord = retResult.getArray("records");
+            var einvs1 = '';
+            
+            if(retRecord[0]){
+                
+                if(retRecord[0].E_Invoice__c){
+                    einvs1 = retRecord[0].E_Invoice__c;
+                }
+                var hvacs1 = '';
+                if(retRecord[0].HVAC_LS_Part_Y_N__c){
+                    hvacs1 = retRecord[0].HVAC_LS_Part_Y_N__c;
+                }
+                var davenets1 = '';
+                if(retRecord[0].DaveNet_Range__c){
+                    davenets1 = retRecord[0].DaveNet_Range__c;
+                }
+                var dlpds1 = '';
+                if(retRecord[0].DLPD__c){
+                    dlpds1 = retRecord[0].DLPD__c;
+                }
+                var prems1 = '';
+                if(retRecord[0].Premier_Dealer_Type_Code__c){
+                    prems1 = retRecord[0].Premier_Dealer_Type_Code__c;
+                }
+                var prods1 = ''
+                if(retRecord[0].Product_Mix__c){
+                    prods1 = retRecord[0].Product_Mix__c;
+                }
+                var caps1 = '';
+                if(retRecord[0].CAP_Package__c){
+                    caps1 = retRecord[0].CAP_Package__c;
+                }
+                var marks1 = '';
+                if(retRecord[0].Marketing_Rolloff__c){
+                    marks1 = retRecord[0].Marketing_Rolloff__c;
+                }
+                var markbens1 = '';
+                if(retRecord[0].Mktg_Program_Benefit_Range__c){
+                    markbens1 = retRecord[0].Mktg_Program_Benefit_Range__c;
+                }
+                /*var ret =
+                        {
+                            cris: parseFloat(retRecord[0].CRI_Score__c),
+                            einv: retRecord[0].E_Invoice__c,
+                            hvac: retRecord[0].HVAC_LS_Part_Y_N__c,
+                            davenet: retRecord[0].DaveNet_Range__c,
+                            dlpd: retRecord[0].DLPD__c,
+                            prem: retRecord[0].Premier_Dealer_Type_Code__c,
+                            prod: retRecord[0].Product_Mix__c,
+                            cap: retRecord[0].CAP_Package__c,
+                            spiff: parseFloat(retRecord[0].Spiffs__c),
+                            rebate: parseFloat(retRecord[0].Rebates_Total__c),
+                            mark: retRecord[0].Marketing_Rolloff__c,
+                            stock: parseFloat(retRecord[0].Stocking__c),
+                            markben: retRecord[0].Mktg_Program_Benefit_Range__c,
+                            markpro: parseFloat(retRecord[0].Mktg_Program_Benefit__c)
+                        }*/
+                        var ret =
+                            {
+                                cris: parseFloat(retRecord[0].CRI_Score__c),
+                                einv : einvs1,
+                                hvac: hvacs1,
+                                davenet: davenets1,
+                                dlpd : dlpds1,
+                                prem : prems1,
+                                prod : prods1,
+                                cap: retRecord[0].CAP_Package__c,
+                                spiff: parseFloat(retRecord[0].Spiffs__c),
+                                rebate: parseFloat(retRecord[0].Rebates_Total__c),
+                                mark : marks1,
+                                stock: parseFloat(retRecord[0].Stocking__c),
+                                markben : markbens1,
+                                markpro: parseFloat(retRecord[0].Mktg_Program_Benefit__c)
+                            }
+                        
+                        for(var prop in ret) {
+                            propSel = '.' + prop;
+                            propVal = ret[prop];
+                            if(typeof(propVal) === 'number') {
+                                if(prop === 'cris' || prop === 'hvac') {
+                                    propVal = $.number(propVal, 0);
+                                    $(propSel).text(propVal);
+                                } else {
+                                    propVal = '$' + $.number(propVal, 2);
+                                    $(propSel).text(propVal);
+                                }
+                            } else {
+                                $(propSel).text(propVal);
+                            }
+                        }
+                    }
+                    
+                    //Save record when an input is edited
+                    var inputVal;
+                    var editedInpuVal;
+                    $('input.form-control, textarea.form-control').focus(function() {
+                        inputVal = $(this).val();
+                    });
+                    $('input.form-control, textarea.form-control').focusout(function() {
+                        editedInputVal = $(this).val();
+                        if(inputVal !== editedInputVal) {
+                            save();
+                        }
+                    });
+                    
+                    //print
+                    $('.print').click(function() {
+                        window.print();
+                    });
+                    
+                    
+                    $('.js-dealer-view').on('click', handleDealerViewClick);
+                    $('.js-internal-view').on('click', handleInternalViewClick);
+                    
+                    
+                    function handleDealerViewClick() {
+                        $('.js-hide-dealer-view').addClass('hidden');
+                        $(this).addClass('hidden');
+                        $('.js-internal-view').removeClass('hidden')
+                    }
+                    
+                    function handleInternalViewClick() {
+                        $('.js-hide-dealer-view').removeClass('hidden');
+                        $(this).addClass('hidden');
+                        $('.js-dealer-view').removeClass('hidden')
+                    }
+                });
+            </script>
+    </apex:pageBlock>
+</body>
+</apex:page>

@@ -1,0 +1,24 @@
+.THIS.line-chart {
+  width: 100%;
+  position: relative; }
+
+.THIS .line-chart__points {
+  min-height: 75px;
+  position: relative; }
+
+.THIS .line-chart__point {
+  background: #0071D1;
+  border-radius: 40px;
+  height: 9px;
+  position: absolute;
+  width: 9px; }
+
+.THIS .line-chart__lines {
+  min-height: 75px;
+  position: relative; }
+
+.THIS .line-chart__line {
+  border: 1px solid token(colorBorderSeparatorAlt);
+  height: 0px;
+  position: absolute;
+  width: 100%; }

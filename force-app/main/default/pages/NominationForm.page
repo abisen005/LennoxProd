@@ -1,0 +1,24 @@
+<apex:page sidebar="false" showHeader="false">
+<apex:slds />
+    <apex:includeLightning />
+    
+    <div id ="NominationFormDiv"/>  
+    
+ 
+
+    <script>
+    $Lightning.use("c:NominationFormApp",    // name of the Lightning app
+                   function() {                  // Callback once framework and app loaded
+                       $Lightning.createComponent(
+                           "c:NominationForm", // top-level component of your app
+                           { },                  // attributes to set on the component when created
+                           "NominationFormDiv",   // the DOM location to insert the component
+                           function(cmp) {
+                           }
+                       );
+                   },
+                   "{!$Label.SiteBaseURL}NominationForm" // Community endpoint 
+                  );
+    </script>
+    
+</apex:page>

@@ -1,0 +1,12 @@
+.THIS .action-area .slds-button {
+    line-height: 1rem;
+}
+.THIS .body .slds-text-heading--large{
+    font-size: 4rem;
+    font-weight: 500;
+}
+.THIS .action-area .slds-button--neutral {
+    background: transparent;
+    border: none;
+    padding: 0;
+}

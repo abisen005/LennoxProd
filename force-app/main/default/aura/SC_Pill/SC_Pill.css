@@ -1,0 +1,7 @@
+.THIS.sc-pill--selected {
+  background: token(colorBackgroundAltInverse);
+  border-color: token(colorBackgroundAltInverse);
+  color: white; }
+  .THIS.sc-pill--selected:hover {
+    background: token(colorBackgroundAltInverse) !important;
+    opacity: .9 !important; }

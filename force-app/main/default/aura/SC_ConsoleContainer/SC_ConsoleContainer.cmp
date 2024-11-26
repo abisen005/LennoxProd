@@ -1,0 +1,69 @@
+<aura:component >
+
+    <aura:handler event="c:routeHistoryChangeSuccess" action="{!c.routeHistoryChangeSuccessHandler}" />
+
+    <aura:attribute name="activePath" type="String" default="consoleContainer/" />
+    
+   <!-- <aura:attribute name="windowPath" type="String" /> -->
+
+        <section class="{!'slds-grid  ' + ($Browser.formFactor != 'PHONE' ? '' : '')}">
+
+            <aura:if isTrue="{!$Browser.formFactor != 'PHONE'}">
+
+                <div class="slds-size--1-of-1 slds-medium-size--3-of-12 slds-large-size--2-of-12 slds-col--rule-right">
+                    <nav class="slds-grid slds-grid--vertical">
+                        <ul class="slds-navigation-list--vertical slds-has-block-links">
+                            <li class="{!(v.activePath == 'consoleContainer/') ? 'slds-is-active' : ''}">
+                                <c:Link to="consoleContainer/"
+                                        class="slds-navigation-list--vertical__action slds-text-link--reset slds-p-vertical--medium slds-p-horizontal--large">
+                                        Coaching
+                                </c:Link>
+                            </li>
+                            <li class="{!(v.activePath == 'consoleContainer/planning') ? 'slds-is-active' : ''}">
+                                <c:Link to="consoleContainer/planning"
+                                        class="slds-navigation-list--vertical__action slds-text-link--reset slds-p-vertical--medium slds-p-horizontal--large">
+                                        Planning
+                                </c:Link>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <aura:set attribute="else">
+
+                        <nav class="slds-tabs slds-tabs--default slds-text-align--center slds-align-top slds-m-bottom--small" >
+                            <ul class="slds-tabs slds-tabs--default__nav slds-grid">
+                                <li class="{!'slds-col slds-tabs--default__item slds-text-title--caps  ' + (v.activePath == 'consoleContainer/' ? 'slds-active' : '')}">
+                                    <c:Link to="consoleContainer/"
+                                            class="slds-tabs--default__link slds-p-horizontal--large">
+                                            Coaching
+                                    </c:Link>
+                                </li>
+                                <li class="{!'slds-col slds-tabs--default__item slds-text-title--caps  ' + (v.activePath == 'consoleContainer/planning' ? 'slds-active' : '')}">
+                                    <c:Link to="consoleContainer/planning"
+                                            class="slds-tabs--default__link slds-p-horizontal--large">
+                                            Planning
+                                    </c:Link>
+                                </li>
+                            </ul>
+                        </nav>
+
+                </aura:set>
+
+            </aura:if>
+
+
+            <div class="slds-size--1-of-1 slds-medium-size--9-of-12 slds-large-size--10-of-12">
+                <!-- ROUTE CONFIGURATION -->
+                <c:Router name="consoleContainer">
+                    <c:Route name="Coaching" path="consoleContainer/" component="c:SC_Coaching" />
+                    <c:Route name="Planning" path="consoleContainer/planning" component="c:SC_Planning" />
+                </c:Router>
+            </div>
+
+
+        </section>
+
+
+
+</aura:component>

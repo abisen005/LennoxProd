@@ -1,0 +1,140 @@
+<aura:component controller="SC_AssessmentDetailController">
+
+
+    <aura:attribute name="assessmentId" type="String" description="Id of the assessment record in scope." />
+
+    <aura:attribute name="assessment" type="Object" description="Assessment object in scope" />
+    <aura:attribute name="skillsToMaster" type="Object[]" description="List of Skills that have not been completed" />
+    <aura:attribute name="skillsAlreadyMastered" type="Object[]" description="List of Skills that have been completed" />
+    <aura:attribute name="isLoading" type="Boolean" description="is the component loading?" />
+
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+
+
+
+    <section>
+        <div class="slds-page-header" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media slds-no-space slds-grow slds-media--center">
+                        <div class="slds-media__figure">
+                            <lightning:icon iconName="custom:custom18" />
+                        </div>
+                        <div class="slds-media__body">
+                            <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate"
+                                title="Assessment Name">{!v.assessment.Name}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-grid slds-align-top">
+
+                    <!-- buttons -->
+
+
+                </div>
+            </div>
+
+            <ul class="slds-grid slds-page-header__detail-row">
+                <li class="slds-page-header__detail-block">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" title="Coach">User</p>
+                    <p class="slds-text-body--regular" >
+                        <c:Link to="{!'/coachee/' + v.assessment.Coachee__r.Id}" label="{!v.assessment.Coachee__r.Name}">
+                            {!v.assessment.Coachee__r.Name}
+                        </c:Link>
+                    </p>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" title="Session">Session</p>
+                    <p class="slds-text-body--regular" >
+                        <c:Link to="{!'/session/' + v.assessment.Coaching_Session__r.Id}" label="{!v.assessment.Coaching_Session__r.Name}">
+                            {!v.assessment.Coaching_Session__r.Name}
+                        </c:Link>
+                    </p>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" title="Initiative">Initiative</p>
+                    <p class="slds-text-body--regular" >
+                        <c:Link to="{!'/initiative/' + v.assessment.Coaching_Session__r.Initiative__r.Id}" label="{!v.assessment.Coaching_Session__r.Initiative__r.Name}">
+                            {!v.assessment.Coaching_Session__r.Initiative__r.Name}
+                        </c:Link>
+                    </p>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" title="Assessment Date">Assessment Date</p>
+                    <p class="slds-text-body--regular" >
+                        <ui:outputDate value="{!v.assessment.CreatedDate}" />
+                    </p>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" title="Progress">Progress</p>
+                    <p class="slds-text-body--regular" >
+                        <c:SC_ProgressBar progress="{!mult(div(v.assessment.of_Skills_Completed__c, v.assessment.of_Skills_to_Complete__c), 100)}" />
+                    </p>
+                </li>
+            </ul>
+
+        </div>
+
+        <c:SC_Breadcrumbs class="slds-m-around--medium" />
+
+        <hr class="slds-m-around--none" />
+
+
+        <h2 class="slds-section-title--divider">Skills Mastered</h2>
+
+        <div class="{!!empty(v.skillsAlreadyMastered) ? 'slds-hide' : ''}">
+            <p class="slds-m-around--small">{!v.assessment.Coachee__r.Name} has not mastered any skills yet.</p>
+        </div>
+
+        <ul class="slds-has-dividers--bottom">
+            <aura:iteration items="{!v.skillsAlreadyMastered}" var="skill" >
+                <li class="slds-item slds-p-around--small">
+                    <div class="slds-media slds-media--center">
+                        <div class="slds-media__figure">
+                            <lightning:icon iconName="utility:success" size="small" alternativeText="Completed" class="complete" />
+                        </div>
+                        <div class="slds-media__body">
+                            <p>{!skill.Description__c}</p>
+                        </div>
+                    </div>
+                </li>
+            </aura:iteration>
+        </ul>
+
+
+        <h2 class="slds-section-title--divider">Skills to Master</h2>
+
+        <div class="{!'slds-m-around--small ' + (!empty(v.skillsToMaster) ? 'slds-hide' : '')}">
+            <p>{!v.assessment.Coachee__r.Name} has mastered all the skills</p>
+        </div>
+
+        <ul class="slds-has-dividers--bottom">
+            <aura:iteration items="{!v.skillsToMaster}" var="skill" >
+                <li class="slds-item slds-p-around--small">
+                    <div class="slds-media slds-media--center">
+                        <div class="slds-media__figure">
+                            <lightning:icon iconName="utility:success" size="small" alternativeText="Completed" class="incomplete" />
+                        </div>
+                        <div class="slds-media__body">
+                            <p>{!skill.Description__c}</p>
+                        </div>
+                    </div>
+                </li>
+            </aura:iteration>
+        </ul>
+
+
+
+
+        <lightning:spinner variant="brand"
+                           size="small"
+                           alternativeText="Assessment is loading"
+                           class="{!v.isLoading ? '' : 'slds-hide'}" />
+
+
+
+    </section>
+
+</aura:component>

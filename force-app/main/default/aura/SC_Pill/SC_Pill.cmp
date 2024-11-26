@@ -1,0 +1,50 @@
+<aura:component access="GLOBAL">
+
+
+    <aura:attribute name="avatarUrl"
+                    type="String"
+                    description="URL of avatar image. Only rendered if provided" />
+
+    <aura:attribute name="pillIconName"
+                    type="String"
+                    description="The Lightning Design System name of the icon. Names are written in the format
+                                 '\utility:down\' where 'utility' is the category, and 'down' is the
+                                 specific icon to be displayed." />
+
+    <aura:attribute name="label"
+                    type="String"
+                    description="The pill label" />
+
+    <aura:attribute name="selected"
+                    type="Boolean"
+                    description="Indicates if the pill is selected or not" />
+
+    <aura:attribute name="class"
+                    type="String"
+                    description="Style classes to append to the outer element class attribute." />
+
+
+
+
+
+    <span class="{!'slds-pill ' + v.class + (v.selected ? ' sc-pill--selected' : '')}">
+        <aura:if isTrue="{!!empty(v.avatarUrl)}">
+            <span class="slds-pill__icon slds-avatar slds-avatar--circle">
+                <img src="{!v.avatarUrl}" alt="{!v.label}" />
+            </span>
+        </aura:if>
+        <aura:if isTrue="{!!empty(pillIconName)}">
+            <lightning:icon class="slds-pill__icon_container"
+                            iconName="{!v.pillIconName}" />
+        </aura:if>
+        {!v.label}
+        <lightning:buttonIcon iconName="{!'utility:' + (v.selected ? 'check' : 'add')}"
+                              class="slds-pill__remove"
+                              size="small"
+                              alternativeText="Add"
+                              variant="{!v.selected ? 'bare-inverse' : 'bare'}"
+                              onclick="{!c.handleToggleSelectedPress}" />
+    </span>
+
+
+</aura:component>

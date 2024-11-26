@@ -1,0 +1,215 @@
+<apex:page standardController="Retention__c" standardStylesheets="false" showHeader="false" sidebar="false">
+
+    <head>
+
+        <apex:stylesheet value="{!$Resource.dbrStyle}" />
+        <c:TrackPageView lenPageName="Dealer Benefit Report" />
+    </head>
+
+    <body class="dbr__web">
+        <div style="padding: 1rem;" class="hide-for-print">
+            <c:printPDF name="{! Retention__c.Account__r.AccountNumber + ' - ' + Retention__c.Account__r.Name + ' - ' + 'Dealer Benefit Report' }" accountId="{!Retention__c.Account__r.Id}" buttonClass="btn btn-default" />
+        </div>
+        <div class="container-fluid">
+            <div class="row" id="header">
+                <div class="col-sm-3">
+                    <apex:image url="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA"
+                        styleClass="dbr__logo"
+                        height="45" />
+                </div>
+                <div class="col-sm-9">
+                    <h1 class="dbr__header">Dealer Benefit Report - {!CASE( MONTH(Retention__c.Retention_Calendar_Date__c),
+                            1, 'January',
+                            2, 'February',
+                            3, 'March',
+                            4, 'April',
+                            5, 'May',
+                            6, 'June',
+                            7, 'July',
+                            8, 'August',
+                            9, 'September',
+                            10, 'October',
+                            11, 'November',
+                            12, 'December',
+                            'Unknown'
+                        ) }
+                        {!YEAR(Retention__c.Retention_Calendar_Date__c)} YTD
+                    </h1>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="highlight">
+                <div class="row">
+                    <div class="col-xs-6">{!Retention__c.Account__r.SAP_Sales_Office__c}</div>
+                    <div class="col-xs-6">{!Retention__c.Account__r.SAP_Sales_Group__c}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6">{!Retention__c.Account__r.SAP_Sales_Office_Desc__c}</div>
+                    <div class="col-xs-6">{!Retention__c.Account__r.Owner.Name}</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6"><strong>{!Retention__c.Account__r.SAP_Customer_Number__c}</strong></div>
+                    <div class="col-xs-6"><strong>{!Retention__c.Account__r.Name}</strong></div>
+                </div>
+            </div>
+
+            <div class="output-row">
+                <div class="row">
+                    <div class="col-xs-6 output-row__label">Dealer Type</div>
+                    <div class="col-xs-6 output-row__label">Current YTD Sales</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 output-row__value">{!Retention__c.Account__r.SAP_Customer_Group__c}</div>
+                    <div class="col-xs-6 output-row__value"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.YTD_Sales__c}"/></apex:outputText>{!IF(MOD(Retention__c.YTD_Sales__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.YTD_Sales__c),2),1,1) = '.', '0', '')}</div>
+                </div>
+            </div>
+
+            <div class="output-row">
+                <div class="row">
+                    <div class="col-xs-6 output-row__label">PremierType</div>
+                    <div class="col-xs-6 output-row__label">Previous YTD Sales</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 output-row__value">{!Retention__c.Premier_Dealer_Type_Code__c}</div>
+                    <div class="col-xs-6 output-row__value">
+                        <apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Prior_Year_YTD_Sales__c}"/></apex:outputText>{!IF(MOD(Retention__c.Prior_Year_YTD_Sales__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Prior_Year_YTD_Sales__c),2),1,1) = '.', '0', '')}
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <h2 class="dbr">Marketing Program Details</h2>
+
+            <div class="output-row">
+                <div class="row">
+                    <div class="col-xs-6 output-row__label">Advertising Package (CAP)</div>
+                    <div class="col-xs-6 output-row__label">Cost of CAP Package</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 output-row__value">{!Retention__c.CAP_Package__c}</div>
+                    <div class="col-xs-6 output-row__value">
+                        <apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.CAP_Package_Cost__c}"/> </apex:outputText>{!IF(MOD(Retention__c.CAP_Package_Cost__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.CAP_Package_Cost__c),2),1,1) = '.', '0', '')}
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="dbr">Dollars Provided to the Dealer by Lennox</h3>
+
+            <div class="output-row highlight text-center">
+                <div class="row">
+                    <div class="col-xs-12 output-row__label">Benefits as a % to Sales</div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12 ouput-row__value">{!Retention__c.CALC_Mktg_Program_Benefit__c}%</div>
+                </div>
+            </div>
+
+            <table class="table table-condensed">
+                <tr>
+                    <td class="text-left">Mkt Fund Earnings</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Mktg_Funds_Total__c}"/></apex:outputText>{!IF(MOD(Retention__c.Mktg_Funds_Total__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Mktg_Funds_Total__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+                <tr>
+                    <td class="text-left">Free Product Earned</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Stocking__c}"/></apex:outputText>{!IF(MOD(Retention__c.Stocking__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Stocking__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+                <!--<tr>
+                    <td class="text-left">Consumer Programs</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Rebates__c}"/></apex:outputText>{!IF(MOD(Retention__c.Rebates__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Rebates__c),2),1,1) = '.', '0', '')}</td>
+                </tr>-->
+                <tr>
+                    <td class="text-left">Rebates</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Rebates__c}"/></apex:outputText>{!IF(MOD(Retention__c.Rebates__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Rebates__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+                <tr>
+                    <td class="text-left">Consumer Financing</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Consumer_Financing__c}"/></apex:outputText>{!IF(MOD(Retention__c.Consumer_Financing__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Consumer_Financing__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+                <tr class="{!IF(Retention__c.Rebates_Costco__c = 0 || ISBLANK(Retention__c.Rebates_Costco__c), 'hide', 'show-tr')}">
+                    <td class="text-left">Costco Programs</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Rebates_Costco__c}"/></apex:outputText>{!IF(MOD(Retention__c.Rebates_Costco__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Rebates_Costco__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+                <tr>
+                    <td class="text-left">Spiff Programs</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Spiffs__c}"/></apex:outputText>{!IF(MOD(Retention__c.Spiffs__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Spiffs__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+                <tr class="{!IF(Retention__c.Marketing_Benefits_Other__c = 0 || ISBLANK(Retention__c.Marketing_Benefits_Other__c), 'hide', 'show-tr')}">
+                    <td class="text-left">Marketing Other</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Marketing_Benefits_Other__c}"/></apex:outputText>{!IF(MOD(Retention__c.Marketing_Benefits_Other__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Marketing_Benefits_Other__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+                <tr>
+                    <th class="text-left">Total Promotional Benefits</th>
+                    <td class="text-right"><strong><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Total_Promotional_Benefits__c}"/></apex:outputText>{!IF(MOD(Retention__c.Total_Promotional_Benefits__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Total_Promotional_Benefits__c),2),1,1) = '.', '0', '')}</strong></td>
+                </tr>
+            </table>
+
+            <div class="page-break" style="page-break-after:always;"></div>
+
+            <h3 class="dbr">Consumer Program Analysis</h3>
+
+            <table class="table table-condensed">
+                <tr>
+                    <td class="text-left">Consumer Offers @ 100%</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Consumer_Offers_100__c}"/></apex:outputText>{!IF(MOD(Retention__c.Consumer_Offers_100__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Consumer_Offers_100__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+                <tr>
+                    <td class="text-left">Current Dealer Cost</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Current_Dealer_Cost__c}"/></apex:outputText>{!IF(MOD(Retention__c.Current_Dealer_Cost__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Current_Dealer_Cost__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+                <tr>
+                    <td class="text-left">Current Lennox Funding</td>
+                    <td class="text-right"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Current_Lennox_Funding__c}"/></apex:outputText>{!IF(MOD(Retention__c.Current_Lennox_Funding__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Current_Lennox_Funding__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+                <tr>
+                    <td class="text-left"># of Retail Salespeople Registered</td>
+                    <td class="text-right">{!SUBSTITUTE(TEXT(Retention__c.Retail_Sales_People_Enrolled__c),'.0', '')}</td>
+                </tr>
+                <tr>
+                    <td class="text-left"># of Retail Salespeople - turned in at least 1 claim</td>
+                    <td class="text-right">{!SUBSTITUTE(TEXT(Retention__c.Retail_Sales_People_Participating__c),'.0', '')}</td>
+                </tr>
+            </table>
+
+            <table class="table table-condensed text-right">
+                <tr>
+                    <td class="span2"></td>
+                    <th class="span5 text-right">Potential Dealer Cost</th>
+                    <th class="span5 text-right">Potential Savings/(Cost) by Changing Package</th>
+                </tr>
+                <tr>
+                    <th class="span2">70%</th>
+                    <td class="span5"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Potental_Dealer_Cost_70__c}"/></apex:outputText>{!IF(MOD(Retention__c.Potental_Dealer_Cost_70__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Potental_Dealer_Cost_70__c),2),1,1) = '.', '0', '')}</td>
+                    <td class="span5"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Potental_Savings_Cost_By_Changing_70__c}"/></apex:outputText>{!IF(MOD(Retention__c.Potental_Savings_Cost_By_Changing_70__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Potental_Savings_Cost_By_Changing_70__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+                <tr>
+                    <th class="span2">60%</th>
+                    <td class="span5"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Potental_Dealer_Cost_60__c}"/></apex:outputText>{!IF(MOD(Retention__c.Potental_Dealer_Cost_60__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Potental_Dealer_Cost_60__c),2),1,1) = '.', '0', '')}</td>
+                    <td class="span5"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Potental_Savings_Cost_By_Changing_60__c}"/></apex:outputText>{!IF(MOD(Retention__c.Potental_Savings_Cost_By_Changing_60__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Potental_Savings_Cost_By_Changing_60__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+                <tr>
+                    <th class="span2">50%</th>
+                    <td class="span5"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Potental_Dealer_Cost_50__c}"/></apex:outputText>{!IF(MOD(Retention__c.Potental_Dealer_Cost_50__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Potental_Dealer_Cost_50__c),2),1,1) = '.', '0', '')}</td>
+                    <td class="span5"><apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!Retention__c.Potental_Savings_Cost_By_Changing_50__c}"/></apex:outputText>{!IF(MOD(Retention__c.Potental_Savings_Cost_By_Changing_50__c,1) = 0, '.00','')}{!IF(MID(RIGHT(TEXT(Retention__c.Potental_Savings_Cost_By_Changing_50__c),2),1,1) = '.', '0', '')}</td>
+                </tr>
+            </table>
+
+            <p style="padding:15px; line-height: 13px" class="small">Based on the current consumer offers at 100%, this is what it would cost the dealer at the different redemption levels.  Each level varies depending on type of package purchased.</p>
+
+            <hr />
+
+            <p class="small" style="padding-right:10px; line-height: 12px">Mkt Fund Earnings:  Marketing Fund Earnings earned as a percentage of qualifying sales.<br /><br />
+                        Free Product Earned: Free Product earned through our Stocking and Buy programs.<br /><br />
+                        Consumer Programs:  Rebates, Instant Discounts, Financing, Extended Warranty Programs. <br /><br />
+                        Spiff Programs:  Dollars earned through the National/District level Retail Salesperson spiffs.<br /><br />
+                        Marketing-Other:  Other miscellaneous dollars applied to the dealer's account via a marketing budget.</p>
+
+            TM Notes:
+            <table class="table table-bordered">
+                <tr><td><br /><br /><br /><br /><br /><br /></td></tr>
+            </table>
+        </div>
+    </body>
+</apex:page>

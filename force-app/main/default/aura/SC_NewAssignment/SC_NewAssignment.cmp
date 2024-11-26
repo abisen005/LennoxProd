@@ -1,0 +1,82 @@
+<aura:component controller="SC_NewAssignmentController" access="GLOBAL" >
+
+    <aura:attribute name="isOpen" type="Boolean" default="false" />
+    <aura:attribute name="assignees" type="Object[]" description="Wrapper for User object with a selected property" />
+    <aura:attribute name="sessionId" type="String" description="Coaching Session Id this assignment is related to." default="" />
+    <aura:attribute name="topicId" type="String" description="Planning Topic Id this assignment is related to." default="" />
+    <aura:attribute name="assignment" type="SC_Assignment__c" default="{ 'sobjectType': 'SC_Assignment__c' }" />
+    <aura:attribute name="missingAssigneesError" type="String" />
+    <aura:attribute name="isLoading" type="Boolean" />
+
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+
+
+
+    <aura:registerEvent name="newAssignmentCreated" type="c:SC_EvtAssignmentCreated" />
+
+
+
+    <c:SC_ModalOverlay isOpen="{!v.isOpen}">
+
+        <aura:set attribute="header">
+
+
+            New Assignment
+
+        </aura:set>
+
+        <div class="slds-form--stacked">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label">Assignee<span class="{!greaterthan(v.assignees.length, 1) ? '' : 'slds-hide'}">s</span></label>
+                <div class="slds-form-element__control">
+                    <aura:if isTrue="{!greaterthan(v.assignees.length, 1)}">
+                        <aura:iteration items="{!v.assignees}" var="assignee" >
+                            <c:SC_Pill avatarUrl="{!assignee.SmallPhotoUrl}"
+                                       label="{!assignee.Name}"
+                                       selected="{!assignee.selected}"
+                                       class="slds-m-vertical--x-small" />
+                        </aura:iteration>
+
+                        <aura:set attribute="else">
+                            <aura:iteration items="{!v.assignees}" var="assignee" >
+                                {!assignee.Name}
+                            </aura:iteration>
+                        </aura:set>
+
+                    </aura:if>
+
+                </div>
+                <span class="slds-required">{!v.missingAssigneesError}</span>
+            </div>
+            <div class="slds-form-element">
+                <label class="slds-form-element__label"><abbr class="slds-required" title="required">*</abbr> Due Date</label>
+                <ui:inputDate aura:id="dueDate" class="slds-input" value="{!v.assignment.Due_Date__c}" displayDatePicker="true" />
+            </div>
+            <div class="slds-form-element">
+                <label class="slds-form-element__label"><abbr class="slds-required" title="required">*</abbr> Description</label>
+                <ui:inputTextArea aura:id="descriptionInput" class="slds-input" value="{!v.assignment.Description__c}" />
+            </div>
+            <div class="slds-form-element slds-size--1-of-2 slds-m-top--x-small">
+                <label class="slds-form-element__label slds-show--block">Is this a Progress Assignment?</label>
+                <ui:inputCheckbox class="slds-show" value="{!v.assignment.Progress_Assignment__c}" />
+           </div>
+           <div class="{!'slds-form-element slds-size--1-of-2 ' + (v.assignment.Progress_Assignment__c ? '' : 'slds-hidden')}">
+               <label class="slds-form-element__label" >How Many Until Complete?</label>
+               <ui:inputNumber class="slds-input" value="{!v.assignment.to_Complete__c}" />
+           </div>
+        </div>
+
+
+        <aura:set attribute="footer">
+
+            <lightning:button variant="neutral" label="Cancel" onclick="{!c.handleCancelPress}" disabled="{!v.isLoading}" />
+            <lightning:button variant="brand" label="Save" onclick="{!c.handleSavePress}" disabled="{!v.isLoading}" />
+
+        </aura:set>
+
+    </c:SC_ModalOverlay>
+
+
+</aura:component>

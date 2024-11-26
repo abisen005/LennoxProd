@@ -1,0 +1,186 @@
+<apex:page sidebar="false" standardcontroller="SupplyChain__c" extensions="FileUploaderforLPPIncrease" showHeader="false">
+
+<meta http-equiv="X-UA-Compatible" content="IE=9" />
+
+
+<style>
+             .odd {
+              background-color: #A4A4A4 !important;
+
+                }
+             .even {
+             background-color: #E6E6E6 !important;
+        
+                }
+.bPageTitle .metadata { display:none; }
+.headerStyleOld
+{
+    font-weight:bold;
+    background-color:#1797C0;
+    color:white;
+}
+.headerStyle
+{
+    font-weight:bold;
+    background-color:#f0f0f0;
+    font-size: 12px;
+    color:white;
+    height:20px;    
+    border-radius: 5px;  
+    -webkit-border-radius: 5px  
+    -moz-border-radiua: 5px
+    margin-right: 5px;
+    padding: 10px 10px 10px;
+}
+.blockStyle
+{
+    background-color:#CFEEF8;
+}
+.modal .pbTitle {
+    width: 50%;
+}
+body .modal .bPageBlock {
+    border-top-color: #236fbd;
+}
+.modal-open{overflow:hidden}.modal{display:none;overflow:auto;overflow-y:scroll;position:fixed;top:0;right:0;bottom:0;left:0;z-index:1050;-webkit-overflow-scrolling:touch;outline:0}.modal.fade .modal-dialog{-webkit-transform:translate(0, -25%);-ms-transform:translate(0, -25%);transform:translate(0, -25%);-webkit-transition:-webkit-transform 0.3s ease-out;-moz-transition:-moz-transform 0.3s ease-out;-o-transition:-o-transform 0.3s ease-out;transition:transform 0.3s ease-out}.modal.in .modal-dialog{-webkit-transform:translate(0, 0);-ms-transform:translate(0, 0);transform:translate(0, 0)}.modal-dialog{position:relative;width:auto;margin:10px}.modal-content{position:relative;background-color:#fff;border:1px solid #999;border:1px solid rgba(0,0,0,0.2);background-clip:padding-box;outline:none}.modal-backdrop{position:fixed;top:0;right:0;bottom:0;left:0;z-index:1040;background-color:#000}.modal-backdrop.fade{opacity:0;filter:alpha(opacity=0)}.modal-backdrop.in{opacity:.2;filter:alpha(opacity=20)}.modal-header{padding:15px;border-bottom:1px solid #e5e5e5;min-height:16.42857143px}.modal-header .close{margin-top:-2px}.modal-title{margin:0;line-height:1.42857143}.modal-body{position:relative;padding:10px}.modal-footer{margin-top:15px;padding:19px 20px 20px;text-align:right;border-top:1px solid #e5e5e5}.modal-footer .btn+.btn{margin-left:5px;margin-bottom:0}.modal-footer .btn-group .btn+.btn{margin-left:-1px}.modal-footer .btn-block+.btn-block{margin-left:0}@media (min-width:768px){.modal-dialog{width:600px;margin:30px auto}.modal-content{;}.modal-sm{width:300px}}@media (min-width:992px){.modal-lg{width:900px}}
+
+.errorClass {
+    background-color: red;
+}
+.normalClass {
+    background-color: green;
+}
+
+
+</style>
+
+   <apex:form >
+   
+    <apex:pagemessages />
+
+<apex:sectionHeader title="Upload data from CSV file"/>
+     
+      <apex:pageBlock id="pb1" rendered="{!ISNULL(skustoupload)}" >
+                               
+                                     <table>
+                                     <center>
+             <br/> <br/> <apex:commandButton action="{!returntorecord}" value="Return to Request" id="theButton1"  style="width:180px;" rendered="{!ISNULL(skustoupload)}"/>
+                <br/> <br/>  
+               
+            
+
+               </center>
+ </table>
+          <center>   
+         
+          <table>
+              <br/> 
+  <br/> <br/> <font size="3"> <b>Before getting started, use the template provided by SCL or download the template via this<a href="https://lennox.my.salesforce.com/sfc/#version?id=068C0000003zbEI" target="_blank">  link </a>.</b> </font>
+                <br/> <br/> <font size="3"> <b>Please ensure your request is in the correct format.  </b> </font>
+                          <br/> <br/>  
+                             
+                
+
+               
+                      <br/> <br/>  
+               
+                
+                <br/> <br/> <font size="3"> <b>If your upload template is missing any of the following required fields, your request will not be processed:</b> </font>
+                <br/> <br/> <font size="3"> <b>Store # -- Did store open within the past 12 months? -- Reason for Request</b> </font>
+               <br/> <br/> <font size="3"> <b> Type of Request -- Material -- Product Division</b> </font>
+
+
+
+                
+                 <br/> <br/>  
+                
+                 <br/> <br/>  
+              </table>
+         
+              </center>
+              </apex:pageblock>
+              
+              
+              
+              <apex:pageblock rendered="{!ISNULL(skustoupload)}">
+   <apex:pageblocksection columns="4">           
+            
+             <apex:pageblocksectionItem >    
+           <font size="3"> <b>STEP 1 </b> </font>
+        <font size="3"> <b> Choose the CSV file that you will be uploading from your desktop. </b> </font>
+    <apex:inputFile value="{!contentFile}" filename="{!nameFile}" rendered="{!ISNULL(skustoupload)}"/>
+             
+
+              
+           
+                </apex:pageblocksectionItem>   
+                
+                 <apex:pageblocksectionItem >   
+                     <font size="3"> <b>STEP 2   </b> </font>
+              <font size="3"> <b>Click the upload button to add your increases to your SCL request. </b> </font>
+              
+              
+              
+              
+        <apex:commandButton action="{!ReadFile}" value="Upload File" onclick="createRec" id="theButton"  rendered="{!ISNULL(skustoupload)}" style="width:180px;"/>
+ 
+ </apex:pageblocksectionItem>   
+               </apex:pageblocksection>    
+               </apex:pageblock>
+               
+               
+               
+               <apex:pageblock >
+
+        
+       
+         </apex:pageblock>  
+         
+         <apex:pageblock >
+         <br/> <br/>  
+            <apex:commandButton action="{!returntorecord}" value="Return to Request"  id="theButton3"  style="width:220px;" rendered="{!NOT(ISNULL(skustoupload)) && status=true}"/>
+             <apex:commandButton action="{!savefile}" value="Create Records" rendered="{!NOT(ISNULL(skustoupload)) && status=false}"  id="theButton2"  style="width:180px;"/>
+
+<apex:pageblocktable value="{!skustoupload}" var="acc" rendered="{!NOT(ISNULL(skustoupload)) && status=false}" rowclasses="even,odd">
+                
+                                   
+        
+                
+                 <apex:column headerValue="Store">
+              <apex:inputField value="{!acc.Storea__c}"/>
+          </apex:column>
+          
+          <apex:column headerValue="New Store?">
+              <apex:inputField value="{!acc.Has_store_opened_in_last_12_months__c}"/>
+          </apex:column>
+          
+                    <apex:column headerValue="Type of Request">
+              <apex:inputField value="{!acc.Typeofrequest__c}"/>
+          </apex:column>
+          
+                    <apex:column headerValue="Reason for Request">
+              <apex:inputField value="{!acc.ReasonforRequest__c}"/>
+          </apex:column>
+          
+                    <apex:column headerValue="Material">
+              <apex:inputField value="{!acc.Material__c}"/>
+          </apex:column>
+          
+                    <apex:column headerValue="Product Division">
+              <apex:inputField value="{!acc.ProductDivision__c}"/>
+          </apex:column>
+       
+                           <apex:column headerValue="Material Description">
+              <apex:inputField value="{!acc.MaterialDescription__c}"/>
+          </apex:column>
+
+
+
+
+
+      </apex:pageblocktable>
+
+
+</apex:pageblock>
+   </apex:form>   
+</apex:page>

@@ -1,0 +1,6 @@
+<apex:page StandardController="Contact"
+            extensions="FTL_DisablePartnerUserController" 
+            lightningStylesheets="true"
+            action="{!disableCustomerUser}">
+    <apex:pageMessages />
+</apex:page>

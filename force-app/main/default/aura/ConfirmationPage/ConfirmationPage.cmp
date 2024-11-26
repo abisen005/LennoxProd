@@ -1,0 +1,14 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access="global" >
+    <aura:attribute name="title" type="String" />   
+    <div class="container">
+        <img src="{!$Resource.lennox_logo}" alt="" style="margin-top:20px;"/>
+
+        <div class="inputLab">{!v.title}</div>
+        <div class="thankYou">
+        <img src="{!$Resource.check_icon}" alt="" width="65"/>
+        <h2 class="heading">Thank you for contacting Lennox Industries Inc. </h2>
+        <p class="para">We appreciate the opportunity to address your support request. 
+            All requests for support are processed in the order in which they are received and will be responded to as soon as possible.</p>
+        </div>
+    </div>   
+</aura:component>

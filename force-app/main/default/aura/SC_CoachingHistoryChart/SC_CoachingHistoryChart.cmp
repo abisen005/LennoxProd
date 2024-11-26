@@ -1,0 +1,42 @@
+<aura:component controller="SC_CoachingHistoryChartController" access="GLOBAL">
+
+
+    <aura:attribute name="userId" type="String" />
+    <aura:attribute name="initiativeId" type="String" />
+    <aura:attribute name="assessmentHistory" type="Object[]" description="A list of items representing the user's assessment history" />
+    <aura:attribute name="chartLinePositions" type="Decimal[]" description="positions of chart lines" />
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler name="change" value="{!v.initiativeId}" action="{!c.handleInitiativeIdChange}" />
+    <aura:handler name="change" value="{!v.userId}" action="{!c.handleUserIdChange}" />
+
+
+
+    <div class="line-chart slds-m-top--medium">
+
+        <p class="{!empty(v.assessmentHistory) ? '' : 'slds-hide'}">
+            There is no coaching history.
+        </p>
+
+        <aura:iteration items="{!v.chartLinePositions}" var="linePos" indexVar="i">
+            <div class="line-chart__line"
+                 style="{!
+                     'bottom: ' + linePos + '%;'
+                     }"></div>
+        </aura:iteration>
+
+
+        <div class="line-chart__points">
+            <aura:iteration items="{!v.assessmentHistory}" var="item" indexVar="i">
+                <div class="line-chart__point"
+                     style="{!
+                         'bottom: ' + item.yPos + '%;' +
+                         'left: ' + item.xPos + '%;'
+                         }"></div>
+            </aura:iteration>
+        </div>
+
+    </div>
+
+</aura:component>

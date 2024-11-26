@@ -1,0 +1,17 @@
+.lookupIcon {
+	background-image: url("/img/func_icons/util/lookup20.gif");
+	background-position: left top;
+	height: 20px;
+	width: 20px;
+	padding-bottom: 1px;
+	vertical-align: middle;		    
+}
+
+.lookupIconOn {
+	padding-bottom: 1px;
+	vertical-align: middle;
+}	
+
+.lineItem {
+	margin: 2px 2px 2px 2px;
+}

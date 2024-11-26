@@ -1,0 +1,20 @@
+<aura:component implements="ForceCommunity:availableForAllPageTypes" 
+    access="global" 
+    controller="FTLDocusignListController" >  
+      
+    <aura:attribute name="ObjectName" type="String"/>  
+    <aura:attribute name="listRecords" type="Object"/>  
+    <aura:attribute name="numRecords" type="Integer"/>  
+    <aura:attribute name="columns" type="List"/>
+      
+    <aura:handler name="init" value="{!this}" action="{!c.getDocuments}"/>  
+      
+    <lightning:card title="Docusign Documents">  
+        <div class="slds-m-around_small slds-text-body_medium"> 
+                <lightning:datatable data="{! v.listRecords }"
+                                     columns="{! v.columns }"
+                                     keyField="documentId"
+                                     hideCheckboxColumn="true"/>
+        </div>    
+    </lightning:card>  
+</aura:component>

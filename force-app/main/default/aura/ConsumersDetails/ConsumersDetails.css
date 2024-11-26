@@ -1,0 +1,53 @@
+.THIS.container{margin:0 auto;width:1000px;}
+.THIS .inputLab{background: #a21919;padding: 6px 20px; text-align: center;margin-top:10px; color: #fff; font-size: 14px;border: 1px solid #8e1212; border-radius:5px;font-weight: bold;margin-bottom:14px;}
+.THIS .slds-modal__header{padding: 0.8rem 0 ;margin-bottom: 10px; margin-top:20px; text-align: left;font-weight:bold;background: #fafaf9;font-size:14px;}
+.THIS .inputText {display:inline-block;width:25%;padding-top:14px;}
+.THIS .inputText.width{width:25%;}
+.THIS .product{padding-top: 1px;}
+.THIS .inputText.padding-right{padding-right:7px;}
+.THIS .inputText.padding-left{padding-left:10px;}
+.THIS .button-sidebar{ margin-top: 10px; margin-bottom:10px;text-align:right;}
+.THIS .btn{padding-bottom: 49px;padding-left: 353px; padding-right: 105px;padding-top: 18px;}
+.THIS .submitbtn{ background:#a21919; font-size: 22px;border-radius:6px; width: 144px; height: 40px; font-weight: bold;border:1px solid #822727;}
+.THIS .submitbtn:active{background:#a21919;}
+.THIS .submitbtn:hover{background:#800f0f;border:1px solid #800f0f;}
+.THIS .slds-m-top_medium{text-align:center;}
+.THIS .height textarea{height:90px;}
+.THIS button.button-sidebar{
+    top: 50%;
+    position: fixed;
+    right: 0;
+    width: 35px;
+    padding: 8px 0;
+    height: inherit;
+    background: #a21919;
+    color: #fff;
+    border: 0;
+    text-align: center;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    transition: all 0.3s ease;
+    z-index: 9;
+    margin-top: -74px;
+    outline:0 none;
+}
+.THIS button.button-sidebar.button-sidebar_open {
+    right: 300px;
+}
+.THIS .instructionPanel .slds-panel_docked-right{
+    position: fixed;
+    right: -300px;
+    top: 0;
+    z-index: 9;
+    width: 300px;
+    bottom: 0;
+    transition: all 0.3s ease;
+    margin-top:0!important;
+}
+
+.THIS .instructionPanel .slds-panel_docked-right.slds-is-open{
+    right: 0;
+   
+}
+.THIS .tost-msg svg{fill: #fff;width: 18px;height: 23px;}
+.THIS .slds-spinner_container{margin:0 auto;width:1000px;height:1600px;}

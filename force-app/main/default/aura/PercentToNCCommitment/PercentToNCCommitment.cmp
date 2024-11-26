@@ -1,0 +1,198 @@
+<aura:component controller="TMDMConsoleController" extends="c:ConsoleComponent">
+    
+    <aura:handler name="change" value="{!v.account}" action="{!c.handleAccountChange}"/>
+    
+    <aura:set attribute="accessLevel" value="1" />
+    
+    <aura:attribute name="accountPlan" type="Account_Planning__c"  />
+    <aura:attribute name="retentionOpps" type="Retention_Opportunity__c[]" />
+    <aura:attribute name="newRetentionOppLink" type="String" />
+    <aura:attribute name="newAccountPlanLink" type="String" />
+    <aura:attribute name="daysInNCProgram" type="Integer" />
+    <aura:attribute name="percentToCommitment" type="Integer" />
+    <aura:attribute name="percentToCommitmentLabel" type="String" />
+    <aura:attribute name="percentToCommitmentSubLabel" type="String" />
+    <aura:attribute name="daysInProgram" type="Integer" default="0" />
+    <aura:attribute name="isSf1" type="Boolean" />
+    <aura:attribute name="showUpdateConversion" type="Boolean" />
+    <aura:attribute name="isModalOpen" type="Boolean" />
+    
+    <aura:renderIf isTrue="{!v.rendered}">
+        
+        <c:ConsoleMetric title="% to NC Commitment">
+            <div class="slds-text-heading--large">
+                <c:ProgressChart label="{!v.percentToCommitmentLabel}" subLabel="{!v.percentToCommitmentSubLabel}" class="nc-commitment" percentageComplete="{!v.percentToCommitment}" />
+            </div>
+            
+            <aura:set attribute="actionArea">
+                
+                <!-- less than 120 days and has conversion record -->
+                <aura:if isTrue="{!v.showUpdateConversion}">
+                    
+                    <!-- IF SF1 -->
+                    <aura:if isTrue="{!v.isSf1}">
+                        
+                        <ui:button class="slds-button" label="Update Conversion Record" press="{!c.handleUpdateConversionPress}" />
+                        
+                        <!-- IF NOT SF1 -->
+                        <aura:set attribute="else">
+                            
+                            <a href="{!'/' + v.account.Conversion__r[0].Id}" target="_parent" class="slds-button">Update Conversion Record</a>
+                            
+                        </aura:set>
+                            
+                    </aura:if>
+                    
+                    <!-- Greater than 120 days  -->
+                    <aura:set attribute="else">
+                        
+                        <ui:button class="slds-button slds-text-align--left slds-truncate" 
+                           label="Update/Create Retention Opp"
+                           press="{!c.handleOpenModal}" />
+                        
+                    </aura:set>
+                    
+                </aura:if>
+                
+            </aura:set>
+            
+        </c:ConsoleMetric>
+        
+        <c:Modal isOpen="{!v.isModalOpen}" header="Update/Create Retention Opportunity">
+            
+            <aura:if isTrue="{!!v.isLoading}">
+                
+                <aura:if isTrue="{!v.retentionOpps.length > 0}">
+                    <div class="slds-scrollable--x">
+                        <table class="slds-table slds-table--bordered slds-max-medium-table--stacked-horizontal">
+                            <thead>
+                                <tr class="slds-text-heading--label">
+                                    <th scope="col">
+                                        <span class="slds-truncate">Name</span>
+                                    </th>
+                                    <th scope="col">
+                                        <span class="slds-truncate">Type</span>
+                                    </th>
+                                    <th scope="col">
+                                        <span class="slds-truncate">Retention Opportunity</span>
+                                    </th>
+                                    <th scope="col">
+                                        <span class="slds-truncate">Notes</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration var="i" items="{!v.retentionOpps}">
+                                    <tr class="slds-hint-parent">
+                                        <td>
+                                            <span class="slds-truncate">
+                                                <a href="{!'/' + i.Id}" class="slds-button" target="_parent">{!i.Name}</a>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="slds-truncate">{!i.Retention_Opportunity_Type__c}</span>
+                                        </td>
+                                        <td>
+                                            <span class="slds-truncate">{!i.Retention_Opportunity__c}</span>
+                                        </td>
+                                        <td>
+                                            <span class="slds-truncate">{!i.Retention_Opportunity_Notes__c}</span>
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <aura:set attribute="else">
+                        
+                        <aura:if isTrue="{!v.accountPlan}">
+                            
+                            <p>There are no open Retention Opportunities.</p>
+                            
+                            <aura:set attribute="else">
+                                
+                                <p>There is no Account Plan for the current year.</p>
+                                
+                            </aura:set>
+                            
+                            
+                        </aura:if>
+                        
+                    </aura:set>
+                    
+                </aura:if>
+                
+                <aura:set attribute="else">
+                    <div class="slds-grid slds-grid--align-center ">
+                        <div class="slds-col">
+                            <div class="slds-spinner--small slds-m-around--large">
+                                <img src="/resource/LightningDesignSystem/images/spinners/slds_spinner_brand.gif" alt="Loading..." />
+                            </div>
+                        </div>
+                    </div>
+                </aura:set>
+                
+            </aura:if>
+            
+            <aura:set attribute="footer">
+            
+                 <!-- HAS ACCOUNT PLAN -->
+                <aura:if isTrue="{!v.accountPlan}">
+                
+                     <!-- IN SALESFORCE1 -->
+                    <aura:if isTrue="{!v.isSf1}">
+                        
+                        <ui:button class="slds-button slds-button--brand" 
+                                   label="New Retention Opportunity" 
+                                   disabled="{!v.isLoading}" 
+                                   aura:id="newRetentionOpp"
+                                   press="{!c.handleNewRetentionOppPress}" />     
+                        
+                         <!-- NOT IN SALESFORCE1 -->
+                        <aura:set attribute="else">
+                        
+                            <a href="{!v.newRetentionOppLink}" class="slds-button slds-button--brand" target="_parent">
+                                New Retention Opportunity
+                            </a>
+                        
+                        </aura:set>
+                        
+                    </aura:if>
+                    
+                    <!-- NO ACCOUNT PLAN -->
+                    <aura:set attribute="else">
+                        
+                        <!-- IN SALESFORCE1 -->
+                        <aura:if isTrue="{!v.isSf1}">
+                            
+                            <ui:button class="slds-button slds-button--brand" 
+                                       label="New Account Plan" 
+                                       disabled="{!v.isLoading}" 
+                                       aura:id="newAccountPlan"
+                                       press="{!c.handleNewAccountPlanPress}" />     
+                            
+                            <!-- NOT IN SALESFORCE1 -->
+                            <aura:set attribute="else">
+                                
+                                <a href="{!v.newAccountPlanLink}" 
+                                   class="slds-button slds-button--brand" 
+                                   target="_parent">
+                                    New Account Plan
+                                </a>
+                                
+                            </aura:set>
+                            
+                        </aura:if>
+                    
+                    </aura:set>
+                    
+                </aura:if>
+            
+            </aura:set>
+            
+        </c:Modal>
+        
+    </aura:renderIf>
+    
+</aura:component>

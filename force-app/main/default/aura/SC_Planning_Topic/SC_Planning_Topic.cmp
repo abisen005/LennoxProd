@@ -1,0 +1,125 @@
+<aura:component controller="SC_PlanningTopicController">
+
+    <aura:attribute name="topicId" type="String" description="Id of the Planning Topic object" />
+    <aura:attribute name="title" type="String" />
+    <aura:attribute name="infoBubbleContent" type="String" />
+    <aura:attribute name="content" type="Planning_Topic_Content__c[]" />
+    <aura:attribute name="textContent" type="Planning_Topic_Content__c[]" />
+    <aura:attribute name="urlContent" type="Planning_Topic_Content__c[]" />
+    <aura:attribute name="canEditStrategy" type="Boolean" default="false" />
+    <aura:attribute name="hasAssignments" type="Boolean" default="false" />
+    <aura:attribute name="showTopicContent" type="Boolean" default="false" />
+    <aura:attribute name="editingStrategyValue" type="String" description="Store the new strategy value here before it is saved." />
+    <aura:attribute name="strategy" type="String" default="" access="GLOBAL" />
+    <aura:attribute name="newAssignment" type="Aura.Component[]" description="New Assignment Component" />
+    <aura:attribute name="user" type="User" />
+    <aura:attribute name="assignees" type="User[]" />
+    <aura:attribute name="assigneeIds" type="String[]" />
+    <aura:attribute name="canCreateAssignments" type="Boolean" />
+
+
+    <aura:attribute name="isEditingNote" type="Boolean" default="FALSE" description="Note is current being edited." />
+    <aura:attribute name="isLoadingNote" type="Boolean" default="FALSE" description="Note is currently loading." />
+
+
+
+    <aura:handler name="newAssignmentCreated" event="c:SC_EvtAssignmentCreated" action="{!c.handleAssignmentCreated}" includeFacets="true" />
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+
+
+    <div class="slds-m-bottom--medium">
+        <h2 class="slds-text-heading--medium slds-m-vertical--medium">
+            {!v.title}
+            <aura:if isTrue="{!v.infoBubbleContent}">
+                <c:SC_Tooltip content="{!v.infoBubbleContent}" class="slds-m-left--xx-small" />
+            </aura:if>
+        </h2>
+
+        <div class="{!v.showTopicContent ? '' : 'slds-hide'}">
+            <h3 class="slds-text-title"><strong>Executive Summary</strong></h3>
+            <ul class="slds-list--dotted">
+                <aura:iteration items="{!v.textContent}" var="item">
+                    <li>{!item.Content__c}</li>
+                </aura:iteration>
+            </ul>
+            <div class="{!v.urlContent.length > 0 ? '' : 'slds-hide'}">
+                <h3 class="slds-text-title slds-m-top--medium"><strong>Documents</strong></h3>
+                <ul class="slds-list--dotted">
+                    <aura:iteration items="{!v.urlContent}" var="item">
+                        <li><a href="{!item.Url__c}" target="_blank">{!item.Url_Label__c}</a></li>
+                    </aura:iteration>
+                </ul>
+            </div>
+        </div>
+        <div class="{!v.canEditStrategy ? '' : 'slds-hide'}">
+            <div class="slds-form-element slds-m-top--medium">
+
+                <label class="slds-form-element__label">
+                    <h3 class="slds-text-title"><strong>My Strategy</strong></h3>
+                    <lightning:buttonIcon iconName="{!v.isEditingNote ? 'utility:close' : 'utility:edit'}"
+                                          variant="bare"
+                                          disabled="{!v.isLoadingNote}"
+                                          onclick="{!c.handleEditStrategyPress}"
+                                          alternativeText="Edit Note" />
+                </label>
+                <div class="slds-form-element__control">
+
+                    <div class="{!v.isEditingNote ? '' : 'slds-hide'}">
+                        <div class="slds-grid">
+                            <div class="slds-size--1-of-1 slds-medium-size--1-of-2">
+                                <ui:inputTextArea class="slds-textarea"
+                                                  disabled="{!v.isLoadingNote}"
+                                                  value="{!v.editingStrategyValue}" />
+                                <lightning:button class="slds-float--right slds-m-top--x-small"
+                                                  variant="brand"
+                                                  disabled="{!v.isLoadingNote}"
+                                                  onclick="{!c.handleSaveStrategyPress}"
+                                                  label="Save" />
+                            </div>
+                        </div>
+                    </div>
+                    <span class="{!v.isEditingNote ? 'slds-hide' : ''}">
+                        <p class="{!empty(v.strategy) ? 'slds-show' : 'slds-hide'}"><i>No strategy yet</i></p>
+                            <ui:outputRichText value="{!v.strategy}" />
+                    </span>
+
+                </div>
+            </div>
+        </div>
+        <div class="{!v.hasAssignments ? '' : 'slds-hide'}">
+            <article class="slds-card slds-m-vertical--small">
+                <div class="slds-card__header slds-grid">
+                    <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                        <div class="slds-media__figure">
+                            <lightning:icon iconName="custom:custom83" size="small" />
+                        </div>
+                        <div class="slds-media__body slds-truncate">
+                            <h2>
+                                <span class="slds-text-heading--small">Assignments</span>
+                            </h2>
+                        </div>
+                    </header>
+                    <div class="slds-no-flex">
+                        <aura:if isTrue="{!v.canCreateAssignments}">
+                            <lightning:button label="New" onclick="{!c.handleNewAssignmentPress}" />
+                        </aura:if>
+                    </div>
+                </div>
+                <div class="slds-card__body">
+                    <c:SC_UserAssignments aura:id="userAssignments" topicId="{!v.topicId}" showAll="true" />
+                </div>
+                <div class="slds-card__footer"></div>
+            </article>
+
+        </div>
+
+
+    </div>
+
+    <!-- NEW ASSIGNMENT -->
+    {!v.newAssignment}
+
+
+
+
+</aura:component>

@@ -1,0 +1,21 @@
+<aura:component >
+
+
+    <aura:registerEvent name="routeNavBack" type="c:routeNavBack" />
+    <aura:registerEvent name="routeNavHistoryChange" type="c:routeNavHistoryChange" />
+
+    <aura:attribute name="name" type="String" />
+    <aura:attribute name="label" type="String" />
+    <aura:attribute name="routerName" type="String" />
+    <aura:attribute name="historyIndex" type="Integer" />
+    <aura:attribute name="routePath" type="String" />
+    <aura:attribute name="isLast" type="Boolean" />
+
+
+    <li class="slds-breadcrumb__item slds-text-title--caps">
+        <a href="#"
+           onclick="{!c.handleBreadcrumbClick}"
+           class="{!v.isLast ? 'slds-text-link--reset' : ''}">{!empty(v.label) ? v.name : v.label}</a>
+    </li>
+
+</aura:component>

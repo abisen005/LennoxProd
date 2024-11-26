@@ -1,0 +1,66 @@
+<aura:component >
+
+
+
+    <aura:attribute name="label" type="String" />
+    <aura:attribute name="value" type="String" />
+    <aura:attribute name="words" type="Object[]" />
+    <aura:attribute name="type" type="String" />
+    <aura:attribute name="hiddenSelectVal" type="String" />
+    <aura:attribute name="isSelecting" type="String" />
+    <aura:attribute name="formFactor" type="String" default="{!$Browser.formFactor}" />
+
+
+
+    <aura:handler name="change" value="{!v.words}" action="{!c.wordsChangeHandler}" />
+
+    <div class="slds-form-element slds-m-bottom--small">
+        <label class="slds-form-element__label" for="{!v.label}">{!v.label}</label>
+        <div class="slds-form-element__control">
+            <div class="slds-grid slds-grid--pull-padded">
+                <div class="slds-p-left--small slds-col slds-size--1-of-8 slds-medium-size--1-of-12">
+                    <lightning:buttonIcon iconName="utility:close" alternativeText="Clear input" variant="border-filled" onclick="{!c.handleClearInputPress}" />
+                </div>
+                <div class="slds-p-horizontal--xx-small slds-col slds-size--6-of-8 slds-medium-size--10-of-12">
+                    <ui:inputText aura:id="input" class="{!'slds-input' + (!empty(v.value) ? ' is-good' : '')}" value="{!v.value}" placeholder="{!v.label}" />
+                </div>
+                <div class="slds-p-right--small slds-col slds-size--1-of-8 slds-medium-size--1-of-12">
+                    <lightning:buttonIcon iconName="utility:down" alternativeText="Available words" variant="border-filled" onclick="{!c.handleShowAvailableWordsPress}" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div role="dialog" tabindex="-1" class="{!'slds-modal' + (v.isSelecting ? ' slds-fade-in-open' : '')}" style="width: auto">
+        <div class="slds-modal__container">
+            <div class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close"
+                                      class="slds-modal__close slds-text-align--right"
+                                      variant="bare-inverse"
+                                      alternativeText="Close Modal"
+                                      onclick="{!c.handleCloseModalPress}" />
+                <h2 class="slds-text-heading--medium">Select a Value</h2>
+            </div>
+            <div class="slds-modal__content">
+                <table class="slds-table slds-table--bordered slds-table--cell-buffer scanned-words-table">
+                    <tbody>
+                        <aura:iteration items="{!v.words}" var="word">
+                            <tr>
+                                <td>
+                                <lightning:buttonIcon value="{!word.value}"
+                                                      iconName="utility:check"
+                                                      onclick="{!c.handleWordButtonPress}" />
+                                </td>
+                                <td>
+                                    {!word.value}
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="{!'slds-backdrop' + (v.isSelecting ? ' slds-backdrop--open' : '')}"></div>
+
+</aura:component>

@@ -1,0 +1,483 @@
+<apex:page controller="RetailScorecardController" standardStylesheets="false" showHeader="false" applyBodyTag="false" applyHtmlTag="false" >
+    <html >
+        <head>
+            <meta charset="utf-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Retail Scorecard</title>
+            <link href="{!URLFOR($Resource.RetailScorecardStyle)}" rel="stylesheet" />
+
+        </head>
+        <apex:pageMessages ></apex:pageMessages>
+        <body>
+
+            <div class="container-fluid">
+                <br />
+                <div class="row">
+                    <div class="col-xs-12 hide-for-print">
+
+                       <div class="pull-right">
+                           <c:printPDF orientation="portrait" buttonClass="btn btn-default" accountId="{!id}" name="Costco Scorecard" />
+                       </div>
+                       <div class="pull-right">
+                           &nbsp;&nbsp;
+                           <button type="button" class="btn btn-default" id="js-dealer-view">Show Dealer View</button>
+                           <button type="button" class="btn btn-default" style="display: none" id="js-internal-view">Show Internal View</button>
+                           &nbsp;&nbsp;
+                       </div>
+
+                    </div>
+                </div>
+                <br />
+            </div>
+
+            <c:RetailScoreCard_Header subHeader="{!'YTD Performance Through ' + lastUpdated + ' | ' + periodInfo}" level="{!level}"
+                                      scorecardId="{!id}"
+                                      img="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nLjh&oid=00D80000000LcQA"
+                                      retailType="costco"
+                                      retailLabel="Costco" />
+
+            <div class="container-fluid">
+                <apex:outputPanel rendered="{!costcoLeadInstallRateData != NULL}">
+                    <div class="row js-even-col-height">
+                        <div class="col-xs-12 col-sm-6 col-pr-5 ">
+                            <div class="page-item">
+                                <h2 class="text-center">Leads - % Dealer Self-Generated</h2>
+                                <div id="selfGenBarChart" class="compare-bar-chart"></div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-pr-7 ">
+                            <div class="page-item">
+                                <h2 class="text-center">Close Rate</h2>
+                                <div class="block col-pr-6">
+                                    <div id="periodLeadToInstallRate" class="chart-container"></div>
+                                    <div class="gauge-chart-value">
+                                        {!ROUND(groupSummaryMap[dealer.SAP_Sales_District__c + dealer.SAP_Sales_Office__c + dealer.SAP_Sales_Group__c + dealer.Id + 'P'].leadToInstallRatio, 1)}%
+                                        <div class="gauge-chart-label">
+                                            Period
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="block col-pr-6">
+                                    <div id="ytdLeadToInstallRate" class="chart-container"></div>
+                                    <div class="gauge-chart-value">
+                                        {!ROUND(groupSummaryMap[dealer.SAP_Sales_District__c + dealer.SAP_Sales_Office__c + dealer.SAP_Sales_Group__c + dealer.Id].leadToInstallRatio, 1)}%
+                                        <div class="gauge-chart-label">
+                                            YTD
+                                        </div>
+                                    </div>
+                                </div>
+                                <table class="table table-condensed">
+                                    <tr>
+                                        <td></td>
+                                        <th class="text-right">Period</th>
+                                        <th class="text-right">YTD</th>
+                                    </tr>
+                                    <apex:outputPanel rendered="{!dealer.Retail_Sales_Tracker__r != NULL}">
+                                        <tr>
+                                            <td class="text-left">Costco Region</td>
+                                            <td class="text-right"><strong>{!ROUND(groupSummaryMap[dealer.Retail_Sales_Tracker__r[0].Store_Region_Name__c + 'P'].leadToInstallRatio, 1)}%</strong></td>
+                                            <td class="text-right"><strong>{!ROUND(groupSummaryMap[dealer.Retail_Sales_Tracker__r[0].Store_Region_Name__c].leadToInstallRatio, 1)}%</strong></td>
+                                        </tr>
+                                    </apex:outputPanel>
+                                    <tr>
+                                        <td class="text-left">Lennox Region</td>
+                                        <td class="text-right"><strong>{!ROUND(groupSummaryMap[dealer.SAP_Sales_District__c + 'P'].leadToInstallRatio, 1)}%</strong></td>
+                                        <td class="text-right"><strong>{!ROUND(groupSummaryMap[dealer.SAP_Sales_District__c].leadToInstallRatio, 1)}%</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-left">Lennox District</td>
+                                        <td class="text-right"><strong>{!ROUND(groupSummaryMap[dealer.SAP_Sales_District__c + dealer.SAP_Sales_Office__c + 'P'].leadToInstallRatio, 1)}%</strong></td>
+                                        <td class="text-right"><strong>{!ROUND(groupSummaryMap[dealer.SAP_Sales_District__c + dealer.SAP_Sales_Office__c].leadToInstallRatio, 1)}%</strong></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </apex:outputPanel>
+                <div class="row js-even-col-height">
+                    <div class="col-xs-12 col-sm-8 col-pr-8">
+                        <div class="page-item">
+                            <h2 class="text-center">Sales Performance Metrics</h2>
+                            <div class="bullet-chart-container" id="bullet-chart-period"></div>
+                            <div class="bullet-chart-container" id="bullet-chart-ytd"></div>
+                            <table class="table table-striped table--costco">
+                                <thead>
+                                    <tr>
+                                        <th>Performance Metrics</th>
+                                        <th class="text-right">Sales $</th>
+                                        <!--<th class="text-right">Target</th>
+                                        <th class="text-right">% to Target</th>-->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th>Avg Sales $ / Whs - Period</th>
+                                        <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!costcoSalesData[0].avgYtdSales}" /></apex:outputText></td>
+                                        <!--<td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!curPeriodSalesTarget}" /></apex:outputText></td>
+                                        <td class="text-right">{!IF(curPeriodSalesTarget != 0, ROUND((costcoSalesData[0].avgYtdSales / curPeriodSalesTarget) * 100, 1) , 0)}%</td>-->
+                                    </tr>
+                                    <tr>
+                                        <th>Avg Sales $ / Whs - YTD</th>
+                                        <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!costcoSalesData[1].avgYtdSales}" /></apex:outputText></td>
+                                        <!--<td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!curAvgSalesStoreTarget}" /></apex:outputText></td>
+                                        <td class="text-right">{!IF(curAvgSalesStoreTarget != 0, ROUND((costcoSalesData[1].avgYtdSales / curAvgSalesStoreTarget) * 100, 1), 0)}%</td>-->
+                                    </tr>
+                                    <tr>
+                                        <th>Change $ - Period</th>
+                                        <td class="text-right sales-{!IF(costcoSalesData[0].ytdChangePercentage >= 0, 'success', 'danger')}">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!costcoSalesData[0].ytdChangeSales}" /></apex:outputText></td>
+                                        <!--<td colspan="2"></td>-->
+                                    </tr>
+                                    <tr>
+                                        <th>Change $ - YTD</th>
+                                        <td class="text-right sales-{!IF(costcoSalesData[1].ytdChangePercentage >= 0, 'success', 'danger')}">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!costcoSalesData[1].ytdChangeSales}" /></apex:outputText></td>
+                                        <!--<td colspan="2"></td>-->
+                                    </tr>
+                                    <tr>
+                                        <th># of Warehouses assigned</th>
+                                        <td class="text-right">{!costcoSalesData[0].numStores}</td>
+                                        <!--<td colspan="2"></td>-->
+                                    </tr>
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-4 col-pr-4">
+                        <div class="page-item overall-performance">
+                            <apex:variable var="ytdSalesStatus"
+                                           value="{!IF(storeSummaryData.ytdChangePercentage > 0, 'success', 'danger')}" />
+                            <apex:variable var="avgStoreTargetStatus"
+                                           value="{!IF(IF(curAvgSalesStoreTarget != 0, ROUND((costcoSalesData[1].avgYtdSales / curAvgSalesStoreTarget) * 100, 1), 0) >= 100, 'success', 'danger')}" />
+                            <apex:variable var="mixIndexStatus"
+                                           value="{!IF(dealer.Costco_Mix_Index__c < 5.5, 'danger', IF(dealer.Costco_Mix_Index__c < 6.5, 'warning', 'success'))}" />
+                            <apex:variable var="overallStatus"
+                                           value="{!IF(ytdSalesStatus = 'success' && avgStoreTargetStatus = 'success' && mixIndexStatus = 'success', 'success', IF(ytdSalesStatus = 'danger' && avgStoreTargetStatus = 'danger' && mixIndexStatus = 'danger', 'danger', 'warning'))}" />
+                            <h2 class="text-center">Overall Sales Performance</h2>
+                            <img src="{!CASE(overallStatus,
+                                      'success', 'https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nDQc&oid=00D80000000LcQA',
+                                      'warning', 'https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nDQI&oid=00D80000000LcQA',
+                                      'danger', 'https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nDQS&oid=00D80000000LcQA',
+                                      null)}" class="overall-performance-indicator" />
+                            <h1 class="text-center overall-performance-title">
+                                {!CASE(overallStatus, 'success', 'On Target', 'warning', 'Needs Attention', 'danger', 'Below Target', null)}
+                            </h1>
+                            <table class="table table-condensed">
+                                <tr>
+                                    <td class="text-left">YTD Sales - YTD Change %</td>
+
+                                    <td class="text-right sales-{!ytdSalesStatus}">
+                                        <strong>
+                                            {!ROUND(storeSummaryData.ytdChangePercentage, 1)}%
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <!--<tr>
+                                    <td class="text-left">Avg Sales $/Warehouse - % to YTD Target</td>
+                                    <td class="text-right sales-{!avgStoreTargetStatus}"><strong>{!IF(curAvgSalesStoreTarget != 0, ROUND((costcoSalesData[1].avgYtdSales / curAvgSalesStoreTarget) * 100, 1), 0)}%</strong></td>
+                                </tr>-->
+                                <tr>
+                                    <td class="text-left">Mix Index</td>
+                                    <td class="text-right sales-{!mixIndexStatus}">{!dealer.Costco_Mix_Index__c}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-left">Escalation / Lead Ratio</td>
+                                    <td class="text-right sales-{!IF(dealer.Costco_Escalation_to_Lead_Ratio__c <= 1, 'success', 'danger')}">{!dealer.Costco_Escalation_to_Lead_Ratio__c}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="page-break" style="page-break-after:always;"></div>
+            <span class="hide-for-web"><c:RetailScoreCard_Header subHeader="{!'YTD Performance Through ' + lastUpdated + ' | ' + periodInfo}" level="{!level}" scorecardId="{!id}" img="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nLjh&oid=00D80000000LcQA" retailType="costco" retailLabel="Costco" /></span>
+
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="page-item">
+                            <h2 class="text-center">Leads / Close Rates</h2>
+                            <apex:repeat value="{!costcoStoreData}" var="key">
+                                <apex:outputPanel rendered="{!CONTAINS(key, 'Period')}">
+                                    <strong>{!key}</strong>
+                                    <table class="table table-striped table--{!retailInfo.type} table-responsive">
+                                        <thead>
+                                            <tr>
+                                                <th>Whs Name</th>
+                                                <th class="text-center">Whs #</th>
+                                                <th class="text-center">Total Leads</th>
+                                                <th class="text-center">Confirmed Leads</th>
+                                                <th class="text-center">Self Gen Leads</th>
+                                                <th class="text-center">Self Gen %</th>
+                                                <th class="text-center">Installs</th>
+                                                <th class="text-center">Close Rate</th>
+                                                <th class="text-center">Sales $</th>
+                                                <th class="text-center">PY Sales $</th>
+                                                <th class="text-center">Change $</th>
+                                                <th class="text-center">Change %</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <apex:repeat value="{!costcoStoreData[key]}" var="store">
+                                                <tr>
+                                                    <td class="text-left">
+                                                        <a class="hide-for-print" href="/{!store.Id}" target="_blank">{!store.Name}</a>
+                                                        <span class="hide-for-web">{!store.Name}</span>
+                                                    </td>
+                                                    <td class="text-center">{!store.Store_Number__c}</td>
+                                                    <td class="text-center">{!store.Total_Leads__c}</td>
+                                                    <td class="text-center">{!store.YTD_Leads__c}</td>
+                                                    <td class="text-center">{!store.Self_Generated_Leads__c}</td>
+                                                    <td class="text-center"><apex:outputField value="{!store.Self_Generated_Leads_Percent__c}" /></td>
+                                                    <td class="text-center">{!store.Installs__c}</td>
+                                                    <td class="text-center"><apex:outputField value="{!store.Lead_to_Install_Percent__c}" /></td>
+                                                    <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!store.YTD_Sales__c}" /></apex:outputText></td>
+                                                    <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!store.PY_YTD_Sales__c}" /></apex:outputText></td>
+                                                    <td class="text-right sales-{!IF(store.YTD_Change_per__c >= 0, 'success', 'danger')}">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!store.YTD_Change__c}" /></apex:outputText></td>
+                                                    <td class="text-right sales-{!IF(store.YTD_Change_per__c >= 0, 'success', 'danger')}">{!ROUND(store.YTD_Change_per__c, 1)}%</td>
+                                                </tr>
+                                            </apex:repeat>
+                                        </tbody>
+                                        <tfoot>
+                                            <apex:outputPanel rendered="{!CONTAINS(key, 'Period')}">
+                                                <tr>
+                                                    <td class="text-right" colspan="2"><strong>Totals: </strong></td>
+                                                    <td class="text-center">{!periodStoreSummaryData.totalLeads}</td>
+                                                    <td class="text-center">{!periodStoreSummaryData.ytdLeads}</td>
+                                                    <td class="text-center">{!periodStoreSummaryData.selfGenLeads}</td>
+                                                    <td class="text-center">{!ROUND(periodStoreSummaryData.selfGenLeadRatio, 1)}%</td>
+                                                    <td class="text-center">{!periodStoreSummaryData.installs}</td>
+                                                    <td class="text-center">{!ROUND(periodStoreSummaryData.leadToInstallRatio, 1)}%</td>
+                                                    <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!periodStoreSummaryData.ytdSales}" /></apex:outputText></td>
+                                                    <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!periodStoreSummaryData.priorYtdSales}" /></apex:outputText></td>
+                                                    <td class="text-right sales-{!IF(periodStoreSummaryData.ytdChangePercentage >= 0, 'success', 'danger')}">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!periodStoreSummaryData.ytdChange}" /></apex:outputText></td>
+                                                    <td class="text-right sales-{!IF(periodStoreSummaryData.ytdChangePercentage >= 0, 'success', 'danger')}">{!ROUND(periodStoreSummaryData.ytdChangePercentage, 1)}%</td>
+                                                </tr>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!!CONTAINS(key, 'Period')}">
+                                                <tr>
+                                                    <td class="text-right" colspan="2"><strong>Totals: </strong></td>
+                                                    <td class="text-center">{!storeSummaryData.totalLeads}</td>
+                                                    <td class="text-center">{!storeSummaryData.ytdLeads}</td>
+                                                    <td class="text-center">{!storeSummaryData.selfGenLeads}</td>
+                                                    <td class="text-center">{!ROUND(storeSummaryData.selfGenLeadRatio, 1)}%</td>
+                                                    <td class="text-center">{!storeSummaryData.installs}</td>
+                                                    <td class="text-center">{!ROUND(storeSummaryData.leadToInstallRatio, 1)}%</td>
+                                                    <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!storeSummaryData.ytdSales}" /></apex:outputText></td>
+                                                    <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!storeSummaryData.priorYtdSales}" /></apex:outputText></td>
+                                                    <td class="text-right sales-{!IF(storeSummaryData.ytdChangePercentage >= 0, 'success', 'danger')}">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!storeSummaryData.ytdChange}" /></apex:outputText></td>
+                                                    <td class="text-right sales-{!IF(storeSummaryData.ytdChangePercentage >= 0, 'success', 'danger')}">{!ROUND(storeSummaryData.ytdChangePercentage, 1)}%</td>
+                                                </tr>
+                                            </apex:outputPanel>
+                                        </tfoot>
+                                    </table>
+                                </apex:outputPanel>
+
+                            </apex:repeat>
+                            <apex:repeat value="{!costcoStoreData}" var="key">
+                                <apex:outputPanel rendered="{!!CONTAINS(key, 'Period')}">
+                                    <strong>{!key}</strong>
+                                    <table class="table table-striped table--{!retailInfo.type} table-responsive">
+                                        <thead>
+                                            <tr>
+                                                <th>Whs Name</th>
+                                                <th class="text-center">Whs #</th>
+                                                <th class="text-center">Total Leads</th>
+                                                <th class="text-center">Confirmed Leads</th>
+                                                <th class="text-center">Self Gen Leads</th>
+                                                <th class="text-center">Self Gen %</th>
+                                                <th class="text-center">Installs</th>
+                                                <th class="text-center">Close Rate</th>
+                                                <th class="text-center">Sales $</th>
+                                                <th class="text-center">PY Sales $</th>
+                                                <th class="text-center">Change $</th>
+                                                <th class="text-center">Change %</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <apex:repeat value="{!costcoStoreData[key]}" var="store">
+                                                <tr>
+                                                    <td class="text-left">
+                                                        <a class="hide-for-print" href="/{!store.Id}" target="_blank">{!store.Name}</a>
+                                                        <span class="hide-for-web">{!store.Name}</span>
+                                                    </td>
+                                                    <td class="text-center">{!store.Store_Number__c}</td>
+                                                    <td class="text-center">{!store.Total_Leads__c}</td>
+                                                    <td class="text-center">{!store.YTD_Leads__c}</td>
+                                                    <td class="text-center">{!store.Self_Generated_Leads__c}</td>
+                                                    <td class="text-center"><apex:outputField value="{!store.Self_Generated_Leads_Percent__c}" /></td>
+                                                    <td class="text-center">{!store.Installs__c}</td>
+                                                    <td class="text-center"><apex:outputField value="{!store.Lead_to_Install_Percent__c}" /></td>
+                                                    <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!store.YTD_Sales__c}" /></apex:outputText></td>
+                                                    <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!store.PY_YTD_Sales__c}" /></apex:outputText></td>
+                                                    <td class="text-right sales-{!IF(store.YTD_Change_per__c >= 0, 'success', 'danger')}">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!store.YTD_Change__c}" /></apex:outputText></td>
+                                                    <td class="text-right sales-{!IF(store.YTD_Change_per__c >= 0, 'success', 'danger')}">{!ROUND(store.YTD_Change_per__c, 1)}%</td>
+                                                </tr>
+                                            </apex:repeat>
+                                        </tbody>
+                                        <tfoot>
+                                            <apex:outputPanel rendered="{!CONTAINS(key, 'Period')}">
+                                                <tr>
+                                                    <td class="text-right" colspan="2"><strong>Totals: </strong></td>
+                                                    <td class="text-center">{!periodStoreSummaryData.totalLeads}</td>
+                                                    <td class="text-center">{!periodStoreSummaryData.ytdLeads}</td>
+                                                    <td class="text-center">{!periodStoreSummaryData.selfGenLeads}</td>
+                                                    <td class="text-center">{!ROUND(periodStoreSummaryData.selfGenLeadRatio, 1)}%</td>
+                                                    <td class="text-center">{!periodStoreSummaryData.installs}</td>
+                                                    <td class="text-center">{!ROUND(periodStoreSummaryData.leadToInstallRatio, 1)}%</td>
+                                                    <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!periodStoreSummaryData.ytdSales}" /></apex:outputText></td>
+                                                    <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!periodStoreSummaryData.priorYtdSales}" /></apex:outputText></td>
+                                                    <td class="text-right sales-{!IF(periodStoreSummaryData.ytdChangePercentage >= 0, 'success', 'danger')}">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!periodStoreSummaryData.ytdChange}" /></apex:outputText></td>
+                                                    <td class="text-right sales-{!IF(periodStoreSummaryData.ytdChangePercentage >= 0, 'success', 'danger')}">{!ROUND(periodStoreSummaryData.ytdChangePercentage, 1)}%</td>
+                                                </tr>
+                                            </apex:outputPanel>
+                                            <apex:outputPanel rendered="{!!CONTAINS(key, 'Period')}">
+                                                <tr>
+                                                    <td class="text-right" colspan="2"><strong>Totals: </strong></td>
+                                                    <td class="text-center">{!storeSummaryData.totalLeads}</td>
+                                                    <td class="text-center">{!storeSummaryData.ytdLeads}</td>
+                                                    <td class="text-center">{!storeSummaryData.selfGenLeads}</td>
+                                                    <td class="text-center">{!ROUND(storeSummaryData.selfGenLeadRatio, 1)}%</td>
+                                                    <td class="text-center">{!storeSummaryData.installs}</td>
+                                                    <td class="text-center">{!ROUND(storeSummaryData.leadToInstallRatio, 1)}%</td>
+                                                    <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!storeSummaryData.ytdSales}" /></apex:outputText></td>
+                                                    <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!storeSummaryData.priorYtdSales}" /></apex:outputText></td>
+                                                    <td class="text-right sales-{!IF(storeSummaryData.ytdChangePercentage >= 0, 'success', 'danger')}">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!storeSummaryData.ytdChange}" /></apex:outputText></td>
+                                                    <td class="text-right sales-{!IF(storeSummaryData.ytdChangePercentage >= 0, 'success', 'danger')}">{!ROUND(storeSummaryData.ytdChangePercentage, 1)}%</td>
+                                                </tr>
+                                            </apex:outputPanel>
+                                        </tfoot>
+                                    </table>
+                                </apex:outputPanel>
+
+                            </apex:repeat>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="js-hide-dealer-view">
+                <div class="page-break" style="page-break-after:always;"></div>
+                <span class="hide-for-web"><c:RetailScoreCard_Header subHeader="{!'YTD Performance Through ' + lastUpdated + ' | ' + periodInfo}" level="{!level}"  scorecardId="{!id}" img="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nLjh&oid=00D80000000LcQA" retailType="costco" retailLabel="Costco" /></span>
+
+
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="page-item">
+                                <h2 class="text-center">TM Questions - For Lennox Use Only</h2>
+                                <table class="table table-bordered table-responsive retail-questions">
+                                    <thead>
+                                        <tr>
+                                            <th>Main Questions:</th>
+                                            <th>Additional Questions:</th>
+                                        </tr>
+                                    </thead>
+                                    <tr>
+                                        <td class="col-xs-6">
+                                            <ol class="retail-questions-main">
+                                                <li>Are you pleased with your Costco performance and results? Why?</li>
+                                                <li>Are you on pace to meet the goals for the warehousesassigned to you?  If not how do we get there?</li>
+                                                <li>How do you manage the relationships with Costco personnel?  (Costco Warehouse Manager / Assistant Manager, Regional Project Manager, etc.) Are relationships good?</li>
+                                                <li>How can Lennox help make the partnership more successful?</li>
+                                                <li>Identify any specific action items to be followed up on either by the Dealer or Lennox by the next review meeting.</li>
+                                            </ol>
+                                        </td>
+                                        <td>
+                                            <ul class="retail-questions-additional">
+                                                <li>Did the Dealer have lead generators present in their retail locations during the last month? Do they need more training? Where in the store are they?</li>
+                                                <li>How many quality leads were generated during the last month, YTD?  How many resulted in sales?  What was their close rate?</li>
+                                                <li>Did the Dealer conduct any “special events” during the last month?</li>
+                                                <li>Are lead generators able to provide “reference pricing” to customers in the store?  If not, how do they respond to questions on price?</li>
+                                                <li>Is the Dealer’s pricing to retail customers the same (or better) than pricing offered in the core business?  Does the Dealer offer any “System Special Packages” or Best/Better/Good options for the retail customer? </li>
+                                                <li>Have the Dealer’s Comfort Advisors found any differences in selling through the retail partner vs. their own internal leads?</li>
+                                                <li>If the Dealer is in multiple locations and there are significant differences in performance from one to another, what are the Dealer’s thoughts on why?</li>
+                                                <li>Does the Dealer have internal staff assigned to handling the administrative side of the retail program?</li>
+                                                <li>Is the Dealer in full compliance with all of the retailer’s requirements regarding signage, literature, staffing, etc.?</li>
+                                                <li>Does the Dealer have a process in place for responding to retail customer complaints or escalations?</li>
+                                                <li>If performance for the most recent update was below expectations, what specific issues or challenges had an impact on results?</li>
+                                                <li>If performance was positive, what specific actions or activities contributed to those results?  What “best practices” can be shared with other Dealers?</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+
+            /* BAR CHART CONFIG */
+            var rateCompareChartConfig = {
+                data: [
+                    <apex:repeat var="key" value="{!costcoSelfGenLeadData}">
+                    {
+                        category: '{!JSENCODE(key)}',
+                        data: [{
+                            label: 'Period',
+                    value: {!ROUND(costcoSelfGenLeadData[key][0] * (1/100), 3)}
+                        }, {
+                            label: 'YTD',
+                value: {!ROUND(costcoSelfGenLeadData[key][1] * (1/100), 3)}
+                        }]
+                    },
+                    </apex:repeat>
+                ],
+                target: .6
+            };
+
+            /* GAUGE CHART CONFIG */
+            var GAUGE_MAX_WIDTH = 210;
+            var gaugeWidth = document.getElementById('periodLeadToInstallRate').offsetWidth - 15  > GAUGE_MAX_WIDTH ? GAUGE_MAX_WIDTH : document.getElementById('periodLeadToInstallRate').offsetWidth - 15,
+                periodLeadToInstallRateConfig = {
+                    size: gaugeWidth,
+                    clipWidth: gaugeWidth,
+                    clipHeight: (gaugeWidth / 2) + 15,
+                    groupingsWidth: [.25, .349, 1],
+                    transitionMs: 0,
+                    value: {!groupSummaryMap[dealer.SAP_Sales_District__c + dealer.SAP_Sales_Office__c + dealer.SAP_Sales_Group__c + dealer.Id + 'P'].leadToInstallRatio}
+                },
+                ytdLeadToInstallRateConfig = {
+                    size: gaugeWidth,
+                    clipWidth: gaugeWidth,
+                    clipHeight: (gaugeWidth / 2) + 15,
+                    groupingsWidth: [.25, .349, 1],
+                    transitionMs: 0,
+                    value: {!groupSummaryMap[dealer.SAP_Sales_District__c + dealer.SAP_Sales_Office__c + dealer.SAP_Sales_Group__c + dealer.Id].leadToInstallRatio}
+                };
+
+            /* BULLET CHART CONFIG */
+            var periodBulletChartData = [{
+                "title":"Period Avg Sales",
+                "subtitle":"$/Whs",
+                "ranges":[{!IF((curPeriodSalesTarget * 1.2) > costcoSalesData[0].avgYtdSales, (curPeriodSalesTarget * 1.2), costcoSalesData[0].avgYtdSales)}],
+                "measures":[{!costcoSalesData[0].avgYtdSales},{!costcoSalesData[0].avgYtdSales}],
+                "markers":[{!curPeriodSalesTarget}]
+            }];
+
+            var ytdBulletChartData = [{
+                "title":"YTD Avg Sales",
+                "subtitle":"$/Whs",
+                "ranges":[{!IF((curAvgSalesStoreTarget * 1.2) > costcoSalesData[1].avgYtdSales, (curAvgSalesStoreTarget * 1.2), costcoSalesData[1].avgYtdSales)}],
+                "measures":[{!costcoSalesData[1].avgYtdSales},{!costcoSalesData[1].avgYtdSales}],
+                "markers":[{!curAvgSalesStoreTarget}]
+            }];
+
+            </script>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+            <script src="{!URLFOR($Resource.d3BulletChart)}"></script>
+            <script src="{!URLFOR($Resource.d3GaugeChart)}"></script>
+            <script src="{!URLFOR($Resource.CostcoScorecardApp)}"></script>
+
+            <c:TrackPageView lenPageName="Costco Retail Scorecard" />
+
+        </body>
+    </html>
+</apex:page>

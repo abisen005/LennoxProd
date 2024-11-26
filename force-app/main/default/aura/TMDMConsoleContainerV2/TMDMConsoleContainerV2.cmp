@@ -1,0 +1,632 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" controller="TMDMConsoleControllerV2" access="global" >
+    
+    <ltng:require styles="/resource/LightningDesignSystem/styles/salesforce-lightning-design-system-ltng.min.css,/resource/TMDMStyle,/resource/FontAwesome/css/font-awesome.min.css" scripts="/resource/numeraljs" />
+     
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />	
+    <aura:attribute name="account" type="Account" default="{ 'sobjectType': 'Account' }"/>	
+    <aura:attribute name="accountCategory" type="Integer" description="1 = Other; 2 = TM Owned; 3 = Key and Priority" />
+    <aura:attribute name="accountId" type="String" />	
+    <aura:attribute name="currentUser" type="User" />
+    <aura:attribute name="costcoScorecardLink" type="URL" />	
+    <aura:attribute name="createScorecardLink" type="String" />		
+    <aura:attribute name="cssStyle" type="String" />
+    <aura:attribute name="isClassic" type="Boolean" default="false"/>
+    <aura:attribute name="isSf1" type="Boolean" />
+    <aura:attribute name="isUpdateForecast" type="Boolean" />
+    <aura:attribute name="lowesScorecardLink" type="String" />	
+    <aura:attribute name="newContactLink" type="String" />	
+    <aura:attribute name="preCallPlannerLink" type="String" />	
+    <aura:attribute name="pySalesSummaryLink" type="String" />	
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="customerNumber" type="String" />
+    <aura:attribute name="salesSummaryLink" type="String" />	
+    <aura:attribute name="showCallDealerModal" type="Boolean" />
+    <aura:attribute name="opportunityScorecardId" type="String" />
+    <aura:attribute type="Boolean" name="ismodalClicked"/>
+    <aura:attribute type="Boolean" name="ismodalClickedWarranty"/>
+    <aura:attribute type="Boolean" name="ismodalClickedSerial"/>
+    <aura:attribute type="Boolean" name="ismodalClickedContact"/>
+    <aura:attribute type="String" name="flowname"/>
+    <lightning:flow aura:id="flowData"/>
+    <aura:attribute name="rec" type="String" />	
+    <force:recordData aura:id="recordLoaderId"
+                      layoutType="FULL"
+                      recordId="{!v.recordId}"
+                      targetError="{!v.targetError}"
+                      targetFields="{!v.targetFields}"
+                      mode="VIEW"
+                      />
+    <aura:attribute name="targetFields" type="Object"/>
+    <aura:attribute name="currentYearPlanLabel" type="String" default="Current Year Account Plan" />
+    <aura:attribute name="currentYearPlan" type="Object" />
+    <aura:attribute name="isAccountPlanExist" type="Boolean" default="true"/>
+   
+    <!--Mobile view-->
+    <aura:if isTrue= "{!$Browser.formFactor == 'PHONE'}">
+                    <div class="slds-grid slds-wrap slds-grid--align-spread slds-card__body">
+                        <aura:if isTrue="{!v.salesSummaryLink}">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">
+                                <!--<aura:if isTrue="{!v.isSf1}">
+                                        <ui:button class="slds-button tmdm-button " label="" press="{!c.handleSalesSummaryPress}">
+                                            <span class="slds-icon__container icon-sales-summary slds-p-around- -small">
+                                                <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                            </span>
+                                        </ui:button>
+                                        <div class="slds-text-body- -small slds-m-top- -x-small">
+                                            {!v.account.Account_Plans__r[0].Account_Plan_Year__c} Dealer Sales Summary
+                                        </div>
+                                        <aura:set attribute="else">-->
+                                <!-- <a href="{!v.salesSummaryLink}" target="_blank" class="slds-button tmdm-button"> -->
+                                <div class="slds-button tmdm-button" onclick="{!c.gotoSalesSummary}">
+                                    <span class="slds-icon__container icon-sales-summary slds-p-around--small">
+                                        <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                    </span>
+                                </div>
+                                <!-- </a> -->
+                                <div class="slds-text-body--small slds-m-top--x-small">
+                                    {!v.account.Account_Plans__r[0].Account_Plan_Year__c} Dealer<br/> Sales summary
+                                </div>
+                                <!--</aura:set>
+                                    </aura:if>-->
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.pySalesSummaryLink}">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">
+                                <!--<aura:if isTrue="{!v.isSf1}">
+                                        <ui:button class="slds-button tmdm-button" label="" press="{!c.handlePySalesSummaryPress}">
+                                            <span class="slds-icon__container icon-sales-summary slds-p-around- -small">
+                                                <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                            </span>
+                                        </ui:button>
+                                        <div class="slds-text-body- -small slds-m-top- -x-small">
+                                            {!v.account.Account_Plans__r[1].Account_Plan_Year__c} Dealer Sales Summary
+                                        </div>
+                                        <aura:set attribute="else">-->
+                                <a href="{!v.pySalesSummaryLink}" target="_blank" class="slds-button tmdm-button">
+                                    <span class="slds-icon__container icon-sales-summary slds-p-around--small">
+                                        <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                    </span>
+                                </a>
+                                <div class="slds-text-body--small slds-m-top--x-small">
+                                    {!v.account.Account_Plans__r[1].Account_Plan_Year__c} Dealer<br/> Sales Summary
+                                </div>
+                                <!--</aura:set>
+                                    </aura:if>-->
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.account.Retention__r}">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">
+                                <!--<aura:if isTrue="{!isSf1}">
+                                        <ui:button class="slds-button tmdm-button" label="" press="{!c.NewDBRPress}">
+                                            <span class="slds-icon__container icon-cy-dbr slds-p-around- -small">
+                                                <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                            </span>
+                                        </ui:button>
+                                        <div class="slds-text-body- -small slds-m-top- -x-small">
+                                            <ui:outputDate value="{!v.account.Retention__r[0].Retention_Calendar_Date__c}" format="yyyy" />
+                                            Dealer Benefit Report
+                                        </div>
+                                        <aura:set attribute="else">-->
+                                <a href="{!'/apex/DealerBenefitReportWeb?id=' + v.account.Retention__r[0].Id}" target="_blank" class="slds-button tmdm-button">
+                                    <span class="slds-icon__container icon-cy-dbr slds-p-around--small">
+                                        <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                    </span>
+                                </a>
+                                <div class="slds-text-body--small slds-m-top--x-small"><ui:outputDate value="{!v.account.Retention__r[0].Retention_Calendar_Date__c}" 
+                                                                                                      format="yyyy" /> 
+                                    Dealer<br/> Benefit Report
+                                </div>
+                                <!--</aura:set>
+                                    </aura:if>-->
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.account.Retention_Historys__r}">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">
+                                <!--<aura:if isTrue="{!isSf1}">
+                                        <ui:button class="slds-button tmdm-button" label="" press="{!c.handleOldDBRPress}">
+                                            <span class="slds-icon__container icon-py-dbr slds-p-around- -small">
+                                                <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                            </span>
+                                        </ui:button>
+                                        <div class="slds-text-body- -small slds-m-top- -x-small"><ui:outputDate value="{!v.account.Retention_Historys__r[0].Retention_Calendar_Date__c}" 
+                                                                                                              format="yyyy" /> 
+                                            Dealer Benefit Report
+                                        </div>
+                                        <aura:set attribute="else">-->
+                                <a href="{!'/apex/DealerBenefitReportHistoryWeb?id=' + v.account.Retention_Historys__r[0].Id}" target="_blank" class="slds-button tmdm-button">
+                                    <span class="slds-icon__container icon-py-dbr slds-p-around--small">
+                                        <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                    </span>
+                                </a>
+                                <div class="slds-text-body--small slds-m-top--x-small">
+                                    <ui:outputDate value="{!v.account.Retention_Historys__r[0].Retention_Calendar_Date__c}" format="yyyy" /> 
+                                    Dealer<br/> Benefit Report
+                                </div>
+                                <!--</aura:set>
+                                    </aura:if>-->
+                            </div>
+                        </aura:if>
+                        <!-- From Classic Start -->
+                        <!--aura:if isTrue="{!!v.isSf1}"-->
+                        <!-- Hidden as per change on 4/7/2023 -->                        
+                        <aura:if isTrue="false">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">		
+                                <a class="slds-button tmdm-button" target="_blank" href="{!v.preCallPlannerLink}">		
+                                    <span class="slds-icon__container icon-pre-call-planner slds-p-around--small">		
+                                        <img src="/resource/LightningDesignSystem/icons/action/new_notebook_60.png" width="33" height="33" />
+                                    </span>		
+                                </a>
+                                <div class="slds-text-body--small slds-m-top--x-small">
+                                    Pre-Call Planner
+                                </div>		
+                            </div>
+                        </aura:if>	
+                        <!--/aura:if-->
+         </div>
+    </aura:if>
+
+     <!--Desktop view-->
+    <aura:if isTrue="{!$Browser.formFactor == 'DESKTOP'}">
+
+    <div class="slds">	
+        <div class="slds-grid slds-wrap slds-medium-nowrap">	
+            <!--<c:ActivityLevel class="slds-col- -padded slds-m-bottom- -large" accountId="{!v.accountId}" accountCategory="{!v.accountCategory}" 
+isSf1="{!v.isSf1}" />-->
+            <c:ActivityLevelV2 class="slds-col--padded slds-m-bottom--large" accountId="{!v.accountId}" accountCategory="{!v.accountCategory}" 
+                               isSf1="{!v.isSf1}" />
+            <c:CRIScoreV2 class="slds-col--padded slds-m-bottom--large" accountId="{!v.accountId}" account="{!v.account}" 
+                          accountCategory="{!v.accountCategory}" isSf1="{!v.isSf1}"/>
+            <c:YTDSalesV2 class="slds-col--padded slds-m-bottom--large" account="{!v.account}" accountCategory="{!v.accountCategory}" isSf1="{!v.isSf1}" opportunityScorecardId="{!v.opportunityScorecardId}" />	
+            <c:OpportunityScorecardV2 class="slds-col--padded slds-m-bottom--large" accountId="{!v.accountId}" account="{!v.account}" 
+                                      accountCategory="{!v.accountCategory}" isSf1="{!v.isSf1}" />
+            <c:NCProgramStatusV2 class="slds-col--padded slds-m-bottom--large" account="{!v.account}" accountCategory="{!v.accountCategory}" 
+                                 isSf1="{!v.isSf1}" />
+        </div>
+    </div>
+    
+    <div class="slds-grid slds-wrap slds-box slds-theme_default slds-m-horizontal_small">
+        <div class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2">
+            <div class="slds-grid slds-wrap">
+                <c:DaysSinceLastForecastV2 class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2" account="{!v.account}" 
+                                           accountCategory="{!v.accountCategory}" />
+                <c:CreditEscalationV2 class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2" account="{!v.account}" 
+                                      accountCategory="{!v.accountCategory}" />
+                <c:CreditRiskGradeV2 class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2" account="{!v.account}" 
+                                     accountCategory="{!v.accountCategory}" />
+                <c:PartsAndSalesPercentageV2 class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2" account="{!v.account}"
+                                             accountCategory="{!v.accountCategory}" isSf1="{!v.isSf1}" opportunityScorecardId="{!v.opportunityScorecardId}"/>
+                <c:ShareOfWalletV2 class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2" account="{!v.account}" accountId="{!v.accountId}" accountIdSoV="{!v.accountId}"
+                                   accountCategory="{!v.accountCategory}" createScorecardLink="{!v.createScorecardLink}" isSf1="{!v.isSf1}" opportunityScorecardId="{!v.opportunityScorecardId}"/>
+                <c:PercentToNCCommitmentV2 class="slds-col--padded slds-size--1-of-1 slds-medium-size--1-of-2" account="{!v.account}" 
+                                           accountCategory="{!v.accountCategory}" isSf1="{!v.isSf1}" />
+            </div>
+        </div>
+        
+        <div class="slds-col slds-size--1-of-1 slds-medium-size--1-of-2">	
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col--padded slds-col--rule-left slds-size--1-of-1 slds-medium-size--1-of-2">	
+                    <h1 class="slds-text-heading--label">
+                        Actions
+                    </h1>	
+                    <div class="slds-grid slds-wrap slds-grid--align-spread slds-card__body">	
+                        <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">	
+                            <!-- HAS SCORECARD -->	
+                            <aura:if isTrue="{!v.account.Scorecards__r}">	
+                                <aura:if isTrue="{!v.isSf1}">	
+                                    <ui:button class="slds-button tmdm-button" labelClass="Order_Search_Mulesoft_Screen_Flow" press="{!c.openmodal}">	
+                                        <span class="slds-icon__container icon-update-scorecard  slds-p-around--small">	
+                                            <img src="/resource/LightningDesignSystem/icons/action/new_custom41_60.png" width="37" height="37" />	
+                                        </span>	
+                                    </ui:button>	
+                                    <div class="slds-text-body--small slds-m-top--x-small">
+                                        Order Search
+                                    </div>	
+                                    <aura:set attribute="else">	
+                                        <a class="slds-button tmdm-button" target="_blank" href="{!'/' + v.account.Scorecards__r[0].Id}">	
+                                            <span class="slds-icon__container icon-update-scorecard slds-p-around--small">	
+                                                <img src="/resource/LightningDesignSystem/icons/action/new_custom41_60.png" width="37" height="37" />	
+                                            </span>	
+                                        </a>	
+                                        <div class="slds-text-body--small slds-m-top--x-small">
+                                            Order Search
+                                        </div>	
+                                    </aura:set>	
+                                </aura:if>	
+                                
+                                
+                                
+                                <aura:if isTrue="{!v.ismodalClicked}">
+                                    <section role="dialog" tabindex="-1" aria-labelledby="header43" style="color: #.2f2f2f" aura:id="Modalbox" class="slds-modal slds-fade-in-open" aria-hidden="true">
+                                        <div class="slds-modal__container">
+                                            <div class="slds-modal__header slds-theme_shade">
+                                                <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModal}">
+                                                    <span aria-hidden="true">X</span>
+                                                    <span class="slds-assistive-text">Close</span>
+                                                </button>
+                                                <h2 id="header43" class="slds-text-heading--medium">Order Search</h2>
+                                            </div>
+                                            <div class="slds-modal__content slds-p-around--medium">
+                                                <div>
+                                                    <c:ScreenflowModalContainer flowname="{!v.flowname}" recordId="{!v.recordId}"/>
+                                                </div>
+                                            </div>
+                                            <div class="slds-modal__footer">
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+                                    
+                                </aura:if>
+                                
+                                <!-- NO SCORECARD -->	
+                                <aura:set attribute="else">	
+                                    <aura:if isTrue="{!v.isSf1}">	
+                                        <ui:button class="slds-button tmdm-button" label="" press="{!c.handlecreateScorecardPress}">	
+                                            <span class="slds-icon__container icon-update-scorecard slds-p-around--small">	
+                                                <img src="/resource/LightningDesignSystem/icons/action/new_custom41_60.png" width="37" height="37" />	
+                                            </span>	
+                                        </ui:button>	
+                                        <div class="slds-text-body--small slds-m-top--x-small">
+                                            Create Scorecard
+                                        </div>
+                                        <aura:set attribute="else">	
+                                            <a class="slds-button tmdm-button" target="_blank" href="{!v.createScorecardLink}">	
+                                                <span class="slds-icon__container icon-update-scorecard slds-p-around--small">	
+                                                    <img src="/resource/LightningDesignSystem/icons/action/new_custom41_60.png" width="37" height="37" />	
+                                                </span>	
+                                            </a>	
+                                            <div class="slds-text-body--small slds-m-top--x-small">
+                                                Create Scorecard
+                                            </div>	
+                                        </aura:set>	
+                                    </aura:if>	
+                                </aura:set>	
+                            </aura:if>	
+                        </div>	
+                        <aura:if isTrue="{!v.isAccountPlanExist}"> 
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--small">
+                                <ui:button class="slds-button tmdm-button" labelClass="Equipment_Search_Mulesoft_Screen_FlowV2" press="{!c.openmodal}">
+                                    <a class="slds-button tmdm-button1" >
+                                        <span class="slds-icon__container icon-update-forecast  slds-p-around--small" style="/*width: 60px;*/">
+                                            <img src="{!$Resource.AssetActionIcon}" width="37" height="37" />
+                                        </span>
+                                    </a>
+                                </ui:button>
+                                <div class="slds-text-body--small slds-m-top--x-small">Serial # Search</div>
+                            </div>
+                        </aura:if>
+                        
+                        <aura:if isTrue="{!v.ismodalClickedSerial}">
+                            <section role="dialog" tabindex="-1" aria-labelledby="header43" style="color: #.2f2f2f" aura:id="Modalbox" class="slds-modal slds-fade-in-open" aria-hidden="true">
+                                <div class="slds-modal__container">
+                                    <div class="slds-modal__header slds-theme_shade">
+                                        <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModal}">
+                                            <span class="slds-assistive-text">Close</span>
+                                            <span aria-hidden="true">X</span>
+                                        </button>
+                                        <h2 id="header43" class="slds-text-heading--medium">Equipment Search</h2>
+                                    </div>
+                                    <div class="slds-modal__content slds-p-around--medium">
+                                        <div>
+                                            <c:ScreenflowModalContainer flowname="{!v.flowname}" recordId="{!v.recordId}" />
+                                        </div>
+                                    </div>
+                                    <div class="slds-modal__footer">
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+                            
+                        </aura:if>
+                        
+                        <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">	
+                            <ui:button class="slds-button tmdm-button" labelClass="Warranty_Search_Mulesoft_Screen_FlowV2" press="{!c.openmodal}">	
+                                <span class="slds-icon__container icon-update-forecast  slds-p-around--small">	
+                                    <img src="/resource/LightningDesignSystem/icons/standard/partner_fund_claim_60.png" width="37" height="37" />	
+                                </span>	
+                            </ui:button>	
+                            <div class="slds-text-body--small slds-m-top--x-small">
+                                Warranty Claim Search
+                            </div>	
+                        </div>	
+                        <aura:if isTrue="{!v.ismodalClickedWarranty}">
+                            <section role="dialog" tabindex="-1" aria-labelledby="header43" style="color: #.2f2f2f" aura:id="Modalbox" class="slds-modal slds-fade-in-open" aria-hidden="true">
+                                <div class="slds-modal__container">
+                                    <div class="slds-modal__header slds-theme_shade">
+                                        <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModal}">
+                                            <span class="slds-assistive-text">Close</span>
+                                            <span aria-hidden="true">X</span>
+                                        </button>
+                                        <h2 id="header43" class="slds-text-heading--medium">Warranty Claim Search</h2>
+                                    </div>
+                                    <div class="slds-modal__content slds-p-around--medium">
+                                        <div>
+                                            <c:ScreenflowModalContainer flowname="{!v.flowname}" recordId="{!v.recordId}" />
+                                        </div>
+                                    </div>
+                                    <div class="slds-modal__footer">
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+                            
+                        </aura:if>
+                             
+                        <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">	
+                            <aura:if isTrue="{!v.isSf1}">	
+                                <ui:button class="slds-button tmdm-button" label="" press="{!c.handleMapDealerPress}">	
+                                    <span class="slds-icon__container icon-map-dealer  slds-p-around--small">	
+                                        <img src="/resource/LightningDesignSystem/icons/action/map_60.png" width="33" height="33" />	
+                                    </span>	
+                                </ui:button>	
+                                <div class="slds-text-body--small slds-m-top--x-small">
+                                    Map Dealer
+                                </div>	
+                                <aura:set attribute="else">	
+                                    <a class="slds-button tmdm-button" target="_blank" 
+                                       href="{!'https://www.google.com/maps/search/' + v.account.ShippingStreet + '+' + v.account.ShippingCity + '+' + v.account.ShippingState + '+' + v.account.ShippingPostalCode}">	
+                                        <span class="slds-icon__container icon-map-dealer  slds-p-around--small">	
+                                            <img src="/resource/LightningDesignSystem/icons/action/map_60.png" width="33" height="33" />	
+                                        </span>	
+                                    </a>	
+                                    <div class="slds-text-body--small slds-m-top--x-small">
+                                        Map Dealer
+                                    </div>	
+                                </aura:set>	
+                            </aura:if>	
+                        </div>	
+                        <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">	
+                            <ui:button class="slds-button tmdm-button" label="" press="{!c.handleCallDealerPress}">	
+                                <span class="slds-icon__container">
+                                    <!--<img src="/resource/LightningDesignSystem/icons/action/call_60.png" width="33" height="33" />-->
+                                    <lightning:icon class="call-icon-override" iconName="standard:call" size="medium" alternativeText="Call Dealer" style="width: 60px;height: 60px;" />
+                                </span>
+                            </ui:button>
+                            <div class="slds-text-body--small slds-m-top--x-small">
+                                Call Dealer
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center" style="width:100%;padding: 0;">
+                                <aura:if isTrue="{!v.isSf1}">
+                                    <ui:button class="slds-button tmdm-button" labelClass="Learning_Mulesoft" press="{!c.openmodal}">
+                                        <span class="slds-icon__container icon-new-contact slds-p-around--small">
+                                            <img src="/resource/LightningDesignSystem/icons/standard/skill_60.png" width="33" height="33" />
+                                        </span>
+                                    </ui:button>
+                                    <div class="slds-text-body--small slds-m-top--x-small">
+                                        Training Search 
+                                    </div>
+                                    <aura:set attribute="else">
+                                        <a href="{!v.newContactLink}" target="_blank" class="slds-button tmdm-button">
+                                            <span class="slds-icon__container icon-new-contact slds-p-around--small">
+                                                <img src="/resource/LightningDesignSystem/icons/action/new_contact_60.png" width="33" height="33" />
+                                            </span>
+                                        </a>
+                                        <div class="slds-text-body--small slds-m-top--x-small">
+                                            Training Search 
+                                        </div>
+                                    </aura:set>
+                                </aura:if>
+                            </div>
+                        </div>
+                        
+                        <aura:if isTrue="{!v.ismodalClickedContact}">
+                            <section role="dialog" tabindex="-1" aria-labelledby="header43" style="color: #.2f2f2f" aura:id="Modalbox" class="slds-modal slds-fade-in-open" aria-hidden="true">
+                                <div class="slds-modal__container">
+                                    <div class="slds-modal__header slds-theme_shade">
+                                        <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModal}">
+                                            <span aria-hidden="true">X</span>
+                                            <span class="slds-assistive-text">Close</span>
+                                        </button>
+                                        <h2 id="header43" class="slds-text-heading--medium">Training Search</h2>
+                                    </div>
+                                    <div class="slds-modal__content slds-p-around--medium">
+                                        <div>
+                                            <c:ScreenflowModalContainer flowname="{!v.flowname}" customerNumber="{!v.targetFields.SAP_Customer_Number__c}"/>
+                                        </div>
+                                    </div>
+                                    <div class="slds-modal__footer">
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+                            
+                        </aura:if>
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </div>
+                <div class="slds-col--padded slds-col--rule-left slds-size--1-of-1 slds-medium-size--1-of-2">
+                    <h1 class="slds-text-heading--label">
+                        Tools
+                    </h1>
+                    <div class="slds-grid slds-wrap slds-grid--align-spread slds-card__body">
+                        <aura:if isTrue="{!v.salesSummaryLink}">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">
+                                <!--<aura:if isTrue="{!v.isSf1}">
+                                        <ui:button class="slds-button tmdm-button " label="" press="{!c.handleSalesSummaryPress}">
+                                            <span class="slds-icon__container icon-sales-summary slds-p-around- -small">
+                                                <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                            </span>
+                                        </ui:button>
+                                        <div class="slds-text-body- -small slds-m-top- -x-small">
+                                            {!v.account.Account_Plans__r[0].Account_Plan_Year__c} Dealer Sales Summary
+                                        </div>
+                                        <aura:set attribute="else">-->
+                                <a href="{!v.salesSummaryLink}" target="_blank" class="slds-button tmdm-button">
+                                    <span class="slds-icon__container icon-sales-summary slds-p-around--small">
+                                        <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                    </span>
+                                </a>
+                                <div class="slds-text-body--small slds-m-top--x-small">
+                                    {!v.account.Account_Plans__r[0].Account_Plan_Year__c} Dealer<br/> Sales Summary
+                                </div>
+                                <!--</aura:set>
+                                    </aura:if>-->
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.pySalesSummaryLink}">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">
+                                <!--<aura:if isTrue="{!v.isSf1}">
+                                        <ui:button class="slds-button tmdm-button" label="" press="{!c.handlePySalesSummaryPress}">
+                                            <span class="slds-icon__container icon-sales-summary slds-p-around- -small">
+                                                <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                            </span>
+                                        </ui:button>
+                                        <div class="slds-text-body- -small slds-m-top- -x-small">
+                                            {!v.account.Account_Plans__r[1].Account_Plan_Year__c} Dealer Sales Summary
+                                        </div>
+                                        <aura:set attribute="else">-->
+                                <a href="{!v.pySalesSummaryLink}" target="_blank" class="slds-button tmdm-button">
+                                    <span class="slds-icon__container icon-sales-summary slds-p-around--small">
+                                        <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                    </span>
+                                </a>
+                                <div class="slds-text-body--small slds-m-top--x-small">
+                                    {!v.account.Account_Plans__r[1].Account_Plan_Year__c} Dealer<br/> Sales Summary
+                                </div>
+                                <!--</aura:set>
+                                    </aura:if>-->
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.account.Retention__r}">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">
+                                <!--<aura:if isTrue="{!isSf1}">
+                                        <ui:button class="slds-button tmdm-button" label="" press="{!c.NewDBRPress}">
+                                            <span class="slds-icon__container icon-cy-dbr slds-p-around- -small">
+                                                <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                            </span>
+                                        </ui:button>
+                                        <div class="slds-text-body- -small slds-m-top- -x-small">
+                                            <ui:outputDate value="{!v.account.Retention__r[0].Retention_Calendar_Date__c}" format="yyyy" />
+                                            Dealer Benefit Report
+                                        </div>
+                                        <aura:set attribute="else">-->
+                                <a href="{!'/apex/DealerBenefitReportWeb?id=' + v.account.Retention__r[0].Id}" target="_blank" class="slds-button tmdm-button">
+                                    <span class="slds-icon__container icon-cy-dbr slds-p-around--small">
+                                        <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                    </span>
+                                </a>
+                                <div class="slds-text-body--small slds-m-top--x-small"><ui:outputDate value="{!v.account.Retention__r[0].Retention_Calendar_Date__c}" 
+                                                                                                      format="yyyy" /> 
+                                    Dealer<br/> Benefit Report
+                                </div>
+                                <!--</aura:set>
+                                    </aura:if>-->
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.account.Retention_Historys__r}">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">
+                                <!--<aura:if isTrue="{!isSf1}">
+                                        <ui:button class="slds-button tmdm-button" label="" press="{!c.handleOldDBRPress}">
+                                            <span class="slds-icon__container icon-py-dbr slds-p-around- -small">
+                                                <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                            </span>
+                                        </ui:button>
+                                        <div class="slds-text-body- -small slds-m-top- -x-small"><ui:outputDate value="{!v.account.Retention_Historys__r[0].Retention_Calendar_Date__c}" 
+                                                                                                              format="yyyy" /> 
+                                            Dealer Benefit Report
+                                        </div>
+                                        <aura:set attribute="else">-->
+                                <a href="{!'/apex/DealerBenefitReportHistoryWeb?id=' + v.account.Retention_Historys__r[0].Id}" target="_blank" class="slds-button tmdm-button">
+                                    <span class="slds-icon__container icon-py-dbr slds-p-around--small">
+                                        <img src="/resource/LightningDesignSystem/icons/standard/document_60.png" width="33" height="33" />
+                                    </span>
+                                </a>
+                                <div class="slds-text-body--small slds-m-top--x-small">
+                                    <ui:outputDate value="{!v.account.Retention_Historys__r[0].Retention_Calendar_Date__c}" format="yyyy" /> 
+                                    Dealer<br/> Benefit Report
+                                </div>
+                                <!--</aura:set>
+                                    </aura:if>-->
+                            </div>
+                        </aura:if>
+                        <!-- From Classic Start -->
+                        <aura:if isTrue="{!!v.isSf1}">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">		
+                                <a class="slds-button tmdm-button" target="_blank" href="{!v.preCallPlannerLink}">		
+                                    <span class="slds-icon__container icon-pre-call-planner slds-p-around--small">		
+                                        <img src="/resource/LightningDesignSystem/icons/action/new_notebook_60.png" width="33" height="33" />
+                                    </span>		
+                                </a>
+                                <div class="slds-text-body--small slds-m-top--x-small">
+                                    Pre-Call Planner
+                                </div>		
+                            </div>		
+                        </aura:if>
+                        <!-- End From Classic -->
+                        
+                        <!-- Start From Lightning -->
+                        <!--<aura:if isTrue="{!v.isSf1}">-->
+                        <aura:if isTrue="{!and(v.isSf1, v.recordId)}">
+                            <c:ActivityLevelLEV2V2 class="slds-size--1-of-2 slds-m-top--medium slds-text-align_center slds-col--padded slds-m-bottom--large" 
+                                                   accountId="{!v.recordId}" accountCategory="{!v.accountCategory}" isSf1="{!v.isSf1}" 
+                                                   userProfileName="{!v.currentUser.Profile.Name}"/>
+                        </aura:if>
+                        <!-- End From Lightning -->
+                        <aura:if isTrue="{!v.account.Retail_Sales_Tracker__r &amp;&amp; v.account.Lowe_s_Dealer__c}">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">
+                                <!--<aura:if isTrue="{!v.isSf1}">
+                                        <ui:button class="slds-button tmdm-button" label="" press="{!c.handleLowesScorecardPress}">
+                                            <span class="slds-icon__container icon-lowes-scorecard slds-p-around- -small">
+                                                <img src="/resource/LightningDesignSystem/icons/custom/custom18_60.png" width="33" height="33" />
+                                            </span>
+                                        </ui:button>
+                                        <div class="slds-text-body- -small slds-m-top- -x-small">
+                                            Lowe's Scorecard
+                                        </div>
+                                        <aura:set attribute="else">-->
+                                <a href="{!v.lowesScorecardLink}" target="_blank" class="slds-button tmdm-button">
+                                    <span class="slds-icon__container icon-lowes-scorecard slds-p-around--small">
+                                        <img src="/resource/LightningDesignSystem/icons/custom/custom18_60.png" width="33" height="33" />
+                                    </span>
+                                </a>
+                                <div class="slds-text-body--small slds-m-top--x-small">
+                                    Lowe's Scorecard
+                                </div>
+                                <!--</aura:set>
+                                    </aura:if>-->
+                            </div>
+                        </aura:if>
+                        <aura:if isTrue="{!v.account.Retail_Sales_Tracker__r &amp;&amp; v.account.Costco_Dealer__c}">
+                            <div class="slds-col--padded slds-size--1-of-2 slds-text-align--center slds-m-top--medium">
+                                <!--<aura:if isTrue="{!v.isSf1}">
+                                        <ui:button class="slds-button tmdm-button" label="" press="{!c.handleCostcoScorecardPress}">
+                                            <span class="slds-icon__container icon-costco-scorecard slds-p-around- -small">
+                                                <img src="/resource/LightningDesignSystem/icons/custom/custom18_60.png" width="33" height="33" />
+                                            </span>
+                                        </ui:button>
+                                        <div class="slds-text-body- -small slds-m-top- -x-small">
+                                            Costco Scorecard
+                                        </div>
+                                        <aura:set attribute="else">-->
+                                <a href="" target="" class="slds-button tmdm-button" >
+                                    <span class="slds-icon__container icon-costco-scorecard slds-p-around--small">
+                                        <img src="/resource/LightningDesignSystem/icons/custom/custom18_60.png" width="33" height="33" onclick="{!c.handleCostcoScorecardPress}" />
+                                    </span>
+                                </a>
+                                <div class="slds-text-body--small slds-m-top--x-small">
+                                    Costco Scorecard
+                                </div>
+                                <!--</aura:set>
+                                    </aura:if>-->
+                            </div>
+                        </aura:if>
+                    </div>
+                </div>      
+            </div>
+        </div>
+        <c:UpdateForecastV2 isModalOpen="{!v.isUpdateForecast}" account="{!v.account}" />
+        <c:ModalV2 isOpen="{!v.showCallDealerModal}" header="Call Dealer Contacts">
+            <c:CallAccountContactsV2 rendered="{!v.showCallDealerModal}" account="{!v.account}" isSf1="{!v.isSf1}" />
+        </c:ModalV2>
+    </div>
+    </aura:if>
+</aura:component>

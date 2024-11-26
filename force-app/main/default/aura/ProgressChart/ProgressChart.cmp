@@ -1,0 +1,18 @@
+<aura:component access="global">
+    
+    <ltng:require scripts="/resource/d3,/resource/d3ProgressChart" afterScriptsLoaded="{!c.handleAfterScriptsLoaded}" />
+    
+    <aura:handler name="change" value="{!v.percentageComplete}" action="{!c.handleChartChange}"/>
+    <aura:handler name="change" value="{!v.label}" action="{!c.handleChartChange}"/>
+    
+    <aura:attribute name="scriptsReady" type="Boolean" description="Have the required dependencies been downloaded?" />
+    <aura:attribute name="class" type="String" description="Class name applied to progress element.  Must be unique." required="true" />
+    <aura:attribute name="percentageComplete" type="Integer" required="true" />
+    <aura:attribute name="label" type="String" description="Progress label."  />
+    <aura:attribute name="subLabel" type="String" description="Progress sub-label." default="" />
+    <aura:attribute name="status" type="String" description="error, warning or success"  />
+    
+    
+    <div class="{!v.class}"></div>
+	
+</aura:component>

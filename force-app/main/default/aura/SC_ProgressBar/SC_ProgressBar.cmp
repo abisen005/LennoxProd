@@ -1,0 +1,17 @@
+<aura:component >
+
+
+
+    <aura:attribute name="progress" type="Integer" description="Progress percentage out of 100%" default="0" />
+    <aura:attribute name="isComplete" type="Boolean" description="is progress 100%?" default="{!v.progress ge 100}" />
+
+
+
+
+    <div class="progress-bar">
+        <div class="{!'progress-bar-progression progress-bar-progression--' + (v.isComplete ? 'complete' : 'incomplete')}"
+             style="{!'width: ' + ((v.progress / 100) * 100) + '%'}" />
+    </div>
+
+
+</aura:component>

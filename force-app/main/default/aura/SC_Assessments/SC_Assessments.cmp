@@ -1,0 +1,146 @@
+<aura:component controller="SC_AssessmentsController">
+
+    <aura:attribute name="initiativeId" type="String" description="Filter by this initiative, if provided" />
+    <aura:attribute name="userId" type="String" description="Filter by this user, if provided" />
+    <aura:attribute name="sessionId" type="String" description="Filter by this session, if provided" />
+    <aura:attribute name="isLoading" type="Boolean" default="true" />
+    <aura:attribute name="isPhone" type="Boolean" default="{!$Browser.formFactor == 'PHONE'}" />
+    <aura:attribute name="assessments" type="SC_Assessment__c[]"  />
+
+
+    <aura:attribute name="limit"
+                    type="Integer"
+                    default="10"
+                    description="Used internally to keep track of pagination." />
+
+    <aura:attribute name="offset"
+                    type="Integer"
+                    default="0"
+                    description="Used internally to keep track of pagination." />
+
+    <aura:attribute name="hasMoreRecords"
+                    type="Boolean"
+                    default="false"
+                    description="Used internally to know if there are more records available to query." />
+
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+
+
+
+    <section>
+
+        <aura:if isTrue="{!v.isPhone}">
+
+
+
+            <aura:set attribute="else">
+
+                <table class="{!'slds-table slds-table--bordered slds-table--cell-buffer ' + (empty(v.assessments) ? 'slds-hide' : '')}">
+
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="col">
+                                <div class="slds-truncate" title="Name">Name</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="User">User</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Session">Session</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Initiative">Initiative</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Progress">Progress</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Assessment Date">Assessment Date</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.assessments}" var="assessment">
+                            <tr>
+                                <td data-label="Name">
+                                    <div class="slds-truncate">
+                                        <c:Link to="{!'/assessment/' + assessment.Id}"
+                                                label="{!assessment.Name}">
+                                            {!assessment.Name}
+                                        </c:Link>
+                                    </div>
+                                </td>
+                                <td data-label="User">
+                                    <div class="slds-truncate">
+                                        {!assessment.Coachee__r.Name}
+                                    </div>
+                                </td>
+                                <td data-label="Session">
+                                    <div class="slds-truncate">
+                                        <c:Link to="{!'/session/' + assessment.Coaching_Session__r.Id}"
+                                                label="{!assessment.Coaching_Session__r.Name}">
+                                            {!assessment.Coaching_Session__r.Name}
+                                        </c:Link>
+                                    </div>
+                                </td>
+                                <td data-label="Initiative">
+                                    <div class="slds-truncate">
+                                        <c:Link to="{!'/initiative/' + assessment.Coaching_Session__r.Initiative__r.Id}"
+                                                label="{!assessment.Coaching_Session__r.Initiative__r.Name}">
+                                            {!assessment.Coaching_Session__r.Initiative__r.Name}
+                                        </c:Link>
+                                    </div>
+                                </td>
+                                <td data-label="Progress">
+                                    <c:SC_ProgressBar progress="{!mult(div(assessment.of_Skills_Completed__c, assessment.of_Skills_to_Complete__c), 100)}" />
+                                    <div class="slds-truncate">
+                                        {!assessment.of_Skills_Completed__c} / {!assessment.of_Skills_to_Complete__c}
+                                    </div>
+                                </td>
+                                <td data-label="Assessment Date">
+                                    <div class="slds-truncate">
+                                        <ui:outputDate value="{!assessment.CreatedDate}" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+
+            </aura:set>
+
+        </aura:if>
+
+
+
+        <div class="{!'slds-text-align--center slds-p-around--medium ' + (!v.hasMoreRecords ? 'slds-hide' : '')}">
+            <lightning:button label="Show More"
+                              iconName="utility:arrowdown"
+                              iconPosition="right"
+                              variant="base"
+                              onclick="{!c.handleShowMoreClick}" />
+        </div>
+
+
+
+        <!-- No Data -->
+        <div class="{!'slds-p-around--small ' + (!empty(v.assessments) ? 'slds-hide' : '')}">
+            <div class="slds-box slds-theme--shade">
+                <p>There are no Assessments.</p>
+            </div>
+        </div>
+
+
+
+        <!-- Loading -->
+        <span class="{!v.isLoading ? '' : 'slds-hide'}">
+            <c:SC_Loader />
+        </span>
+
+
+    </section>
+
+
+</aura:component>

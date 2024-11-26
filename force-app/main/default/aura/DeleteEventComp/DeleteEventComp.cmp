@@ -1,0 +1,21 @@
+<aura:component implements="lightning:isUrlAddressable,force:lightningQuickActionWithoutHeader,force:hasRecordId" 
+                controller="DeleteEvtComp">
+    <aura:html tag="style">
+        .slds-p-around--medium {
+            overflow: hidden;
+            height: 140px !important;
+        	max-height:unset !important;
+            padding: 0;
+        }
+        .cuf-content {
+        padding: 0 !important;
+        }
+    </aura:html>
+    <div class="slds-p-around_medium">
+        <p>If you have added the event to your Outlook Calendar please delete the same.</p>
+    </div>
+    <footer class="slds-card__footer">
+        <button class="slds-button slds-button_brand" onclick="{!c.close}">Cancel</button>
+        <button class="slds-button slds-button_brand" onclick="{!c.delete}" >OK</button>
+    </footer>
+</aura:component>

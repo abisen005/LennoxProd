@@ -1,0 +1,14 @@
+.THIS {
+  position: relative; }
+  .THIS .slds-form-element + .slds-popover {
+    display: none;
+    position: absolute;
+    top: 26px;
+    left: -16px; }
+  .THIS .slds-form-element:hover + .slds-popover {
+    display: block; }
+  .THIS .slds-popover {
+    /* force the tooltip to be a certain width */
+    min-width: 15rem; }
+    .THIS .slds-popover:hover {
+      display: block; }

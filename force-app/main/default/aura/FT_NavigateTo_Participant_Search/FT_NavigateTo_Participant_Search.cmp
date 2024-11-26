@@ -1,0 +1,5 @@
+<aura:component implements="force:hasRecordId,force:appHostable,flexipage:availableForAllPageTypes" access="global">
+    <lightning:navigation aura:id="navService"/>
+    <lightning:workspaceAPI aura:id="workspace" />
+    <lightning:button label="Check Eligibility" title="Check Eligibility" onclick="{! c.navigateToParticipantSearch }"/>
+</aura:component>

@@ -1,0 +1,146 @@
+<!--
+@purpose 	 : This is custom sharing cmp.  Which is on the favorite obj in quick action form.  'Sharing' is the name of quick action 
+@createdDate :
+-->
+<aura:component implements="force:lightningQuickAction,force:hasRecordId"
+                access="global"
+                controller="ShareFavoriteRecordCmpController">
+    <!-- include jquery autotable and css  -->
+    <ltng:require styles="{! $Resource.jquery_datatable + '/datatable/media/css/jquery.dataTables.min.css'}" 
+                  scripts="{!join(',', 
+                           $Resource.jquery_datatable + '/jquery/js/jquery-2.2.4.min.js', 
+                           $Resource.jquery_datatable + '/datatable/media/js/jquery.dataTables.min.js')
+                           }" />
+	<!-- init method -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!-- attributes -->
+    <aura:attribute name="userJsonString" type="String" />
+    <aura:attribute name="searchList" type="List" />
+    <aura:attribute name="picklistValue" type="List"/>
+    <aura:attribute name="defaultRecords" type="List" />
+    <aura:attribute name="selectedRecords" type="List" />
+    <aura:attribute name="partnerUserList" type="List" />
+    <aura:attribute name="portalRolesList" type="List" />
+    <aura:attribute name="portalRolesSubordList" type="List" />
+    <aura:attribute name="publicGroupList" type="List" />
+    <aura:attribute name="rolesList" type="List" />
+    <aura:attribute name="rolesInterSubOdList" type="List" />
+    <aura:attribute name="rolesInterSubOdPortalList" type="List" />
+    <aura:attribute name="usersList" type="List" />
+    <aura:attribute name="isActive" type="Boolean" default="true" />
+    <aura:attribute name="alreadySharedRecords" type="List" />
+    <aura:attribute name="ownerRecord" type="Object"/>
+    <aura:attribute name="findButton" type="Boolean" default="true" />
+    
+    <!-- lightning spinner -->
+    <lightning:spinner aura:id="mySpinner" variant="base" size="large"/>
+    
+    <!-- This includes picklist and search box -->
+    <div class="slds-grid slds-gutters">
+        <div clss="slds-col">
+            <!-- picklist -->
+            <lightning:select name="mySelect" label="Select" aura:id="mySelect" onchange="{!c.getPicklistValue}">
+                <aura:iteration items="{!v.picklistValue}" var="options" >
+                    <option value="{!options}" >{!options}</option>
+                </aura:iteration> 
+            </lightning:select>
+        </div>
+        <div class="forTxt">
+           for:
+        </div>
+         <!-- and search box -->
+        <div clss="slds-p-right_xx-large">
+            <br/>
+            <ui:inputText aura:id="mySearch" class="slds-input serchKey" keyup="{!c.activatefindButton}" updateOn="keyup"/> 
+        </div>
+        <!-- find button -->
+        <div class="slds-p-right_xx-large slds-m-left_medium">
+            <br/>
+            <lightning:button variant="brand" label="Find" onclick="{! c.searchResult }" disabled="{!v.findButton}"/>
+        </div>
+    </div>
+    <!-- Available list -->
+    <br/>
+    <div class="slds-grid slds-gutters">
+        <div class="slds-col">
+            <span>
+                <ui:inputSelect multiple="true" label="Available" aura:id="myAvailable"> 
+                    <aura:if isTrue="{!v.defaultRecords.length > 0}">
+                        <aura:iteration items="{!v.defaultRecords}" var="record">
+                            <option value="{!record.value}" >{!record.label}</option>
+                        </aura:iteration>
+                        <aura:set attribute="else">
+                            <option value="--None--" >--None--</option>
+                        </aura:set>
+                    </aura:if>
+                </ui:inputSelect>
+            </span>
+        </div>
+        <div class="slds-col">
+            <span>
+                <br/>
+                <div class="slds-row"><!-- right select button -->
+                    <lightning:button variant="bare" iconName="utility:right"  onclick="{! c.selectRecord }" />
+                </div>
+                <div class="slds-row"><!-- left select button -->
+                    <lightning:button variant="bare" iconName="utility:left" onclick="{! c.deselectRecord }" />  
+                </div>
+            </span>
+        </div><!-- Share with list -->
+        <div class="slds-col">
+            <span>
+                <ui:inputSelect multiple="true" label="Share With" aura:id="myShareWith" >
+                    <aura:if isTrue="{!v.selectedRecords.length > 0}">
+                        <aura:iteration items="{!v.selectedRecords}" var="record" >
+                            <option value="{!record.value}" >{!record.label}</option>
+                        </aura:iteration>
+                        <aura:set attribute="else">
+                            <option value="--None--" label="--None--"/>
+                        </aura:set>
+                    </aura:if>
+                </ui:inputSelect>
+            </span>
+        </div>
+    </div>
+    <br/><!-- Access Level -->
+    <lightning:select name="mySelect" label="Access Level" aura:id="accessLevel" required="true">
+        <option value="Read" >Read Only</option>
+        <option value="Edit" >Read/Write</option>
+    </lightning:select>
+	<br/><!-- Share record button -->
+	<lightning:button variant="brand" label="Save" onclick="{!c.saveChangesOnServer}" disabled="{!v.isActive}"/>
+    
+    <!-- Sharing record datatable -->
+    <div class="slds-m-around_medium">
+        <table id="tableId" class="slds-table slds-table_bordered slds-table_cell-buffer" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Name</th>
+                    <th>Access Level</th>
+                    <th>Reason</th> 
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.alreadySharedRecords}" var="shareRecord">
+                    <tr>
+                        <td>
+                            <a id="{!shareRecord.id}" onclick="{!c.deleteShareRecord}">Del</a>
+                        </td>
+                        <td>{!shareRecord.name}</td>
+                        <td>{!shareRecord.accessLevel}</td>
+                        <td>{!shareRecord.reason}</td>
+                    </tr>
+                </aura:iteration>
+                <tr>
+                    <td> </td>
+                    <td>{!v.ownerRecord.name}</td>
+                    <td>{!v.ownerRecord.accessLevel}</td>
+                    <td>{!v.ownerRecord.reason}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+</aura:component>

@@ -1,0 +1,243 @@
+<aura:component controller="SC_UserAssignmentsController">
+
+    <aura:attribute name="userId" type="String" />
+    <aura:attribute name="userIds" type="String[]" description="An additional list of user ids whose assignment should be shown in addition to the primary user id" />
+    <aura:attribute name="initiativeId" type="String" />
+    <aura:attribute name="sessionId" type="String" default="" />
+    <aura:attribute name="topicId" type="String" default="" />
+    <aura:attribute name="showCompleted" type="Boolean" default="FALSE" />
+    <aura:attribute name="showAll" type="Boolean" default="FALSE" description="If provided, showCompleted is ignored and all assignments are included." />
+    <aura:attribute name="assignments" type="SC_Assignment__c[]" description="List of assignments" />
+    <aura:attribute name="isLoading" type="Boolean" default="true" />
+    <aura:attribute name="isPhone" type="Boolean" default="{!$Browser.formFactor == 'PHONE'}" />
+
+    <aura:attribute name="limit"
+                    type="Integer"
+                    default="10"
+                    description="Used internally to keep track of pagination." />
+
+    <aura:attribute name="offset"
+                    type="Integer"
+                    default="0"
+                    description="Used internally to keep track of pagination." />
+
+    <aura:attribute name="hasMoreRecords"
+                    type="Boolean"
+                    default="false"
+                    description="Used internally to know if there are more records available to query." />
+
+
+
+    <aura:handler name="change" value="{!v.userId}" action="{!c.handleUserIdChange}" />
+    <aura:handler name="change" value="{!v.sessionId}" action="{!c.handleSessionIdChange}" />
+    <aura:handler name="change" value="{!v.topicId}" action="{!c.handleTopicIdChange}" />
+    <aura:handler name="change" value="{!v.showCompleted}" action="{!c.handleShowCompletedChange}" />
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+
+
+
+    <aura:method name="refresh" action="{!c.handleRefresh}" description="Update the component with new data." />
+
+
+
+    <section>
+
+
+        <aura:if isTrue="{!v.isPhone}">
+
+            <!-- Has Data - MOBILE -->
+            <ul class="slds-has-dividers--bottom-space">
+                <aura:iteration items="{!v.assignments}" var="assignment">
+                    <li class="slds-item">
+                        <div class="slds-tile slds-media">
+                            <div class="slds-media__figure">
+                                <lightning:icon iconName="custom:custom83" size="medium" alternativeText="Assignment icon"/>
+                            </div>
+                            <div class="slds-media__body">
+                                <h3 class="slds-truncate" title="{!assignment.Name}">
+                                    <c:Link to="{!'/assignment/' + assignment.Id}"
+                                            label="{!assignment.Name}">
+                                        {!assignment.Name}
+                                    </c:Link>
+                                </h3>
+                                <div class="slds-tile__detail slds-text-body--small">
+                                    <dl class="slds-dl--horizontal">
+                                        <dt class="slds-dl--horizontal__label">
+                                            <p class="slds-truncate" title="Initiative">Assigned by:</p>
+                                        </dt>
+                                        <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                                            <p class="slds-truncate" title="{!assignment.CreatedBy.Name}">
+                                                {!assignment.CreatedBy.Name}
+                                            </p>
+                                        </dd>
+                                        <aura:if isTrue="{!empty(v.topicId)}">
+                                            <dt class="slds-dl--horizontal__label">
+                                                <p class="slds-truncate" title="Session">Session:</p>
+                                            </dt>
+                                            <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                                                <p class="slds-truncate" title="{!assignment.Coaching_Session__r.Name}">
+                                                    <c:Link to="{!'/session/' + assignment.Coaching_Session__c}"
+                                                            label="{!assignment.Coaching_Session__r.Name}">
+                                                        {!assignment.Coaching_Session__r.Name}
+                                                    </c:Link>
+                                                </p>
+                                            </dd>
+                                            <dt class="slds-dl--horizontal__label">
+                                                <p class="slds-truncate" title="Initiative">Initiative:</p>
+                                            </dt>
+                                            <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                                                <p class="slds-truncate" title="{!assignment.Coaching_Session__r.Initiative__r.Name}">
+                                                    {!assignment.Coaching_Session__r.Initiative__r.Name}
+                                                </p>
+                                            </dd>
+                                        </aura:if>
+                                        <dt class="slds-dl--horizontal__label">
+                                            <p class="slds-truncate" title="Description">Description:</p>
+                                        </dt>
+                                        <dd class="slds-dl--horizontal__detail slds-tile__meta slds-truncate">
+                                            <p class="slds-truncate" title="{!assignment.Description__c}">
+                                                {!assignment.Description__c}
+                                            </p>
+                                        </dd>
+                                        <dt class="slds-dl--horizontal__label">
+                                            <p class="slds-truncate" title="Date">Date:</p>
+                                        </dt>
+                                        <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                                            <p class="slds-truncate" title="{!assignment.Due_Date__c}">
+                                                <ui:outputDate value="{!assignment.Due_Date__c}" />
+                                            </p>
+                                        </dd>
+                                        <dt class="slds-dl--horizontal__label">
+                                            <p class="slds-truncate" title="Progress">Progress:</p>
+                                        </dt>
+                                        <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                                            <div class="{!assignment.Progress_Assignment__c ? '' : 'slds-hide'}">
+                                                <c:SC_ProgressBar progress="{!assignment.Progress__c}" />
+                                                <p class="slds-truncate" title="{!assignment.Progress__c}">
+                                                    {!assignment.Progress__c}%
+                                                </p>
+                                            </div>
+                                            <div class="{!assignment.Progress_Assignment__c ? 'slds-hide' : ''}">
+                                                <lightning:icon iconName="utility:success" size="medium" class="{!(assignment.Progress__c == 100 ? 'complete' : 'incomplete')}" />
+                                            </div>
+                                        </dd>
+
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </aura:iteration>
+            </ul>
+
+            <!-- Has Data -->
+
+            <aura:set attribute="else">
+                <table class="{!'slds-table slds-table--bordered slds-table--cell-buffer ' + (empty(v.assignments) ? 'slds-hide' : '')}">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="col">
+                                <div class="slds-truncate" title="Name">Name</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Assigned by">Assigned by</div>
+                            </th>
+                            <aura:if isTrue="{!empty(v.topicId)}">
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Session">Session</div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Initiative">Initiative</div>
+                                </th>
+                            </aura:if>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Description">Description</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Date">Date</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Progress">Progress</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.assignments}" var="assignment">
+                            <tr>
+                                <th scope="row" data-label="Name">
+                                        <c:Link to="{!'/assignment/' + assignment.Id}"
+                                                label="{!assignment.Name}">
+                                            {!assignment.Name}
+                                        </c:Link>
+                                </th>
+                                <td scope="row" data-label="Assigned by">
+                                    {!assignment.CreatedBy.Name}
+                                </td>
+                                <aura:if isTrue="{!empty(v.topicId)}">
+                                    <td data-label="Session">
+                                            <c:Link to="{!'/session/' + assignment.Coaching_Session__c}"
+                                                    label="{!assignment.Coaching_Session__r.Name}"
+                                                    class="slds-button">
+                                                {!assignment.Coaching_Session__r.Name}
+                                            </c:Link>
+                                    </td>
+                                    <td data-label="Initiative">
+                                        {!assignment.Coaching_Session__r.Initiative__r.Name}
+                                    </td>
+                                </aura:if>
+                                <td data-label="Description" class="slds-cell-wrap">
+                                        {!assignment.Description__c}
+                                </td>
+                                <td data-label="Due Date">
+                                    <ui:outputDate value="{!assignment.Due_Date__c}" />
+                                </td>
+                                <td data-label="Progress">
+                                    <div class="{!assignment.Progress_Assignment__c ? '' : 'slds-hide'}">
+                                        <c:SC_ProgressBar progress="{!assignment.Progress__c}" />
+                                        {!assignment.Progress__c}%
+                                    </div>
+                                    <div class="{!assignment.Progress_Assignment__c ? 'slds-hide' : ''}">
+                                        <lightning:icon iconName="utility:success" size="medium" class="{!(assignment.Progress__c == 100 ? 'complete' : 'incomplete')}" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+
+            </aura:set>
+
+        </aura:if>
+
+        <div class="{!'slds-text-align--center slds-p-around--medium ' + (!v.hasMoreRecords ? 'slds-hide' : '')}">
+            <lightning:button label="Show More"
+                              iconName="utility:arrowdown"
+                              iconPosition="right"
+                              variant="base"
+                              onclick="{!c.handleShowMoreClick}" />
+        </div>
+
+
+
+        <!-- No Data -->
+        <div class="{!'slds-p-around--small ' + (!empty(v.assignments) ? 'slds-hide' : '')}">
+            <div class="slds-box slds-theme--shade">
+                <p>There are no {!v.showAll ? '' : v.showCompleted ? 'completed' : 'incomplete'} Assignments.</p>
+            </div>
+        </div>
+
+
+
+        <!-- Loading -->
+        <span class="{!v.isLoading ? '' : 'slds-hide'}">
+            <c:SC_Loader />
+        </span>
+
+
+
+    </section>
+
+
+
+
+</aura:component>

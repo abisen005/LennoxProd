@@ -1,0 +1,124 @@
+.SettingsTableCSS {
+	margin:0px;padding:0px;
+	width:80%;
+	box-shadow: 10px 10px 5px #888888;
+	border:1px solid #000000;
+	
+	-moz-border-radius-bottomleft:11px;
+	-webkit-border-bottom-left-radius:11px;
+	border-bottom-left-radius:11px;
+	
+	-moz-border-radius-bottomright:11px;
+	-webkit-border-bottom-right-radius:11px;
+	border-bottom-right-radius:11px;
+	
+	-moz-border-radius-topright:11px;
+	-webkit-border-top-right-radius:11px;
+	border-top-right-radius:11px;
+	
+	-moz-border-radius-topleft:11px;
+	-webkit-border-top-left-radius:11px;
+	border-top-left-radius:11px;	
+}
+
+.SettingsTableCSS table{
+	width:100%;
+	height:100%;
+	margin:0px;padding:0px;
+}
+
+.SettingsTableCSS tr:last-child td:last-child {
+	-moz-border-radius-bottomright:11px;
+	-webkit-border-bottom-right-radius:11px;
+	border-bottom-right-radius:11px;
+}
+
+.SettingsTableCSS table tr:first-child td:first-child {
+	-moz-border-radius-topleft:11px;
+	-webkit-border-top-left-radius:11px;
+	border-top-left-radius:11px;
+}
+
+.SettingsTableCSS table tr:first-child td:last-child {
+	-moz-border-radius-topright:11px;
+	-webkit-border-top-right-radius:11px;
+	border-top-right-radius:11px;
+}
+
+.SettingsTableCSS tr:last-child td:first-child{
+	-moz-border-radius-bottomleft:11px;
+	-webkit-border-bottom-left-radius:11px;
+	border-bottom-left-radius:11px;
+}
+
+.SettingsTableCSS tr:hover td{
+	background-color:#ffffaa;
+		
+
+}
+.SettingsTableCSS td{
+	vertical-align:middle;
+	
+	background-color:#aad4ff;
+
+	border:1px solid #000000;
+	border-width:0px 1px 1px 0px;
+	text-align:left;
+	padding:9px;
+	font-size:14px;
+	font-family:Georgia;
+	font-weight:normal;
+	color:#000000;
+}
+
+.SettingsTableCSS tr:last-child td{
+	border-width:0px 1px 0px 0px;
+}
+
+.SettingsTableCSS tr td:last-child{
+	border-width:0px 0px 1px 0px;
+}
+
+.SettingsTableCSS tr:last-child td:last-child{
+	border-width:0px 0px 0px 0px;
+}
+
+.SettingsTableCSS tr:first-child td{
+	background:-o-linear-gradient(bottom, #006ddb 5%, #001f3f 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006ddb), color-stop(1, #001f3f) );
+	background:-moz-linear-gradient( center top, #006ddb 5%, #001f3f 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#006ddb", endColorstr="#001f3f");	background: -o-linear-gradient(top,#006ddb,001f3f);
+
+	background-color:#006ddb;
+	border:0px solid #000000;
+	text-align:center;
+	border-width:0px 0px 1px 1px;
+	font-size:15px;
+	font-family:Georgia;
+	font-weight:bold;
+	color:#ffffff;
+}
+
+.SettingsTableCSS tr:first-child:hover td{
+	background:-o-linear-gradient(bottom, #006ddb 5%, #001f3f 100%);	background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #006ddb), color-stop(1, #001f3f) );
+	background:-moz-linear-gradient( center top, #006ddb 5%, #001f3f 100% );
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr="#006ddb", endColorstr="#001f3f");	background: -o-linear-gradient(top,#006ddb,001f3f);
+
+	background-color:#006ddb;
+}
+
+.SettingsTableCSS tr:first-child td:first-child{
+	border-width:0px 0px 1px 0px;
+}
+
+.SettingsTableCSS tr:first-child td:last-child{
+	border-width:0px 0px 1px 1px;
+}
+
+.SettingsTableCSS input:focus, textarea:focus{
+	border: 2px solid #E61010; 			
+}
+
+.SettingsTableCSS input {
+	border-radius: 0.4em 0.4em 0.4em 0.4em;
+	padding: 0.15em;
+}

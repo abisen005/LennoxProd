@@ -1,0 +1,5 @@
+<aura:event type="APPLICATION" description="Listen to this event to retrieve coaching info.">
+
+    <aura:attribute name="coachingInfo" type="CoachingInfo" description="coachingInfo object for current user." />
+
+</aura:event>

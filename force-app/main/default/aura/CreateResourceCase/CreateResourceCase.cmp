@@ -1,0 +1,49 @@
+<aura:component controller="CreateResourceCaseController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:lightningQuickActionWithoutHeader,force:hasRecordId,lightning:isUrlAddressable" access="global">
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!-- General Aura attributes -->    
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="childRecordId" type="Id" />
+    <aura:attribute name="isSpinner" type="Boolean" default="false" />
+    <lightning:workspaceAPI aura:id="workspace"/>
+    
+    <!-- Toast Message attributes -->
+    <aura:attribute name="toastMessage" type="String" default=""/>
+    <aura:attribute name="ShowMessageClass" type="String" default="slds-theme_success"/>    
+    <aura:attribute name="isShowToaster" type="Boolean" default="false"/>
+    <!-- Component Body -->
+    <div class="main-container">
+        <aura:if isTrue="{!v.isSpinner}">
+            <div class="slds-spinner_container">
+                <div role="status" class="slds-spinner slds-spinner_brand slds-spinner_large">
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </aura:if>
+        <!-- Toast messages -->
+        <div class="messageDiv" style="height: 4rem; display:none; position:relative;">
+            <div class="slds-notify_container slds-is-relative"> 
+                <div class="{!'slds-notify slds-notify_toast ' + v.ShowMessageClass +' messageCont'}" role="alert">
+                    <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                        <div class="slds-icon slds-icon_small" aria-hidden="true">
+                            <lightning:icon iconName="utility:error" size="small"/>
+                        </div>
+                    </span>
+                    <div class="slds-notify__content">
+                        <h2 class="slds-text-heading_small">{!v.toastMessage}</h2>
+                    </div>
+                    <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" onclick="{!c.hideMessageDiv}" title="Close">
+                        <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                            <lightning:icon iconName="utility:close" size="small"/>                                
+                        </div>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!--<div class="product_modal_footer"> 
+            <lightning:button class="slds-align_absolute-center slds-button slds-button_brand" variant="brand" aura:id="resync" label="Create Opportunity Bid Result" onclick="{!c.createOBRRecord}" />
+        </div>-->
+    </div>
+</aura:component>

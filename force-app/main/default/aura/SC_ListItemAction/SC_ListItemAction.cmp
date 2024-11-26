@@ -1,0 +1,41 @@
+<aura:component >
+
+    <aura:registerEvent name="ListItemActionPress" type="c:SC_ListItemActionPress"/>
+
+    <aura:attribute name="class" type="String" description="Button class" />
+    <aura:attribute name="label" type="String" description="Button label" />
+    <aura:attribute name="content" type="String" description="Additional content to display. Truncated after end of first line." />
+    <aura:attribute name="iconClass" type="String" default="" description="Class applied to span around svg icon. If not provided, no icon will be rendered" />
+    <aura:attribute name="iconPath" type="String" description="Path to svg icon iresource" />
+    <aura:attribute name="imageClass" type="String" />
+    <aura:attribute name="imageUrl" type="String" />
+    <aura:attribute name="param" type="String" description="This will be included in the event payload when the list item is clicked." />
+    <aura:attribute name="hasChildren" type="Boolean" description="Will show an icon indicating the item has children." />
+    <aura:attribute name="disabled" type="Boolean" description="Disables the button if true." />
+
+
+    <ui:button class="{!'slds-button slds-p-vertical--small p' + v.class}" disabled="{!v.disabled}" press="{!c.handleButtonPress}">
+        <div class="slds-grid slds-grid--vertical-align-center">
+            <div class="{!'slds-p-left--small ' + (v.iconPath == '' ? 'slds-hide' : '')}">
+                <lightning:icon iconName="{!v.iconPath}" />
+            </div>
+            <div class="{!'slds-p-left--small ' + (v.imageUrl == '' ? 'slds-hide' : '')}">
+                <span class="{!v.imageClass}">
+                    <img src="{!v.imageUrl}" />
+                </span>
+            </div>
+            <div class="slds-col--padded slds-text-align--left">
+                <p class="slds-truncate list-item-action__label">
+                    <strong>{!v.label}</strong>
+                    <aura:if isTrue="{!v.hasChildren}">
+                        <span class="slds-icon_container slds-p-left--small">
+                            <lightning:icon iconName="utility:threedots" class="slds-icon-text-default" size="small" />
+                        </span>
+                    </aura:if>
+                </p>
+                <div><p class="slds-line-height--reset list-item-action__content">{!v.content}</p></div>
+            </div>
+        </div>
+    </ui:button>
+
+</aura:component>

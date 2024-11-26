@@ -1,0 +1,22 @@
+<aura:component >
+
+    <aura:attribute name="userId" type="String" />
+
+
+    <c:Tabs ulClass="slds-p-horizontal--small">
+
+        <c:Tab title="Upcoming" tabClass="test" >
+
+            <c:SC_UserSessions userId="{!v.userId}" />
+
+        </c:Tab>
+
+        <c:Tab title="Past" tabClass="test" >
+
+            <c:SC_UserSessions userId="{!v.userId}" newSessions="FALSE" />
+
+        </c:Tab>
+
+    </c:Tabs>
+
+</aura:component>

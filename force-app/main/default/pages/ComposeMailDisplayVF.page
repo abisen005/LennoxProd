@@ -1,0 +1,18 @@
+<apex:page standardController="Case" standardStylesheets="false" showHeader="false" sidebar="false">
+    <apex:slds />
+    <apex:includeLightning />
+
+    <div id="ComposeMailDisplayId"></div>
+    <script>
+        $Lightning.use("c:ComposeMailDisplayApp", function() { // reference to the wrapping lightning app
+            $Lightning.createComponent(
+                "c:ComposeMail", // component markup:name
+                {
+                    "recordId" : "{!$CurrentPage.parameters.id}" // params to pass in
+                },
+                "ComposeMailDisplayId", // container(div) to put component into
+                function(composeMailCmp) {} // callback with a reference to the added component
+            );
+        });
+    </script>
+</apex:page>

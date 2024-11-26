@@ -1,0 +1,32 @@
+<aura:component extends="c:ConsoleComponent" access="global">
+    
+	<aura:handler name="change" value="{!v.account}" action="{!c.handleAccountChange}"/>
+    
+    <aura:set attribute="accessLevel" value="2" />
+    
+    <aura:attribute name="daysSinceLastUpdate" type="Integer" />
+    <aura:attribute name="chartLabel" type="String" />
+    <aura:attribute name="chartSubLabel" type="String" />
+    <aura:attribute name="isModalOpen" type="Boolean" default="false" />
+    <aura:attribute name="percentageToForecast" type="Integer" />
+    
+    
+    <c:ConsoleMetric title="% of Forecast">
+        <c:ProgressChart label="{!v.chartLabel}" subLabel="{!v.chartSubLabel}" class="percent-to-forecast" percentageComplete="{!v.percentageToForecast}" />
+        
+        <aura:set attribute="actionArea">
+            
+            <i class="{!'slds-button__icon--left fa fa-' + (v.status == 'error' ? 'exclamation-circle ' : v.status == 'warning' ? 'exclamation-circle ' : 'check-circle ') + v.status}"></i> 
+            <ui:button class="slds-button slds-text-align--left" 
+                       label="{!v.daysSinceLastUpdate != null ? v.daysSinceLastUpdate + ' Day' + (v.daysSinceLastUpdate == 1 ? '' : 's') + ' Since Last Update' : 'No Forecast Entered'}" 
+                       press="{!c.handleOpenModal}" />
+
+        </aura:set>
+        
+    </c:ConsoleMetric>
+    
+    
+    <c:UpdateForecast isModalOpen="{!v.isModalOpen}" account="{!v.account}" />
+    
+    
+</aura:component>

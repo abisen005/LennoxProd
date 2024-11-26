@@ -1,0 +1,210 @@
+<!--
+  ComposeMail v-1.0
+  Design: 
+  Description: Lightning Component to compose mail
+  CreatedDate: 01/04/2019
+-->
+<aura:component implements="force:hasSObjectName,force:lightningQuickActionWithoutHeader,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes"
+                access="global" 
+                controller="ComposeMailController" >
+    <aura:attribute name="accept" type="List" default="['.jpg', '.jpeg', '.pdf', '.png']"/>
+    <aura:attribute name="multiple" type="Boolean" default="true"/>
+    <aura:handler name='init' value="{!this}" action="{!c.doinit}"/> 
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:attribute name="mailBody" type="String"/>
+    <aura:attribute name="fileName" type="String"/>
+    <aura:attribute name="mailContent" type="String"/>
+    <aura:attribute name="isOpen" type="boolean"/>
+    <aura:attribute name="isSpinner" type="Boolean" default="false" />
+    <aura:attribute name="mailAttachment" type="String"/>
+    <!--<aura:registerEvent name="SendMail" type="c:SendEmailWithContent"/>-->
+    
+    <aura:attribute name="contactListData" type="List"/>   
+    <aura:attribute name="showLoadingSpinner" type="Boolean"/>   
+    <aura:attribute name="contactNameToIdList" type="List"/>
+    <aura:attribute name="selectedContactIdList" type="List"/>
+    <aura:attribute name="selectedEmailList" type="List"/>
+    <aura:attribute name="finalEmailList" type="List"/>    
+    <aura:attribute name="isTo" type="Boolean" default="false" />
+    <aura:attribute name="isCC" type="Boolean" default="false" />
+    <aura:attribute name="isBCC" type="Boolean" default="false" />
+    
+    <aura:attribute name="isEnabled" type="Boolean" default="true"/>
+    
+    <!-- Toast Message attributes -->
+    <aura:attribute name="toastMessageCompose" type="String" default=""/>
+    <aura:attribute name="ShowMessageClassCompose" type="String" default="slds-theme_success"/>    
+    <aura:attribute name="isShowToaster" type="Boolean" default="false"/>
+    
+    <!-- Email Template attributes -->
+    <aura:attribute name="options" type="List"/>
+    <aura:attribute name="selectedValue" type="String"/>
+    
+    <aura:if isTrue="{!v.isSpinner}">
+        <div class="slds-spinner_container">
+            <div role="status" class="slds-spinner slds-spinner_brand slds-spinner_large">
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <aura:html tag="style">
+        .cuf-content {
+        padding: 0 0rem !important;
+        }
+        .slds-p-around--medium {
+        padding: 0rem !important;
+        }       
+        .slds-modal__content{
+        overflow-y:hidden !important;
+        height:unset !important;
+        max-height:unset !important;
+        }
+        .ql-editor.slds-rich-text-area__content{max-height: 110px !important;}
+        .slds-modal__container{width:100% !important;min-width: 90% !important;max-width: 90% !important; padding: 38px 10px 10px !important;height: 106% !important; margin-top: -30px;}
+    </aura:html>
+    <!-- Mail To-->   
+    <div class="slds-modal__content slds-p-around--medium" style="padding:10px;">
+        
+        <!-- Toast messages -->
+        <div class="messageDivCompose" style="height: 4rem; display:none; position:relative;">
+            <div class="slds-notify_container slds-is-relative"> 
+                <div class="{!'slds-notify slds-notify_toast ' + v.ShowMessageClassCompose +' messageCont'}" role="alert">
+                    <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                        <div class="slds-icon slds-icon_small" aria-hidden="true">
+                            <lightning:icon iconName="utility:error" size="small"/>
+                        </div>
+                    </span>
+                    <div class="slds-notify__content">
+                        <h2 class="slds-text-heading_small">{!v.toastMessageCompose}</h2>
+                    </div>
+                    <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" onclick="{!c.hideMessageDivCompose}" title="Close">
+                        <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                            <lightning:icon iconName="utility:close" size="small"/>                                
+                        </div>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="slds-modal__header">
+            <h2 id="header99" class="slds-text-heading--medium">Consumer Support Request</h2>
+        </div>
+        <div class="spaceBox">
+            <!--
+            <div>
+               <lightning:select tabindex="-1" name="SelectTemplate" label="Select Template" aura:id="TemplateId" value="{!v.selectedValue}" onchange="{!c.renderedEmailBody}">
+                    <option text="None" value="None" selected="True"/>                            
+                    <aura:iteration items="{!v.options}" var="option">
+                        <option text="{!option.Name}" value="{!option.Id}"/>
+                    </aura:iteration>
+                </lightning:select>
+            </div> -->
+            
+            <div class="mailspan btmSpace" style="position:relative;"> 
+                <div class="slds-form">
+                  <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label labelwrap" for="horizontal-input-id-01">To</label>
+                    <div class="slds-form-element__control inputwrap" style="width: 90%;">
+                       <lightning:input aura:id="txtRecipients" name="mRecipients" placeholder="To"/>
+                    </div>
+                  </div>
+                  <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label labelwrap" for="horizontal-input-id-01">From </label>
+                    <div class="slds-form-element__control inputwrap" style="width: 90%;">
+                        <lightning:input aura:id="txtFrom" name="mFrom"  placeholder="From" 
+                                         value="consumeraffairs@lennoxind.com" readonly="true"/>
+                        <div style="display:none"><!-- Added by me -->
+                            <lightning:button variant="base" aura:id="btnCc" label="Cc" onclick="{! c.toggleCc }" />
+                            <lightning:button variant="base" aura:id="btnBcc" label="Bcc" onclick="{! c.toggleBcc }" />
+                        </div>
+                    </div>
+                  </div>
+                   <aura:if isTrue="{!v.isTo}">          
+                    <div class="lookup_list" > <!-- tabindex="100" onblur="{!c.outsideDiv}" blur="{!c.outsideDiv}" onfocusout="{!c.outsideDiv}" -->
+                        <aura:iteration items="{!v.contactListData}" var="contactVal">
+                            <span onclick="{!c.storeLookupValue}"  id="{!contactVal.Email}">{!contactVal.Name} &lt;{!contactVal.Email}&gt;</span>
+                        </aura:iteration>
+                    </div>
+                </aura:if>   
+                <!-- Cc To-->
+            <div class="mailspan btmSpace" style="position:relative; display:none;"> 
+                 <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label labelwrap" for="horizontal-input-id-01">Cc</label>
+                    <div class="slds-form-element__control inputwrap" style="width: 90%;">
+                     <div>
+                        <span onkeypress="{! c.addSeparatorCc }" onkeyup="{! c.addSeparatorCcUp}">
+                            <lightning:input class="toggle" name="mCc" aura:id="txtCc" placeholder="Cc"/>
+                        </span>     
+                    </div>
+                    <aura:if isTrue="{!v.isCC}">
+                        <div class="lookup_list lookup_list_full_width">
+                            <aura:iteration items="{!v.contactListData}" var="contactVal">
+                                <span onclick="{!c.storeLookupValueCC}"  id="{!contactVal.Email}">{!contactVal.Name} &lt;{!contactVal.Email}&gt;</span>
+                            </aura:iteration>
+                        </div>
+                    </aura:if>
+                    </div>
+                  </div>
+                
+            </div>
+            <!-- End Cc To-->     
+                </div>     
+              <!-- Bcc To-->
+            <div class="mailspan btmSpace" style="position:relative; display:none;"> 
+                 <div class="slds-form-element slds-form-element_horizontal">
+                    <label class="slds-form-element__label labelwrap" for="horizontal-input-id-01">Bcc</label>
+                    <div class="slds-form-element__control inputwrap">
+                      <div>
+                            <span onkeypress="{! c.addSeparatorBcc }" onkeyup="{! c.addSeparatorBccUp}">
+                                <lightning:input class="toggle" name="mBcc" aura:id="txtBcc" placeholder="Bcc"/>
+                            </span>
+                        </div>
+                        <aura:if isTrue="{!v.isBCC}">
+                            <div class="lookup_list lookup_list_full_width">
+                                <aura:iteration items="{!v.contactListData}" var="contactVal">
+                                    <span onclick="{!c.storeLookupValueBCC}"  id="{!contactVal.Email}">{!contactVal.Name} &lt;{!contactVal.Email}&gt;</span>
+                                </aura:iteration>
+                            </div>
+                        </aura:if>
+                    </div>
+                  </div>
+                
+            </div>
+                
+            <div class="slds-form-element slds-form-element_horizontal">
+                <label class="slds-form-element__label labelwrap" for="horizontal-input-id-01">Subject</label>
+                <div class="slds-form-element__control inputwrap" style="width: 90%;">
+                     <lightning:input name="mSub" aura:id="txtSub" placeholder="Enter Subject"  class="inputFld"/>
+                </div>
+            </div>    
+           
+            <!-- Lightning Rich Text -->
+            <div class="btmSpace" style="padding: 20px;">
+                <lightning:inputRichText variant="bottom-toolbar" aura:id="txtBody" value="{!v.mailBody}" />
+            </div>
+            <!-- End Bcc To--> 
+            </div>
+            <!-- End Mail To--> 
+            <div class=" slds-box">
+                <div class="slds-grid slds-wrap">                        
+                    <lightning:input aura:id="fileId" onchange="{!c.handleFilesChange}" type="file" name="file" label="Upload Attachment" multiple="true"/>
+                    <div class="slds-text-body_small slds-text-color_error">{!v.fileName} </div>
+                </div>
+            </div>
+            
+            <aura:if isTrue="{!v.showLoadingSpinner}">
+                <div class="slds-text-body_small slds-text-color_error">Uploading...! 
+                    <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>'
+                </div>
+            </aura:if>
+        </div>
+    </div>
+    <footer class="slds-modal__footer" implements="force:lightningQuickActionWithoutHeader">
+        <div class="slds-text-align_right">        
+            <lightning:button label="Cancel" onclick="{!c.closeModal}"/>
+            <lightning:button variant="brand" label="Send Mail" onclick="{!c.sendMail}" disabled="{!!v.isEnabled}"/>
+        </div>
+    </footer>
+</aura:component>

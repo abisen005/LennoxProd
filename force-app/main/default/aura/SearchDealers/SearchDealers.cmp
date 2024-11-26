@@ -1,0 +1,90 @@
+<aura:component access="GLOBAL" controller="SignatureSalesAppController">
+    
+    <aura:attribute name="dealers" type="Account[]" description="List of dealers returned from search query" />
+    <aura:attribute name="selectedDealer" type="Account" />
+    <aura:attribute name="query" type="String" />
+    <aura:attribute name="isLoading" type="Boolean" />
+    <aura:attribute name="isEmpty" type="Boolean" />
+    <aura:attribute name="isSf1" type="Boolean" />
+    
+    
+    <aura:if isTrue="{!v.body[0]}">
+        
+
+        <div class="slds-page-header slds-m-bottom--medium" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <div class="slds-icon_container slds-icon-standard-account">
+                                <img src="/resource/LightningDesignSystem/icons/standard/account_60.png" width="30" />
+                            </div>
+                        </div>
+                        <div class="slds-media__body">
+                            <p class="slds-page-header__title slds-truncate slds-align-middle" title="{!v.selectedDealer.Name}">
+                                {!v.selectedDealer.Name}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-align-bottom">
+                    <ui:button label="View"
+                               class="slds-button slds-button--neutral slds-button--small" 
+                               aura:id="viewDealer"
+                               press="{!c.handleViewDealerPress}" />
+                </div>
+            </div>
+            
+        </div>
+        {!v.body}
+        
+        <aura:set attribute="else">
+            
+            <div class="slds-theme--shade slds-p-around--small">
+                <ui:inputText aura:id="search"
+                              class="slds-input"
+                              value="{!v.query}"
+                              placeholder="Search for Dealers"
+                              disabled="{!v.isLoading}"
+                              keyup="{!c.handleSearchKeyup}" />
+            </div>
+            
+            <h1 class="slds-p-around--xx-small slds-section-title--divider">Dealers</h1>
+            
+            <aura:if isTrue="{!v.isLoading}">
+                <div class="text-align--center slds-p-around--large">Loading...</div>
+            </aura:if>
+            
+            <aura:if isTrue="{!v.dealers.length > 0}">
+                
+                <ul class="slds-list--vertical slds-has-dividers--bottom-space slds-has-block-links--space" >
+                    <aura:iteration items="{!v.dealers}" var="d">
+                        <li class="slds-list__item" >
+                            <c:button label="" class="slds-button slds-text-align--left slds-p-around--x-small" press="{!c.handleAccountBtnPress}" param="{!d.Id}">
+                                <div class="slds-media slds-media--center">
+                                    <div class="slds-media__figure">
+                                        <div class="slds-icon_container slds-icon-standard-account slds-p-around--xxx-small">
+                                            <img src="/resource/LightningDesignSystem/icons/standard/account_60.png" width="30" />
+                                        </div>
+                                    </div>
+                                    <div class="slds-media__body">
+                                        {!d.Name}
+                                    </div>
+                                </div>
+                            </c:button>
+                        </li>
+                    </aura:iteration>
+                </ul>
+                
+            </aura:if>
+            
+            <aura:if isTrue="{!v.isEmpty &amp;&amp; !v.isLoading}">
+                <div class="text-align--center slds-p-around--large">There are no results for "{!v.query}"</div>
+            </aura:if>
+            
+        </aura:set>
+        
+    </aura:if>
+    
+    
+</aura:component>

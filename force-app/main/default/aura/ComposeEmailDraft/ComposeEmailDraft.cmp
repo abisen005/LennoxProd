@@ -1,0 +1,173 @@
+<aura:component implements="force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global" 
+                controller="ComposeMailDraftController">
+    
+    <aura:handler name="init" value="this" action="{!c.doInit}"/>
+   
+    <aura:attribute name="from" type="String"/>
+    <aura:attribute name="to" type="String"/>
+    <aura:attribute name="cc" type="String"/>
+    <aura:attribute name="bcc" type="String"/>
+    <aura:attribute name="subject" type="String"/>
+    <aura:attribute name="body" type="String"/>
+    <aura:attribute name="isSpinner" type="boolean" default="false"/>
+    <aura:attribute name="isDisable" type="boolean" default="false"/>
+    <aura:attribute name="MessageId" type="Id"/>
+    <aura:attribute name="MessageData" type="String"/>
+    <aura:attribute name="fileParentId" type="Id"/>
+    <aura:attribute name="fileToBeUploaded" type="Object[]"/>
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <aura:attribute name="fileName" type="String" default="No File Selected" />
+    <aura:attribute name="mailAttachment" type="String"/>
+    
+    <!-- Toast Message attributes -->
+    <aura:attribute name="toastMessage" type="String" default=""/>
+    <aura:attribute name="ShowMessageClass" type="String" default="slds-theme_success"/>    
+    <aura:attribute name="isShowToaster" type="Boolean" default="false"/>
+    
+    <!-- Email Template attributes -->
+    <aura:attribute name="options" type="List"/>
+    <aura:attribute name="selectedValue" type="String"/>
+   	
+    <aura:if isTrue="{!v.isSpinner}">
+        <div class="slds-spinner_container">
+            <div role="status" class="slds-spinner slds-spinner_brand slds-spinner_large">
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <div class="slds-page-header bgWhite">
+        <div class="slds-grid headerResp">
+            <div class="slds-col slds-has-flexi-truncate">
+                <div class="slds-media slds-no-space slds-grow">
+                    <!--<lightning:icon class="oppo-quote-icon" iconName="standard:quotes" size="small" alternativeText="Bid Products"/>-->
+                    <div class="slds-media__body">
+                        <h1 class="slds-page-header__title slds-m-right_small slds-align-middle slds-truncate">Compose Mail</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast messages -->
+    <div class="messageDiv" style="height: 4rem; display:none; position:relative;">
+        <div class="slds-notify_container slds-is-relative"> 
+            <div class="{!'slds-notify slds-notify_toast ' + v.ShowMessageClass +' messageCont'}" role="alert">
+                <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                    <div class="slds-icon slds-icon_small" aria-hidden="true">
+                        <lightning:icon iconName="utility:error" size="small"/>
+                    </div>
+                </span>
+                <div class="slds-notify__content">
+                    <h2 class="slds-text-heading_small">{!v.toastMessage}</h2>
+                </div>
+                <button class="slds-button slds-button_icon slds-notify__close slds-button_icon-inverse" onclick="{!c.hideMessageDiv}" title="Close">
+                    <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                        <lightning:icon iconName="utility:close" size="small"/>                                
+                    </div>
+                    <span class="slds-assistive-text">Close</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- End toast message -->    
+    
+    <div class="slds-m-around--medium">
+        <div class="slds-container--medium">
+            <div class="slds-form--stacked">
+                <div class="">
+                    <lightning:select tabindex="-1" name="SelectTemplate" label="Select Template" aura:id="TemplateId" value="{!v.selectedValue}" onchange="{!c.renderedEmailBody}" disabled="{!v.isDisable}">
+                        <option text="None" value="None" selected="True"/>                            
+                        <aura:iteration items="{!v.options}" var="option">
+                            <option text="{!option.Name}" value="{!option.Id}"/>
+                        </aura:iteration>
+                    </lightning:select>
+                </div>
+                
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="from">From</label>
+                    <div class="slds-form-element__control">
+                        <ui:inputEmail class="slds-input" aura:id="from" value="{!v.from}" required="true" disabled="{!v.isDisable}"/>
+                    </div>
+                </div>
+                
+                <div class="slds-form-element">
+                    <div class="flexContent">
+                        <span onkeypress="{! c.addSeparatorTo }" onkeyup="{! c.addSeparatorToUp}">
+                            <lightning:input aura:id="to" name="mRecipients" label="To:" placeholder="To" value="{!v.to}" disabled="{!v.isDisable}"/>
+                        </span>
+                        <lightning:button variant="base" aura:id="btnCc" label="Cc" onclick="{! c.toggleCc }" disabled="{!v.isDisable}"/>
+                        <lightning:button variant="base" aura:id="btnBcc" label="Bcc" onclick="{! c.toggleBcc }" disabled="{!v.isDisable}"/>
+                    </div>
+                </div>
+                
+                <div class="slds-form-element">
+                    <div class="flexContent">
+                        <span onkeypress="{! c.addSeparatorCc }" onkeyup="{! c.addSeparatorCcUp}">
+                            <lightning:input class="toggle" name="mCc" aura:id="cc" label="Cc:" placeholder="Cc" value="{!v.cc}" disabled="{!v.isDisable}"/>
+                        </span>     
+                    </div>
+                </div>
+                
+                <div class="slds-form-element">
+                    <div class="flexContent">
+                        <span onkeypress="{! c.addSeparatorBcc }" onkeyup="{! c.addSeparatorBccUp}">
+                            <lightning:input class="toggle" name="mBcc" aura:id="bcc" label="Bcc:" placeholder="Bcc" value="{!v.bcc}" disabled="{!v.isDisable}"/>
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label" for="bcc">Subject</label>
+                    <div class="slds-form-element__control">
+                        <ui:inputEmail class="slds-input" aura:id="subject" value="{!v.subject}" disabled="{!v.isDisable}"/>
+                    </div>
+                </div>                
+                
+                <div class="slds-form-element">
+                        <lightning:inputRichText label="Body" labelVisible="true" aura:id="body" value="{!v.body}" disabled="{!v.isDisable}"/>
+                </div><br/>
+                
+                <!--<lightning:input aura:id="fileId" onchange="{!c.handleFilesChange}" type="file" name="file" label="Upload Attachment" multiple="false" disabled="{!v.isDisable}"/>
+                <div class="slds-text-body_small slds-text-color_error">{!v.fileName} </div>-->
+                
+                <div class=" slds-box">
+                    <div class="slds-grid slds-wrap">                        
+                        <lightning:input aura:id="fileId" onchange="{!c.handleFilesChange}" type="file" name="file" label="Upload Attachment" multiple="false" disabled="{!v.isDisable}"/>
+                        <div class="slds-text-body_small slds-text-color_error">{!v.fileName} </div>
+                    </div>
+                </div>
+                <!--<div class=" slds-box">
+                    <div class="slds-grid slds-wrap">
+                        <lightning:fileUpload label="Upload Attachment"
+                                              name="fileUploader"
+                                              multiple="true"
+                                              accept=".pdf, .png"
+                                              recordId="{!v.myRecordId}"
+                                              onuploadfinished="{!c.handleUploadFinished}" />
+                    </div>
+                </div>
+                -->
+                
+                <aura:if isTrue="{!v.showLoadingSpinner}">
+                    <div class="slds-text-body_small slds-text-color_error">Uploading...! 
+                        <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>'
+                    </div>
+                </aura:if><br/>
+                
+                <!--<div class="slds-form-element">  
+                    <lightning:button variant="brand" label="Save Email" onclick="{!c.validateAndSaveEmail}" disabled="{!v.isDisable}"/>
+                </div>-->
+            </div>
+        </div>
+    </div>
+    
+     <footer class="slds-modal__footer">
+        <div class="slds-text-align_right">        
+            <lightning:button label="Cancel" onclick="{!c.closeModal}"/>
+            <lightning:button variant="brand" label="Save Draft" onclick="{!c.validateAndSaveEmail}" disabled="{!v.isDisable}"/>
+        </div>
+    </footer>
+</aura:component>

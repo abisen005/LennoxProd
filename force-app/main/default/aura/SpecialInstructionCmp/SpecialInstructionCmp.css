@@ -1,0 +1,12 @@
+.THIS.aquaBlue{
+   background-color: #F6DDCC;
+}
+
+.THIS .uiOutputRichText.ol, .THIS .uiOutputRichText.ul {
+     list-style: unset !important; 
+}
+.THIS h2.richTxt ul > li {
+    list-style: circle;
+    text-align: left;
+    list-style-position: inside;
+}

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>36.0</apiVersion>
+    <description>Extends the ui:button component but allows for passing in an optional parameter that can be populated in an aura:iteration component and accessed from the press event handler in the controller.</description>
+</AuraDefinitionBundle>

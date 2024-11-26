@@ -1,0 +1,17 @@
+<aura:component
+    Controller="FTL_NominationCounter"
+    Implements="flexipage:availableForAllPageTypes,forceCommunity:availableForAllPageTypes"
+    access="global"
+>
+<aura:attribute name="data" type="Object"/>
+<aura:attribute name="columns" type="List"/>
+<aura:handler name="init" value="{! this }" action="{! c.init }"/>
+
+<lightning:card>
+    <lightning:datatable
+                keyField="StateProvince"
+                data="{! v.data.Items }"
+                columns="{! v.columns }"
+                hideCheckboxColumn="true"/>
+</lightning:card>
+</aura:component>

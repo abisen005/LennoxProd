@@ -1,0 +1,36 @@
+<aura:component controller="NewAccountLightningCtrl" implements="lightning:actionOverride,flexipage:availableForRecordHome" access="global">
+    <aura:attribute name="searchKey" type="String" default="" />
+    <aura:attribute name="placeDetails" type="String" default="" />
+    <aura:attribute name="name" type="String" default=""/>
+    <aura:attribute name="phone" type="String" default=""/>
+    <aura:attribute name="website" type="String" default=""/>
+    <aura:attribute name="fax" type="String" default=""/>
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+
+    <lightning:card title="New Prospect Account">
+        <aura:if isTrue="{! v.showSpinner }">
+            <div>
+                <lightning:spinner alternativeText="Creating New Account..." size="medium" />
+            </div>
+        </aura:if>
+        <lightning:notificationsLibrary aura:id="notifLib" />
+            <div class="slds-grid slds-gutters" style="padding: 0 12px;">
+            <div class="slds-col">
+                <lightning:input label="Name" value="{!v.name}" placeholder="Enter new account name" required="true" /><br />
+                <lightning:input label="Phone" type="tel" value="{!v.phone}" placeholder="Enter new account phone" required="true" /><br />
+                <label class="slds-form-element__label_edit slds-no-flex" style="color:rgb(62, 62, 60);font-size:12px;">
+                    <abbr lightning-input_input="" title="required" class="slds-required">*</abbr>Address
+                    <c:AutoCompleteAddress searchKey="{!v.searchKey}" placeDetails="{!v.placeDetails}"/>
+                </label>
+            </div>
+            <div class="slds-col">
+                <lightning:input label="Website" type="url" value="{!v.website}" placeholder="Enter a valid website address starting with http:// or https://" /><br />
+                <lightning:input label="Fax" type="tel" value="{!v.fax}" placeholder="Enter new account fax" />
+            </div>
+        </div>
+        <div class="slds-text-align_center" style="padding:24px;">
+            <lightning:button label="Cancel" variant="neutral" onclick="{! c.handleCancel }" />
+            <lightning:button label="Create" variant="destructive" onclick="{! c.handleCreate }" />
+        </div>
+    </lightning:card>
+</aura:component>

@@ -1,0 +1,13 @@
+.THIS .flexContent{display:flex;margin-bottom: 7px;}
+.THIS .flexContent div{display:flex;align-items:center;}
+.THIS .flexContent span{width:100%;} 
+.THIS .mailspan span{margin-right: 10px;}
+.THIS .toggle {display: none;}
+.THIS .messageDiv {
+    display: none;
+    color:#fff;    
+}
+.THIS .messageCont{
+    width: fit-content;
+    min-width: unset !important;
+}

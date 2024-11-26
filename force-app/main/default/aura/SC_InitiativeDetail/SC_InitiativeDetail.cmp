@@ -1,0 +1,89 @@
+<aura:component controller="SC_InitiativeDetailController" access="GLOBAL">
+
+    <aura:attribute name="initiativeId" type="String" description="Initiative salesforce id" />
+    <aura:attribute name="userId" type="String" description="Coachee id." />
+
+    <aura:attribute name="initiative" type="SC_Initiative__c" description="Initiative object" />
+    <aura:attribute name="dashboardId" type="String" description="Dashboard id" />
+    <aura:attribute name="reportIds" type="String" description="Related report ids for this initiative" />
+    <aura:attribute name="reviewIframeSrc" type="String" default="" />
+    <aura:attribute name="coachingSessionWizard" type="Aura.Component[]" access="GLOBAL" />
+    <aura:attribute name="coachingInfo"
+                    type="CoachingInfo"
+                    description="An object with information about the current user's coaching role and related data." />
+
+
+
+    <aura:registerEvent name="coachingInfoRequest" type="c:SC_CoachingInfoRequest" />
+
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler name="change" value="{!v.initiativeId}" action="{!c.handleInitiativeIdChange}" />
+    <aura:handler event="c:SC_CoachingInfoResponse" action="{!c.handleCoachingInfoResponse}" />
+
+
+
+    <section>
+        <div class="slds-page-header" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media slds-no-space slds-grow">
+                        <div class="slds-media__figure">
+
+                                <c:SC_svg class="slds-icon slds-icon-custom-custom26" xlinkHref="/resource/SC_LightningDesignSystem/icons/custom-sprite/svg/symbols.svg#custom26" />
+
+                        </div>
+                        <div class="slds-media__body">
+                            <p class="slds-text-title--caps slds-line-height--reset">Initiative</p>
+                            <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate" title="{!v.initiative.Name}">{!v.initiative.Name}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-grid slds-align-top">
+
+                    <div class="{!'slds-button-group ' + (v.coachingInfo.isCoach ? '' : 'slds-hide')}" role="group">
+                        <lightning:button class="{!'slds-button slds-button--neutral ' + (empty(v.dashboardId) ? 'slds-hide' : '')}"
+                                          onclick="{!c.handleViewDashboardPress}"
+                                          label="View Dashboard" />
+                        <lightning:button class="slds-button slds-button--neutral"
+                                          onclick="{!c.handleCoachPress}"
+                                          label="Coach" />
+                    </div>
+
+                </div>
+            </div>
+
+            <ul class="slds-grid slds-m-top--small">
+                <li class="">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" >Description</p>
+                    <p class="slds-text-body--regular">{!v.initiative.Description__c}</p>
+                </li>
+            </ul>
+        </div>
+
+
+
+        <c:SC_Breadcrumbs class="slds-m-around--medium" />
+
+
+        <hr class="slds-m-around--none" />
+
+
+        <aura:if isTrue="{!v.coachingInfo.isCoach}">
+            <div class="{!'slds-box slds-theme--shade slds-m-around--small  ' + (v.reviewIframeSrc == '' ? 'slds-show' : 'slds-hide')}">
+                <p>There are no reports to show for {!v.initiative.Name}</p>
+            </div>
+            <div class="slds-grid">
+                <iframe src="{!v.reviewIframeSrc}"
+                        width="100%"
+                        height="2000"
+                        frameborder="0" />
+            </div>
+        </aura:if>
+
+        {!v.coachingSessionWizard}
+
+    </section>
+
+</aura:component>

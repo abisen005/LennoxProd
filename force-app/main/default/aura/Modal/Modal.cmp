@@ -1,0 +1,53 @@
+<aura:component >
+    
+    <aura:handler event="c:ModalAlert" action="{!c.handleModalAlert}" />
+    
+    <aura:attribute name="isOpen" type="Boolean" required="true" default="false" />
+    <aura:attribute name="header" type="String" required="true" />
+    <aura:attribute name="headerClass" type="String" />
+    <aura:attribute name="hasAlert" type="Boolean" default="false" />
+    <aura:attribute name="alertType" type="String"  description="success, warning, error" />
+    <aura:attribute name="alertMessage" type="String"  />
+    <aura:attribute name="footer" type="Aura.Component[]"/>
+	
+	<div>
+        <div aria-hidden="false" role="dialog" class="{!'slds-modal slds-fade-in-' + (v.isOpen ? 'open' : 'close')}">
+            <div class="slds-modal__container">
+                <div class="{!'slds-modal__header ' + v.headerClass}">
+                    <h2 class="slds-text-heading--medium">{!v.header}</h2>
+                    <ui:button press="{!c.closeModal}" label="" class="slds-button slds-button--icon-inverse slds-modal__close">
+                        <span class="slds-icon__container">
+                            <img src="/resource/LightningDesignSystem/icons/action/close_60.png" />
+                        </span>
+                        <span class="slds-assistive-text">Close</span>
+                    </ui:button>
+                    <aura:renderIf isTrue="{!v.hasAlert}">
+                        <div class="slds-notify-container">
+                            <div class="{!'slds-notify slds-notify--toast' + (v.alertType ? ' slds-theme--' + v.alertType : '')}" role="alert">
+                                <span class="slds-assistive-text" >{!v.alertType ? v.alertType : 'generic alert'}</span>
+                                
+                                <div class="notify__content slds-grid">
+                                    <div class="slds-col slds-align-middle">
+                                        <h2 class="slds-text-heading--small">{!v.alertMessage}</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </aura:renderIf>
+                </div>
+                <div class="slds-modal__content ">
+
+                        {!v.body}
+
+                </div>
+                <div class="slds-modal__footer">
+                    <div class="slds-x-small-buttons--horizontal">
+                        {!v.footer}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="{!'slds-backdrop slds-backdrop--' + (v.isOpen ? 'open' : 'close')}"></div>
+    </div>                    
+                    
+</aura:component>

@@ -1,0 +1,14 @@
+.THIS .truncate {
+  max-width: 25px; }
+
+@media all and (min-width: 47.9375em) {
+  .THIS .truncate {
+    max-width: 50px; } }
+
+@media all and (min-width: 48em) {
+  .THIS .truncate {
+    max-width: 75px; } }
+
+@media all and (min-width: 64.0625em) {
+  .THIS .truncate {
+    max-width: 125px; } }

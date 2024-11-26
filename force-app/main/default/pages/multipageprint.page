@@ -1,0 +1,84 @@
+<apex:page >
+    <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"/>
+    <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"/>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .content {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        a {
+            color: #3498db;
+        }
+    </style>
+
+    <h1>Lennox Donates 400 HVAC Units</h1>
+    <button onclick="showContent()">Show Article</button>
+
+    <div class="content" id="article-content">
+        <h2>Background</h2>
+        <p>Lennox, through its "Feel The Love" program, donated over 400 HVAC units to homeowners in need across 45 states and several Canadian provinces. This program aims to provide year-round comfort to individuals facing challenges such as financial hardship or community service. Dealers volunteered to install these systems at no cost, bringing relief and comfort to local heroes.</p>
+        <p>The installations were done free of charge, thanks to Lennox’s partnerships with dealers and volunteers. This year’s efforts marked a significant expansion in the program’s reach.</p>
+        
+        <h2>Additional Information</h2>
+        <p>This section contains more information about the program, its goals, and the impact it has had on communities. Lennox's initiative has been widely recognized for its commitment to supporting families in need.</p>
+        <p>Through these efforts, many families have received the comfort of heating and cooling solutions that were previously unaffordable. Community involvement has played a critical role in making this program successful.</p>
+        
+        <h2>Conclusion</h2>
+        <p>The Lennox "Feel The Love" program continues to grow, with plans to expand into more regions in the coming years. For more information and to learn how to get involved, visit the official website.</p>
+        
+        <p><a href="https://www.achrnews.com/articles/163526-lennox-donates-400-hvac-units-to-homeowners-in-need-to-provide-year-round-comfort" target="_blank">Read more at ACHR News</a></p>
+    </div>
+
+    <button onclick="generatePDF()">Download as PDF</button>
+
+    <script>
+        function showContent() {
+            document.querySelector('.content').style.display = 'block';
+        }
+
+        function generatePDF() {
+            const element = document.getElementById('article-content');
+            
+            html2canvas(element).then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'mm', 'a4');
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 295; // A4 height in mm
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                // Add the first page
+                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                // Handle overflow for multiple pages
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                doc.save('lennox_donation_article.pdf');
+            });
+        }
+    </script>
+</apex:page>

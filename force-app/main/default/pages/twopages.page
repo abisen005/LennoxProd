@@ -1,0 +1,307 @@
+<apex:page Controller="executiveAggregate" standardStylesheets="false" showHeader="false" sidebar="false"  >
+    <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"/>
+    <apex:includeScript value="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"/>
+    <apex:stylesheet value="{!$Resource.dbrStyle}" />
+    <apex:stylesheet value="{!$Resource.AccountPlanStyle}" />
+    <style type="text/css"> @media all { .page-break { display: none; } } @media print { .page-break { display: block; page-break-before: always; }  
+                   
+                 } @page { margin: 1cm } </style>
+                 
+    <body>
+    
+    <div class="content" id="page1">
+    
+     <div class="header">
+
+                        <h3 class="pull-right pad-right">Lennox Sales Roll-Up Summary - {!year}</h3>
+
+                        <apex:image url="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" styleClass="header__logo pad-left" />
+                    </div>
+                    <apex:messages style="font-size:20px;color:white;background-color:red;"/>
+
+                    <table class="table table-condensed highlight content-block" style="margin-top:1%;">
+                        <tr>                      
+                            <td>
+                                <h5 class="text-left pad-left" style="color:#c60b36;">
+                                      <b>  <apex:outputText value="Report as of : {0,date,MM'/'dd'/'yyyy}">
+                                            <apex:param value="{!lastSalesHistoryUpdate}" />
+                                        </apex:outputText>
+                                      </b>
+                                </h5>  
+
+                            </td>
+                        </tr>
+                    </table>
+    
+    <table class="table table-condensed" width="100%" style="margin-top: 10px;margin-bottom: 25px" >
+                        <tr>
+                            <td class="span6 print5" styleClass ="vfpage" style="width:40%;">
+                                <table class="table table-bordered table-hover print-tbl">
+                                    <tr>
+                                        <th class="highlight" colspan="2">Sales History</th>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preThreeYear} Sales</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previousThreeYearsTotalSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preTwoYear} Sales</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previousTwoYearsTotalSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preYear} Sales </th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previousYearTotalSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td class="span6 print7" style="width:50%">
+                                <!--<h3 class="chart-title">Product Hierarchy</h3>-->
+                                <div id="barchartTotal"  align="right"></div>
+                            </td>
+                           
+                        </tr>
+                    </table>  
+                    
+                     <table class="content-block" width="100%" style="margin-top: 5px;margin-bottom: 25px">
+                        <tr>
+                            <td class="span6 print5" style="width:40%;">
+                                <table class="table table-bordered table-hover print-tbl">
+                                    <tr>
+                                        <th class="highlight" colspan="2">YTD Sales Comparison</th>
+                                    </tr>
+                                    <tr>
+                                        <th>{!year} Sales Forecast</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!presentYearSalesForecast}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!year}</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preYear}</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previuosYearsYTDSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>YoY Change</th>
+                                        <td class="text-right js-change-amt">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdSalesChange}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td class="span6 print7" style="width:50%;">
+                                <!--<h3 class="chart-title">Product Hierarchy</h3>-->
+                                <div id="barchart"  align="right"></div>
+                            </td>
+                        </tr>
+                    </table>
+                     <table class="content-block" width="100%">
+                        <tr>
+                            <td class="span7 print5" style="width:40%;">
+                                <table class="table table-bordered ytd table-hover print-tbl">
+                                    <tr>
+                                        <th colspan="3" class="highlight">YTD Sales - Product Hierarchy</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="print8"><div style="width:10px; height:10px; background-color:#e74c3c;display:inline-block;" />&nbsp;&nbsp;Res Equipment </th>
+                                        <td class="print4 text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdResEquipment}" />
+                                            </apex:outputText>
+                                        </td>
+                                        <td class="text-right">
+                                            <span class="resEquipSales"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><div style="width:10px; height:10px; background-color:#2ECC71;display:inline-block;" />&nbsp;&nbsp;Commercial  </th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdCommercials}" />
+                                            </apex:outputText>
+                                        </td>
+                                        <td class="text-right">
+                                            <span class="comSales"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><div style="width:10px; height:10px; background-color:#F1C40F;display:inline-block;" />&nbsp;&nbsp; P&amp;S | Mini-Splits | Others </th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdPartsndSupplies}" />
+                                            </apex:outputText>
+                                        </td>
+                                        <td class="text-right"><span class="PSSales"></span></td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td class="span5 print7" style="width:50%;">
+                                <!--<h3 class="chart-title">YTD Sales</h3>-->
+                                <div id="piechart"  align="right"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                    
+                    
+                     </div>
+                     
+                     
+                      <div class="content" id="page2">
+    
+    <table class="table table-condensed"  width="100%" style="margin-top: 10px;margin-bottom: 25px" >
+                        <tr>
+                            <td class="span6 print5" styleClass ="vfpage" style="width:40%;">
+                                <table class="table table-bordered table-hover print-tbl">
+                                    <tr>
+                                        <th class="highlight" colspan="2">Sales History</th>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preThreeYear} Sales</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previousThreeYearsTotalSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preTwoYear} Sales</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previousTwoYearsTotalSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preYear} Sales </th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previousYearTotalSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td class="span6 print7" style="width:50%">
+                                <!--<h3 class="chart-title">Product Hierarchy</h3>-->
+                                <div id="barchartTotal"  align="right"></div>
+                            </td>
+                           
+                        </tr>
+                    </table>  
+                    
+                     <table class="content-block" width="100%" style="margin-top: 5px;margin-bottom: 25px">
+                        <tr>
+                            <td class="span6 print5" style="width:40%;">
+                                <table class="table table-bordered table-hover print-tbl">
+                                    <tr>
+                                        <th class="highlight" colspan="2">YTD Sales Comparison</th>
+                                    </tr>
+                                    <tr>
+                                        <th>{!year} Sales Forecast</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!presentYearSalesForecast}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!year}</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preYear}</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previuosYearsYTDSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>YoY Change</th>
+                                        <td class="text-right js-change-amt">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdSalesChange}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td class="span6 print7" style="width:50%;">
+                                <!--<h3 class="chart-title">Product Hierarchy</h3>-->
+                                <div id="barchart"  align="right"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                     </div>
+                     
+                    <button onclick="generatePDF()">Download as PDF</button>
+              
+    
+    </body>
+    <script>
+        function showContent() {
+            document.querySelector('.content').style.display = 'block';
+        }
+
+      function generatePDF() {
+    const page1 = document.getElementById('page1');
+    const page2 = document.getElementById('page2');
+
+const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('p', 'mm', 'a4');
+
+// Capture and add the first page
+    html2canvas(page1,{scale: 2}).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        doc.addImage(imgData, 'PNG', 0, 0, 210, (canvas.height * 210) / canvas.width);
+        
+        // Add a new page for the second section
+        doc.addPage();
+
+// Capture and add the second page
+        html2canvas(page2,{scale: 2}).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            doc.addImage(imgData, 'PNG', 0, 0, 210, (canvas.height * 210) / canvas.width);
+
+// Save the PDF
+            doc.save('dealer_benefit.pdf');
+        });
+    });
+}
+    </script>
+</apex:page>

@@ -1,0 +1,32 @@
+.THIS .container {
+    padding: 20px;
+    position: relative;
+}
+
+.THIS .slds-modal__container .container {
+    position: relative;
+    padding:0;
+}
+.THIS .searchAccount {
+   /* margin-top:2rem;*/
+    margin-bottom:20px;
+}
+
+.THIS .bodyGrid { width: 100%; display: flex; margin-top: 20px; }
+
+.THIS .componentDspl { display: block; width: 47%; margin-bottom: 20px; margin-right: 3%; height: 30px; padding-right:1.5rem; }
+.THIS .bodyGrid .slds-input { margin-left: 3%; width: 47%;  margin-bottom: 20px; height: 30px;  padding-right:1.5rem;}
+.THIS .leftMargin {margin-left:3%;}
+.THIS .rightMargin {margin-right:3%;}
+.THIS .slds-size_1-of-2.col { width: 47%; }
+.THIS .slds-page-header { margin-bottom: 15px; }
+.THIS .uiInput--select.select:not([multiple]), 
+.THIS .uiInput--select .select:not([multiple]),
+.THIS .uiInput--select .uiPopupTrigger a {background-position: 99.4% 50%;}
+
+.THIS .slds-select_container:before {display:none;}
+
+.THIS .slds-select_container:after { border-top: 5px solid #55698d; bottom: 41%; border-left: 4px solid transparent; border-right: 4px solid transparent;}
+.THIS .tableParent { padding:20px;}
+
+.THIS .slds-table th, .THIS .slds-table td {white-space:normal;}

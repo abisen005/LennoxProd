@@ -1,0 +1,263 @@
+<aura:component controller="TMDMConsoleController">
+    
+    <aura:handler name="change" value="{!v.isRendered}" action="{!c.handleIsRenderedChange}"/>
+    
+    <aura:attribute name="account" type="Account" />
+    <aura:attribute name="isRendered" type="Boolean" default="false" />
+    <aura:attribute name="isLoading" type="Boolean" default="false" />
+    <aura:attribute name="isSf1" type="Boolean" default="false" />
+    <aura:attribute name="accountPlan" type="Account_Planning__c"  />
+    <aura:attribute name="accountOpps" type="Account_Opportunty__c[]" />
+    <aura:attribute name="actionPlans" type="Action_Plan__c[]" />
+    <aura:attribute name="newAccountPlanLink" type="String" />
+    <aura:attribute name="newAccountOppLink" type="String" />
+    <aura:attribute name="newActionPlanLink" type="String" />
+    
+    
+    <div class="slds-p-around--medium">
+        
+        <!-- IF RENDERED -->
+        <aura:if isTrue="{!v.isRendered}">
+            
+            <!-- IF NOT LOADING -->
+            <aura:if isTrue="{!!v.isLoading}">
+                
+                <!-- IF HAS ACCOUNT PLAN -->
+                <aura:if isTrue="{!v.accountPlan}">
+                    
+                    <div class="slds-card">
+                        
+                        <div class="slds-card__header slds-grid">
+                            <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                                <div class="slds-media__figure">
+                                    <c:svgIcon class="slds-icon slds-icon-custom-16 slds-icon--small" xlinkHref="/resource/LightningDesignSystem/icons/custom-sprite/svg/symbols.svg#custom16" />
+                                </div>
+                                <div class="slds-media__body">
+                                    <h2 class="slds-text-heading--small slds-truncate">Account Opportunities</h2>
+                                </div>
+                            </div>
+                            <div class="slds-no-flex">
+
+                                <aura:if isTrue="{!v.isSf1}">
+                                        
+                                        <ui:button class="slds-button slds-button--neutral slds-button--small" label="New" press="{!c.handleNewAccountOppPress}" />
+                                        
+                                        <!-- IF NOT SF1 -->
+                                        <aura:set attribute="else">
+                                            
+                                            <a href="{!v.newAccountOppLink}" class="slds-button slds-button--neutral slds-button--small" target="_parent">New</a>
+                                            
+                                        </aura:set>
+                                        
+                                    </aura:if>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-card__body">
+                            
+                            <!-- IF HAS ACCOUNT OPPS -->
+                            <aura:if isTrue="{!v.accountOpps.length > 0}">
+                                
+                                <table class="slds-table slds-table--bordered slds-max-medium-table--stacked-horizontal slds-no-row-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="slds-text-heading--label slds-size--1-of-4" scope="col">Name</th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4" scope="col">Type</th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4" scope="col">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <aura:iteration items="{!v.accountOpps}" var="ao">
+                                            <tr>
+                                                <td class="slds-size--1-of-3">
+                                                    
+                                                    <!-- IF SF1 -->
+                                                    <aura:if isTrue="{!v.isSf1}">
+                                                        
+                                                        <c:button class="slds-button" 
+                                                                  label="{!ao.Name}" 
+                                                                  param="{!ao.Id}"
+                                                                  press="{!c.handleAccountOppUpdatePress}" />
+                                                        
+                                                        <!-- IF NOT SF1 -->
+                                                        <aura:set attribute="else">
+                                                            
+                                                            <a class="slds-button"
+                                                               href="{!'/' + ao.Id}" 
+                                                               target="_parent">{!ao.Name}</a>
+                                                            
+                                                        </aura:set>
+                                                        
+                                                    </aura:if>
+                                                    
+                                                </td>
+                                                <td class="slds-size--1-of-3">{!ao.Opportunity_Type__c}</td>
+                                                <td class="slds-size--1-of-3">{!ao.Opportunity_Status__c}</td>
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                                
+                                
+                                <!-- IF NO ACCOUNT OPPS -->
+                                <aura:set attribute="else">
+                                    
+                                    <!-- IF SF1 -->
+                                    <aura:if isTrue="{!v.isSf1}">
+                                        
+                                        <p class="slds-m-around--large">There are no open Account Opportunities for the current account plan.  <ui:button class="slds-button" label="Create a new one?" press="{!c.handleNewAccountOppPress}" /> </p>
+                                        
+                                        <!-- IF NOT SF1 -->
+                                        <aura:set attribute="else">
+                                            
+                                            <p class="slds-m-around--large">There are no open Account Opportunities for the current account plan.  <a href="{!v.newAccountOppLink}" target="_parent">Create a new one?</a></p>
+                                            
+                                        </aura:set>
+                                        
+                                    </aura:if>
+                                    
+                                </aura:set>
+                                
+                            </aura:if>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="slds-card">
+                        <div class="slds-card__header slds-grid">
+                            <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                                <div class="slds-media__figure">
+                                    <c:svgIcon class="slds-icon slds-icon-custom-62 slds-icon--small" xlinkHref="/resource/LightningDesignSystem/icons/custom-sprite/svg/symbols.svg#custom16" />
+                                </div>
+                                <div class="slds-media__body">
+                                    <h2 class="slds-text-heading--small slds-truncate">Action Plans</h2>
+                                </div>
+                            </div>
+                            <div class="slds-no-flex">
+
+                                <aura:if isTrue="{!v.isSf1}">
+                                        
+                                        <ui:button class="slds-button slds-button--neutral slds-button--small" label="New" press="{!c.handleNewActionPlanPress}" />
+                                        
+                                        <!-- IF NOT SF1 -->
+                                        <aura:set attribute="else">
+                                            
+                                            <a href="{!v.newActionPlanLink}" class="slds-button slds-button--neutral slds-button--small" target="_parent">New</a>
+                                            
+                                        </aura:set>
+                                        
+                                    </aura:if>
+                            </div>
+                        </div>
+                        <div class="slds-card__body">
+                            
+                            <!-- IF HAS ACCOUNT OPPS -->
+                            <aura:if isTrue="{!v.actionPlans.length > 0}">
+                                
+                                <table class="slds-table slds-table--bordered slds-max-medium-table--stacked-horizontal slds-no-row-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="slds-text-heading--label slds-size--1-of-4" scope="col">Name</th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4" scope="col">Action</th>
+                                            <th class="slds-text-heading--label slds-size--1-of-4" scope="col">Type</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <aura:iteration items="{!v.actionPlans}" var="ap">
+                                            <tr>
+                                                <td class="slds-size--1-of-3">
+                                                    
+                                                    <!-- IF SF1 -->
+                                                    <aura:if isTrue="{!v.isSf1}">
+                                                        
+                                                        <c:button class="slds-button slds-button--small" 
+                                                                  label="{!ap.Name}" 
+                                                                  param="{!ap.Id}"
+                                                                  press="{!c.handleActionPlanUpdatePress}" />
+                                                        
+                                                        <!-- IF NOT SF1 -->
+                                                        <aura:set attribute="else">
+                                                            
+                                                            <a class="slds-button slds-button--small"
+                                                               href="{!'/' + ap.Id}" 
+                                                               target="_parent">{!ap.Name}</a>
+                                                            
+                                                        </aura:set>
+                                                        
+                                                    </aura:if>
+                                                    
+                                                    
+                                                    
+                                                </td>
+                                                <td class="slds-size--1-of-3">{!ap.Action__c}</td>
+                                                <td class="slds-size--1-of-3">{!ap.Action_Type__c}</td>
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                                
+                                
+                                <!-- IF NO ACTION PLANS -->
+                                <aura:set attribute="else">
+                                    
+                                    <!-- IF SF1 -->
+                                    <aura:if isTrue="{!v.isSf1}">
+                                        
+                                        <p class="slds-m-around--large">There are no open Action Plans.  <ui:button class="slds-button" label="Create a new one?" press="{!c.handleNewActionPlanPress}" /> </p>
+                                        
+                                        <!-- IF NOT SF1 -->
+                                        <aura:set attribute="else">
+                                            
+                                            <p class="slds-m-around--large">There are no open Action Plans.  <a href="{!v.newActionPlanLink}" target="_parent">Create a new one?</a></p>
+                                            
+                                        </aura:set>
+                                        
+                                    </aura:if>
+                                    
+                                </aura:set>
+                                
+                            </aura:if>
+                            
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- IF NO ACCOUNT PLAN -->
+                    <aura:set attribute="else">
+                        
+                        <!-- IF SF1 -->
+                        <aura:if isTrue="{!v.isSf1}">
+                            
+                            <p>There is no Account Plan for the current year.  <ui:button class="slds-button" label="Create a new one?" press="{!c.handleNewAccountPlanPress}" /> </p>
+                            
+                            <!-- IF NOT SF1 -->
+                            <aura:set attribute="else">
+                                
+                                <p>There is no Account Plan for the current year.  <a href="{!v.newAccountPlanLink}" target="_parent">Create a new one?</a></p>
+                                
+                            </aura:set>
+                            
+                        </aura:if>
+                        
+                    </aura:set>
+                    
+                </aura:if>
+                
+                <!-- IF LOADING -->
+                <aura:set attribute="else">
+                    <div class="slds-grid slds-grid--align-center ">
+                        <div class="slds-col">
+                            <div class="slds-spinner--small slds-m-around--large">
+                                <img src="/resource/LightningDesignSystem/images/spinners/slds_spinner_brand.gif" alt="Loading..." />
+                            </div>
+                        </div>
+                    </div>
+                </aura:set>
+                
+            </aura:if>
+            
+        </aura:if>
+        
+    </div>
+    
+</aura:component>

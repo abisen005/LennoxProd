@@ -1,0 +1,155 @@
+<aura:component controller="SC_InitiativeUserDetailController" access="GLOBAL">
+
+    <aura:attribute name="initiativeId" type="String" description="Initiative salesforce id" />
+    <aura:attribute name="userId" type="String" description="Id of the coachee this page is scoped to." />
+    <aura:attribute name="userName" type="String" description="Name of the coachee this page is scoped to." />
+    <aura:attribute name="initiative" type="SC_Initiative__c" description="Initiative object" />
+    <aura:attribute name="skills" type="SC_Skill__c[]" description="List of skill objects" />
+    <aura:attribute name="nextCoachingSession" type="Object" description="Object wih upcoming session id, name and date" />
+    <aura:attribute name="coachingSessionWizard" type="Aura.Component[]" access="GLOBAL" />
+    <aura:attribute name="coachingInfo"
+                    type="CoachingInfo"
+                    description="An object with information about the current user's coaching role and related data." />
+    <aura:attribute name="isCoach" type="Boolean" />
+
+    <aura:registerEvent name="coachingInfoRequest" type="c:SC_CoachingInfoRequest" />
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler name="change" value="{!v.initiativeId}" action="{!c.handleInitiativeIdChange}" />
+    <aura:handler name="change" value="{!v.userId}" action="{!c.handleUserIdChange}" />
+    <aura:handler event="c:SC_CoachingInfoResponse" action="{!c.handleCoachingInfoResponse}" />
+
+
+    <section>
+        <div class="slds-page-header" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media slds-no-space slds-grow">
+                        <div class="slds-media__figure">
+
+                            <c:SC_svg class="slds-icon slds-icon-custom-custom26" xlinkHref="/resource/SC_LightningDesignSystem/icons/custom-sprite/svg/symbols.svg#custom26" />
+
+                        </div>
+                        <div class="slds-media__body">
+                            <p class="slds-text-title--caps slds-line-height--reset">{!v.userName}</p>
+                            <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate" title="{!v.initiative.Name}">{!v.initiative.Name}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-grid slds-align-top">
+
+                    <div class="{!'slds-button-group ' + (v.isCoach ? '' : 'slds-hide')}" role="group">
+                        <lightning:button class="slds-button slds-button--neutral"
+                                          label="Complete Coaching" />
+                        <lightning:button class="slds-button slds-button--neutral"
+                                          label="New Assessment" />
+                        <lightning:button class="slds-button slds-button--neutral"
+                                          onclick="{!c.handleCoachPress}"
+                                          label="Coach" />
+                    </div>
+
+                </div>
+            </div>
+
+            <ul class="slds-grid slds-m-top--small">
+                <li class="">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" >Description</p>
+                    <p class="slds-text-body--regular">{!v.initiative.Description__c}</p>
+                </li>
+            </ul>
+        </div>
+
+
+
+        <c:SC_Breadcrumbs class="slds-m-around--medium" />
+
+
+        <hr class="slds-m-around--none" />
+
+
+        <div class="slds-grid slds-wrap slds-grid--pull-padded-small slds-grid--vertical-stretch bg-alt-inverse">
+
+            <aura:if isTrue="{!!v.isCoach}">
+                <div class="slds-size--1-of-1 slds-medium-size--2-of-3 slds-p-around--small">
+                    <div class="slds-box slds-theme--default">
+                        <h1 class="slds-text-title--caps slds-col">Skills</h1>
+                        <ul class="slds-list--dotted">
+                            <aura:iteration items="{!v.skills}" var="skill">
+                                <li>{!skill.Description__c}</li>
+                            </aura:iteration>
+                        </ul>
+                    </div>
+                </div>
+            </aura:if>
+
+            <aura:if isTrue="{!v.isCoach}">
+                <div class="slds-size--1-of-1 slds-medium-size--1-of-3 slds-p-around--small">
+                    <div class="slds-box slds-theme--default">
+                        <h1 class="slds-text-title--caps slds-p-bottom--medium">Current Skill Mastery</h1>
+                        <c:SC_SkillMastery userId="{!v.userId}" initiativeId="{!v.initiativeId}" />
+                    </div>
+                </div>
+            </aura:if>
+
+            <div class="slds-size--1-of-1 slds-medium-size--1-of-3 slds-p-around--small">
+                <div class="slds-box slds-theme--default slds-grid slds-grid--vertical slds-grid--align-spread">
+                    <div class="slds-col">
+                        <h1 class="slds-text-title--caps slds-col">Next Coaching Session</h1>
+                        <h2 class="slds-text-heading--large color-success slds-col">
+                            <ui:outputDate value="{!v.nextCoachingSession.Start_Date__c}" />
+                        </h2>
+                        <p class="{!empty(v.nextCoachingSession) ? 'slds-m-top--medium' : 'slds-hide'}">
+                            No upcoming sessions scheduled.
+                            <a href="#" onclick="{!c.handleCoachPress}">Schedule one now?</a>
+                        </p>
+                    </div>
+                    <div class="slds-col">
+                        <c:Link to="{!'/session/' + v.nextCoachingSession.Id}"
+                                label="{!v.nextCoachingSession.Name}"
+                                class="slds-button line-height-reset slds-p-top--small ">
+                            {!v.nextCoachingSession.Name}
+                        </c:Link>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <aura:if isTrue="{!v.isCoach}">
+                <div class="slds-size--1-of-1 slds-medium-size--1-of-3 slds-p-around--small">
+                    <div class="slds-box slds-theme--default">
+                        <h1 class="slds-text-title--caps">Coaching History</h1>
+                        <c:SC_CoachingHistoryChart userId="{!v.userId}" initiativeId="{!v.initiativeId}" />
+                    </div>
+                </div>
+            </aura:if>
+        </div>
+
+
+        <lightning:tabset >
+            
+            <lightning:tab label="Assignments" >
+                <c:SC_UserAssignments userId="{!v.userId}" initiativeId="{!v.initiativeId}" showAll="TRUE" />
+            </lightning:tab>
+            
+            <lightning:tab label="Coaching Sessions" >
+                <c:SC_UserSessions userId="{!v.userId}" initiativeId="{!v.initiativeId}" showAll="TRUE" />
+            </lightning:tab>
+            
+           
+            <aura:if isTrue="{!v.isCoach}">
+            <lightning:tab label="Assessments" >
+                <c:SC_Assessments userId="{!v.userId}" initiativeId="{!v.initiativeId}" />
+            </lightning:tab>
+            </aura:if>
+            
+        </lightning:tabset>
+
+
+
+        {!v.coachingSessionWizard}
+
+    </section>
+
+</aura:component>

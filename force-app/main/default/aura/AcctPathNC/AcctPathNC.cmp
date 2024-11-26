@@ -1,0 +1,74 @@
+<aura:component implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" controller="AcctPathNCController">
+    <aura:html tag="style">
+       .slds-theme_info, .slds-theme--info {background: #596d90;}
+   </aura:html>
+    <!-- attributes -->
+    <aura:attribute access="private" name="recordIdCollection" type="Object"/>
+    <aura:attribute name="currentStep" type="String"/>
+
+    <force:recordData
+        aura:id="forceRecord"
+        recordId="{!v.recordId}"
+        recordUpdated="{!c.doInit}"
+        layoutType="FULL"
+    />
+
+    <!-- event handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <!-- main body -->
+    <div class="div-main">
+        <div class="slds-path">
+        <div class="slds-grid slds-path__track">
+            <div class="slds-grid slds-path__scroller-container">
+                <div class="slds-path__scroller" role="application">
+                    <div class="slds-path__scroller_inner">
+                    <ul class="slds-path__nav" role="listbox" aria-orientation="horizontal" >
+                        <li class="slds-path__item slds-is-incomplete " role="presentation" aura:id="1" >
+                        <a class="slds-path__link" href="javascript:void(0);" id="path-1" role="option" tabindex="0" data-object="opportunityScorecard" onclick="{!c.handleSelect}">
+                            <span class="slds-path__stage">
+                                <lightning:icon iconName="utility:check" size="xx-small" variant="inverse"/>
+                            </span>
+                            <span class="slds-path__title">
+                                Scorecard
+                            </span>
+                        </a>
+                        </li>
+                        <li class="slds-path__item slds-is-incomplete " role="presentation"  aura:id="2">
+                        <a aria-selected="false" class="slds-path__link" href="javascript:void(0);" id="path-2" role="option" tabindex="-1" data-object="accountPlan" onclick="{!c.handleSelect}">
+                            <span class="slds-path__stage">
+                                <lightning:icon iconName="utility:check" size="xx-small" variant="inverse"/>
+                            </span>
+                            <span class="slds-path__title">
+                                Account Plan
+                            </span>
+                        </a>
+                        </li>
+                        <li class="slds-path__item slds-is-incomplete " role="presentation"  aura:id="3">
+                        <a aria-selected="false" class="slds-path__link" href="javascript:void(0);" id="path-3" role="option" tabindex="-1" data-object="proposalAndClose" onclick="{!c.handleSelect}">
+                            <span class="slds-path__stage">
+                                <lightning:icon iconName="utility:check" size="xx-small" variant="inverse"/>
+                            </span>
+                            <span class="slds-path__title">
+                                Proposal
+                            </span>
+                        </a>
+                        </li>
+                        <li class="slds-path__item slds-is-incomplete " role="presentation"  aura:id="4">
+                        <a aria-selected="false" class="slds-path__link" href="javascript:void(0);" id="path-4" role="option" tabindex="-1" data-object="conversion" onclick="{!c.handleSelect}">
+                            <span class="slds-path__stage">
+                                <lightning:icon iconName="utility:check" size="xx-small" variant="inverse"/>
+                            </span>
+                            <span class="slds-path__title">
+                                Conversion
+                            </span>
+                        </a>
+                        </li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</aura:component>

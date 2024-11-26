@@ -1,0 +1,93 @@
+<aura:component controller="SC_CoachingAcceptModuleController" implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <aura:attribute name="recordId" type="Id" default="a3f2h000000BFz3AAG"/>
+    <aura:attribute name="session" type="SC_Coaching_Session__c" description="Session sobject with related attendees, assessments, notes, assignments." />
+    <aura:attribute name="relation" type="EventRelation" description="Represents the EventRelation  of the attendee. Necessary for accepting and declining invitations." />
+    <aura:attribute name="sessionDuration" type="Integer" access="PRIVATE" />
+    <aura:attribute name="sessionStartDate" type="Integer" access="PRIVATE" />
+    <aura:attribute name="isLoading" type="Boolean" default="false" />
+    <aura:attribute name="isCoach" type="Boolean" default="false" />
+    <aura:attribute name="BaseUrl" type="string"/>
+    
+    
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <div>
+        <!-- LOADER -->
+        <span class="{!v.isLoading ? '' : 'slds-hide'}">
+            <c:SC_Loader />
+        </span>
+        
+        <!-- RESCHEDULE MODAL/OVERLAY -->
+        <c:SC_ModalOverlay aura:id="rescheduleModal">
+            
+            <aura:set attribute="header">
+                Reschedule Session
+            </aura:set>
+            
+            <div class="slds-box slds-theme--shade">
+                <p>All assignees will be notified.</p>
+            </div>
+            
+            <div class="slds-form--stacked slds-m-top--medium">
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label" ><span class="slds-required">*</span>Session Date/Time</label>
+                    <div class="slds-form-element__control">
+                        <ui:inputDateTime aura:id="sessionDate" value="{!v.sessionStartDate}" class="slds-input" displayDatePicker="true" />
+                    </div>
+                </div>
+                <div class="slds-form-element slds-m-bottom--medium">
+                    <label class="slds-form-element__label" ><span class="slds-required">*</span>Session Duration (minutes)</label>
+                    <div class="slds-form-element__control">
+                        <ui:inputText aura:id="sessionDuration" value="{!v.sessionDuration}" class="slds-input" />
+                    </div>
+                </div>
+            </div>
+            
+            <aura:set attribute="footer">
+                
+                <lightning:button variant="neutral" label="Cancel" onclick="{!c.handleCancelReschedulePress}" />
+                <lightning:button variant="brand" label="Save" onclick="{!c.handleSaveReschedulePress}" />
+                
+            </aura:set>
+            
+        </c:SC_ModalOverlay>
+        
+        <!-- HAS USER ACCEPTED INVITE? -->
+        <c:SC_ModalOverlay aura:id="acceptInviteModal">
+            
+            <aura:set attribute="header">
+                Respond to the Session Invitation
+            </aura:set>
+            
+            <p>You haven't responded to the session invitation yet. Would you like to accept the invitation?</p>
+            
+            <ui:outputDateTime value="{!v.session.Start_Date__c}" />
+            <aura:set attribute="footer">
+                <lightning:button variant="brand" label="Accept" onclick = "{!c.handleAcceptInvitePress}"/>
+                <!-- <lightning:button variant="destructive" label="Decline" onclick="{!c.handleDeclineInvitePress}" /> -->
+                <aura:if isTrue="{!lessthan(v.session.Coaching_Session_Attendees__r.length, 2)}">
+                    <lightning:button label="Reschedule" onclick ="{!c.handleRescheduleForCochee}" />
+                </aura:if>
+            </aura:set>
+            
+        </c:SC_ModalOverlay>
+        
+        
+        <!-- Has cochee rescheduled invite? -->
+        <c:SC_ModalOverlay aura:id="rescheduledInviteModal">
+            
+            <aura:set attribute="header">
+                Respond to the Session Invitation
+            </aura:set>
+            
+            <p>This Session has been rescheduled by cochee to <ui:outputDateTime value="{!v.session.Start_Date__c}" />.</p>
+            
+            <aura:set attribute="footer">
+                <lightning:button variant="brand" label="Accept" onclick="{!c.handleAcceptRescheduledInviteForCoach}"/>
+                <lightning:button label="Re-schedule Session" onclick= "{!c.handleRescheduleInviteForCoach}" />
+            </aura:set>
+            
+        </c:SC_ModalOverlay>
+        
+    </div>
+    
+</aura:component>

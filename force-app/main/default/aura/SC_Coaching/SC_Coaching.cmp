@@ -1,0 +1,52 @@
+<aura:component access="GLOBAL">
+
+    <aura:registerEvent name="routeChangeAttempt" type="c:routeChangeAttempt" />
+    <aura:registerEvent name="coachingInfoRequest" type="c:SC_CoachingInfoRequest" />
+
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler name="initiativeSelected" event="c:SC_EvtInitiativeSelected" action="{!c.handleInitiativeSelected}" includeFacets="true"  />
+    <aura:handler event="c:SC_CoachingInfoResponse" action="{!c.handleCoachingInfoResponse}" />
+
+
+
+    <aura:attribute name="isLoading" type="Boolean" />
+    <aura:attribute name="serchkey" type="string"/>
+    <aura:attribute name="coachingInfo"
+                    type="CoachingInfo"
+                    description="An object with information about the current user's coaching role and related data." />
+
+
+
+    <section>
+
+
+        <lightning:tabset variant="{!$Browser.formFactor != 'PHONE' ? 'default' : 'scoped'}" onselect="{!c.handleTabSelect}">
+
+
+            <lightning:tab label="My Coaching" aura:id="c:SC_MyCoaching" id="c:SC_MyCoaching">
+
+            </lightning:tab>
+
+            <aura:if isTrue="{!v.coachingInfo.isCoach}">
+
+
+                <lightning:tab label="People" id="c:SC_People">
+
+                </lightning:tab>
+
+                <lightning:tab label="Initiatives" id="c:SC_SelectInitiatives">
+
+                </lightning:tab>
+                
+            </aura:if>
+
+
+        </lightning:tabset>
+
+
+
+    </section>
+
+</aura:component>

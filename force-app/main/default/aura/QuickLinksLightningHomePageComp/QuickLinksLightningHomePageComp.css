@@ -1,0 +1,7 @@
+.THIS .quickLnksContainer .slds-icon_container_circle{ border-radius:3px;}
+.THIS .quickLnks-wrapper .slds-col {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0px !important;
+}
+.THIS .quickLnks-wrapper{align-items: flex-start;justify-content: center;}

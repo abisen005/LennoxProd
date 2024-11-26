@@ -1,0 +1,32 @@
+<apex:page controller="SCLAlerts" cache="false">
+<apex:pageblock >
+   
+<table width="850" height="300" border="0" cellspacing="0" cellpadding="0">
+    <td width="500px" valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">      
+      <tr>
+        <td valign="top"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+          <tr class="list">
+
+             </tr>
+          <tr>
+          
+          <td valign="center" >
+          
+                <apex:pageBlockTable value="{!chains}" var="div"  >
+                <column headervalue="" title=""/>
+
+<apex:column >
+            <apex:outputText value="{!div.Message1__c}" style="{!if(div.PriorityMessage__c = true, 'color:red;font-weight: bold;font-size:12pt;', 'color: black;font-size:12pt;')}" />
+            </apex:column>
+                       </apex:pageBlockTable>
+          
+            </td>
+
+ 
+ 
+            </tr> </table></td></tr></table></td>
+       </table>  
+
+</apex:pageblock>
+
+</apex:page>

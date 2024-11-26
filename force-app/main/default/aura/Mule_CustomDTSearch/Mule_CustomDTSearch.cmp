@@ -1,0 +1,116 @@
+<!--
+  @description       : Aura component for custom datatable and flow integration
+  @author            : Ventas Consulting
+  @group             : 
+  @last modified on  : 11-15-2022/08-30-2024
+  @last modified by  : Ventas Consulting
+-->
+<aura:component 
+    implements="lightning:availableForFlowScreens,lightning:availableForFlowActions,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" 
+    access="global"    
+    controller="CustomDTSearchController">
+
+    <!-- Attributes -->
+    <aura:attribute name="navigateFlow" type="Object"/>
+    <aura:attribute name="canBack" type="Boolean" default="true"/>
+    <aura:attribute name="mydata" type="Object[]"/>
+    <aura:attribute name="mySelectedData" type="Object[]"/>
+    <aura:attribute name="mycolumns" type="Object[]"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="myOrderHeaderdata" type="Object"/>
+    <aura:attribute name="type" type="String"/>
+    <aura:attribute name="stringResponseRFC" type="String" access="global"/>
+    <aura:attribute name="PreviousScreen" type="Boolean" access="global"/>
+    <aura:attribute name="searchName" type="String" access="global"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="selectedRowsCount" type="Integer" default="0"/>
+    <aura:attribute name="maxRowSelection" type="Integer"/>
+    <aura:attribute name="isDataSelected" type="Boolean" default="false"/>
+    <aura:attribute name="myOrderHeaderdataisTrue" type="Boolean" default="false"/>
+    <aura:attribute name="showPrint" type="Boolean" default="true"/>
+    <aura:attribute name="orderNumber" type="String"/>
+    <aura:attribute name="serialNumber" type="String"/>
+    <aura:attribute name="selectedRowsData" type="String"/>
+    <aura:attribute name="orderHeader" type="String"/>
+    <aura:attribute name="navigateURL" type="String" default="Hello"/>
+    <aura:attribute name="accName" type="String" access="global"/>
+    <aura:attribute name="custNumber" type="String" access="global"/>
+    <aura:attribute name="selectedRows" type="List" access="PRIVATE"/>
+
+    <!-- Flow Component -->
+    <lightning:flow aura:id="flowData"/>
+
+    <!-- Handlers -->
+    <aura:handler name="init" value="{!this}" action="{!c.init}"/> 
+
+    <!-- Optional Visualforce Host -->
+    <aura:attribute name="vfHost" type="String" default="lennox--mule--c.visualforce.com"/>
+    <!-- <iframe aura:id="vfFrame" src="{!'https://' + v.vfHost + '/apex/OrderSearchDatatable'}"/> -->
+
+    <!-- Conditional Rendering for Data Table -->
+    <aura:if isTrue="{!v.myOrderHeaderdataisTrue}">
+        <th class="textSize" scope="col" style="text-align: center;">
+            <div class="slds-truncate" title="Header Title">
+                <lightning:icon iconName="standard:orders" alternativeText="Approved" title="SAP Sales Document Number" />
+                SAP Sales Document Number: {!v.orderNumber}
+            </div>
+        </th>
+        <lightning:datatable 
+            data="{!v.mydata}" 
+            columns="{!v.mycolumns}" 
+            keyField="id"
+            showRowNumberColumn="false" 
+            selectedRows="false"
+            hideCheckboxColumn="true">
+        </lightning:datatable>
+        <th class="textSize" scope="col" style="text-align: center;"></th>      
+    </aura:if>
+
+    <aura:if isTrue="{!not(v.myOrderHeaderdataisTrue)}">
+        <th class="textSize" scope="col" style="text-align: center;">
+            <div class="slds-card__body" title="Header Title">List of SAP Sales Documents</div>
+        </th>
+        <aura:renderIf isTrue="{!v.searchName == 'EquipmentSearchFlow'}">
+            Serial Number: {!v.serialNumber}
+        </aura:renderIf>
+        <div class="slds-scrollable">
+            <aura:if isTrue="{!v.isDataSelected}">
+                <!-- Test 1: When data is selected -->
+                <lightning:datatable 
+                    data="{!v.mydata}" 
+                    columns="{!v.mycolumns}" 
+                    keyField="id"
+                    selectedRows="false"
+                    hideCheckboxColumn="true">
+                </lightning:datatable>
+                <aura:set attribute="else">
+                    <!-- Test 2: When no data is selected -->
+                    <lightning:datatable 
+                        data="{!v.mydata}" 
+                        columns="{!v.mycolumns}" 
+                        maxRowSelection="{!v.maxRowSelection}"
+                        keyField="id"
+                        onrowselection="{!c.updateSelectedText}"  
+                        showRowNumberColumn="true">
+                    </lightning:datatable>
+                </aura:set>
+            </aura:if>
+        </div>
+
+        <br></br>
+        <aura:if isTrue="{!v.showPrint}">
+            <div aura:id="actionButtonBar" class="slds-clearfix slds-p-top_medium" style="right: 120px; top: 36px;">
+                <!-- If Previous is available, display to the left -->
+                <aura:if isTrue="{!v.canBack}">
+                    <lightning:button  class="slds-float_right"  variant="destructive" label="View PDF"  title="Destructive action"  onclick="{!c.handleClick}"/>
+                    <aura:if isTrue="{!v.searchName != 'LearningSearchFlow'}">
+                        <lightning:button  class="slds-float_right"  aura:id="BACK" label="Previous" variant="destructive" onclick="{!c.onButtonPressed}" />
+                    </aura:if>
+                    <aura:if isTrue="{!v.searchName == 'LearningSearchFlow'}">
+                        <lightning:button label="Previous" class="slds-float_right" onclick="{!c.onButtonPressed2}"  aura:id="PREVIOUS" variant="destructive"/>
+                    </aura:if>
+                </aura:if>
+            </div>
+        </aura:if>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,49 @@
+<apex:page controller="NewCDQAccountOpportunityController" tabStyle="Account_Opportunty__c" action="{!createAccountPlan}">
+    <apex:form >
+        <apex:pageBlock title="New CDQ Account Opportunity">
+
+            <apex:pageMessages escape="false" ></apex:pageMessages>
+
+            <apex:pageBlockButtons >
+                <apex:commandButton rendered="{! !isSubmitted}" action="{!saveAndSubmitForApproval}" value="Save" />
+            </apex:pageBlockButtons>
+
+            <apex:outputPanel rendered="{! !isSubmitted}" >
+                <apex:pageBlockSection >
+                    <apex:outputField value="{!accountOpp.Dealer_Account_Plan__c}" />
+                    <apex:outputField value="{!accountOpp.Opportunity_Scorecard__c}" />
+                    <apex:outputField value="{!accountOpp.Opportunity_Type__c}" />
+                    <apex:outputField value="{!accountOpp.Opportunity_Status__c}" />
+                    <apex:inputField value="{!accountOpp.Opportunity_Notes__c}" />
+                    <apex:inputField value="{!accountOpp.Adjusted_Value__c}" />
+                    <apex:inputField value="{!accountOpp.TM_Probability__c}" />
+                </apex:pageBlockSection>
+            </apex:outputPanel>
+
+            <apex:outputPanel rendered="{! isSubmitted}" >
+                <apex:pageMessage title="Success"
+                                  summary="The Account Opportunity was successfully created. Redirecting to Vendavo..."
+                                  severity="CONFIRM" />
+                                  
+                 
+                 
+               <script>
+               
+               var base_url = window.location.origin;
+               
+               //redirect user to new vendavo page after the account opp has been created
+                setTimeout(function() {
+                       var accountId = '{!$CurrentPage.parameters.accountId}',
+                           accountName = '{!JSENCODE($CurrentPage.parameters.accountName)}',
+                           agreementType = '{!$CurrentPage.parameters.agreementType}',
+                           newAgreementEndpoint = '/apex/Vendavo__VCreateDealWizardPage?parentId='+accountId+'&accountID='+accountId+'&AgreementType='+agreementType+'&accountName='+accountName;
+                window.open(newAgreementEndpoint , '_blank');
+                document.location = base_url ;
+                       }, 3000);
+
+               </script>
+            </apex:outputPanel>
+
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

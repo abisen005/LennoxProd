@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuraDefinitionBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>37.0</apiVersion>
+    <description>Fired by a Router when the history changes.  Intended for external components to manage breadcrumbs, back/forward navigation and managing active/inactive styles in navigation.</description>
+</AuraDefinitionBundle>

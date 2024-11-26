@@ -1,0 +1,145 @@
+<aura:component controller="SearchAccountCmpController"
+                implements="force:appHostable,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:actionOverride,flexipage:availableForRecordHome" 
+                access="Global">
+    <aura:attribute name="fields" type="List" />
+    <aura:attribute name="selectedOptionList" type="List" />
+    <aura:attribute name="selectedValue1" type="String" />
+    <aura:attribute name="selectedValue2" type="String" />
+    <aura:attribute name="inputValue1" type="String" />
+    <aura:attribute name="inputValue2" type="String" />
+    <aura:attribute name="accountList" type="object[]" />
+    <aura:attribute name="showOtherPicklist" type="boolean" default="true"/>
+    <aura:attribute name="isSpinner" type="boolean" default="false"/>
+    <aura:attribute name="isShowAccTable" type="boolean" default="false"/>
+    <aura:attribute name="index" type="Integer" default="0"/>
+    <aura:attribute name="disableLeadCreateBtn" type="Boolean"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="slds-card">
+        <aura:if isTrue="{!v.isSpinner}">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </aura:if>
+        <div class="container slds-form-element" > 
+            <div class="slds-page-header">
+                <div class="slds-page-header__name">
+                    <div class="slds-page-header__name-title">
+                        <h2>
+                            <span class="slds-page-header__title slds-truncate" title="Search Account">Search Account</span>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-size_1-of-2 col rightMargin">
+                        <lightning:select  aura:id="formFieldToValidate" 
+                                          name="selectList1" 
+                                          label="Select the value" 
+                                          value="{!v.selectedValue1}" 
+                                          onchange="{! c.onChangeOfSelectedValue1 }" 
+                                          required="true">
+                            <option text="-None-" value="None" selected="True"/>
+                            <option text="Customer Number" value="SAP_Customer_Number__c"/>
+                            <aura:iteration items="{!v.fields}" var="option">
+                                <option text="{!option.label}" value="{!option.value}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                    <div class="slds-size_1-of-2 col leftMargin">
+                        <lightning:input  aura:id="formFieldToValidate" 
+                                         label="Enter a value"
+                                         name="inputfld1"
+                                         value="{!v.inputValue1}"
+                                         messageWhenValueMissing="This Field is required!"
+                                         required="true"/>
+                    </div>
+                </div>
+                <!--<aura:if isTrue="{!v.showOtherPicklist}">-->
+                    <div  class="slds-grid slds-wrap">
+                        <div class="slds-size_1-of-2 col rightMargin">
+                            <lightning:select aura:id="formFieldToValidate" 
+                                              name="selectList2" 
+                                              label="" 
+                                              value="{!v.selectedValue2}" 
+                                              onchange="{! c.onChangeOfSelectedValue2 }" 
+                                              disabled="{!v.showOtherPicklist}"
+                                              required="true">
+                                <option text="-None-" value="None" selected="True"/>
+                                <aura:iteration items="{!v.fields}" var="option">
+                                    <aura:if isTrue="{! (option.value != v.selectedValue1)}">
+                                        <option text="{!option.label}" value="{!option.value}"/>
+                                    </aura:if>
+                                </aura:iteration>
+                            </lightning:select>
+                        </div>
+                        <div class="slds-size_1-of-2 col leftMargin">
+                            <lightning:input aura:id="formFieldToValidate" 
+                                             label="" 
+                                             name="inputfld2"
+                                             value="{!v.inputValue2}"
+                                             disabled="{!v.showOtherPicklist}"
+                                             messageWhenValueMissing="This Field is required!"
+                                             required="true"
+                                             />
+                            
+                        </div>
+                    </div>
+                <!--</aura:if>-->
+                <div class="slds-grid slds-wrap">
+                    <div class="bodyGrid slds-grid slds-wrap" aura:id="navigationDiv" >{!v.body}</div>
+                </div>
+            </div>
+            <div class="searchAccount">
+                <lightning:button  variant="brand" label="Search" onclick="{! c.searchAccount }" />
+            </div>
+        </div>     
+        <aura:if isTrue="{!v.isShowAccTable}">
+            <div class="">
+                <aura:if isTrue="{!v.accountList.length > 0}">
+                    <div class="tableParent">
+                    <table id="tableId" class="slds-table slds-table_bordered " cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Customer Number</th>
+                                <th>Account Owner</th>
+                                <th>Shipping Street</th>
+                                <th>Shipping City</th>
+                                <th>Shipping State</th>
+                                <th>Shipping Postal</th>
+                                <th>Phone</th>
+                                <th>District</th>
+                                <th>Dealer Type Code</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <aura:iteration items="{!v.accountList}" var="acc">
+                                <tr>
+                                    <!--<td><a id="{!acc.Id}" onclick="{!c.openRecordDetailPage}">{!acc.Name}</a></td>-->
+                                    <td>{!acc.Name}</td>
+                                    <td>{!acc.SAP_Customer_Number__c}</td>
+                                    <td>{!acc.Owner.Name}</td>
+                                    <td>{!acc.ShippingStreet}</td>
+                                    <td>{!acc.ShippingCity}</td>
+                                    <td>{!acc.ShippingState}</td>
+                                    <td>{!acc.ShippingPostalCode}</td>
+                                    <td>{!acc.Phone}</td>
+                                    <td>{!acc.SAP_District__c}</td>
+                                    <td>{!acc.SAP_Customer_Group_Id__c}</td>
+                                </tr>
+                            </aura:iteration>  
+                        </tbody>
+                    </table>
+                    </div>
+                    <aura:set attribute="else">
+                        <div class="slds-text-heading_large">
+                            <p>Account record not found</p>
+                        </div>
+                        
+                    </aura:set>
+                </aura:if>
+            </div>
+        </aura:if>
+        
+    </div>
+</aura:component>

@@ -1,0 +1,299 @@
+<aura:component access="GLOBAL" controller="OutboundPhoneCallRequestController">
+
+
+
+    <!-- ATTRIBUTES -->
+    <aura:attribute name="preCallPlanner"
+        type="Object"
+        description="Pre_Call_Planner sobjects" />
+
+    <aura:attribute name="state"
+        type="String"
+        default="SELECT_TEMPLATE"
+        description="SELECT_TEMPLATE, " />
+
+    <aura:attribute name="scenarios"
+        type="Object[]"
+        description="Collection of Pre_Call_Planner_Scenario__c sobjects" />
+    
+    <aura:attribute name="scenariosRecordArray" type="Object[]"
+        description="Collection of Pre_Call_Planner_Scenario__c sobjects"/>
+    
+   
+
+    <aura:attribute name="objectives"
+        type="Object[]"
+        description="Collection of objectives related to the selected template." />
+
+    <aura:attribute name="situationQuestions"
+        type="Object[]"
+        description="Collection of questions related to the selected template." />
+
+    <aura:attribute name="problemQuestions"
+        type="Object[]"
+        description="Collection of questions related to the selected template." />
+
+    <aura:attribute name="implicationQuestions"
+        type="Object[]"
+        description="Collection of questions related to the selected template." />
+
+    <aura:attribute name="needPayoffQuestions"
+        type="Object[]"
+        description="Collection of questions related to the selected template." />
+
+    <aura:attribute name="selectedTemplateId"
+        type="String"
+        description="Id of the selected template"
+        default="" />
+    
+    <aura:attribute name="selectedTemplateName"
+        type="String"
+        description="Name of the selected template"
+        default="" />
+
+    <aura:attribute name="selectedPrimaryObjectiveId"
+        type="String"
+        description="Id of the selected primary objective"
+        default="" />
+
+    <aura:attribute name="selectedSecondaryObjectiveId"
+        type="String"
+        description="Id of the selected secondary objective"
+        default="" />
+
+    <aura:attribute name="isOpen"
+        type="Boolean"
+        description="Is the modal open?"
+        default="false" />
+    
+    <aura:attribute name="selectedScenario"
+        type="String"
+        description="Use to store selected scenario name"
+        default="" />
+
+    <aura:attribute name="showScenarioTabs"
+        type="Boolean"
+        default="true" />
+    
+    <aura:attribute name="showScenarioRecords"
+        type="Boolean"
+        default="false" />
+    
+    <aura:attribute name="isShowPreviousButton"
+        type="Boolean"
+        default="false" />    
+    
+    <aura:attribute name="isShowNextButton"
+                    type="Boolean"
+                    default="false" />  
+    
+    <aura:attribute name="isShowFooter"
+                    type="Boolean"
+                    default="false" />
+    
+    <aura:attribute name="options" type="List"/>
+    <aura:attribute name="optionDefaultValue" type="String"/>
+    <aura:attribute name="templateNameTemp" type="String" default="Channel Focus (RNC / Retail)"/>
+    
+    
+    <!-- REGISTER LISTENERS -->
+    <aura:registerEvent name="selectPrecallPlannerScenarioEvent" type="c:selectPrecallPlannerScenarioEvent" />
+
+
+    <!-- EVENT LISTENERS -->
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+
+    <div>
+        <section
+            class="{!'slds-modal slds-modal_large ' + (v.isOpen ? 'slds-fade-in-open' : '')}"
+            role="dialog"
+            tabindex="-1"
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content" >
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                 
+                    <lightning:buttonIcon iconName="utility:close"
+                        variant="bare"
+                        class="slds-button_icon-inverse slds-modal__close"
+                        size="large"
+                        alternativeText="Close"
+                        onclick="{!c.handleCancelClick}" />
+                    <h2 id="modal-heading" class="{!'slds-text-heading_medium slds-hyphenate ' + (v.state == 'SELECT_TEMPLATE' ? 'slds-show' : 'slds-hide')}">Select an Outbound Phone Call Template</h2>
+                    <h2 id="modal-heading" class="{!'slds-text-heading_medium slds-hyphenate ' + (v.state == 'SELECT_OBJECTIVES' ? 'slds-show' : 'slds-hide')}">Select a Primary and Secondary Objective</h2>
+                    <h2 id="modal-heading" class="{!'slds-text-heading_medium slds-hyphenate ' + (v.state == 'SELECT_QUESTIONS' ? 'slds-show' : 'slds-hide')}">Select Your Questions From Each Section</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content">
+
+                    <!-- SELECT TEMPLATE -->
+                    <div class="{!v.state == 'SELECT_TEMPLATE' ? 'slds-show' : 'slds-hide'}">
+                        <fieldset class="slds-form-element">                            
+                            <div class="slds-form-element__control">                               
+                                                            
+                                    
+                                    <aura:if isTrue="{!v.selectedTemplateName == 'Outbound Phone Call'}">
+                                        
+                                    	<lightning:radioGroup name="radioGroup"
+                                                          label="Scenarios:"
+                                                          options="{! v.options }"
+                                                          
+                                                          type="radio"
+                                                          onchange="{!c.handleScenarioChange}" value="{!v.selectedTemplateId}" />
+                                        <aura:set attribute="else">
+                                            <lightning:radioGroup name="radioGroup"
+                                                          label="Scenarios:"
+                                                          options="{! v.options }"
+                                                          
+                                                          type="radio"
+                                                          onchange="{!c.handleScenarioChange}" />
+                                        </aura:set>
+                                        
+                                    </aura:if>
+                                    
+                             
+                            
+                            </div>
+                        </fieldset>
+                    </div>
+
+
+                    <!-- SELECT OBJECTIVES -->
+                    <div class="{!v.state == 'SELECT_OBJECTIVES' ? 'slds-show' : 'slds-hide'}">
+                        <fieldset class="slds-form-element">
+                            <legend class="slds-form-element__legend slds-form-element__label">Select a Primary Objective</legend>
+                            <div class="slds-form-element__control">
+                                <aura:iteration items="{!v.objectives}" var="objective" indexVar="i">
+                                    <span class="slds-radio">
+                                        <input
+                                            type="radio"
+                                            id="{!objective.Id}"
+                                            name="primaryObjectives"
+                                            value="{!objective.Id}"
+                                            onchange="{!c.handlePrimaryObjectiveChange}"
+                                            disabled="{!equals(objective.Id, v.selectedSecondaryObjectiveId)}" />
+                                        <label class="slds-radio__label" for="{!objective.Id}">
+                                            <span class="slds-radio_faux"></span>
+                                            <span class="slds-form-element__label">{!objective.Objective__c}</span>
+                                        </label>
+                                    </span>
+                                </aura:iteration>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="slds-form-element">
+                            <legend class="slds-form-element__legend slds-form-element__label">Select a Secondary Objective</legend>
+                            <div class="slds-form-element__control">
+                                <aura:iteration items="{!v.objectives}" var="objective" indexVar="i">
+                                    <span class="slds-radio">
+                                        <input
+                                            type="radio"
+                                            id="{!objective.Id + '_sec'}"
+                                            name="secondaryObjectives"
+                                            value="{!objective.Id}"
+                                            onchange="{!c.handleSecondaryObjectiveChange}"
+                                            disabled="{!equals(objective.Id, v.selectedPrimaryObjectiveId)}" />
+                                        <label class="slds-radio__label" for="{!objective.Id + '_sec'}">
+                                            <span class="slds-radio_faux"></span>
+                                            <span class="slds-form-element__label">{!objective.Objective__c}</span>
+                                        </label>
+                                    </span>
+                                </aura:iteration>
+                            </div>
+                        </fieldset>
+
+                    </div>
+
+
+
+                    <!-- SELECT QUESTIONS -->
+                    <div class="{!v.state == 'SELECT_QUESTIONS' ? 'slds-show' : 'slds-hide'}">
+
+                        <div class="slds-text-heading_small">
+                            Select Questions
+                        </div>
+
+                        <fieldset class="slds-form-element slds-m-top_medium">
+                            <legend class="slds-form-element__legend slds-form-element__label slds-text-heading_small">Situation Questions</legend>
+                            <p class="slds-m-bottom_small">Finding out facts about the dealers’ situation - What questions do you not have the answer for already?</p>
+                            <aura:iteration items="{!v.situationQuestions}" var="question" >
+                            <lightning:input type="checkbox"
+                                checked="{!question.selected}"
+                                name="{!question.id}"
+                                aura:id="situationQuestions"
+                                label="{!question.question}" />
+                            </aura:iteration>
+                        </fieldset>
+
+                        <fieldset class="slds-form-element slds-m-top_medium">
+                            <legend class="slds-form-element__legend slds-form-element__label slds-text-heading_small">Problem Questions</legend>
+                            <p class="slds-m-bottom_small">Asking about problems, difficulties, or dissatisfactions that exist which we can solve.</p>
+                            <aura:iteration items="{!v.problemQuestions}" var="question" >
+                            <lightning:input type="checkbox"
+                                checked="{!question.selected}"
+                                name="{!question.id}"
+                                aura:id="situationQuestions"
+                                label="{!question.question}" />
+                            </aura:iteration>
+                        </fieldset>
+
+                        <fieldset class="slds-form-element slds-m-top_medium">
+                            <legend class="slds-form-element__legend slds-form-element__label slds-text-heading_small">Implication Questions</legend>
+                            <p class="slds-m-bottom_small">Asking about the effect or consequences of their problems if they don't take action.</p>
+                            <aura:iteration items="{!v.implicationQuestions}" var="question" >
+                            <lightning:input type="checkbox"
+                                checked="{!question.selected}"
+                                name="{!question.id}"
+                                aura:id="situationQuestions"
+                                label="{!question.question}" />
+                            </aura:iteration>
+                        </fieldset>
+
+                        <fieldset class="slds-form-element slds-m-top_medium">
+                            <legend class="slds-form-element__legend slds-form-element__label slds-text-heading_small">Need/Payoff Questions</legend>
+                            <p class="slds-m-bottom_small">Asking about the value or usefulness of our proposed solution to their needs.</p>
+                            <aura:iteration items="{!v.needPayoffQuestions}" var="question" >
+                            <lightning:input type="checkbox"
+                                checked="{!question.selected}"
+                                name="{!question.id}"
+                                aura:id="situationQuestions"
+                                label="{!question.question}" />
+                            </aura:iteration>
+                        </fieldset>
+
+
+
+                    </div>
+
+                </div>
+
+                <aura:if isTrue="{!v.isShowFooter}">
+                    <footer class="slds-modal__footer slds-modal__footer_directional">
+                        <lightning:button label="Cancel"
+                                          onclick="{!c.handleCancelClick}"  />
+                        <aura:if isTrue="{!v.isShowPreviousButton}">
+                            <lightning:button label="Previous" class="{!v.state == 'SELECT_TEMPLATE' ? '' : 'slds-hide'}"
+                                              onclick="{!c.handlePreviousClick}"  />
+                        </aura:if>
+                        <lightning:button class="{!v.state != 'SELECT_TEMPLATE' ? '' : 'slds-hide'}"
+                                          variant="base"
+                                          onclick="{!c.handleBackClick}"
+                                          label="Back" />
+                        
+                        <aura:if isTrue="{!v.isShowNextButton}">
+                            <lightning:button class="{! !equals(v.state, 'SELECT_QUESTIONS') ? '' : 'slds-hide'}"
+                                              variant="brand"
+                                              onclick="{!c.handleNextClick}"
+                                              label="Next" />
+                        </aura:if>
+                        <lightning:button class="{! equals(v.state, 'SELECT_QUESTIONS') ? '' : 'slds-hide'}"
+                                          variant="brand"
+                                          onclick="{!c.handleFinishClick}"
+                                          label="Finish" />
+                    </footer>
+                </aura:if>
+            </div>
+        </section>
+        <div class="{!'slds-backdrop ' + (v.isOpen ? 'slds-backdrop_open' : '')}"></div>
+    </div>
+
+</aura:component>

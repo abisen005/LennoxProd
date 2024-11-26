@@ -1,0 +1,122 @@
+<apex:page standardController="FTL_Program_Form__c" extensions="FTL_findDealerController" lightningStylesheets="true" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+        <head>
+            <style>
+            .slds-center {
+              text-align:center;
+                }
+             .slds-button.slds_btn_red {
+                color: #fff !important;
+    background-color: rgb(156, 42, 60);
+    border-color: rgb(79,23,2);
+                padding-left:1rem;
+                padding-right:1rem;
+                }
+                
+                .slds-button.slds_btn_red.padded-btn {
+                margin-top: 6px;
+                margin-bottom: 6px;
+                }
+                table.detailList th div, td a{
+                	white-space : normal;
+                }
+                
+                /*table.detailList th, td > a {
+                	white-space : normal;
+                }
+                table.detailList tr:first-child td:first-child {
+                	display: none;
+                }
+                
+                table.list tr:first-child td:first-child {
+                	display: none;
+                }*/
+            </style>
+            <meta charset="utf-8" />
+            <meta http-equiv="x-ua-compatible" content="ie=edge" />
+            <title>Find Dealer</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <!-- Import the Design System style sheet -->
+            <apex:slds /> 
+            <script>
+            function refreshPage(){
+                window.top.location='/{!form.Id}'; 
+                return false;    
+            }
+            </script>
+        </head>
+        <body>
+            <div class="slds-scope">
+                <apex:pageBlock id="tabl">
+                    <apex:outputText value="" id="showstate" />
+                    <!--<apex:pageBlockTable value="{!acnts}" var="a" styleClass="slds-table slds-table--bordered slds-table--striped" rendered="{!form.Assigned_Dealer__c == null && acnts.size>0}">
+                        <apex:column headerValue="Account Name">
+                            <apex:outputLink target="_blank" value="/{!a.id}">{!a.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column headerValue="Customer Number" value="{!a.SAP_Customer_Number__c}"/>
+                        <!--<apex:column headerValue="Postal Code" value="{!a.ShippingPostalCode}"/>
+                         <apex:column headerValue="Nomination Count" value="{!a.FTL_Nomination_Count__c}"/>
+                        <apex:column headerValue="Select Dealer">
+                            <apex:form >
+                                <apex:commandButton value="Select" action="{!assignDealer}" oncomplete="refreshPage();" styleClass="slds-button slds_btn_red" rerender="showstate">
+                                    <apex:param name="acntId1" assignTo="{!paramValue}" value="{!a.id}" />
+                                </apex:commandButton>
+                            </apex:form>
+                        </apex:column>
+                    </apex:pageBlockTable>-->
+                    
+                    <!-- custom section if no accounts are initially returned call google api-->
+                    <apex:pageBlockSection id="dealerList" columns="1">
+                        
+                       
+                           
+                        <apex:form >
+                            <p style="color:red;">{!errorMsg}</p>
+                            <!--<span>No dealers match the nominee's zip code. Please click the button below to populate the table below with the closest eligible dealers.</span><br/>-->
+                            
+                            <apex:commandButton value="Find Nearby Dealers" action="{!getNearbyDealers}" styleClass="slds-button slds_btn_red padded-btn" rerender="dealerList"/>
+                        </apex:form>
+                        
+                        
+
+                        <apex:pageBlockTable value="{!acntWraps}" var="a" styleClass="slds-table slds-table--bordered slds-table--striped" rendered="{!acntWraps.size>0}" >
+                            
+                            <apex:column headerValue="Account Name">
+                                <apex:outputLink target="_blank" value="/{!a.acntId}">{!a.Name}</apex:outputLink>
+                            </apex:column>
+                            <apex:column headerValue="Customer Number" value="{!a.customerNum}"/>
+                            <apex:column headerValue="Postal Code" value="{!a.ShippingPostalCode}"/>
+                            <apex:column headerValue="Distance" value="{!a.distanceText}" />
+                            <apex:column headerValue="Nomination Count" value="{!a.NominationCount}" />
+                            <apex:column headerValue="Select Dealer">
+                                <apex:form >
+                                    <apex:commandButton value="Select" action="{!assignDealer}" oncomplete="refreshPage();" styleClass="slds-button slds_btn_red" rerender="showstate">
+                                        <apex:param name="acntId1" assignTo="{!paramValue}" value="{!a.acntId}" />
+                                    </apex:commandButton>
+                                </apex:form>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                    <!-- section with message saying dealer already assigned 
+                    <apex:pageBlockSection rendered="{!form.Assigned_Dealer__c != null}">
+                        <div class="slds-container slds-center">
+                            <div class="slds-notify slds-notify--toast slds-theme--success" role="alert">
+                                <svg aria-hidden="true" class="slds-icon">
+                                    <use xlink:href="{!URLFOR($Asset.SLDS, 'assets/icons/standard-sprite/svg/symbols.svg#task2')}"></use>
+                                </svg>
+                                <div class="slds-notify__content slds-grid">
+                                    <div class="slds-col slds-align-middle">
+                                        <h2 class="slds-text-heading_small">Success</h2>
+                                        <p>A Dealer is already assigned.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </apex:pageBlockSection>-->
+                    
+                    
+                </apex:pageBlock>
+            </div>
+        </body>
+    </html>
+</apex:page>

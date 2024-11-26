@@ -1,0 +1,25 @@
+<aura:component controller="TMDMConsoleControllerV2" extends="c:ConsoleComponentV2">
+	
+    <aura:handler name="change" value="{!v.account}" action="{!c.handleAccountChange}"/>
+    
+    <aura:set attribute="accessLevel" value="1" />
+    
+    <aura:attribute name="percentageToForecast" type="Integer" default="0" />
+    <aura:attribute name="chartLabel" type="String" />
+    <aura:attribute name="isModalOpen" type="Boolean" />
+    <aura:attribute name="isSf1" type="Boolean"/>
+    <aura:attribute name="opportunityScorecardId" type="String" />
+    
+    <c:ConsoleMetric title="P&amp;S Purchases to YTD Sales">
+        <c:ProgressChart label="{!v.chartLabel}" class="ps-purchases" percentageComplete="{!v.account.Parts_YTD_Sales_of_Total_YTD_Sales__c}" status="{!v.status}" />
+        
+        <aura:set attribute="actionArea">
+            <ui:button class="slds-button" label="Update Account Opps/Action Plans" press="{!c.handleOpenModal}" /> 
+        </aura:set>
+    </c:ConsoleMetric>
+    
+    <c:ModalV2 isOpen="{!v.isModalOpen}" header="Update/Create Account Opportunities &amp; Action Plans">
+        <c:UpdateAccountOppsAndActionPlansV2 account="{!v.account}" isRendered="{!v.isModalOpen}" isSf1="{!v.isSf1}" opportunityScorecardId="{!v.opportunityScorecardId}"/>
+    </c:ModalV2>
+    
+</aura:component>

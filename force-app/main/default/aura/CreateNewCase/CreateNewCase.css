@@ -1,0 +1,29 @@
+.THIS .slds-dropdown_length-with-icon-10,.THIS .slds-dropdown--length-with-icon-10 {
+    min-height: 50px;
+}
+
+.THIS .scrollDiv{
+    /*  max-height: 400px;*/
+}
+.THIS .slds-card__body .scrollDiv { height: 100%; max-height: 350px; overflow: auto; }
+.THIS .slds-listbox.slds-listbox_vertical.slds-dropdown.slds-dropdown_fluid {
+    max-height: 200px;
+}
+
+
+.THIS .slds-card__header {
+    padding: unset;
+    margin: unset;
+}
+.THIS.slds-card {
+    padding: .75rem !important;
+}
+
+.THIS .customRequired{
+ font-weight: 400; } .THIS .customRequired:before{    
+ content: "*";
+ margin: 0 0.125rem 0 0.125rem;
+ color: rgb(194, 57, 52);
+ float: left; } 
+.THIS .none{
+ display:none; }

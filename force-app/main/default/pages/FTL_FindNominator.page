@@ -1,0 +1,92 @@
+<apex:page standardController="Account" extensions="FTL_findNominatorController" lightningStylesheets="true" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0"  >
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+        <head>
+            <style>
+                /* Define default style for the button */
+                .custom-button.slds-button {
+                background: linear-gradient(45deg, #a52934, rgb(170 43 62) ); /* Gradient background */
+                color: white !important; /* White text */
+                border: none; /* No border */
+                border-radius: 5px; /* Rounded corners */
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow effect */
+                transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease; /* Smooth transition for transform, box-shadow, and background */
+                cursor: pointer; /* Show pointer cursor on hover */
+                font-size: larger;
+                }
+                
+                /* Define hover effect for the button */
+                .custom-button.slds-button:hover {
+                transform: translateY(-2px); /* Move button up on hover */
+                box-shadow: 0 4px 6px rgba(135, 21, 37, 1); /* Increase shadow size on hover */
+                background: linear-gradient(90deg, #820707 0%, #9c1a1a 100%);
+                color: white !important; /* White text */
+                }
+            </style>
+            
+            <meta charset="utf-8" />
+            <meta http-equiv="x-ua-compatible" content="ie=edge" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <!-- Import the Design System style sheet -->
+            <apex:slds /> 
+        </head>
+        <script>
+        function showMessage(button) {
+            var tableRow = button.closest('tr'); // Get the closest table row
+            var rowIndex = tableRow.rowIndex; // Get the index of the row
+            var messageElement = document.getElementById('mainForm:tableId:message' + rowIndex); // Construct the ID of the message element
+            messageElement.innerText = 'Selected Successfully'; // Update the message
+        }       
+        
+        
+        </script>
+        <body>
+            <apex:form id="mainForm">
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <div class="slds-col">
+                        <apex:commandButton value="Find Nearby Nominees" action="{!getNearbyNominators}" styleClass="custom-button slds-button slds-button_brand" rerender="dealerList"/>
+                    </div>
+                </div>
+                
+                <apex:actionFunction action="{!doReferesh}" name="refreshPage" oncomplete="doRefreshTableScript()" rerender="mainForm,dealerList">
+                    <apex:param name="firstParam" assignTo="{!currentId}" value="someVal" />
+                </apex:actionFunction>   
+                <apex:actionFunction action="{!doTableRefresh}" name="doTableRefresh" rerender="mainForm,dealerList,tabl">
+                </apex:actionFunction> 
+            </apex:form>
+            
+            <apex:outputPanel id="dealerList">
+                <apex:pageBlock id="tabl" rendered="{!NominatorWrapper.size > 0}">
+                    <apex:pageBlockTable value="{!NominatorWrapper}" var="a" styleClass="slds-table slds-table--bordered slds-table--striped">
+                        <apex:column headerValue="Nominator Name">
+                            <apex:outputLink target="_blank" value="/{!a.nomId}">{!a.Name}</apex:outputLink>
+                        </apex:column>
+                        <apex:column headerValue="Dealer Name" value="{!a.dealerName}"/>
+                        <apex:column headerValue="Postal Code" value="{!a.NomineeZipCode}"/>
+                        <apex:column headerValue="Distance" value="{!a.distanceText}" />
+                        <apex:column headerValue="Select Dealer">
+                            <apex:form >
+                                <apex:commandButton value="Select" action="{!assignNominator}" oncomplete="refreshPage()" style="font-size: small;" styleClass="custom-button slds-button slds-button_brand">
+                                    <apex:param name="nomId1" assignTo="{!paramValueNominator}" value="{!a.nomId}" />
+                                    <apex:param name="accId1" assignTo="{!paramValueDealer}" value="{!Account.Id}" />
+                                </apex:commandButton>  
+                            </apex:form>
+                        </apex:column>
+                        <apex:column headerValue="" style="color: darkgreen;" value="{!a.message}"/>
+                    </apex:pageBlockTable>
+                </apex:pageBlock>
+                <apex:outputPanel rendered="{!NominatorWrapper.size = 0} && {!nominatorsFound}">
+                    <!-- Render a message if no nominators are found -->
+                    No nearby nominators found.
+                </apex:outputPanel>
+            </apex:outputPanel>
+        </body>
+    </html>
+    
+    
+    <script>
+    function doRefreshTableScript(){
+        let iddd = setInterval(doTableRefresh(), 4000);
+    }
+    
+    </script>
+</apex:page>

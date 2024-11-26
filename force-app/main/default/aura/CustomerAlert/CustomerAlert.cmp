@@ -1,0 +1,120 @@
+<aura:component controller="CustomerAlertController" implements="flexipage:availableForRecordHome,force:hasRecordId">
+    <aura:attribute name="customer" type="object"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="errorMsg" type="String"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInIt}"/>
+    
+    
+    <div>
+        <aura:if isTrue="{!v.customer != null}">
+            <aura:if isTrue="{!v.customer.SAP_Customer_Group__c == 'Closed Account'}">
+                
+                <c:ShowAlertText alertMessage="{!''+ v.customer.Name +' is a closed account.'}"
+                                 iconName="utility:warning"
+                                 themeType="slds-theme_success"
+                                 textColor="white"/>
+                
+                <aura:set attribute="else">
+                    
+                    <aura:if isTrue="{!or(v.customer.Segmentation__c == 'KST', or(v.customer.Segmentation__c == 'KMV', or (v.customer.Segmentation__c == 'KNA', 
+                                     or(v.customer.Segmentation__c == 'KSI', or(v.customer.Segmentation__c == 'PPR',
+                                     or(v.customer.Segmentation__c == 'PBB', or(v.customer.Segmentation__c == 'PNE',
+                                     or(v.customer.Segmentation__c == 'PSL', or(v.customer.Segmentation__c == 'PSI')))))))))}">
+                        <div>
+                            <aura:if isTrue="{!or(v.customer.Segmentation__c == 'KST', or(v.customer.Segmentation__c == 'KMV', 
+                                             or(v.customer.Segmentation__c == 'KSI')))}">
+                                <c:ShowAlertText alertMessage="{!'Customer '+ v.customer.Name +' is a Key Customer.'}"
+                                                 iconName="utility:warning"
+                                                 themeType="slds-theme_success"
+                                                 textColor="white"/>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!v.customer.Segmentation__c == 'PSL'}">
+                                <c:ShowAlertText alertMessage="{!'Customer '+ v.customer.Name +' is a Lennox Sales Account.'}"
+                                                 iconName="utility:warning"
+                                                 themeType="slds-theme_success"
+                                                 textColor="white"/>
+                            </aura:if>
+                            
+                                                   <aura:if isTrue="{!v.customer.Segmentation__c == 'KNA'}">
+                                <c:ShowAlertText alertMessage="{!'Customer '+ v.customer.Name +' is a Residential National Account.'}"
+                                                 iconName="utility:warning"
+                                                 themeType="slds-theme_success"
+                                                 textColor="white"/>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!or(v.customer.Segmentation__c == 'PBB', or(v.customer.Segmentation__c == 'PSI'))}">
+                                <c:ShowAlertText alertMessage="{!'Customer '+ v.customer.Name +' is a Priority Customer.'}"
+                                                 iconName="utility:warning"
+                                                 themeType="slds-theme_success"
+                                                 textColor="white"/>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!v.customer.Segmentation__c == 'PNE'}">
+                                <c:ShowAlertText alertMessage="{!'Customer '+ v.customer.Name +' is a Priority New Customer.'}"
+                                                 iconName="utility:warning"
+                                                 themeType="slds-theme_success"
+                                                 textColor="white"/>
+                            </aura:if>
+                            
+                            <aura:if isTrue="{!v.customer.Segmentation__c == 'PPR'}">
+                                <c:ShowAlertText alertMessage="{!'Customer '+ v.customer.Name +' is a Premier Customer.'}"
+                                                 iconName="utility:warning"
+                                                 themeType="slds-theme_success"
+                                                 textColor="white"/>
+                            </aura:if>
+                            
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!or(v.customer.Escalation_Code__c  == 'E1', or(v.customer.Escalation_Code__c  == 'E2', 
+                                     or(v.customer.Escalation_Code__c  == 'E3', or(v.customer.Escalation_Code__c  == 'E4', 
+                                     or(v.customer.Escalation_Code__c  == 'E5')))))}">
+                        <div class="slds-m-top_xx-small">
+                            <c:ShowAlertText alertMessage="Customer under Credit Action."
+                                             iconName="utility:warning"
+                                             themeType="slds-theme_warning"
+                                             textColor="slds-text-color_default"/>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.customer.SAP_Customer_Group_Id__c == 'CA'}">
+                        <div class="slds-m-top_xx-small">
+                            <c:ShowAlertText alertMessage="Commercial Alliance Customer."
+                                             iconName="utility:warning"
+                                             themeType="blue"
+                                             textColor="white"/>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.customer.numberOfCalls > 2}">
+                        <div class="slds-m-top_xx-small">
+                            <c:ShowAlertText alertMessage="{!'Account has called '+ v.customer.numberOfCalls +' times in the last month'}"
+                                             iconName="utility:warning"
+                                             themeType="blue"
+                                             textColor="white"/>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.customer.Special_Instruction__c != null}">
+                        <div class="slds-m-top_xx-small" >
+                            <c:SpecialInstructionCmp alertMessage="{!v.customer.Special_Instruction__c}"
+                                                     themeType="aquaBlue"
+                                                     textColor="slds-text-color_default"/>
+                        </div>
+                    </aura:if>
+                    
+                </aura:set>
+            </aura:if>
+            
+            
+            <!--<aura:set attribute="else">
+                <div>
+                    <c:ShowAlertText alertMessage="{!v.errorMsg}"
+                                     iconName="utility:warning"
+                                     themeType="slds-theme_error"
+                                     textColor="white"/>
+                </div>
+            </aura:set>-->
+        </aura:if>
+    </div>
+    
+    
+</aura:component>

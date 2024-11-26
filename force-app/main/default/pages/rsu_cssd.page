@@ -1,0 +1,1128 @@
+<apex:page docType="html-5.0" Controller="executiveAggregate" standardStylesheets="false" showHeader="false" sidebar="false" renderAs="{!renderPDF}">
+    <apex:includeLightning />  
+    <!--script>
+    
+     $Lightning.use("c:RollupSummaryPrint", function() {
+        $Lightning.createComponent("c:printRollupSummaryLwc",
+          { 
+          },
+          "LightningComponentid",
+          function(cmp) {
+             console.log('LWC Componenet added in VF page');
+          });
+    });
+    </script-->
+    <c:TrackPageView lenPageName="Rollup Summary" />
+    <style type="text/css"> 
+        @media print { 
+            a[href]:after { content: none !important;} 
+            .topSpace {margin-top:15px;}
+            table.content-block {table-layout:fixed;}
+        }  
+        .customPopup { background-color: white; border: 2px solid #CC0000; z-index: 10001; left: 50%; padding:10px; position: absolute; width: 500px; margin-left: -250px; top:50px; } 
+        .customForm { background-color: white; border: 2px solid #CC0000; z-index: 9999; left: 50%; padding:10px; position: absolute; width: 500px; margin-left: -250px; top:50px; } 
+        .popupBackground { background-color:black; opacity: 0.20; filter: alpha(opacity = 30); position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 9990; }
+    </style>
+    <apex:form >
+        <apex:outputPanel styleClass="customPopup" layout="block" rendered="{!invalidProfile}">
+            <div class="bPageTitle" style="width:100%;">
+                <div class="ptBody secondaryPalette" style="width:100%;">
+                    <div class="content" style="width:100%;"> Only Executives can access this page. Please contact System Admin for more information.<br/>Please &nbsp;<apex:commandLink value="click here" action="{!cancel}"></apex:commandLink>&nbsp; to close the window.
+                        <div class="blank"></div>
+                    </div>
+                </div>
+            </div>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!invalidProfile == false}">
+            <head>
+                <title>Roll-Up Summary</title>
+                <apex:stylesheet value="{!$Resource.bootstrap}" />
+                <apex:stylesheet value="{!$Resource.AccountPlanStyle}" />
+                <style type="text/css"> @media all { .page-break { display: none; } } @media print { .page-break { display: block; page-break-before: always; }  
+                   
+                 } @page { margin: 1cm } </style>
+            </head>
+            <body >
+                <div class="container">
+                    <div class="row hidden-print">
+                        <!--div style="float: right;" id="LightningComponentid" /--> 
+                        <c:printPDF invokedVFpageOrientation="Landscape" buttonClass="btn btn-small print pull-right" name="Rollup Summary" />
+                    </div>
+                    <!--
+<h6 align="right" style="text-decoration: underline">
+<apex:outputLink value="{!pdfLink}" target="_blank" rendered="{!IF(renderPDF=='pdf', false, true)}">PDF Version</apex:outputLink>
+</h6>
+-->
+                    <div class="header">
+                        <h1 class="pull-right pad-right">Lennox Sales Roll-Up Summary - {!year}</h1>
+                        <apex:image url="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" styleClass="header__logo pad-left" />
+                    </div>
+                    <apex:messages style="font-size:20px;color:white;background-color:red;"/>
+                    <table class="table table-condensed highlight content-block">
+                        <tr>                      
+                            <td class="span6">
+                               <h3 class="text-left pad-left">
+                                    <span class="text-callout">
+                                        <apex:outputText value="Report as of : {0,date,MM'/'dd'/'yyyy}">
+                                            <apex:param value="{!lastSalesHistoryUpdate}" />
+                                        </apex:outputText>
+                                    </span>
+                                </h3>  
+                            </td>
+                            <td class="span6">
+                               
+                            </td>
+                        </tr>
+                    </table>
+                    <table class="content-block" width="100%" style="margin-top: 10px;margin-bottom: 25px" >
+                        <tr>
+                            <td class="span6 print5" styleClass ="vfpage">
+                                <table class="table table-bordered table-hover print-tbl">
+                                    <tr>
+                                        <th class="highlight" colspan="2">Sales History</th>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preThreeYear} Sales</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previousThreeYearsTotalSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preTwoYear} Sales</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previousTwoYearsTotalSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preYear} Sales </th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previousYearTotalSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td class="span6 print7" >
+                                <!--<h3 class="chart-title">Product Hierarchy</h3>-->
+                                <div id="barchartTotal"  align="right"></div>
+                            </td>
+                           
+                        </tr>
+                    </table>              
+                    <table class="content-block" width="100%" style="margin-top: 5px;margin-bottom: 25px">
+                        <tr>
+                            <td class="span6 print5">
+                                <table class="table table-bordered table-hover print-tbl">
+                                    <tr>
+                                        <th class="highlight" colspan="2">YTD Sales Comparison</th>
+                                    </tr>
+                                    <tr>
+                                        <th>{!year} Sales Forecast</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!presentYearSalesForecast}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!year}</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>{!preYear}</th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!previuosYearsYTDSales}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>YoY Change</th>
+                                        <td class="text-right js-change-amt">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdSalesChange}" />
+                                            </apex:outputText>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td class="span6 print7">
+                                <!--<h3 class="chart-title">Product Hierarchy</h3>-->
+                                <div id="barchart"  align="right"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <!--div class="page-break" style="page-break-after:always"></div-->
+                     <!--div class="hide-for-web" style="height:30px"></div-->
+                    <table class="content-block" width="100%">
+                        <tr>
+                            <td class="span6 print5">
+                                <table class="table table-bordered ytd table-hover print-tbl">
+                                    <tr>
+                                        <th colspan="3" class="highlight">YTD Sales - Product Hierarchy</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="print8"><div style="width:10px; height:10px; background-color:#e74c3c;display:inline-block;" />&nbsp;&nbsp;Res Equipment </th>
+                                        <td class="print4 text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdResEquipment}" />
+                                            </apex:outputText>
+                                        </td>
+                                        <td class="text-right">
+                                            <span class="resEquipSales"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><div style="width:10px; height:10px; background-color:#2ECC71;display:inline-block;" />&nbsp;&nbsp;Commercial  </th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdCommercials}" />
+                                            </apex:outputText>
+                                        </td>
+                                        <td class="text-right">
+                                            <span class="comSales"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><div style="width:10px; height:10px; background-color:#F1C40F;display:inline-block;" />&nbsp;&nbsp; P&amp;S | Mini-Splits | Others </th>
+                                        <td class="text-right">
+                                            <apex:outputText value="{0,number,$#,###}">
+                                                <apex:param value="{!ytdPartsndSupplies}" />
+                                            </apex:outputText>
+                                        </td>
+                                        <td class="text-right"><span class="PSSales"></span></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            <td class="span6 print7">
+                                <!--<h3 class="chart-title">YTD Sales</h3>-->
+                                <div id="piechart"  align="right"></div>
+                            </td>
+                        </tr>
+                    </table>
+                    <!--div class="page-break" style="page-break-after:always;"></div-->
+                    <div class="hide-for-web" style="height:30px"></div>
+                    <table class="table table-bordered table-hover">
+                        <tr>
+                            <th colspan="6" class="highlight">YTD Sales - Product Tier</th>
+                        </tr>
+                        <tr>
+                            <th>Product Tier</th>
+                            <th class="text-center">{!year}</th>
+                            <th class="text-center">% of Sales</th>
+                            <th class="text-center">{!preYear}</th>
+                            <th class="text-center">% of Sales</th>
+                            <th class="text-center">Change</th>
+                        </tr>
+                        <tr>
+                            <td>DLSC</td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!presetDLSC}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+    <apex:param value="{!IF(ytdSales != 0, presetDLSC / ytdSales * 100.00, 0)}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!previousYearDLSC}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                    <apex:param value="{!IF(previuosYearsYTDSales != 0,previousYearDLSC/previuosYearsYTDSales *100.00,0)}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right js-change-amt">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!changeDLSC}" />
+                                </apex:outputText>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Elite</td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!presetElite}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                        <apex:param value="{!IF(ytdSales != 0, presetElite / ytdSales * 100.00, 0)}" />
+
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!previousYearElite}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                           <apex:param value="{!IF(previuosYearsYTDSales != 0, previousYearElite / previuosYearsYTDSales * 100.00, 0)}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right js-change-amt">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!changeElite}" />
+                                </apex:outputText>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Merit</td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!presetMerit}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                    <apex:param value="{!IF(ytdSales != 0, presetMerit / ytdSales * 100.00, 0)}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!previousYearMerit}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                 <apex:param value="{!IF(previuosYearsYTDSales != 0, previousYearMerit / previuosYearsYTDSales * 100.00, 0)}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right js-change-amt">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!changeMerit}" />
+                                </apex:outputText>
+                            </td>
+                        </tr>
+                        <!--tr>
+                            <td>Aire-Flo</td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!presetAireFlo}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                    <apex:param value="{!(presetAireFlo/ytdSales)*100.00}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!previousYearAireFlo}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                                    <apex:param value="{!(previousYearAireFlo/previuosYearsYTDSales)*100.00}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right js-change-amt">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!changeAireFlo}" />
+                                </apex:outputText>
+                            </td>
+                        </tr-->
+                        <tr>
+                            <td>Other</td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!presetOther}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                              <apex:param value="{!IF(ytdSales != 0, presetOther / ytdSales * 100.00, 0)}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!previousYearOther}" />
+                                </apex:outputText>
+                            </td>
+                            <td class="text-right">
+                                <apex:outputText value="{0,number,##0.0}">
+                              <apex:param value="{!IF(previuosYearsYTDSales != 0, previousYearOther / previuosYearsYTDSales * 100.00, 0)}" />
+                                </apex:outputText>%
+                            </td>
+                            <td class="text-right js-change-amt">
+                                <apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!changeOther}" />
+                                </apex:outputText>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="page-break" style="page-break-after:always;"></div>
+                    <div class="hide-for-web" style="height:30px"></div>                    
+                </div>
+                <div class="container"> <!-- ------------------------------------------------AM DISPLAY -------------------------------------------------- -->
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                        <tr >
+                            <td class="highlight" colspan="8" style="text-align:left;">
+                                <h3 class="pad-left">YTD Sales by Region</h3>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Region</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">{!year}</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">% of Sales</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">{!preYear}</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">% of Sales</th>
+                            <th scope="col" style="text-align:center;vertical-align: middle">Change</th>
+                        </tr>
+                        <apex:repeat var="am" value="{!regionRecords}">
+                            <tr>
+                                <td style="text-align:left;">
+                                    <apex:outputLink rendered="{!NOT(am.NonResidentialAccounts__c)}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink>
+                                    <!---apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /-->
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!am.CY_YTDSales__c}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,##0.0}%">
+                                        <apex:param value="{!IF(OR(ISNULL(ytdSales),ytdSales=0),0,(am.CY_YTDSales__c/ytdSales)*100)}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!am.PY_YTDSales__c}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,##0.0}%">
+                                        <apex:param value="{!IF(OR(ISNULL(previuosYearsYTDSales),previuosYearsYTDSales=0),0,(am.PY_YTDSales__c/previuosYearsYTDSales)*100)}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;" class="js-change-amt">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!am.CY_YTDSales__c-am.PY_YTDSales__c}" />
+                                    </apex:outputText>
+                                </td>
+                            </tr>
+                        </apex:repeat>
+                        <apex:repeat var="res" value="{!regionResidentialRecords}">
+                         <tr>   
+                            <td style="text-align:left;">
+                                <apex:outputLink target="_blank" value="/apex/ResNationalAggregateVF?type=HPM&year={!year}">Home Warr/Prpty Mgmt</apex:outputLink>
+                               
+                            </td>
+                             <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!res['CY_YTDSales__c']}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,##0.0}%">
+                                        <apex:param value="{!IF(OR(ISNULL(ytdSales),ytdSales=0),0,(res['CY_YTDSales__c']/ytdSales)*100)}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!res['PY_YTDSales__c']}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,##0.0}%">
+                                        <apex:param value="{!IF(OR(ISNULL(previuosYearsYTDSales),previuosYearsYTDSales=0),0,(res['PY_YTDSales__c']/previuosYearsYTDSales)*100)}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;" class="js-change-amt">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!res['CY_YTDSales__c']-res['PY_YTDSales__c']}" />
+                                    </apex:outputText>
+                                </td>
+                        </tr>
+                        </apex:repeat>
+                         
+                         
+                        <apex:repeat var="res" value="{!regionResSourcedRecords}">
+                         <tr>   
+                            <td style="text-align:left;">
+                                <apex:outputLink target="_blank" value="/apex/ResNationalAggregateVF?type=RSP&year={!year}">Res Sourced Products</apex:outputLink>
+                               
+                            </td>
+                             <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!res['CY_YTDSales__c']}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,##0.0}%">
+                                        <apex:param value="{!IF(OR(ISNULL(ytdSales),ytdSales=0),0,(res['CY_YTDSales__c']/ytdSales)*100)}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!res['PY_YTDSales__c']}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,##0.0}%">
+                                        <apex:param value="{!IF(OR(ISNULL(previuosYearsYTDSales),previuosYearsYTDSales=0),0,(res['PY_YTDSales__c']/previuosYearsYTDSales)*100)}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;" class="js-change-amt">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!res['CY_YTDSales__c']-res['PY_YTDSales__c']}" />
+                                    </apex:outputText>
+                                </td>
+                        </tr>
+                        </apex:repeat>
+                         <!--apex:repeat var="res" value="{!regionRecordsWithNRA}">
+                         <tr>
+                            <td style="text-align:left;">
+                                Non Residential Accounts
+                            </td>
+                             <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!res['CY_YTDSales__c']}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,##0.0}%">
+                                        <apex:param value="{!IF(OR(ISNULL(ytdSales),ytdSales=0),0,(res['CY_YTDSales__c']/ytdSales)*100)}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!res['PY_YTDSales__c']}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;">
+                                    <apex:outputText value="{0,number,##0.0}%">
+                                        <apex:param value="{!IF(OR(ISNULL(previuosYearsYTDSales),previuosYearsYTDSales=0),0,(res['PY_YTDSales__c']/previuosYearsYTDSales)*100)}" />
+                                    </apex:outputText>
+                                </td>
+                                <td style="text-align:right;" class="js-change-amt">
+                                    <apex:outputText value="{0,number,$#,###}">
+                                        <apex:param value="{!res['CY_YTDSales__c']-res['PY_YTDSales__c']}" />
+                                    </apex:outputText>
+                                </td>
+                        </tr>
+                        </apex:repeat-->
+                        
+                        <tr>
+                            <td style="text-align:left;">
+                                <b>Total</b>
+                            </td>
+                            <td style="text-align:right;">
+                                <b><apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!ytdSales}" />
+                                    </apex:outputText></b>
+                            </td>
+                            <td style="text-align:right;"></td>
+                            <td style="text-align:right;">
+                                <b><apex:outputText value="{0,number,$#,###}">
+                                    <apex:param value="{!previuosYearsYTDSales}" />
+                                    </apex:outputText></b>
+                            </td>
+                            <td style="text-align:right;"></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    <div class="page-break" style="page-break-after:always;"></div>
+                    <div class="hide-for-web" style="height:30px"></div>
+                </div>
+                <div class="container">
+                    <!-- ------------------------------------------------ACCOUNT OPPORTUNITIES--------------------------------------------------- -->
+                    
+                    <apex:outputPanel rendered="{!displayCompletedAccOpty || displayInProgressAccOpty || displayCanceledAccOpty || displayNotStartedAccOpty}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover" >
+                            <tr >
+                                <td class="highlight" colspan="5" style="text-align:left;">
+                                    <h3 class="pad-left">Account Opportunities</h3>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="4" style="background-color:#F9F3DF;height:1px;">
+                                    <span style="font-size:12px;text-align:left;"><b>Opportunity Status:</b> In Progress <b>({!thisRecord.TotalInProgressOpp__c} records)</b></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="40%" scope="col" style="text-align:center;vertical-align: middle">Region</th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Opportunities </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Adjusted Value </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Expected Value </th>
+                            </tr>
+                            <apex:repeat var="am" value="{!accOppInProgress}">
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfAccOpp__c)),am.NumberOfAccOpp__c>0),true,false)}">
+                                    <tr>
+                                        <td width="40%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfAccOpp__c}</td>
+                                        <td width="20%" style="text-align:right;"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!am.AdjustedValue__c }" /></apex:outputText></td>
+                                        <td width="20%" style="text-align:right;"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!am.ExpectedValue__c }" /></apex:outputText></td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            
+                            <tr>
+                                <td width="40%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,#,###}"><apex:param value="{!thisRecord.TotalInProgressOpp__c}" /></apex:outputText></b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,$#,###}"><apex:param value="{!thisRecord.TotalInProgressAdj__c}" /></apex:outputText></b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,$#,###}"><apex:param value="{!thisRecord.TotalInProgressExp__c}" /></apex:outputText></b></td>
+                            </tr>
+                            
+                            <!--</apex:panelGrid>-->
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                   </apex:outputPanel>
+                    
+                    <apex:outputPanel rendered="{!displayNotStartedAccOpty}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td colspan="4" style="background-color:#F9F3DF;height:1px;">
+                                    <span style="font-size:12px;text-align:left;"><b>Opportunity Status:</b> Not Started <b>({!thisRecord.TotalNotStartedOpp__c} records)</b></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="40%" scope="col" style="text-align:center;vertical-align: middle">Region</th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Opportunities </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Adjusted Value </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Expected Value </th>
+                            </tr>
+                            <apex:repeat var="am" value="{!accOppNotStarted}">
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfAccOpp__c)),am.NumberOfAccOpp__c>0),true,false)}">
+                                    <tr>
+                                        <td width="40%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfAccOpp__c}</td>
+                                        <td width="20%" style="text-align:right;"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!am.AdjustedValue__c }" /></apex:outputText></td>
+                                        <td width="20%" style="text-align:right;"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!am.ExpectedValue__c }" /></apex:outputText></td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            <tr>
+                                <td width="40%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,#,###}"><apex:param value="{!thisRecord.TotalNotStartedOpp__c}" /></apex:outputText></b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,$#,###}"><apex:param value="{!thisRecord.TotalNotStartedAdj__c}" /></apex:outputText></b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,$#,###}"><apex:param value="{!thisRecord.TotalNotStartedExp__c}" /></apex:outputText></b></td>
+                            </tr>
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!displayHoldAccOpty}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td colspan="4" style="background-color:#F9F3DF;height:1px;">
+                                    <span style="font-size:12px;text-align:left;"><b>Opportunity Status:</b> On Hold <b>({!thisRecord.TotalOnHoldOpp__c} records)</b></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="40%" scope="col" style="text-align:center;vertical-align: middle">Region</th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Opportunities </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Adjusted Value </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Expected Value </th>
+                            </tr>
+                            <apex:repeat var="am" value="{!accOppOnHold}">
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfAccOpp__c)),am.NumberOfAccOpp__c>0),true,false)}">
+                                    <tr>
+                                        <td width="40%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfAccOpp__c}</td>
+                                        <td width="20%" style="text-align:right;"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!am.AdjustedValue__c }" /></apex:outputText></td>
+                                        <td width="20%" style="text-align:right;"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!am.ExpectedValue__c }" /></apex:outputText></td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            <tr>
+                                <td width="40%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,#,###}"><apex:param value="{!thisRecord.TotalOnHoldOpp__c}" /></apex:outputText></b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,$#,###}"><apex:param value="{!thisRecord.TotalOnHoldAdj__c}" /></apex:outputText></b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,$#,###}"><apex:param value="{!thisRecord.TotalOnHoldExp__c}" /></apex:outputText></b></td>
+                            </tr>
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!displayCompletedAccOpty}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td colspan="4" style="background-color:#F9F3DF;height:1px;">
+                                    <span style="font-size:12px;text-align:left;"><b>Opportunity Status:</b> Completed <b>({!thisRecord.TotalCompletedOpp__c} records)</b></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="40%" scope="col" style="text-align:center;vertical-align: middle">Region</th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Opportunities </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Adjusted Value </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Expected Value </th>
+                            </tr>
+                            <apex:repeat var="am" value="{!accOppCompleted}">
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfAccOpp__c)),am.NumberOfAccOpp__c>0),true,false)}">
+                                    <tr>
+                                        <td width="40%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfAccOpp__c}</td>
+                                        <td width="20%" style="text-align:right;"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!am.AdjustedValue__c }" /></apex:outputText></td>
+                                        <td width="20%" style="text-align:right;"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!am.ExpectedValue__c }" /></apex:outputText></td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            <tr>
+                                <td width="40%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,#,###}"><apex:param value="{!thisRecord.TotalCompletedOpp__c}" /></apex:outputText></b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,$#,###}"><apex:param value="{!thisRecord.TotalCompletedAdj__c}" /></apex:outputText></b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,$#,###}"><apex:param value="{!thisRecord.TotalCompletedExp__c}" /></apex:outputText></b></td>
+                            </tr>
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!displayCanceledAccOpty}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td colspan="4" style="background-color:#F9F3DF;height:1px;">
+                                    <span style="font-size:12px;text-align:left;"><b>Opportunity Status:</b> Canceled: <b>({!thisRecord.TotalCanceledOpp__c} records)</b></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="40%" scope="col" style="text-align:center;vertical-align: middle">Region</th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Opportunities </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Adjusted Value </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Expected Value </th>
+                            </tr>
+                            <apex:repeat var="am" value="{!accOppCanceled}">
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfAccOpp__c)),am.NumberOfAccOpp__c>0),true,false)}">
+                                    <tr>
+                                        <td width="40%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfAccOpp__c}</td>
+                                        <td width="20%" style="text-align:right;"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!am.AdjustedValue__c }" /></apex:outputText></td>
+                                        <td width="20%" style="text-align:right;"><apex:outputText value="{0,number,$#,###}"><apex:param value="{!am.ExpectedValue__c }" /></apex:outputText></td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            <tr>
+                                <td width="40%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,#,###}"><apex:param value="{!thisRecord.TotalCanceledOpp__c}" /></apex:outputText></b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,$#,###}"><apex:param value="{!thisRecord.TotalCanceledAdj__c}" /></apex:outputText></b></td>
+                                <td width="20%" style="text-align:right;"><b><apex:outputText value="{0,number,$#,###}"><apex:param value="{!thisRecord.TotalCanceledExp__c}" /></apex:outputText></b></td>
+                            </tr>
+                            
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                    </apex:outputPanel>
+                </div>
+
+                <div class="container">
+                    
+                    <!-- -----------------------------------------------------RETENTION OPPORTUNITIES----------------------------------------------- -->
+                    <apex:outputPanel rendered="{!displayRetentionOppProgress || displayRetentionOppCompleted || displayRetentionOppNotStarted || displayRetentionOppCanceled}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td class="highlight" colspan="5" style="text-align:left;">
+                                    <h3 class="pad-left">Retention Opportunities</h3>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" style="background-color:#F9F3DF;">
+                                    <span style="font-size:12px;text-align:left;"><b>Retention Opportunity Status:</b> In Progress<b> ({!thisRecord.TotalInProgressRet__c} records)</b></span>
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="60%" scope="col" style="text-align:center;vertical-align: middle">Region</th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Opportunities </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Potential CRI Points</th>
+                            </tr>
+                            <apex:repeat var="am" value="{!accRetInProgress}">
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfRetOpp__c)),am.NumberOfRetOpp__c>0),true,false)}">
+                                    <tr>
+                                        <td width="60%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfRetOpp__c}</td>
+                                        <td width="20%" style="text-align:right;">{!am.PotentialCRIPoints__c}</td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            <tr>
+                                <td width="60%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                <td width="20%" style="text-align:right;"><b>{!thisRecord.TotalInProgressRet__c}</b></td>
+                                <td width="20%" style="text-align:right;"><b>{!retInProgressCRI}</b></td>
+                            </tr>
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!displayRetentionOppNotStarted}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td colspan="3" style="background-color:#F9F3DF;">
+                                    <span style="font-size:12px;text-align:left;"><b>Retention Opportunity Status:</b> Not Started<b> ({!thisRecord.TotalNotStartedRet__c} records)</b></span>
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="60%" scope="col" style="text-align:center;vertical-align: middle">Region</th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Opportunities </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Potential CRI Points</th>
+                            </tr>
+                            <apex:repeat var="am" value="{!accRetNotStarted}">
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfRetOpp__c)),am.NumberOfRetOpp__c>0),true,false)}">
+                                    <tr>
+                                        <td width="60%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfRetOpp__c}</td>
+                                        <td width="20%" style="text-align:right;">{!am.PotentialCRIPoints__c}</td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            <tr>
+                                <td width="60%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                <td width="20%" style="text-align:right;"><b>{!thisRecord.TotalNotStartedRet__c}</b></td>
+                                <td width="20%" style="text-align:right;"><b>{!retNotStartedCRI}</b></td>
+                            </tr>
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!displayRetentionOppCompleted}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td colspan="3" style="background-color:#F9F3DF;">
+                                    <span style="font-size:12px;text-align:left;"><b>Retention Opportunity Status:</b> Completed<b> ({!thisRecord.TotalCompletedRet__c} records)</b></span>
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="60%" scope="col" style="text-align:center;vertical-align: middle">Region</th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Opportunities </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Potential CRI Points</th>
+                            </tr>
+                            <apex:repeat var="am" value="{!accRetCompleted}">
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfRetOpp__c)),am.NumberOfRetOpp__c>0),true,false)}">
+                                    <tr>
+                                        <td width="60%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfRetOpp__c}</td>
+                                        <td width="20%" style="text-align:right;">{!am.PotentialCRIPoints__c}</td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            <tr>
+                                <td width="60%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                <td width="20%" style="text-align:right;"><b>{!thisRecord.TotalCompletedRet__c}</b></td>
+                                <td width="20%" style="text-align:right;"><b>{!retCompletedCRI}</b></td>
+                            </tr>
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!displayRetentionOppCanceled}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td colspan="5" style="background-color:#F9F3DF;">
+                                    <span style="font-size:12px;text-align:left;"><b>Retention Opportunity Status:</b> Canceled<b> ({!thisRecord.TotalCanceledRet__c} records)</b></span>
+                                    
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="60%" scope="col" style="text-align:center;vertical-align: middle">Region</th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Opportunities </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Potential CRI Points</th>
+                            </tr>
+                            <apex:repeat var="am" value="{!accRetCanceled}">
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfRetOpp__c)),am.NumberOfRetOpp__c>0),true,false)}">
+                                    <tr>
+                                        <td width="60%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfRetOpp__c}</td>
+                                        <td width="20%" style="text-align:right;">{!am.PotentialCRIPoints__c}</td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            <tr>
+                                <td width="60%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                <td width="20%" style="text-align:right;"><b>{!thisRecord.TotalCanceledRet__c}</b></td>
+                                <td width="20%" style="text-align:right;"><b>{!retCanceledCRI}</b></td>
+                            </tr>
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                    </apex:outputPanel>
+                </div>
+
+                <div class="container">
+                    <!-- ------------------------------------------------------------ACTION PLAN SECTION----------------------------------------------- -->
+                    <apex:outputPanel rendered="{!displayActionPlanProgress || displayActionPlanCompleted || displayActionPlanNotStarted || displayActionPlanCanceled}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td class="highlight" colspan="2" style="text-align:left;">
+                                    <h3 class="pad-left">Action Plans</h3>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="background-color:#F9F3DF;">
+                                    <span style="font-size:12px;text-align:left;"><b>Action Plan Status:</b> In Progress<b> ({!thisRecord.TotalInProgressAcp__c} records)</b></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="80%" scope="col" style="text-align:center;vertical-align: middle">Region </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Action Plans</th>
+                            </tr>
+                            <apex:variable value="{!0}" var="accInProgressTotal"/>
+                            <apex:repeat var="am" value="{!accPlanInProgress}">
+                                <apex:variable var="accInProgressTotal" value="{!accInProgressTotal + am.NumberOfActionPlans__c}"/>
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfActionPlans__c)),am.NumberOfActionPlans__c>0),true,false)}">
+                                    <tr>
+                                        <td width="80%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfActionPlans__c}</td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            <tr>
+                                <td width="80%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                <td width="20%" style="text-align:right;"><b>{!thisRecord.TotalInProgressAcp__c}</b></td>
+                            </tr>
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!displayActionPlanNotStarted}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td colspan="2" style="background-color:#F9F3DF;">
+                                    <span style="font-size:12px;text-align:left;"><b>Action Plan Status:</b> Not Started<b> ({!thisRecord.TotalNotStartedAcp__c} records)</b></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="80%" scope="col" style="text-align:center;vertical-align: middle">Region </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Action Plans</th>
+                            </tr>
+                            <apex:variable value="{!0}" var="accNotStartedTotal"/>
+                            <apex:repeat var="am" value="{!accPlanNotStarted}">
+                                <apex:variable var="accNotStartedTotal" value="{!accNotStartedTotal + am.NumberOfActionPlans__c}"/>
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfActionPlans__c)),am.NumberOfActionPlans__c>0),true,false)}">
+                                    <tr>
+                                        <td width="80%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfActionPlans__c}</td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            <tr>
+                                <td width="80%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                <td width="20%" style="text-align:right;"><b>{!thisRecord.TotalNotStartedAcp__c}</b></td>
+                            </tr>
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!displayActionPlanCompleted}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td colspan="2" style="background-color:#F9F3DF;">
+                                    <span style="font-size:12px;text-align:left;"><b>Action Plan Status:</b> Completed<b> ({!thisRecord.TotalCompletedAcp__c} records)</b></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="80%" scope="col" style="text-align:center;vertical-align: middle">Region </th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Action Plans</th>
+                            </tr>
+                            <apex:variable value="{!0}" var="accCompletedTotal"/>
+                            <apex:repeat var="am" value="{!accPlanCompleted}">
+                                <apex:variable var="accCompletedTotal" value="{!accCompletedTotal + am.NumberOfActionPlans__c}"/>
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfActionPlans__c)),am.NumberOfActionPlans__c>0),true,false)}">
+                                    <tr>
+                                        <td width="80%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfActionPlans__c}</td>
+                                    </tr>
+                                </apex:outputPanel>
+                            </apex:repeat>
+                            <tr>
+                                <td width="80%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                <td width="20%" style="text-align:right;"><b>{!thisRecord.TotalCompletedAcp__c}</b></td>
+                            </tr>
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!displayActionPlanCanceled}">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                            <tr>
+                                <td colspan="2" style="background-color:#F9F3DF;">
+                                    <span style="font-size:12px;text-align:left;"><b>Action Plan Status:</b> Canceled<b> ({!thisRecord.TotalCanceledAcp__c} records)</b></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="80%" scope="col" style="text-align:center;vertical-align: middle">Region</th>
+                                <th width="20%" scope="col" style="text-align:center;vertical-align: middle">Number of Action Plans</th>
+                            </tr>
+                            <apex:variable value="{!0}" var="accCanceledTotal"/>
+                            <apex:repeat var="am" value="{!accPlanCanceled}">
+                                <apex:variable var="accCanceledTotal" value="{!accCanceledTotal + am.NumberOfActionPlans__c}"/>
+                                <apex:outputPanel rendered="{!IF(AND(NOT(ISNULL(am.NumberOfActionPlans__c)),am.NumberOfActionPlans__c>0),true,false)}">
+                                    <tr>
+                                        <td width="80%" style="text-align:left;"><apex:outputLink rendered="{!!am.NonResidentialAccounts__c}" target="_blank" value="{!am.URLText__c}">{!am.Region__c}</apex:outputLink><apex:outputText rendered="{!am.NonResidentialAccounts__c}" value="Non Residential Accounts" /></td>
+                                        <td width="20%" style="text-align:right;">{!am.NumberOfActionPlans__c}</td>
+                                    </tr>
+                                </apex:outputPanel>
+                                <tr>
+                                    <td width="80%" colspan="1" style="text-wrap:suppress;text-align:left;"><b>Total</b></td>
+                                    <td width="20%" style="text-align:right;"><b>{!thisRecord.TotalCanceledAcp__c}</b></td>
+                                </tr>
+                            </apex:repeat>
+                        </table>
+                        <div class="page-break" style="page-break-after:always;"></div>
+                        <div class="hide-for-web" style="height:30px"></div>
+                    </apex:outputPanel>
+                    
+                 <!-- ------------------------------------------------------------Reports/Dashboards----------------------------------------------- -->
+               
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-hover">
+                        <tr>
+                            <td colspan="5" style="background-color:#F9F3DF;">
+                                <span style="font-size:14px;text-align:left;"><b>Reports/Dashboards</b></span>
+                            </td>
+                        </tr>
+                        <ul class="favorites-content">
+                            <apex:repeat var="fav" value="{!favURLList}">
+                                <tr>
+                                    <td width="40%" style="text-align:left;">
+                                        <apex:outputLink styleClass="" target="_blank" value="{!fav.favoriteURL}">{!fav.name} </apex:outputLink>
+                                    </td>
+                                    
+                                </tr>
+                            </apex:repeat>   
+                        </ul>                         
+                    </table>
+                    
+                <!--------------->             
+                </div>
+            
+                <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+                <script src="https://www.google.com/jsapi"></script>
+                <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
+                <script>
+                    $(document).ready(function()
+                                      { $('.js-change-amt').each(function()
+                                                                 {
+                                                                     var amt = $(this).text().replace('$','');
+                                                                     amt = amt.replace(',','');
+                                                                     amt = Number(amt.replace(',',''));
+                                                                     if(amt > 0) { $(this).prepend('+').addClass('pos-value'); }
+                                                                     else { $(this).addClass('neg-value'); };
+                                                                 });
+                                       
+                                       window.onBeforePrint = function() {
+                                           printing = true;
+                                           drawPieChart();
+                                           drawBarChart();
+                                           drawBarTotalChart();
+                                       };
+                                       
+                                       function convertToPercent(dec) {
+                                           var perc = (dec * 100);
+                                           return perc.toFixed(1) + '%'; };
+                                       
+                                       var totSales = {!ytdCommercials} + {!ytdPartsndSupplies} + {!ytdResEquipment};
+                                       var comSales = convertToPercent({!ytdCommercials} / totSales);
+                                                                       var PSSales = convertToPercent({!ytdPartsndSupplies} / totSales);
+                                                                       var resEquipSales = convertToPercent({!ytdResEquipment} / totSales);
+                                                                       $('.comSales').text(comSales);
+                                       $('.PSSales').text(PSSales);
+                                       $('.resEquipSales').text(resEquipSales); });
+                
+                var printing = false, chartWidth = '100%', chartHeight = '100%', formatTreshold = 800080;
+                // Load the Visualization API and the piechart package.
+                google.load('visualization', '1.0', {'packages':['corechart']});
+                // Set a callback to run when the Google Visualization API is loaded.
+                google.setOnLoadCallback(drawPieChart);
+                google.setOnLoadCallback(drawBarChart);
+                google.setOnLoadCallback(drawBarTotalChart);
+                function drawBarChart() {
+                    if(printing) {
+                        chartWidth = 400;
+                        chartHeight = 200;
+                        formatTreshold = 300000 }
+                    
+                    function formatVAxis(formatTreshold) {
+                        var ytdSales = ({!ISBLANK(ytdSales)}) ? 0 : {!ytdSales};
+                        var previuosYearsYTDSales = ({!ISBLANK(previuosYearsYTDSales)}) ? 0 : {!previuosYearsYTDSales};
+                        if(ytdSales > formatTreshold || previuosYearsYTDSales > formatTreshold) {
+                            return '$####.##M';
+                        } else {
+                            return '$#,###'; }
+                    }
+                    
+                    function formatSales(num, formatTreshold) {
+                        var ytdSales = ({!ISBLANK(ytdSales)}) ? 0 : {!ytdSales};
+                        var previuosYearsYTDSales = ({!ISBLANK(previuosYearsYTDSales)}) ? 0 : {!previuosYearsYTDSales};
+                        if(ytdSales > formatTreshold || previuosYearsYTDSales > formatTreshold) {
+                            return num / 1000000; }
+                        else { return num; }
+                    }
+                    var chartData = new google.visualization.DataTable();
+                    chartData.addColumn('string', 'Year');
+                    chartData.addColumn('number', 'Sales');
+                    chartData.addColumn({type: 'string', role: 'tooltip'});
+                    chartData.addRows([ ['Current Year', formatSales({!ytdSales}, formatTreshold), '<apex:outputText value="{0,number,$#,###}"><apex:param value="{!ytdSales}" /></apex:outputText>'], ['Previous Year', formatSales({!previuosYearsYTDSales}, formatTreshold), '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!previuosYearsYTDSales}" /></apex:outputText>'] ]);
+                    var data = google.visualization.arrayToDataTable([ ['Year', 'Sales'], ['A', 123456], ['B', 234567] ]);
+                    var options = { 'width':chartWidth, 'height':chartHeight, 'fontName':'Verdana', vAxis: {baseline: 0, format: formatVAxis(formatTreshold) }, colors: ['#3498db'], legend: {position: 'none'} };
+                    var barChart = new google.visualization.ColumnChart(document.getElementById('barchart')); barChart.draw(chartData, options); }
+                
+                function drawBarTotalChart() {
+                    if(printing) {
+                        chartWidth = 400;
+                        chartHeight = 200;}
+                        //formatTreshold = 300000 }
+                    
+                    function formatVAxis(formatTreshold) {
+                        var previousThreeYearsTotalSales = ({!ISBLANK(previousThreeYearsTotalSales)}) ? 0 : {!previousThreeYearsTotalSales};
+                        var previousTwoYearsTotalSales = ({!ISBLANK(previousTwoYearsTotalSales)}) ? 0 : {!previousTwoYearsTotalSales};
+                        var previousYearTotalSales = ({!ISBLANK(previousYearTotalSales)}) ? 0 : {!previousYearTotalSales};
+                        if(previousThreeYearsTotalSales > formatTreshold || previousTwoYearsTotalSales > formatTreshold || previousYearTotalSales > formatTreshold){
+                            return '$####.##M'; }
+                        else { return '$#,###'; }
+                    }
+                    
+                    function formatTotalSales(num, formatTreshold) {
+                        var previousThreeYearsTotalSales = ({!ISBLANK(previousThreeYearsTotalSales)}) ? 0 : {!previousThreeYearsTotalSales};
+                        var previousTwoYearsTotalSales = ({!ISBLANK(previousTwoYearsTotalSales)}) ? 0 : {!previousTwoYearsTotalSales};
+                        var previousYearTotalSales = ({!ISBLANK(previousYearTotalSales)}) ? 0 : {!previousYearTotalSales};
+                        if(previousThreeYearsTotalSales > formatTreshold || previousTwoYearsTotalSales > formatTreshold || previousYearTotalSales > formatTreshold){
+                            return num / 1000000; }
+                        else { return num; }
+                    }
+                    
+                    var chartData2 = new google.visualization.DataTable();
+                    chartData2.addColumn('string', 'Year');
+                    chartData2.addColumn('number', 'Sales');
+                    chartData2.addColumn({type: 'string', role: 'tooltip'});
+                    chartData2.addRows([ ['{!preThreeYear} Sales', formatTotalSales({!previousThreeYearsTotalSales}, formatTreshold), '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!previousThreeYearsTotalSales}" /></apex:outputText>'], ['{!preTwoYear} Sales', formatTotalSales({!previousTwoYearsTotalSales}, formatTreshold), '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!previousTwoYearsTotalSales}" /></apex:outputText>'], ['{!preYear} Sales', formatTotalSales({!previousYearTotalSales}, formatTreshold), '<apex:outputText value="{0,number,$#,###.##}"><apex:param value="{!previousYearTotalSales}" /></apex:outputText>'] ]);
+                    
+                    var data = google.visualization.arrayToDataTable([ ['Year', 'Sales'], ['A', 123456], ['B', 234567] ]);
+                    //var options = { 'width':chartWidth, 'height':chartHeight, 'fontName':'Verdana', vAxis: {baseline: 0, format: formatVAxis(formatTreshold) }, colors: ['#3498db'], legend: {position: 'bottom'}, lineWidth:4, pointShape:'square', pointSize:8};
+                    var options = { 'width':chartWidth, 'height':chartHeight, 'fontName':'Verdana', vAxis: {baseline: 0,format: formatVAxis(formatTreshold)  }, colors: ['#3498db'], legend: {position: 'bottom'}, lineWidth:4, pointShape:'square', pointSize:8};
+
+                    //var options = {  title: 'Company Performance',  curveType: 'function', legend: { position: 'bottom' } };
+                    var barChartTotal = new google.visualization.LineChart(document.getElementById('barchartTotal'));
+                    barChartTotal.draw(chartData2, options);
+                }
+                
+                // Callback that creates and populates a data table, // instantiates the pie chart, passes in the data and // draws it.
+                function drawPieChart() { if(printing) { chartWidth = 400; chartHeight = 200; }
+                                         // Create the data table.
+                                         var data = new google.visualization.DataTable();
+                                         data.addColumn('string', 'Product');
+                                         data.addColumn('number', 'Sales');
+                                         data.addRows([ ['YTD - Commercial Sales', {!ytdCommercials}], ['YTD - P&S Sales', {!ytdPartsndSupplies}], ['YTD - Res Equip Sales', {!ytdResEquipment}] ]);
+                                         // Set chart options
+                                         var options = { 'width':chartWidth, 'height':chartHeight, 'fontName':'Verdana', 'colors':['#e74c3c','#F1C40F','#2ECC71'], 'tooltip':{text: 'percentage', showColorCode: true}, 'reverseCategories': true, 'pieStartAngle': 180, legend: {position: 'none'} };
+                                         // Instantiate and draw our chart, passing in some options.
+                                         var pieChart = new google.visualization.PieChart(document.getElementById('piechart')); pieChart.draw(data, options); }
+                </script>
+            </body>
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

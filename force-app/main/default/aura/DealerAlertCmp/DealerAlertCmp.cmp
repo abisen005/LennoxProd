@@ -1,0 +1,42 @@
+<aura:component controller="DealerAlertCmpController" implements="flexipage:availableForRecordHome,forceCommunity:availableForAllPageTypes,force:hasRecordId">
+    <aura:attribute name="programForm" type="object"/>
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="startDateTime" type="String"/>
+    <aura:attribute name="endDateTime" type="String"/>
+    <aura:attribute name="subjectString" type="String"/>
+    <aura:attribute name="FTLTaskId" type="String"/>
+    <aura:attribute name="errorMsg" type="String"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInIt}"/>
+    <aura:handler event="force:refreshView" action="{!c.doInIt}"/>
+    
+    <div>
+        <aura:if isTrue="{!v.programForm != null}">
+            <a href="/feelthelove/s/recordlist/FTL_Program_Form__c">
+                <div class="slds-m-top_xx-small">
+                    <c:ShowAlertText alertMessage="You have Nominations Assigned"
+                                    iconName="utility:warning"
+                                    themeType="slds-theme_success"
+                                    textColor="white"/>
+                </div>
+            </a>
+        </aura:if>
+        
+        <aura:if isTrue="{!v.endDateTime != null}">
+            <div class="slds-m-top_xx-small" style="background-color:#5679C0;">
+                <div class="slds-notify slds-notify_alert" role="alert">
+                    <span class="slds-assistive-text">warning</span>
+                    <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Warning">
+                        <lightning:icon iconName="utility:warning" size="xx-small" variant="inverse"/>
+                    </span>
+                    <h2 class="white">
+                        The <b><u><a href="javascript:void(0)" onclick="{!c.goToFTLTask}">{!v.subjectString}</a></u></b> task is coming due on 
+                            <b><lightning:formattedDateTime value="{!v.endDateTime}" year="numeric" day="2-digit" month="long"/></b>
+                    </h2>        
+                </div>
+            </div>
+        </aura:if>
+    </div>
+    
+    
+</aura:component>

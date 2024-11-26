@@ -1,0 +1,4 @@
+<aura:component >
+    <!-- call the `ical_download()` function to create and download the .ics file -->
+    <button style="font-size:32px;" onclick="{!c.ical_download}">Download</button>
+</aura:component>

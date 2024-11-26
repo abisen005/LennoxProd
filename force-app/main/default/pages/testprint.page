@@ -1,0 +1,38 @@
+<apex:page showHeader="false" sidebar="false">
+    <style>
+        /* Optional: Add some basic styling to the button */
+        .my-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #0074D9;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+
+    <apex:form >
+        <button class="my-button" onclick="takeScreenshot()">Take Screenshot</button>
+    </apex:form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script>
+        function takeScreenshot() {
+            // Capture the entire webpage using html2canvas
+            html2canvas(document.body).then(function(canvas) {
+                // Convert the canvas to an image
+                var screenshotImage = new Image();
+                screenshotImage.src = canvas.toDataURL('image/png');
+
+                // Create a PDF using jsPDF
+                var pdf = new jsPDF();
+                pdf.addImage(screenshotImage, 'PNG', 10, 10, 190, 0); // Adjust dimensions as needed
+
+                // Save the PDF
+                pdf.save('screenshot.pdf');
+            });
+        }
+    </script>
+</apex:page>

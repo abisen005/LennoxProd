@@ -1,0 +1,113 @@
+<apex:page standardController="Account" docType="HTML-5.0" showHeader="false" sidebar="false" standardStylesheets="true">
+<apex:includeScript value="/lightning/lightning.out.js" />
+<apex:includeScript value="{!$Resource.Vendavo__json3}"/>
+<style type="text/css">
+.deal-list-wrapper {
+position: relative;
+}
+#createDeal {
+position: absolute;
+top: 45px;
+left: 2px;
+background: white;
+border: 1px solid #e6eaed;
+border-radius: 4px;
+box-shadow: 0 1px 2px 0 #adadad;
+}
+#createDeal:before,
+#createDeal:after {
+bottom: 100%;
+left: 10%;
+border: solid transparent;
+content: " ";
+height: 0;
+width: 0;
+43
+position: absolute;
+pointer-events: none;
+}
+#createDeal:after {
+border-bottom-color: white;
+border-width: 9px;
+margin-left: -9px;
+}
+#createDeal:before {
+border-bottom-color: #e6eaed;
+border-width: 10px;
+margin-left: -10px;
+}
+/* working indication*/
+#createDeal.working:after {
+border-bottom-color:rgba(0,0,0,0.75);
+}
+</style>
+<div id="messages" />
+<div class="deal-list-wrapper">
+<div id="dealList" />
+<div id="createDeal" />
+</div>
+<div id="redirection" />
+<script>
+var parentId = '{!Account.Id}';
+var dealType = '{!Account.Vendavo__AgreementType__c}';
+var accountId = '{!Account.Id}';
+var dealListComponent;
+var createDealComponent;
+$Lightning.use('Vendavo:VDealListApp', function() {
+$Lightning.createComponent('Vendavo:VMessageDisplay', {}, 'messages', function (cmp) {
+});
+var dealListParams = {
+parentId: parentId,
+type: 'PriceAgreement',
+dealsPerPage: 10,
+showDealDetail: function (dealId) {
+window.top.location = '/' + dealId;
+},
+createFn: function () {
+setCreateVisible(true);
+renderCreateDeal();
+},
+hideCopyAction:true,
+hideDeleteAction:true
+};
+$Lightning.createComponent('Vendavo:VDealList', dealListParams, 'dealList', function (cmp) {
+dealListComponent = cmp;
+});
+function renderCreateDeal() {
+if (createDealComponent) {
+return;
+}
+var dealCreateParams = {
+accountId: accountId,
+parentId: parentId,
+dealType: dealType,
+skipSingleRecordSelection:false,
+onShowSpinnerFn: function () {
+var el = document.getElementById('createDeal');
+el.className = 'working';
+},
+onHideSpinnerFn: function () {
+44
+6.
+var el = document.getElementById('createDeal');
+el.className = '';
+},
+cancelFn: function () {
+setCreateVisible(false);
+}
+};
+$Lightning.createComponent('Vendavo:VCreateDeal', dealCreateParams, 'createDeal', function
+(cmp) {
+createDealComponent = cmp;
+});
+}
+});
+function setElVisible(el, visible) {
+el.style.display = visible ? 'block' : 'none';
+}
+function setCreateVisible(visible) {
+var el = document.getElementById('createDeal');
+setElVisible(el, visible);
+}
+</script>
+</apex:page>

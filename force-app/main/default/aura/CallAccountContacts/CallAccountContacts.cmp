@@ -1,0 +1,68 @@
+<aura:component controller="TMDMConsoleController" access="Global">
+    
+    <aura:handler name="change" value="{!v.rendered}" action="{!c.handledRenderedChange}" />
+
+    
+    <aura:attribute name="account" type="Account" />
+    <aura:attribute name="contacts" type="Contact[]" />
+    <aura:attribute name="isLoading" type="Boolean" />
+    <aura:attribute name="rendered" type="Boolean" />
+    <aura:attribute name="isSf1" type="Boolean" />
+    
+    
+    <!-- IF NOT LOADING -->
+    <aura:if isTrue="{!!v.isLoading}">
+    
+        <!-- IF HAS CONTACTS -->
+        <aura:if isTrue="{!v.contacts}">
+            
+            <table class="slds-table slds-table--bordered">
+                <thead>
+                    <tr class="slds-text-heading--label">
+                        <th scope="col">Name</th>
+                        <th scope="col">Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.contacts}" var="con">
+                        <tr class="slds-hint-parent">
+                            <td data-label="Name">{!con.Name}</td>
+                            <td data-label="Phone">
+                                <aura:if isTrue="{!v.isSf1}">
+                                    <c:button class="slds-button" label="{!con.Phone}" press="{!c.handlePhonePress}" param="{!con.Phone}" />
+                                    <aura:set attribute="else">
+                                        {!con.Phone}
+                                    </aura:set>
+                                </aura:if>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+            
+            <!-- IF NO CONTACTS -->
+            <aura:set attribute="else">
+                
+                <p>There are no contacts for this Account.</p>
+            
+            </aura:set>
+
+        </aura:if>
+        
+        <!-- IF LOADING -->
+        <aura:set attribute="else">
+        
+            <div class="slds-grid slds-grid--align-center ">
+                <div class="slds-col">
+                    <div class="slds-spinner--small slds-m-around--large">
+                        <img src="/resource/LightningDesignSystem/images/spinners/slds_spinner_brand.gif" alt="Loading..." />
+                    </div>
+                </div>
+            </div>
+        
+        </aura:set>
+        
+    </aura:if>
+    
+    
+</aura:component>

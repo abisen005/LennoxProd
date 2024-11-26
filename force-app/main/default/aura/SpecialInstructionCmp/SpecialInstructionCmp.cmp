@@ -1,0 +1,13 @@
+<aura:component >
+    <aura:attribute name="alertMessage" type="String"/>
+    <aura:attribute name="themeType" type="String"/>
+    <aura:attribute name="textColor" type="String"/>
+    <aura:attribute name="iconName" type="String" default="utility:warning"/>
+    
+    <div class="{!'slds-notify slds-notify_alert ' +v.themeType}" role="alert">
+        
+        <h2 class="{!v.textColor + ' richTxt ' }">
+            <ui:outputRichText aura:id="outputRT" value="{!v.alertMessage}" />   
+        </h2>
+    </div>
+</aura:component>

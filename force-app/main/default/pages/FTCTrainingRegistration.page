@@ -1,0 +1,88 @@
+<apex:page standardController="Account" sidebar="false" showHeader="false">
+
+<style>
+ 
+ 
+
+        @import url('/resource/SLDS090/assets/styles/salesforce-lightning-design-system-vf.min.css');
+
+    
+     body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    .box {
+      display: flex;
+      height:100%;
+    }
+    .blue {
+      flex: 60%;
+      padding: 3% 3% 0% 3%;
+      zoom:120%;
+      overflow-y:scroll;
+    }
+    .yellow {
+      flex:40%;
+      display:table;      
+      background-color: #003059;
+      height:100%;
+
+    }
+    .submissiontitle {
+      text-align:center; 
+      vertical-align: middle;
+      display: table-cell;  
+      color:white;
+      font-size:35px; 
+      font-family:Roboto, sans-serif;
+      font-weight:700;
+    }
+
+  </style>
+  
+
+   <html>
+      <head>
+      
+         <apex:includeLightning />
+         <title>FTC Mini-School- Student Registration</title>
+      </head>
+      
+      <body>
+
+  <div class="box">
+    <div class="yellow">
+    <p class="submissiontitle ">FTC Mini-School - Student Registration</p>
+    </div>
+    
+    
+    <div class="blue">                                              
+         <div id="flowContainer" />
+         
+         <script>
+            $Lightning.use("c:ForcecomeSite", function() {
+               // Create the flow component and set the onstatuschange attribute
+               $Lightning.createComponent("lightning:flow", {},
+                  "flowContainer",
+                  function (component) {
+                     // Set the input variables                                      
+                     // Start an interview in the flowContainer div, and 
+                     // initializes the input variables.
+                     component.startFlow("Validate_Guest_Course_Creation");
+                  }
+               );
+            });
+         </script>
+
+         </div>
+    
+  </div>
+
+</body>
+
+   </html>
+   
+   </apex:page>

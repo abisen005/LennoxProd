@@ -1,0 +1,229 @@
+<aura:component controller="TMDMConsoleControllerV2" extends="c:ConsoleComponentV2">
+    
+    <aura:handler name="change" value="{!v.account}" action="{!c.handleAccountChange}"/>
+    
+    <aura:set attribute="accessLevel" value="1" />
+    <aura:set attribute="status" value="success" />
+    
+    <aura:attribute name="isModalOpen" type="Boolean" default="false" />
+    <aura:attribute name="accountPlan" type="Account_Planning__c"  />
+    <aura:attribute name="retentionOpps" type="Retention_Opportunity__c[]" />
+    <aura:attribute name="newRetentionOppLink" type="String" />
+    <aura:attribute name="newAccountPlanLink" type="String" />
+    <aura:attribute name="isSf1" type="Boolean" default="false" />
+    <aura:attribute name="isSubmitted" type="Boolean" default="false" />
+    <aura:attribute name="ScorecardExist" type="Boolean" default="false"/>
+    <aura:attribute name="openScoreCardEditor" type="Boolean" default="false"/>
+    <aura:attribute name="scorecardRec" type="Scorecard__c"/>
+    
+    <c:Card title="New Customer Program">
+        
+        <div class="slds-text-heading--large">
+            <aura:if isTrue="{!v.account.Qualifies_for_NC_Program__c == 'Currently Enrolled'}">
+                <span class="{!v.status}">Enrolled</span>
+                <span class="slds-m-left--small slds-badge">
+                    <ui:outputCurrency value="{!v.account.NC_Commitment__c}" />
+                </span>
+                <aura:set attribute="else">
+                    <span class="{!v.status}">Eligible</span>
+                </aura:set>
+            </aura:if>
+        </div>
+        
+        <aura:set attribute="footer">
+            <aura:if isTrue="{!v.account.Qualifies_for_NC_Program__c == 'Currently Enrolled'}">
+                <ui:button class="slds-button slds-text-align--left slds-truncate" 
+                           label="Update/Create Retention Opp"
+                           press="{!c.handleOpenModal}" />
+                </aura:if>
+                <!--<aura:set attribute="else">
+                    <ui:button class="slds-button slds-text-align left slds-truncate" 
+                               label="{!v.ScorecardExist ? 'Update Scorecard ' : 'Create Scorecard'}" 
+                               press="{!c.edit}" />
+                </aura:set> -->
+                
+                <!-- -->
+                <aura:if isTrue="{!v.account.Scorecards__r}">	
+                    <ui:button class="slds-button slds-text-align--left slds-truncate" label="Update Scorecard" press="{!c.handleUpdateScorecardPress}">	
+                    </ui:button>	
+                    
+                    <!-- NO SCORECARD -->	
+                    <aura:set attribute="else">	
+                        <ui:button class="slds-button slds-text-align--left slds-truncate" label="Create Scorecard" press="{!c.handlecreateScorecardPress}">	
+                            <span class="slds-icon__container icon-update-scorecard slds-p-around--small">	
+                            </span>	
+                        </ui:button>	
+                        
+                    </aura:set>	
+                </aura:if>		
+                
+                <!-- -->
+                
+                
+            
+        </aura:set>
+    </c:Card>
+    
+
+    <!-- -->
+    
+    <c:ModalV2 isOpen="{!v.isModalOpen}" header="{!v.account.Qualifies_for_NC_Program__c == 'Currently Enrolled' ? 'Update/Create Retention Opportunity' : 'Submit for New Customer Program'}" headerClass="{!v.account.Qualifies_for_NC_Program__c == 'Currently Enrolled' ? '' : 'slds-theme--warning slds-theme--alert-texture'}">
+        
+        <aura:if isTrue="{!v.account.Qualifies_for_NC_Program__c == 'Currently Enrolled'}">
+            
+            <aura:if isTrue="{!!v.isLoading}">
+                
+                <aura:if isTrue="{!v.retentionOpps.length > 0}">
+                    <div class="slds-scrollable--x">
+                        <table class="slds-table slds-table--bordered slds-max-medium-table--stacked-horizontal">
+                            <thead>
+                                <tr class="slds-text-heading--label">
+                                    <th scope="col">
+                                        <span class="slds-truncate">Name</span>
+                                    </th>
+                                    <th scope="col">
+                                        <span class="slds-truncate">Type</span>
+                                    </th>
+                                    <th scope="col">
+                                        <span class="slds-truncate">Retention Opportunity</span>
+                                    </th>
+                                    <th scope="col">
+                                        <span class="slds-truncate">Notes</span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <aura:iteration var="i" items="{!v.retentionOpps}">
+                                    <tr class="slds-hint-parent">
+                                        <td>
+                                            <span class="slds-truncate">
+                                                <a href="{!'/' + i.Id}" class="slds-button" target="_parent">{!i.Name}</a>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="slds-truncate">{!i.Retention_Opportunity_Type__c}</span>
+                                        </td>
+                                        <td>
+                                            <span class="slds-truncate">{!i.Retention_Opportunity__c}</span>
+                                        </td>
+                                        <td>
+                                            <span class="slds-truncate">{!i.Retention_Opportunity_Notes__c}</span>
+                                        </td>
+                                    </tr>
+                                </aura:iteration>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <aura:set attribute="else">
+                        
+                        <aura:if isTrue="{!v.accountPlan}">
+                            
+                            <p>There are no open Retention Opportunities.</p>
+                            
+                            <aura:set attribute="else">
+                                
+                                <p>There is no Account Plan for the current year.</p>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                </aura:if>
+                
+                <aura:set attribute="else">
+                    <div class="slds-grid slds-grid--align-center ">
+                        <div class="slds-col">
+                            <div class="slds-spinner--small slds-m-around--large">
+                                <img src="/resource/LightningDesignSystem/images/spinners/slds_spinner_brand.gif" alt="Loading..." />
+                            </div>
+                        </div>
+                    </div>
+                </aura:set>
+            </aura:if>
+            
+            <aura:set attribute="else">
+                
+                <aura:if isTrue="{!v.isSubmitted}">
+                    
+                    <p>This dealer has already been submitted for the new customer program and is pending approval.  Please check with your BDM for more information.</p>
+                    
+                    <aura:set attribute="else">
+                        <div class="slds-m-around--medium">
+                            <p>Before submitting a dealer to the New Customer Program, the following are required:</p>
+                            <ol class="slds-list--ordered">
+                                <li>The “Qualifies for NC Program” field on the Account record must indicate “Yes”</li>
+                                <li>The “Dealer Type Code” must be one of the following:  RT,RI,MI,PS</li>
+                                <li>The dealer must have a Scorecard, Account Plan and a DM-approved Proposal in Salesforce</li>
+                                <li>The Proposal Stage should be set to "Stage 3-Proposal Accepted”</li>
+                            </ol>
+                        </div>
+                    </aura:set>
+                </aura:if>
+            </aura:set>
+        </aura:if>
+        
+        <aura:set attribute="footer">
+            
+            <aura:if isTrue="{!v.account.Qualifies_for_NC_Program__c == 'Currently Enrolled'}">
+                
+                <!-- HAS ACCOUNT PLAN -->
+                <aura:if isTrue="{!v.accountPlan}">
+                    
+                    <!-- IN SALESFORCE1 -->
+                    <aura:if isTrue="{!v.isSf1}">
+                        
+                        <ui:button class="slds-button slds-button--brand" 
+                                   label="New Retention Opportunity" 
+                                   disabled="{!v.isLoading}" 
+                                   aura:id="newRetentionOpp"
+                                   press="{!c.handleNewRetentionOppPress}" />     
+                        
+                        <!-- NOT IN SALESFORCE1 -->
+                        <aura:set attribute="else">
+                            
+                            <a href="{!v.newRetentionOppLink}" class="slds-button slds-button--brand" target="_parent">
+                                New Retention Opportunity
+                            </a>
+                        </aura:set>
+                    </aura:if>
+                    
+                    <!-- NO ACCOUNT PLAN -->
+                    <aura:set attribute="else">
+                        
+                        <!-- IN SALESFORCE1 -->
+                        <aura:if isTrue="{!v.isSf1}">
+                            
+                            <ui:button class="slds-button slds-button--brand" 
+                                       label="New Account Plan" 
+                                       disabled="{!v.isLoading}" 
+                                       aura:id="newAccountPlan"
+                                       press="{!c.handleNewAccountPlanPress}" />     
+                            
+                            <!-- NOT IN SALESFORCE1 -->
+                            <aura:set attribute="else">
+                                
+                                <a href="{!v.newAccountPlanLink}" 
+                                   class="slds-button slds-button--brand" 
+                                   target="_parent">
+                                    New Account Plan
+                                </a>
+                            </aura:set>
+                        </aura:if>
+                    </aura:set>
+                </aura:if>
+                
+                <!-- IF ELIGIBLE -->
+                <aura:set attribute="else">
+                    
+                    <!-- SHOW SUBMIT FOR NC PROGRAM IF NOT SUBMITTED -->
+                    <aura:if isTrue="{!!v.isSubmitted}">
+                        
+                        <ui:button class="slds-button slds-button--brand" 
+                                   label="Submit for NC Program" 
+                                   press="{!c.handleSubmitForEnrollment}" />
+                        
+                    </aura:if>
+                </aura:set>
+            </aura:if>
+        </aura:set>
+    </c:ModalV2>
+</aura:component>

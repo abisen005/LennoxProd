@@ -1,0 +1,138 @@
+<aura:component controller="SC_People_Controller">
+
+    <aura:registerEvent name="coachingInfoRequest" type="c:SC_CoachingInfoRequest" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler event="c:SC_CoachingInfoResponse" action="{!c.handleCoachingInfoResponse}" />
+    <aura:handler name="ViewTeam" event="c:SC_ViewTeam" action="{!c.fireViewTeamEvent}"/>
+
+    <aura:attribute name="isLoading" type="Boolean" default="true" />
+    <aura:attribute name="coachingInfo"
+                    type="CoachingInfo"
+                    description="An object with information about the current user's coaching role and related data." />
+    <aura:attribute name="Coachee" type="Object[]"/>
+    <aura:attribute name="SelectedTabCoachee" type="Object[]"/>
+    <aura:attribute name="serchkey" type="string"/>
+    <aura:attribute name="tabs" type="String[]"/>
+    <aura:attribute name="SelectedTab" type="String"/>
+    <aura:attribute name="showSearchBar" type="Boolean" default="false"/> 
+    <aura:attribute name="UserName" type="String" default = ""/>
+    <aura:attribute name="test" type="Boolean" default = "true"/>
+    
+    <aura:attribute name="RegionalDirector" type="Object[]"/>
+    <aura:attribute name="RBMBDM" type="Object[]"/>
+    <aura:attribute name="DistrictManager" type="Object[]"/>
+    <aura:attribute name="AreaSalesManager" type="Object[]"/>
+    <aura:attribute name="TerritoryManager" type="Object[]"/>
+   
+    <aura:if isTrue = "{!v.showSearchBar}">
+        <div onkeyup="{! c.handleKeyUp }"> 
+            <lightning:input aura:id="enter-search"  name="enter-search" type="search"  value="{!v.serchkey}"/>
+        </div> 
+    </aura:if>
+    <div class="{!!empty(v.tabs) ? '' : 'slds-hide'}">
+        <lightning:tabset onselect="{!c.handleTabSelect}" selectedTabId="{!v.SelectedTab}">
+            <aura:iteration items="{!v.tabs}" var="Tab">
+                <lightning:tab label="{!Tab}" id="{!Tab}">
+                </lightning:tab>
+            </aura:iteration>
+        </lightning:tabset>
+   </div>
+    <aura:if isTrue = "{!v.UserName != ''}">
+        <table style="width:100%">
+            <tr>
+                <th style="width:75%">
+                    <div class="slds-text-heading_medium slds-float--left"> View Team > {!v.UserName}</div>
+                </th>
+                <th style="width:25%">
+                    <button class="slds-button slds-button_brand slds-float--right" onclick="{!c.backToList}"> Back </button>
+                </th> 
+            </tr>
+        </table>
+        <br/>
+    </aura:if>
+    
+    <section class="{!$Browser.formFactor != 'PHONE' ? 'null' : 'slds-tabs--scoped__content slds-m-horizontal--small slds-p-around--none'}">
+        
+        <div class="{!'slds-grid slds-wrap slds-grid--pull-padded-small slds-p-vertical--small ' + (empty(v.Coachee) ? 'slds-hide' : '')}">
+           <!-- <aura:iteration items="{!v.coachingInfo.coachees}" var="coachee">-->
+            
+            <aura:iteration items="{!v.Coachee}" var="coachee">
+                <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--small">
+                    <c:SC_Coachee coachee="{!coachee}" upcomingSessions="{!v.coachingInfo.upcomingSessions}" />
+                </div>
+            </aura:iteration>
+            
+        </div>  
+        <div class="{!empty(v.Coachee)  ? '' : 'slds-hide'}">
+            <div class="{!v.UserName ==  '' ? '' : 'slds-hide'}">
+                <div class="slds-box slds-theme--shade slds-m-around--small">
+                    <p>There are no users available for coaching.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- RegionalDirector -->
+        <div class="{!'slds-grid slds-wrap slds-grid--pull-padded-small slds-p-vertical--small ' + (empty(v.RegionalDirector) ? 'slds-hide' : '')}">
+            
+            <aura:iteration items="{!v.RegionalDirector}" var="coachee">
+                <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--small">
+                    <c:SC_Coachee coachee="{!coachee}" upcomingSessions="{!v.coachingInfo.upcomingSessions}" />
+                </div>
+            </aura:iteration>
+            
+        </div>
+        <br/>
+        <!-- RBMBDM -->
+        <div class="{!'slds-grid slds-wrap slds-grid--pull-padded-small slds-p-vertical--small ' + (empty(v.RBMBDM) ? 'slds-hide' : '')}">
+            
+            <aura:iteration items="{!v.RBMBDM}" var="coachee">
+                <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--small">
+                    <c:SC_Coachee coachee="{!coachee}" upcomingSessions="{!v.coachingInfo.upcomingSessions}" />
+                </div>
+            </aura:iteration>
+            
+        </div>
+        <br/>
+        <!-- DistrictManager -->
+        <div class="{!'slds-grid slds-wrap slds-grid--pull-padded-small slds-p-vertical--small ' + (empty(v.DistrictManager) ? 'slds-hide' : '')}">
+            
+            <aura:iteration items="{!v.DistrictManager}" var="coachee">
+                <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--small">
+                    <c:SC_Coachee coachee="{!coachee}" upcomingSessions="{!v.coachingInfo.upcomingSessions}" />
+                </div>
+            </aura:iteration>
+            
+        </div>
+        <br/>
+         <!-- AreaSalesManager -->
+        <div class="{!'slds-grid slds-wrap slds-grid--pull-padded-small slds-p-vertical--small ' + (empty(v.AreaSalesManager) ? 'slds-hide' : '')}">
+            
+            <aura:iteration items="{!v.AreaSalesManager}" var="coachee">
+                <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--small">
+                    <c:SC_Coachee coachee="{!coachee}" upcomingSessions="{!v.coachingInfo.upcomingSessions}" />
+                </div>
+            </aura:iteration>
+            
+        </div>
+        <br/>
+         <!-- TerritoryManager -->
+        <div class="{!'slds-grid slds-wrap slds-grid--pull-padded-small slds-p-vertical--small ' + (empty(v.TerritoryManager) ? 'slds-hide' : '')}">
+            
+            <aura:iteration items="{!v.TerritoryManager}" var="coachee">
+                <div class="slds-p-horizontal--small slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--1-of-3 slds-p-bottom--small">
+                    <c:SC_Coachee coachee="{!coachee}" upcomingSessions="{!v.coachingInfo.upcomingSessions}" />
+                </div>
+            </aura:iteration>
+            
+        </div>
+        <br/>
+
+        <span class="{!v.isLoading ? '' : 'slds-hide'}">
+            <c:SC_Loader />
+        </span>
+
+    </section>
+
+
+</aura:component>

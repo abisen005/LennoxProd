@@ -1,0 +1,154 @@
+<aura:component implements="flexipage:availableForAllPageTypes"
+                controller="HighPriorityAlertsController2"
+                access="global">
+    
+    <aura:attribute name="isOpen" type="boolean" default="false"/>
+    <aura:attribute name="highPriorityList" type="Object[]" access="global"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="currentWrapper" type="Object" access="global"/>
+    <aura:attribute name="rowIndex" type="Integer" access="global"/>
+    
+    <lightning:card title="High Priority Alerts" footer="Card Footer">
+        <aura:set attribute="title">
+            <strong>High Priority Alerts</strong>
+        </aura:set>
+        <aura:if isTrue="{!not(empty(v.highPriorityList))}">
+        <table>
+            <thead>
+                <tr class="hideOnMobile">
+                    <th width="120px">
+                        <div title="Due Date">Due Date</div>
+                    </th>
+                    <th>
+                        <div title="Subject" class="slds-text-align_left">Subject</div>
+                    </th>
+                    <th>
+                        <div title="Related To" class="slds-text-align_left">Related To</div>
+                    </th>
+                    <th width="120px">
+                        <div title="Action">Action</div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.highPriorityList}" var="h">
+                    <tr>
+                        <td data-label="Due Date">
+                            <div title="Due Date"><lightning:formattedDateTime value="{!h.tsk.ActivityDate}" year="numeric" month="2-digit" day="2-digit"/></div>
+                        </td>
+                        <td data-label="Subject">
+                            <div title="Subject" class="slds-text-align_left">{!h.tsk.Subject}</div>
+                        </td>
+                        <td data-label="Related To">
+                            <div title="Related To" class="slds-text-align_left">
+                                <a href="{!'/' + h.tsk.WhatId}" target="_blank">{!h.tsk.What.Name}</a>
+                            </div>
+
+                        </td>
+                        <td data-label="Action">
+                            <div title="Action"><a onclick="{!c.openModal}" data-value="{!h.rowIndex}" data-value2="{!v.highPriorityList}">Review</a></div>
+                        </td>
+                    </tr>
+                </aura:iteration>
+                
+            </tbody>
+        </table>
+       </aura:if>
+        <aura:if isTrue="{!(empty(v.highPriorityList))}">
+            
+           <div class="slds-text-align_center">No Current High Priority Alerts assigned to you.</div>
+            
+        </aura:if>
+        
+        
+        <aura:set attribute="footer"></aura:set>
+    </lightning:card>
+    
+    <aura:if isTrue="{!v.isOpen}">
+        <div class="hpa-modal" style="height: 640px;">
+            <section role="dialog" tabindex="-1" aria-labelledby="hpaModalHeader" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"  onclick="{!c.closeModal}">
+                            X
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="hpaModalHeader" class="slds-text-heading--medium">Task Details</h2>
+                    </header>
+                    <div class="slds-modal__content slds-p-around_medium">
+                        <lightning:card >
+                            <table class="modal-table">
+                                <tr>
+                                    <td colspan="1">
+                                        <div class="slds-text-align_right"><strong>Related To</strong></div>
+                                    </td>
+                                    <td colspan="3" data-label="Related To">
+                                        <div title="Related To" class="slds-text-align_left">{!v.currentWrapper.tsk.What.Name}</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1">
+                                        <div class="slds-text-align_right"><strong>Subject</strong></div>
+                                    </td>
+                                    <td colspan="3" data-label="Subject">
+                                        <div title="Subject" class="slds-text-align_left">{!v.currentWrapper.tsk.Subject}</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1">
+                                        <div class="slds-text-align_right"><strong>Task Type</strong></div>
+                                    </td>
+                                    <td colspan="1" data-label="Task Type">
+                                        <div title="Task Type" class="slds-text-align_left">{!v.currentWrapper.tsk.Task_Type__c}</div>
+                                    </td>
+                                    <td colspan="1">
+                                        <div class="slds-text-align_right"><strong>Task Topic</strong></div>
+                                    </td>
+                                    <td colspan="1" data-label="Task Topic">
+                                        <div title="Task Topic" class="slds-text-align_left">{!v.currentWrapper.tsk.Task_Topic__c}</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1">
+                                        <div class="slds-text-align_right"><strong>Status</strong></div>
+                                    </td>
+                                    <td colspan="1" data-label="Status">
+                                        <div title="Status" class="slds-text-align_left">{!v.currentWrapper.tsk.STATUS}</div>
+                                    </td>
+                                    <td colspan="1">
+                                        <div class="slds-text-align_right"><strong>Priority</strong></div>
+                                    </td>
+                                    <td colspan="1" data-label="Priority">
+                                        <div title="Priority" class="slds-text-align_left">{!v.currentWrapper.tsk.PRIORITY}</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="1">
+                                        <div class="slds-text-align_right"><strong>Comments</strong></div>
+                                    </td>
+                                    <td colspan="3" data-label="Comments">
+                                        <div title="Comments" class="slds-text-align_left">{!v.currentWrapper.tsk.Description}</div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </lightning:card>
+                    </div>
+                    <footer class="slds-modal__footer">
+                        
+                        <aura:if isTrue="{!if(v.currentWrapper.actionType=='Auto-Complete',true,false)}">
+                            <button class="slds-button slds-button--brand" onclick="{!c.autoComplete}">Auto-Complete</button>
+                        </aura:if>
+                        <aura:if isTrue="{!if(v.currentWrapper.actionType=='New Event',true,false)}">
+                            <button class="slds-button slds-button--brand" onclick="{!c.createEvent}">Create Event</button>
+                        </aura:if>
+                        <aura:if isTrue="{!if(v.currentWrapper.actionType=='Navigate to Record',true,false)}">
+                            <button class="slds-button slds-button--brand" onclick="{!c.navigateToRec}">Go to Record</button>
+                        </aura:if>
+                        <button class="slds-button slds-button--neutral" onclick="{!c.closeModal}">Review Later</button>
+                    </footer>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+        </div>
+    </aura:if>
+</aura:component>

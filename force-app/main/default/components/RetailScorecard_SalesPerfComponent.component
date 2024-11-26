@@ -1,0 +1,118 @@
+<apex:component controller="RetailScorecard_SalesPerfComponentCtrl" layout="none">
+    
+    <apex:attribute name="level" type="String" description="Report level - Dealer, Territory, District, etc." required="true" assignTo="{!compLevel}" />
+    <apex:attribute name="scorecardId" type="String" description="Relevant id based on level (account id, district id, etc.)" required="true" assignTo="{!compId}" />
+    <apex:attribute name="title" type="String" description="Chart title" required="true" />
+    <apex:attribute name="retailType" type="String" description="Retail type (lowes, homeDepot, costsco)" required="true"  />
+    <apex:attribute name="retailLabel" type="String" description="Retail type (Lowe's, Home Depot, Costsco)" required="true" assignTo="{!compRetailLabel}" />
+    
+        <div class="page-item sales-performance">
+            <h2 class="text-center">Sales Performance Metrics</h2>
+            <span class="page-item__metadata">Annual minimum targets: $<apex:outputText value="{0,number,###,###}"><apex:param value="{!targets.Average_Sales_Store_Target__c}" /></apex:outputText> per store | {!ROUND(targets.Average_Proposals_Closed_Store__c, 0)} closed proposals per store</span>
+            <div class="bullet-chart-container" id="bullet-chart"></div>
+            <script>
+            var bulletChartData = [{
+                "title":"Avg Sales",
+                "subtitle":"$/Store",
+                "ranges":[{!IF(salesData.avgMinTargetSales * 1.25 > salesData.avgYtdSales, salesData.avgMinTargetSales * 1.25, salesData.avgYtdSales)}],
+                "measures":[{!salesData.avgYtdSales},{!salesData.avgYtdSales}],
+                "markers":[{!salesData.avgMinTargetSales}]
+            }],
+                buildBulletChartFunction = function(config) {
+                    //config = {
+                    //  chartWidth,
+                    //  chartHeight,
+                    //  margin: {top, right, bottom, left}
+                    //}
+                    config = config || {};
+                    return function() {
+                        var chartContainer = document.getElementById('bullet-chart');
+                        var childNode = chartContainer.childNodes[0];
+                        childNode ? chartContainer.removeChild(childNode) : null;
+                        var data = bulletChartData;
+                        var container = d3.select('.bullet-chart-container').node().getBoundingClientRect();
+                        var margin = config.margin || {top: 20, right: 10, bottom: 40, left: 80},
+                            width = config.chartWidth || container.width - margin.left - margin.right,
+                            height = config.chartHeight || 65;
+                        var chart = d3.bullet(width, height)
+                        .width(width)
+                        .height(height);
+                        var svg = d3.select(".bullet-chart-container").selectAll("svg")
+                        .data(data)
+                        .enter().append("svg")
+                        .attr("class", "bullet")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                        .call(chart);
+                        
+                        var title = svg.append("g")
+                        .style("text-anchor", "end")
+                        .attr("transform", "translate(-6," + height / 2 + ")");
+                        
+                        title.append("text")
+                        .attr("class", "title")
+                        .text(function(d) { return d.title; });
+                        
+                        title.append("text")
+                        .attr("class", "title")
+                        .attr("dy", "1.2em")
+                        .text(function(d) { return d.subtitle; });
+
+                    }
+                };
+            var setupBulletChart = buildBulletChartFunction(),
+                setupPrintBulletChart = buildBulletChartFunction({chartWidth: 290, chartHeight: 40, margin: {top: 10, right: 8, bottom: 20, left: 64}});
+            window.addEventListener('load', function() {
+                setupBulletChart();
+                retailScorecardApp.addBeforePrintFunction(setupPrintBulletChart);
+            });
+            </script>
+            <table class="table table-striped table--{!retailType}">
+                <thead>
+                    <tr>
+                        <th>Performance Metrics</th>
+                        <th class="text-right">YTD Actual</th>
+                        <th class="text-right">YTD Target</th>
+                        <th class="text-right">% to YTD Target</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Avg Sales $ / Store</th>
+                        <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!salesData.avgYtdSales}" /></apex:outputText></td>
+                        <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!salesData.avgMinTargetSales}" /></apex:outputText></td>
+                        <td class="text-right">{!ROUND(salesData.avgPercentToTargetSales, 1)}%</td>
+                    </tr>
+                    <tr>
+                        <th>Avg Proposals Closed / Store</th>
+                        <td class="text-right">{!ROUND(salesData.ytdClosed, 1)}</td>
+                        <td class="text-right">{!ROUND(salesData.minTargetClosed, 1)}</td>
+                        <td class="text-right">{!ROUND(salesData.percentToTargetClosed, 1)}%</td>
+                    </tr>
+                    <tr>
+                        <th>YTD Sales $</th>
+                        <td class="text-right"><apex:outputText value="${0,number,###,###}"><apex:param value="{!salesData.ytdSales}" /></apex:outputText></td>
+                        <td class="text-right"><apex:outputText value="${0,number,###,###}"><apex:param value="{!salesData.minTargetSales}" /></apex:outputText></td>
+                        <td class="text-right">{!ROUND(salesData.percentToTargetSales, 1)}%</td>
+                    </tr>
+                    <tr>
+                        <th>YTD Change $</th>
+                        <td class="text-right sales-{!IF(salesData.ytdChangePercentage >= 0, 'success', 'danger')}">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!salesData.ytdChangeSales}" /></apex:outputText></td>
+                        <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <th>YTD Change %</th>
+                        <td class="text-right sales-{!IF(salesData.ytdChangePercentage >= 0, 'success', 'danger')}">{!ROUND(salesData.ytdChangePercentage, 1)}%</td>
+                        <td colspan="2"></td>
+                    </tr>
+                    <tr>
+                        <th>Total # of Stores Assigned</th>
+                        <td class="text-right">{!salesData.numStores}</td>
+                        <td colspan="2"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+</apex:component>

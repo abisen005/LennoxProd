@@ -1,0 +1,195 @@
+<!--
+	@purpose : This cmp will render the tiles as per user
+	@createdDate : 13 Apr 2018
+-->
+<aura:component implements="flexipage:availableForAllPageTypes"
+                access="global"
+                controller="SignatureSalesCompController">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="userInfo" type="user"/>
+    <aura:attribute name="userList" type="List" />
+    <aura:attribute name="todaysYear" type="Integer" />
+    <aura:attribute name="title" type="String" />
+    
+    <!--
+		1) Lennox - Res Sales TM
+		
+		3) Lennox - Res Sales DM
+		
+		5) Lennox - Res Sales ASM
+		6) Lennox - Res Sales AM
+		7) Lennox - Res Sales AM Pilot
+		8) Lennox - Res Sales RBM
+	    9) Lennox - Res Sales - Corporate User
+	   10) Lennox Business Administrator Super
+	   11) Lennox Business Administrator
+       12) Lennox - Res Sales - EXE
+       13) Lennox - Res Sales - BDM
+				
+	-->
+    
+    
+    <aura:if isTrue="{! v.userInfo.Profile.Name == 'Lennox - Res Sales TM' || 
+           
+                         v.userInfo.Profile.Name == 'Lennox - Res Sales DM' || 
+                      
+                         v.userInfo.Profile.Name == 'Lennox - Res Sales ASM' || 
+                         v.userInfo.Profile.Name == 'Lennox - Res Sales AM' || 
+                    
+                         v.userInfo.Profile.Name == 'Lennox - Res Sales RBM' ||
+                     	 v.userInfo.Profile.Name == 'Lennox - Res Sales - Corporate User' ||
+                         v.userInfo.Profile.Name == 'Lennox Business Administrator Super' ||
+                         v.userInfo.Profile.Name == 'Lennox Business Administrator' ||
+                         v.userInfo.Profile.Name == 'Lennox - Res Sales - EXE' ||
+                         v.userInfo.Profile.Name == 'Lennox - Res Sales - BDM'}"> 
+   
+    <lightning:card title="Roll Up Summaries" footer="Card Footer">
+        <aura:set attribute="title">
+            <!-- Title {!v.title} -->
+            <strong>Signature Sales Console</strong>
+        </aura:set>
+        <table>
+            <tbody>
+                <!--1)
+				Profiles 1) Lennox - Res Sales TM
+						 2) Lennox - Res Sales TM Pilot
+				-->
+                <aura:if isTrue="{!v.userInfo.Profile.Name == 'Lennox - Res Sales TM'}"> 
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col--padded slds-size--1-of-8 slds-text-align--center slds-m-top--x-small hideDv"></div>
+                        <div class="slds-col--padded slds-size--3-of-8 slds-text-align--center slds-m-top--x-small">
+                            <ui:button class="slds-button tmdm-button slds-p-around_none">
+                                <span class="slds-icon__container icon-territory-roll-up slds-p-around--small">
+                                        <img src="/resource/LightningDesignSystem/icons/action/new_custom62_60.png" width="33" height="33"
+                                             onclick="{!c.redirectToUrl}" 
+                                             data-category="{!'/apex/dealerAccountPlanAggregateVF?year='+ v.todaysYear +'&#38;u='+v.userInfo.Id}"/>
+                                </span> 
+                            </ui:button>
+                            <div class="slds-text-body--small slds-m-top--x-small">{!v.todaysYear} Territory<br />Rollup Summary</div>
+                        </div>
+                        <div class="slds-col--padded slds-size--3-of-8 slds-text-align--center slds-m-top--x-small">
+                            <ui:button class="slds-button tmdm-button slds-p-around_none">
+                                <span class="slds-icon__container icon-territory-roll-up slds-p-around--small">
+                                        <img onclick="{!c.redirectToUrl}"
+                                             src="/resource/LightningDesignSystem/icons/action/new_custom62_60.png" width="33" height="33" 
+                                             data-category="{!'/apex/dealerAccountPlanAggregateVF?year='+ (v.todaysYear - 1) +'&#38;u='+v.userInfo.Id}"/>
+                                </span>
+                            </ui:button>
+                            <div class="slds-text-body--small slds-m-top--x-small">{!v.todaysYear - 1} Territory<br />Rollup Summary</div>
+                        </div>
+                    </div>
+                    <div class="slds-col--padded slds-size--1-of-8 slds-text-align--center slds-m-top--x-small hideDv"></div>
+                </aura:if>
+                <!--2)
+				Profiles 1) Lennox - Res Sales DM
+						 2) Lennox - Res Sales DM Pilot
+						 3) Lennox - Res Sales ASM
+				-->
+                <aura:if isTrue="{!v.userInfo.Profile.Name == 'Lennox - Res Sales DM' || v.userInfo.Profile.Name == 'Lennox - Res Sales DM Pilot' || v.userInfo.Profile.Name == 'Lennox - Res Sales ASM'}"> 
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col--padded slds-size--1-of-8 slds-text-align--center slds-m-top--x-small hideDv"></div>
+                        <div class="slds-col--padded slds-size--3-of-8 slds-text-align--center slds-m-top--x-small">
+                            <ui:button class="slds-button tmdm-button slds-p-around_none">
+                                <span class="slds-icon__container icon-territory-roll-up slds-p-around--small">
+                                        <img onclick="{!c.redirectToUrl}"
+                                             src="/resource/LightningDesignSystem/icons/action/new_custom62_60.png" width="33" height="33"
+                                             data-category="{!'/apex/districtManagerAggregateVF?year='+v.todaysYear}"/>
+                                </span> 
+                            </ui:button>
+                            <div class="slds-text-body--small slds-m-top--x-small">{!v.todaysYear} District<br />Rollup Summary</div>
+                        </div>
+                        <div class="slds-col--padded slds-size--3-of-8 slds-text-align--center slds-m-top--x-small">
+                            <ui:button class="slds-button tmdm-button slds-p-around_none">
+                                <span class="slds-icon__container icon-territory-roll-up slds-p-around--small">
+                                        <img onclick="{!c.redirectToUrl}"
+                                             src="/resource/LightningDesignSystem/icons/action/new_custom62_60.png" width="33" height="33" 
+                                             data-category="{!'/apex/districtManagerAggregateVF?year='+ (v.todaysYear - 1)}" />
+                                </span>
+                            </ui:button>
+                            <div class="slds-text-body--small slds-m-top--x-small">{!v.todaysYear - 1} District<br />Rollup Summary</div>
+                        </div>
+                    </div>
+                    <div class="slds-col--padded slds-size--1-of-8 slds-text-align--center slds-m-top--x-small hideDv"></div>
+                </aura:if>
+               <!--3)
+				Profiles 1) Lennox - Res Sales AM
+						 2) Lennox - Res Sales AM Pilot
+						 3) Lennox - Res Sales RBM
+				-->
+                <aura:if isTrue="{!v.userInfo.Profile.Name == 'Lennox - Res Sales AM' || v.userInfo.Profile.Name == 'Lennox - Res Sales AM Pilot' || v.userInfo.Profile.Name == 'Lennox - Res Sales RBM' }"> 
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col--padded slds-size--1-of-8 slds-text-align--center slds-m-top--x-small hideDv"></div>
+                        <div class="slds-col--padded slds-size--3-of-8 slds-text-align--center slds-m-top--x-small">
+                            <ui:button class="slds-button tmdm-button slds-p-around_none">
+                                <span class="slds-icon__container icon-territory-roll-up slds-p-around--small">
+                                    <img onclick="{!c.redirectToUrl}"
+                                         src="/resource/LightningDesignSystem/icons/action/new_custom62_60.png" width="33" height="33"
+                                         data-category="{!'/apex/areaManagerAggregateVF?year='+v.todaysYear}" />
+                                </span> 
+                            </ui:button>
+                            <div class="slds-text-body--small slds-m-top--x-small">{!v.todaysYear} Region<br />Rollup Summary</div>
+                        </div>
+                        <div class="slds-col--padded slds-size--3-of-8 slds-text-align--center slds-m-top--x-small">
+                            <ui:button class="slds-button tmdm-button slds-p-around_none">
+                                <span class="slds-icon__container icon-territory-roll-up slds-p-around--small">
+                                        <img onclick="{!c.redirectToUrl}"
+                                             src="/resource/LightningDesignSystem/icons/action/new_custom62_60.png" width="33" height="33" 
+                                             data-category="{!'/apex/areaManagerAggregateVF?year='+ (v.todaysYear - 1)}" />
+                                </span>
+                            </ui:button>
+                            <div class="slds-text-body--small slds-m-top--x-small">{!v.todaysYear - 1} Region<br />Rollup Summary</div>
+                        </div>
+                    </div>
+                    <div class="slds-col--padded slds-size--1-of-8 slds-text-align--center slds-m-top--x-small hideDv"></div>
+                </aura:if>
+               <!--4)
+				Profiles 1) Lennox - Res Sales - Corporate User
+						 2) Lennox Business Administrator Super
+						 3) Lennox Business Administrator
+                         4) Lennox - Res Sales - EXE
+                         5) Lennox - Res Sales - BDM
+				-->
+                <aura:if isTrue="{!v.userInfo.Profile.Name == 'Lennox - Res Sales - Corporate User' || v.userInfo.Profile.Name == 'Lennox Business Administrator Super' || v.userInfo.Profile.Name == 'Lennox Business Administrator' || v.userInfo.Profile.Name == 'Lennox - Res Sales - EXE' || v.userInfo.Profile.Name == 'Lennox - Res Sales - BDM'}"> 
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col--padded slds-size--1-of-8 slds-text-align--center slds-m-top--x-small hideDv"></div>
+                        <div class="slds-col--padded slds-size--3-of-8 slds-text-align--center slds-m-top--x-small">
+                            <ui:button class="slds-button tmdm-button slds-p-around_none">
+                                <span class="slds-icon__container icon-territory-roll-up slds-p-around--small">
+                                        <img onclick="{!c.redirectToUrl}"
+                                             src="/resource/LightningDesignSystem/icons/action/new_custom62_60.png" width="33" height="33"
+                                             data-category="{!'/apex/executiveAggregateVF?year='+v.todaysYear}"/> 
+                                </span> 
+                            </ui:button>
+                            <div class="slds-text-body--small slds-m-top--x-small">{!v.todaysYear} Territory<br />Rollup Summary</div>
+                        </div>
+                        <div class="slds-col--padded slds-size--3-of-8 slds-text-align--center slds-m-top--x-small">
+                            <ui:button class="slds-button tmdm-button slds-p-around_none">
+                                <span class="slds-icon__container icon-territory-roll-up slds-p-around--small">
+                                    <img onclick="{!c.redirectToUrl}"
+                                         src="/resource/LightningDesignSystem/icons/action/new_custom62_60.png" width="33" height="33" 
+                                         data-category="{!'/apex/executiveAggregateVF?year='+ (v.todaysYear - 1)}"/>
+                                    
+                                </span>
+                            </ui:button>
+                            <div class="slds-text-body--small slds-m-top--x-small">{!v.todaysYear - 1} Territory<br />Rollup Summary</div>
+                        </div>
+                    </div>
+                    <div class="slds-col--padded slds-size--1-of-8 slds-text-align--center slds-m-top--x-small hideDv"></div>
+                </aura:if>
+                <!--5)
+				Profiles 1) Lennox - Res Sales DM
+  						 2) Lennox - Res Sales DM Pilot
+						 3) Lennox - Res Sales ASM
+   						 this chunk of code removed // see testComponent2.cmp, aura:if beginning ~ LOC 32
+				-->
+
+				
+            </tbody>
+        </table>
+        <aura:set attribute="footer"></aura:set>
+    </lightning:card>
+
+    </aura:if>
+
+</aura:component>

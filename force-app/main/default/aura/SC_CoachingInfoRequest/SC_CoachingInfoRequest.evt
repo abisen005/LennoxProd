@@ -1,0 +1,3 @@
+<aura:event type="APPLICATION" description="Fire this event when requesting Coaching Info.">
+    <aura:attribute name="isRefresh" type="Boolean" description="Checks if we need to refresh data before sending."/>
+</aura:event>

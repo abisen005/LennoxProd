@@ -1,0 +1,35 @@
+<aura:component controller="TMDMConsoleControllerV2" access="Global">
+    
+    <aura:handler name="change" value="{!v.account}" action="{!c.handleAccountChange}"/>
+    
+    <aura:attribute name="account" type="Account" />
+    <aura:attribute name="isModalOpen" type="Boolean" default="false" />
+    <aura:attribute name="isLoading" type="Boolean" />
+    <aura:attribute name="forecastAmountCopy" type="Decimal"
+        description="a non SObject decimal value used to prevent errors thrown by lightning
+                        when you set the value attribute of a ui:inputCurrency component 
+                        to an sobject field of type Number.  Instead we hold the forecast amount
+                        in this custom attribute, convert it from a string to a number and set
+                        the sobject value." />
+    
+    <c:ModalV2 isOpen="{!v.isModalOpen}" header="Update Forecast">
+        
+        <div class="slds-form--stacked slds-m-around--large">
+            <div class="slds-form-element">
+                <label class="slds-form-element__label">Forecast</label>
+                <div class="slds-form-element__control">
+                    <ui:inputCurrency class="slds-input" 
+                                      value="{!v.forecastAmountCopy}"
+                                      disabled="{!v.isLoading}" />
+                </div>
+            </div>
+        </div>
+        
+        <aura:set attribute="footer">
+            <ui:button class="slds-button slds-button--neutral slds-button--brand slds-text-align--left" 
+                       label="Update Forecast" 
+                       press="{!c.handleUpdateForecastPress}"
+                       disabled="{!v.isLoading}" />
+        </aura:set>
+    </c:ModalV2>
+</aura:component>

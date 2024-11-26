@@ -1,0 +1,8 @@
+<aura:event type="COMPONENT" description="Fired when an assessment skill is changed from the CoacheeAssessment component" >
+
+    <aura:attribute name="assessmentSkills"
+                    type="SC_Assessment_Skill__c[]"
+                    description="The updated assessment skill records" />
+
+
+</aura:event>

@@ -1,0 +1,275 @@
+<aura:component controller="LSAFormController">
+
+    <aura:attribute name="isSpinner" type="Boolean" default="true"/>
+    <aura:attribute name="showInstructions" type="Boolean" default="false" />
+    <aura:attribute name="isSuccess" type="Boolean" default="false" />
+    <aura:attribute name="hasActiveLSAProgram" type="Boolean" default="true" />
+    <aura:attribute name="reloadForm" type="boolean" default="true" />
+    <aura:attribute name="showCustomToast" type="boolean" default="false" />
+    <aura:attribute name="searchKey" type="string" default=""/>
+    <aura:attribute name="placeDetails" type="String[]"/>
+    <aura:attribute name="LSAProgram" type="Object"/>
+    <aura:attribute name="LennoxForm" type="Object" />
+    <aura:attribute name="recordTypeId" type="String"/>
+    <aura:attribute name="validAdd" type="boolean" default="true"/>
+    <aura:attribute name="programExpired" type="boolean" default="false"/>
+    <aura:attribute name="searchSerialNumber" type="string" default=""/>
+    <aura:attribute name="serialNumberNotFound" type="boolean" default="true"/>
+    <aura:attribute name="searchErrorMessage" type="string" default=""/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.showInstructions}" action="{!c.handleInstrChange}" />
+
+    <aura:if isTrue="{!v.hasActiveLSAProgram}">
+        <aura:if isTrue="{!v.isSuccess}">
+
+            <c:ConfirmationPageLSA title=" Labor Request Form"/>
+
+            <aura:set attribute="else">
+                <div class="container">
+
+                    <aura:if isTrue="{!v.isSpinner}">
+                        <div class="slds-spinner_container">
+                            <div role="status" class="slds-spinner slds-spinner_brand slds-spinner_large">
+                                <div class="slds-spinner__dot-a"></div>
+                                <div class="slds-spinner__dot-b"></div>
+                            </div>
+                        </div>
+                    </aura:if>
+
+                    <img src="{!$Resource.lennox_logo}" alt="" style="margin-top:20px;"/>
+
+                    <div class="inputLab"> Labor Request Form</div>
+
+                    <aura:if isTrue="{!v.showCustomToast}">
+                        <div class="demo-only" style="height:4rem">
+                            <div class="slds-notify_container slds-is-relative">
+                                <div class="slds-notify slds-notify_toast slds-theme_success" role="status">
+                                    <span class="slds-assistive-text">success</span>
+                                    <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                                        <lightning:icon iconName="utility:success" alternativeText="success" variant="inverse"/>
+                                    </span>
+                                    <div class="slds-notify__content">
+                                        <h2 class="slds-text-heading_small ">
+                                             Labor Request Form Form submitted successfully.</h2>
+                                    </div>
+                                    <div class="slds-notify__close">
+                                        <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close" onclick="{!c.closeCustomToast}">
+                                            <lightning:icon iconName="utility:close" alternativeText="close" variant="inverse"/>
+                                            <span class="slds-assistive-text">Close</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.serialNumberNotFound}">
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-4">
+                                <lightning:input name= "startSerialNumber" 
+                                                label="Unit Serial Number" 
+                                                value="{!v.searchSerialNumber}" 
+                                                required="true"/>
+                            </div>  
+                        </div>
+                        <aura:if isTrue="{!v.searchErrorMessage}">
+                            <div class="slds-text-color_error">
+                                {!v.searchErrorMessage}
+                            </div>
+                            <br/>
+                        </aura:if>                        
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_2-of-4"/>
+                            <div class="slds-col slds-size_1-of-4">
+                                <lightning:button name="searchSerialNumber"
+                                                  label="Search"
+                                                  onclick="{!c.searchSerialNumber}"/>
+                            </div>              
+                        </div>
+                        <aura:set attribute="else">
+                            <aura:if isTrue="{!v.reloadForm}">
+                                <lightning:recordEditForm
+                                                        onsuccess="{!c.handleOnSuccess}"
+                                                        objectApiName="Lennox_Form__c"
+                                                        aura:id="LSAForm"
+                                                        onsubmit="{!c.handleOnSubmit}"
+                                                        onload="{!c.setDefaults}"
+                                                        onerror="{!c.getError}"
+                                                        recordTypeId="{!v.recordTypeId}">
+                                    <lightning:messages/>
+                                    <div class="readonlyDiv">
+                                        <header class="slds-modal__header">PROGRAM DETAILS</header>
+                                        <div class="slds-grid slds-gutters label-red">
+                                            <div class="slds-col slds-size_1-of-3">
+                                                <lightning:textarea label="Special Allowance Form" value="{!v.LSAProgram.Special_Allowance_Form__c}" disabled="true"/>
+                                                <!--<lightning:inputRichText value="{!v.LSAProgram.Special_Allowance_Form__c}" label="Special Allowance Form" labelVisible="true" disabled="true"/>-->
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3">
+                                                <lightning:textarea aura:id="formFieldToValidate"  label="Units Affected" value="{!v.LSAProgram.Units_Affected__c}" disabled="true"/>
+                                                <!--<lightning:inputRichText value="{!v.LSAProgram.Units_Affected__c}" label="Units Affected" labelVisible="true" disabled="true"/>-->
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-3">
+                                                <lightning:textarea disabled="true" value="{!v.LSAProgram.Description__c}" label="Description" />
+                                            </div>
+                                        </div>
+                                        <div class="slds-grid slds-gutters">
+                                            <div class="slds-col slds-size_1-of-4">
+                                                <lightning:input disabled="true" value="{!v.LSAProgram.Material_Number__c}" label="Material Number" />
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-4">
+                                                <!--<lightning:input disabled="true" value="{!v.LSAProgram.Amount__c}" label="Amount" />-->
+                                                <label lightning-input_input="" for="input-7" class="slds-form-element__label slds-no-flex">Amount</label>
+                                                <ui:inputCurrency aura:id="amount" disabled="true" class="slds-textarea field" value="{!v.LSAProgram.Amount__c}" />
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-4">
+                                                <lightning:input disabled="true" value="{!v.LSAProgram.Order_Reason__c}" label="Order Reason" />
+                                            </div>
+                                            <div class="slds-col slds-size_1-of-4 label-text">
+                                                <lightning:input type="date" name="input2" label="Program Expiration Date" value="{!v.LSAProgram.Program_Expiration_Date__c}" disabled="true"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-grid slds-gutters">
+                                    </div>
+
+                                    <header class="slds-modal__header">DEALER DETAILS</header>
+
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col slds-size_1-of-3">
+                                            <!-- <label for="DealerNumber" class="slds-form-element__label">Account Number</label> -->
+                                            <lightning:input type="text" variant="label-stacked" aura:id="formFieldToValidate" name="Account Number" value="{!v.LennoxForm.DealerNumber__c}" label="Account Number" required="true" onblur="{! c.getAccountDetailsJS }"/>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-3">
+                                            <lightning:input variant="label-stacked" label="Account Name" aura:id="DealerName" value="{!v.LennoxForm.DealerName__c}" disabled="true"/>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-3">
+                                        </div>
+                                    </div>
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col slds-size_1-of-3">
+                                            <lightning:input variant="label-stacked" aura:id="formFieldToValidate" name="Dealer Contact Submitter" value="{!v.LennoxForm.DealerContactSubmitter__c}" label="Dealer Contact Submitter" required="true"/>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-3">
+                                            <lightning:input aura:id="formFieldToValidate" type="email" name="SubmitterEmail" label="Submitter Email" value="{!v.LennoxForm.Submitter_Email__c}" required="true"/>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-3">
+                                            <lightning:input aura:id="formFieldToValidate" type="date" name="DateOfFieldAction" label="Date of Field Action" value="{!v.LennoxForm.Date_of_field_action__c}" required="true"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Side Panel -->
+                                    <div class="instructionPanel">
+                                        <c:SidePanelComponent
+                                                            aura:id="sidePanelCmp"
+                                                            formType="Lennox LSA Form"
+                                                            formTitle=""
+                                                            isOpen="{!v.showInstructions}" />
+                                        <button type="button" aura:id="sidePanelBtn" class="button-sidebar" onclick="{!c.toggleInstructions}">
+                                            <span><img src="{!$Resource.instruction_img}" alt=""/> </span> </button>
+                                    </div>
+
+                                    <header class="slds-modal__header">JOB LOCATION DETAILS</header>
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col slds-size_1-of-4">
+                                            <lightning:input  aura:id="formFieldToValidate" name="FirstName" value="{!v.LennoxForm.JobFirstName__c}" label="Job First Name" required="true" onblur="{! c.handleBlur }"/>
+                                            <!--<lightning:inputField variant= "label-stacked" fieldName="JobFirstName__c" aura:id="JobFirstName__c" value="{!v.LennoxForm.JobFirstName__c}"/>-->
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4">
+                                            <lightning:input  aura:id="formFieldToValidate" name="LastName" value="{!v.LennoxForm.JobLastName__c}" label="Job Last Name" required="true"/>
+                                            <!--<lightning:inputField aura:id="formFieldToValidate" variant= "label-stacked" name="LastName" fieldName="JobLastName__c" value="{!v.LennoxForm.JobLastName__c}"/>-->
+                                        </div>
+                                    </div>
+                                    <div class="label-text">
+                                        <label>
+                                            <abbr lightning-input_input="" title="required" class="slds-required">*</abbr>Job Location
+                                        </label>
+                                    </div>
+
+                                    <c:AutoCompleteAddress searchKey="{!v.searchKey}" placeDetails="{!v.placeDetails}" validAdd="{!v.validAdd}"/>
+
+                                    <header class="slds-modal__header">EQUIPMENT DETAILS</header>
+                                    <div class="slds-grid slds-gutters">
+
+                                        <!--div class="slds-col slds-size_1-of-4"-->
+                                        <!--   <lightning:inputField variant= "label-stacked" fieldName="Unit_Type__c" aura:id="unitType" value="{!v.LennoxForm.Unit_Type__c}"  required="true"/>-->
+                                        <!-- <lightning:input variant= "label-stacked" aura:id="formFieldToValidate" name="Unit_Type__c" value="{!v.LennoxForm.Unit_Type__c}" label="Unit Type"/>-->
+                                            <!--lightning:select aura:id="formFieldToValidate" name="Unit Type" label="Unit Type" value="{!v.LennoxForm.Unit_Type__c}" required="true" >
+                                                <option value="">None</option>
+                                                <option value="Indoor Unit">Indoor Unit</option>
+                                                <option value="Outdoor Unit">Outdoor Unit</option>
+                                            </lightning:select>
+                                        </div-->
+                                        <div class="slds-col slds-size_1-of-4">
+                                            <!--<label for="IndoorUnitModelNumber" class="slds-form-element__label">Unit Model Number</label>
+                                            <lightning:inputField variant="label-hidden" fieldName="IndoorUnitModelNumber__c" aura:id="IndoorUnitModelNumber" value="{!v.LennoxForm.IndoorUnitModelNumber__c}"/>-->
+                                            <lightning:input variant= "label-stacked" aura:id="formFieldToValidate" name="Unit Model Number" value="{!v.LennoxForm.IndoorUnitModelNumber__c}" label="Unit Model Number" disabled="true"/>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4">
+                                            <!--<lightning:inputField variant= "label-stacked" fieldName="IndoorUnitSerialNumber__c" aura:id="IndoorUnitSerialNumber" maxlength="10"/>-->
+                                            <lightning:input name= "SerialNumber" aura:id="formFieldToValidate" label="Unit Serial Number" value="{!v.LennoxForm.IndoorUnitSerialNumber__c}" maxlength="10" minlength="9"
+                                                            messageWhenTooShort="The serial number entered is not a valid Lennox serial number."
+                                                            messageWhenPatternMismatch="The serial number entered is not a valid Lennox serial number."
+                                                            onblur="{! c.checkSerialNumber }" disabled="true"
+                                                            pattern="(^\d{4}[A-z]{1}\d{5}|^[A-z]{1}\d{2}[A-z]{1}\d{5}|^[A-z]{2}\d{2}[A-z]{1}\d{5})"
+                                                            />
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4">
+                                            <lightning:input aura:id="formFieldToValidate" required = "true" type="date" name="Date Unit Installed" label="Date Unit Installed" value="{!v.LennoxForm.DateUnitInstalled__c}" disabled="false"/>
+                                        <!--<lightning:inputField  variant= "label-stacked" fieldName="DateUnitInstalled__c" value="{!v.LennoxForm.DateUnitInstalled__c}" required = 'true'/>-->
+
+                                        </div>
+                                    </div>
+
+                                    <!--<lightning:input type="checkbox"
+                                label="certify the dealership above has completed the required replacement of the Time Delay Relay in the above installed referenced air
+                                        handler at no cost to the homeowner."
+                                aura:id="hasAgree" class="slds-p-vertical_small"  onclick="{!c.onchange}"/>-->
+                                    <header class="slds-modal__header">DEALER CERTIFICATION</header>
+                                    <div class="slds-grid">
+                                        <ui:inputCheckbox aura:id="hasAgree" class="slds-m-vertical_xx-small slds-m-horizontal_small"
+                                                        change="{!c.onchange}"/>
+                                    <!--   <label>I certify the dealership above has completed the required replacement of the Time Delay Relay in the above installed referenced air handler at no cost to the homeowner.</label> -->
+                                        <label>I certify the dealership above has completed the program requirements at no cost to the homeowner.</label>
+                                    </div>
+                                    <div class="slds-m-top_medium slds-text-align_center slds-m-bottom_small">
+                                        <div>
+                                            <lightning:button aura:Id="submit" value="submit" variant="destructive" disabled="true"  name="Submit" label="Submit" class="submitbtn" onclick="{!c.handleOnSuccess}" />
+                                            <lightning:button aura:Id="submitNew" variant="destructive" disabled="true" name="SubmitNew" label="Submit &amp; New" class="submitbtn slds-m-left_medium" onclick="{!c.handleOnSuccess}"/>
+                                        </div>
+                                    </div>
+
+                                </lightning:recordEditForm>
+                            </aura:if>
+                        </aura:set>
+                    </aura:if>
+                </div>
+            </aura:set>
+        </aura:if>
+    </aura:if>
+    <aura:if isTrue="{!!v.hasActiveLSAProgram}">
+        <aura:if isTrue="{!v.programExpired}">
+            <div class="container">
+
+                <img src="{!$Resource.lennox_logo}" alt="" style="margin-top:20px;"/>
+
+                <div class="inputLab"> Labor Request Form</div>
+
+                <div class="slds-text-heading_large slds-text-align_center">
+                    <span><q>{!v.LSAProgram.Name}</q> expired on <lightning:formattedDateTime value="{!v.LSAProgram.Program_Expiration_Date__c}"/>.</span>
+                </div>
+            </div>
+        <aura:set attribute="else">
+            <div class="container">
+
+                <img src="{!$Resource.lennox_logo}" alt="" style="margin-top:20px;"/>
+
+                <div class="inputLab"> Labor Request Form</div>
+
+                <div class="slds-text-heading_large slds-text-align_center">No Active Labor Request Program found.</div>
+            </div>
+        </aura:set> 
+        </aura:if>
+    </aura:if>
+
+
+</aura:component>

@@ -1,0 +1,125 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes"
+                controller="QuickLinksLightningHomePageController"
+                access="global" >
+    
+    
+    <aura:handler name="init" action="{!c.init}" value="{!this}" />
+    <aura:attribute name="OpenModel" type="Boolean" access="global" default ="false"/>
+    <aura:attribute name="currentYear" type="Integer" access="global"/>
+    <aura:attribute name="TabPermission" type="Object" access="global"/>
+    <aura:attribute name="rollUpSummaryType" type="string" access="global"/>
+    
+    <lightning:card >
+         <aura:set attribute="title">
+            <!--  Title -->
+            <strong>Quick Links</strong>
+        </aura:set>
+        <center>
+            <div class="quickLnksContainer" style = "padding-right: 30px;padding-left: 30px;">
+                <div class="slds-grid slds-gutters quickLnks-wrapper">
+                    <aura:if isTrue="{!v.TabPermission.data.Approvalrequests}">
+                        <div class="slds-col">
+                            <lightning:icon iconName="action:approval" alternativeText="Approval requests"/><br/>
+                            <div title="Action"><a data-attriVal= "view" onclick ="{!c.gotoURL}">Approval Requests({!v.TabPermission.data.numItems})</a></div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.TabPermission.data.MapTool}">
+                        <div class="slds-col">
+                            <lightning:icon iconName="action:map" alternativeText="MapTools"/><br/>
+                            <div title="Action"><a data-attriVal= "map" onclick ="{!c.gotoURL}">MAP Tool</a></div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.TabPermission.data.SFMaps}">
+                    <div class="slds-col">
+                            <lightning:icon iconName="action:map" alternativeText="Maps"/><br/>
+                            <div title="Action"><a data-attriVal= "MapsView" onclick ="{!c.gotoURL}">Salesforce Maps</a></div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.TabPermission.data.TerritoryRollupSummary}">
+                        <div class="slds-col">
+                            <lightning:icon iconName="action:add_file" alternativeText=" Territory Rollup Summary"/><br/>
+                            <div title="Action"><a onclick="{!c.openmodal}" data-attriVal=" Territory Rollup Summary">Territory Rollup Summary</a></div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.TabPermission.data.DistrictRollupSummary}">
+                        <div class="slds-col">
+                            <lightning:icon iconName="action:add_file" alternativeText="District Roll Up Summary"/><br/>
+                            <div title="Action"><a onclick="{!c.openmodal}" data-attriVal=" District Rollup Summary" >District Rollup Summary</a></div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.TabPermission.data.RegionRollupSummary}">
+                        <div class="slds-col">
+                            <lightning:icon iconName="action:add_file" alternativeText="Region RollUp Summary"/><br/>
+                            <div title="Action"><a onclick="{!c.openmodal}" data-attriVal=" Region Rollup Summary">Region Rollup Summary</a></div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.TabPermission.data.RollupSummary}">
+                        <div class="slds-col">
+                            <lightning:icon iconName="action:add_file" alternativeText="Roll Up Summary"/><br/>
+                            <div title="Action"><a onclick="{!c.openmodal}" data-attriVal=" Roll Up Summary">Roll Up Summary</a></div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.TabPermission.data.ManagerRollup}">
+                        <div class="slds-col">
+                            <lightning:icon iconName="action:add_file" alternativeText="Store Manager Rollup"/><br/>
+                            <div title="Action"><a onclick="{!c.openmodal}" data-attriVal=" Store Manager Rollup">Store Manager Rollup</a></div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.TabPermission.data.ZoneRollup}">
+                        <div class="slds-col">
+                            <lightning:icon iconName="action:add_file" alternativeText="Store Zone Rollup"/><br/>
+                            <div title="Action"><a onclick="{!c.openmodal}" data-attriVal=" Store Zone Rollup">Store Zone Rollup</a></div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.TabPermission.data.ExecutiveRollup}">
+                        <div class="slds-col">
+                            <lightning:icon iconName="action:add_file" alternativeText="Store Executive Rollup"/><br/>
+                            <div title="Action"><a onclick="{!c.openmodal}" data-attriVal=" Store Executive Rollup">Store Executive Rollup</a></div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.TabPermission.data.RegionRollup}">
+                        <div class="slds-col">
+                            <lightning:icon iconName="action:add_file" alternativeText="Store Region Rollup"/><br/>
+                            <div title="Action"><a onclick="{!c.openmodal}" data-attriVal=" Store Rollup">Store Region Rollup</a></div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.TabPermission.data.CDQ}">
+                        <div class="slds-col">
+                            <lightning:icon iconName="action:record" alternativeText="CDQ" /><br/>
+                            <div title="Action"><a data-attriVal= "cdq" onclick ="{!c.gotoURL}">CDQ</a></div>
+                        </div>
+                    </aura:if>
+                    <div class="slds-col">
+                            <lightning:icon iconName="standard:event" size="large" alternativeText="Calendar"/><br/>
+                            <div title="Action"><a data-attriVal= "view" onclick ="{!c.gotoEvent}">Calendar</a></div>
+                        </div>
+                    
+                </div>
+            </div>
+        </center>
+    </lightning:card>
+    
+    <aura:if isTrue="{!v.OpenModel}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{!v.rollUpSummaryType}</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <ul>
+                        <li><a onclick="{!c.redirectToPage}" data-attriVal="{!v.rollUpSummaryType}" data-year="{!v.currentYear}" target="_blank">{!v.currentYear}  {!v.rollUpSummaryType}</a></li>
+                        <li><a onclick="{!c.redirectToPage}" data-attriVal="{!v.rollUpSummaryType}" data-year="{!v.currentYear-1}" target="_blank">{!v.currentYear - 1}  {!v.rollUpSummaryType}</a></li>
+                    </ul> 
+                </div>
+                <footer class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick="{!c.closemodal}">Close</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    
+</aura:component>

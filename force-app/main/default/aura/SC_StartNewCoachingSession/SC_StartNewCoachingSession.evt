@@ -1,0 +1,26 @@
+<aura:event type="APPLICATION" description="Launches the Coaching Session wizard">
+
+    <aura:attribute name="users"
+                    type="Object[]"
+                    description="The users being coached." />
+
+    <aura:attribute name="initiative"
+                    type="SC_Initiative__c"
+                    description="The selected Initiative being coached on" />
+
+    <aura:attribute name="hidePlanningSteps"
+                    type="Boolean"
+                    default="FALSE"
+                    description="If true, review and assessment steps will be hidden." />
+
+    <aura:attribute name="planningOnly"
+                    type="Boolean"
+                    default="FALSE"
+                    description="If true, it is assumed that the session already exists and the session id is provided
+                                 in the sessionId attribute." />
+
+     <aura:attribute name="session"
+                     type="SC_Coaching_Session__c"
+                     description="If provided, this session was already scheduled, but coach has not yet planned (reviewed and assessed)." />
+
+</aura:event>

@@ -1,0 +1,210 @@
+<aura:component controller="SC_UserSessionsController" access="GLOBAL">
+
+    <aura:attribute name="userId" type="String" description="Get the sessions where this user is an attendee" />
+    <aura:attribute name="ownerId" type="String" description="Get the sessions where this user is the owner" />
+    <aura:attribute name="initiativeId" type="String" description="Optionally scope the result to a single initiative." />
+    <aura:attribute name="newSessions" type="Boolean" default="true" description="Defaults to true. If false, this component will render old sessions." />
+    <aura:attribute name="showAll" type="Boolean" default="FALSE" description="If true, newSessions is ignored and all sessions are returned" />
+    <aura:attribute name="sessions" type="SC_Coaching_Session__c[]" description="List of coaching sessions" />
+    <aura:attribute name="isLoading" type="Boolean" default="true" />
+    <aura:attribute name="isPhone" type="Boolean" default="{!$Browser.formFactor == 'PHONE'}" />
+    <aura:attribute name="Id" type="String"/>
+
+
+    <aura:attribute name="limit"
+                    type="Integer"
+                    default="10"
+                    description="Used internally to keep track of pagination." />
+
+    <aura:attribute name="offset"
+                    type="Integer"
+                    default="0"
+                    description="Used internally to keep track of pagination." />
+
+    <aura:attribute name="hasMoreRecords"
+                    type="Boolean"
+                    default="false"
+                    description="Used internally to know if there are more records available to query." />
+
+    <aura:handler name="change" value="{!v.userId}" action="{!c.handleUserIdChange}" />
+    <aura:handler name="change" value="{!v.ownerId}" action="{!c.handleOwnerIdChange}" />
+    <aura:handler name="change" value="{!v.newSessions}" action="{!c.handleNewSessionsChange}" />
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+
+
+
+    <section>
+
+        <aura:if isTrue="{!v.isPhone}">
+
+
+            <!-- Has Data - MOBILE -->
+            <ul class="slds-has-dividers--bottom-space">
+                <aura:iteration items="{!v.sessions}" var="session">
+                    <li class="slds-item">
+                        <div class="slds-tile slds-media">
+                            <div class="slds-media__figure">
+                                <lightning:icon iconName="custom:custom15" size="medium" alternativeText="Session icon"/>
+                            </div>
+                            <div class="slds-media__body">
+                                <h3 class="slds-truncate" title="{!session.Name}">
+                                    <c:Link to="{!'/session/' + session.Id}"
+                                            label="{!session.Name}">
+                                           {!session.Name}
+                                    </c:Link>
+                                </h3>
+                                <div class="slds-tile__detail slds-text-body--small">
+                                    <dl class="slds-dl--horizontal">
+                                        <aura:if isTrue="{!empty(v.ownerId)}">
+                                            <dt class="slds-dl--horizontal__label">
+                                                <p class="slds-truncate" title="Coach">Coach:</p>
+                                            </dt>
+                                            <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                                                <p class="slds-truncate" title="{!session.CreatedBy.Name}">
+                                                    {!session.CreatedBy.Name}
+                                                </p>
+                                            </dd>
+                                        </aura:if>
+                                        <dt class="slds-dl--horizontal__label">
+                                            <p class="slds-truncate" title="Attendees">Attendees:</p>
+                                        </dt>
+                                        <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                                            <p class="slds-truncate" title="attendees">
+                                                <aura:iteration items="{!session.Coaching_Session_Attendees__r}" var="attendee" indexVar="i">
+                                                    {!attendee.User__r.Name}<span class="{!equals(i + 1, session.Coaching_Session_Attendees__r.length) ? 'slds-hide' : ''}">, </span>
+                                                </aura:iteration>
+                                            </p>
+                                        </dd>
+                                        <dt class="slds-dl--horizontal__label">
+                                            <p class="slds-truncate" title="Initiative">Initiative:</p>
+                                        </dt>
+                                        <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                                            <p class="slds-truncate" title="{!session.Initiative__r.Name}">
+                                                <c:Link to="{!'/initiative-user/' + session.Initiative__c + '/' + v.Id}"
+                                                        label="{!session.Initiative__r.Name}">
+                                                    {!session.Initiative__r.Name}
+                                                </c:Link>
+                                            </p>
+                                        </dd>
+                                        <dt class="slds-dl--horizontal__label">
+                                            <p class="slds-truncate" title="Date">Date:</p>
+                                        </dt>
+                                        <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                                            <p class="slds-truncate" title="{!session.Start_Date__c}">
+                                                <ui:outputDateTime value="{!session.Start_Date__c}" />
+                                            </p>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </aura:iteration>
+            </ul>
+
+            <aura:set attribute="else">
+                <!-- Has Data - NOT MOBILE -->
+                <table class="{!'slds-table slds-table--bordered slds-table--cell-buffer ' + (empty(v.sessions) ? 'slds-hide' : '')}">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="col">
+                                <div class="slds-truncate" title="Session Name">Coaching Session</div>
+                            </th>
+                            <aura:if isTrue="{!empty(v.ownerId)}">
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Coach">Coach</div>
+                                </th>
+                            </aura:if>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Attendees">Attendees</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Initiative">Initiative</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Date">Date</div>
+                            </th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.sessions}" var="session">
+                            <tr>
+                                <th scope="row" data-label="Session Name">
+                                    <div class="slds-truncate">
+                                        <c:Link to="{!'/session/' + session.Id}"
+                                                label="{!session.Name}"
+                                                class="slds-button">
+                                                {!session.Name}
+                                        </c:Link>
+                                    </div>
+                                </th>
+                                <aura:if isTrue="{!empty(v.ownerId)}">
+                                    <td data-label="Coach">
+                                        <div class="slds-truncate">
+                                            {!session.CreatedBy.Name}
+                                        </div>
+                                    </td>
+
+                                </aura:if>
+                                <td data-label="Attendees" class="slds-cell-wrap">
+                                    <div class="slds-truncate">
+                                        <aura:iteration items="{!session.Coaching_Session_Attendees__r}" var="attendee" indexVar="i">
+                                            {!attendee.User__r.Name}<span class="{!equals(i + 1, session.Coaching_Session_Attendees__r.length) ? 'slds-hide' : ''}">, </span>
+                                        </aura:iteration>
+                                    </div>
+                                </td>
+                                <td data-label="Initiative">
+                                    <div class="slds-truncate">
+                                        <c:Link to="{!'/initiative-user/' + session.Initiative__c + '/' + v.Id}"
+                                                label="{!session.Initiative__r.Name}"
+                                                class="slds-button">
+                                            {!session.Initiative__r.Name}
+                                        </c:Link>
+                                    </div>
+                                </td>
+                                <td data-label="Date">
+                                    <div class="slds-truncate"><ui:outputDateTime value="{!session.Start_Date__c}" /></div>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+
+
+            </aura:set>
+
+        </aura:if>
+
+
+
+        <div class="{!'slds-text-align--center slds-p-around--medium ' + (!v.hasMoreRecords ? 'slds-hide' : '')}">
+            <lightning:button label="Show More"
+                              iconName="utility:arrowdown"
+                              iconPosition="right"
+                              variant="base"
+                              onclick="{!c.handleShowMoreClick}" />
+        </div>
+
+
+
+        <!-- No Data -->
+        <div class="{!'slds-p-around--small ' + (!empty(v.sessions) ? 'slds-hide' : '')}">
+            <div class="slds-box slds-theme--shade">
+                <p>There are no {!v.showAll ? '' : v.newSessions ? 'upcoming' : 'past'} Coaching Sessions.</p>
+            </div>
+        </div>
+
+
+
+        <!-- Loading -->
+        <span class="{!v.isLoading ? '' : 'slds-hide'}">
+            <c:SC_Loader />
+        </span>
+
+
+
+    </section>
+
+
+</aura:component>

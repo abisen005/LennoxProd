@@ -1,0 +1,52 @@
+<aura:component abstract="true" extensible="true" description="Super Component to be extended by tm/dm console components.">
+	
+    <aura:attribute name="accountId" 
+                    type="String" 
+                    description="Id of the Account in scope.  Use this when data from the Account object in scope is not needed
+                                 and you need to query related data." />
+    
+    <aura:attribute name="account"
+                    type="Account"
+                    description="the Account SObject in scope.  Use this when the data is already available in the parent component." />
+    
+    <aura:attribute name="title" 
+                    type="String" 
+                    description="Console component title." />
+    
+    <aura:attribute name="status" 
+                    type="String" 
+                    description="Indicates if the information in the component is 'success', 'warning,' or 'error.'" />
+    
+    <aura:attribute name="accountCategory"
+                    type="Integer"
+                    description="Account category level represented by an integer." />
+    
+    <aura:attribute name="accessLevel"
+                    type="Integer"
+                    description="Determines if the component is rendered.  If account component access level is greater 
+                                 than or equal to the account category value, then the component is rendered." />
+    
+    <aura:attribute name="rendered"
+                    type="Boolean"
+                    description="Should the component be rendered."
+                    default="true" />
+    
+    <aura:attribute name="class" 
+                    type="String"
+                    description="Class names applied to outer element of component" />
+    
+    <aura:attribute name="isLoading"
+                    type="Boolean"
+                    description="Generic boolean value to determine if the component is in a loading state."
+                    default="true" />
+    
+    
+
+        <aura:if isTrue="{!(v.accountCategory >= v.accessLevel) &amp;&amp; (v.rendered)}">
+            <div class="{!v.class}">
+                {!v.body}
+            </div>
+        </aura:if>
+
+    
+</aura:component>

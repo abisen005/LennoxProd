@@ -1,0 +1,19 @@
+.THIS {
+  transition: .2s box-shadow ease-in-out; }
+  .THIS p {
+    color: token(colorTextDefault);
+    line-height: token(lineHeightText); }
+  .THIS .slds-media__body,
+  .THIS .coachee__body {
+    font-weight: 300; }
+  .THIS .coachee__profile {
+    border-radius: 25px; }
+  .THIS .coachee__body {
+    border-top: 1px solid #F4F6F9;
+    border-bottom: 1px solid #F4F6F9; }
+  .THIS .coachee__icon--success svg {
+    fill: #4bca81; }
+  .THIS .coachee__icon--warning svg {
+    fill: #ffb75d; }
+  .THIS .coachee__footer {
+    margin: -.75rem; }

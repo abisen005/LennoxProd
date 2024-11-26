@@ -1,0 +1,279 @@
+<aura:component controller="LSAFormController" implements="force:appHostable,flexipage:availableForAllPageTypes">
+    <lightning:notificationsLibrary aura:id="notifLib"/>
+    <aura:attribute name="isSpinner" type="Boolean" default="true"/>
+    <aura:attribute name="isSuccess" type="Boolean" default="false" />
+    <aura:attribute name="hasActiveConsumerProgram" type="Boolean" default="true" />
+    <aura:attribute name="consumerProgramForm" type="Boolean" default="false" />
+    <aura:attribute name="showToast1" type="boolean" default="false"/>
+    <aura:attribute name="showToast2" type="boolean" default="false"/>
+    <aura:attribute name="formAlreadyExist" type="boolean" default="false"/>
+    <aura:attribute name="LSAProgram" type="Object"/>
+    <aura:attribute name="url" type="String"/>
+    <aura:attribute name="inputValue" type="string" />
+    <aura:attribute name="showInstructions" type="Boolean" />
+    <aura:attribute name="storeSubmitterEmail" type="String"/>
+    
+    <aura:attribute name="firstScreenSerialNumber" type="String"/>
+    <aura:attribute name="submissionScreenSameSerialNumber" type="boolean" default="false"/>
+    
+    
+    
+    <aura:attribute name="recordId" type="String"/>
+    <aura:attribute name="hasActiveLSAProgram" type="Boolean" default="false" />
+    <aura:attribute name="siteLocationId" type="String"/>
+    <aura:attribute name="newConsumerFormSubmission" type="boolean" default="false"/>
+    <aura:attribute name="ConsumerForm" type="Object" />
+    <aura:attribute name="placeDetails" type="String[]"/>
+    <aura:attribute name="searchKey" type="string" default=""/>
+    <aura:attribute name="validAdd" type="boolean" default="true"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler event="aura:waiting" action="{!c.showSpinner}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/>
+    <aura:attribute name="toggleSpinner" type="boolean" default="false"/> 
+    <aura:if isTrue="{!v.toggleSpinner}">
+        <div class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>       
+    <aura:if isTrue="{!v.hasActiveLSAProgram}">
+        <aura:if isTrue="{!v.isSuccess}">
+            <c:ConfirmationPageLSA title=" Homeowner Request Form" childAttrLSAForm="LSAHomeowner" />
+            <aura:set attribute="else">
+                <div class="container">
+                    <img src="{!$Resource.lennox_logo}" alt="" style="margin-top:20px;"/>
+                    <aura:if isTrue="{!v.hasActiveConsumerProgram}">    
+                        <div class="overlay" aura:id="overlay"></div>
+                        <div class="inputLab">Homeowner Request Form </div>
+                        <header class="slds-modal__header">Homeowner Details</header>
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col slds-size_1-of-3">
+                                <!-- <label for="DealerNumber" class="slds-form-element__label">Account Number</label> -->
+                                <lightning:input type="text" variant="label-stacked" aura:id="serialNumber" name="Serial Number" label="Unit Serial Number"  maxlength="10" minlength="9"
+                                                 messageWhenTooShort="The serial number entered is not a valid Lennox serial number."
+                                                 messageWhenPatternMismatch="The serial number entered is not a valid Lennox serial number."
+                                                 required="true"  onchange = "{!c.onChangeSerialSearch}"
+                                                 pattern="(^\d{4}[A-z]{1}\d{5}|^[A-z]{1}\d{2}[A-z]{1}\d{5}|^[A-z]{2}\d{2}[A-z]{1}\d{5})" />
+                            </div>
+                        </div>
+                        <div class="slds-m-top_medium slds-text-align_center slds-m-bottom_small">
+                            <div>
+                                <lightning:button aura:Id="serialSearchId" value="search" variant="destructive" disabled="true"  name="search" label="Search" class="submitbtn" onclick="{!c.handleOnSearch}" />    
+                            </div>
+                        </div>
+                    </aura:if>
+                    <aura:if isTrue="{!v.consumerProgramForm}">
+                        <div class="inputLab"> Homeowner Request Form </div>
+                        <lightning:recordEditForm
+                                                  objectApiName="Consumer_Form__c"
+                                                  aura:id="ConsumerForm"
+                                                  onsubmit="{!c.handleOnSubmit}"
+                                                  onerror="{!c.getError}"
+                                                  recordId ="{!v.recordId}">
+                            <lightning:messages/>
+                            <div class="slds-grid slds-gutters">
+                            </div>
+                            <header class="slds-modal__header">DEALER</header>
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_1-of-3">
+                                    <lightning:input variant="label-stacked" label="Account Name" aura:id="DealerName" value="{!v.ConsumerForm.Lennox_LSA__r.Account__r.Name}" disabled="true"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                </div>
+                            </div>
+                            <!-- Side Panel -->
+                            <div class="instructionPanel">
+                                <c:SidePanelComponent
+                                                      aura:id="sidePanelCmp"
+                                                      formType="Lennox LSA Form"
+                                                      formTitle=""
+                                                      isOpen="{!v.showInstructions}" />
+                                <button type="button" aura:id="sidePanelBtn" class="button-sidebar" onclick="{!c.toggleInstructions}">
+                                    <span><img src="{!$Resource.instruction_img}" alt=""/> </span> </button>
+                            </div>
+                            <header class="slds-modal__header">INSTALLATION ADDRESS DETAILS</header>
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_1-of-4">
+                                    <lightning:input  aura:id="formFieldToValidate" fieldname="Job_First_Name__c" value="{!v.ConsumerForm.Job_First_Name__c}" label="Job First Name" disabled="true"/>
+                                    <!--<lightning:inputField variant= "label-stacked" fieldName="JobFirstName__c" aura:id="JobFirstName__c" value="{!v.LennoxForm.JobFirstName__c}"/>-->
+                                </div>
+                                <div class="slds-col slds-size_1-of-4">
+                                    <lightning:input  aura:id="formFieldToValidate" name="LastName" value="{!v.ConsumerForm.Job_Last_Name__c}" label="Job Last Name" disabled="true"/>
+                                    <!--<lightning:inputField aura:id="formFieldToValidate" variant= "label-stacked" name="LastName" fieldName="JobLastName__c" value="{!v.LennoxForm.JobLastName__c}"/>-->
+                                </div>
+                            </div>
+                            <!--c:AutoCompleteAddress searchKey="{!v.searchKey}"  placeDetails="{!v.placeDetails}"  validAdd="{!v.validAdd}"/-->
+                            <div class="slds-col slds-size_1-of-3">
+                                <lightning:input variant="label-stacked" label="Job Location" aura:id="DealerName" value="{!v.ConsumerForm.Lennox_LSA__r.Home_Owner__r.Name}" disabled="true"/>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3">
+                                <lightning:input  aura:id="formFieldToValidate"  value="{!v.inputValue}" label="Email" type='Email'  required="true"/>
+                            </div>
+                            <p>Your personal information will be used in accordance with Lennox’s privacy policy available at: 
+                                <a href="{!v.url}" target="_blank" onclick="{!c.handleClickVerbiageURL}">{!$Label.c.LSA_Homeowner_Verbiage}</a>
+                                By submitting your email address, you understand and acknowledge that we will utilize your email address solely to acknowledge and administer your claim. In the event you do not share your email address, please take a screen shot of your submission for your records. 
+                            </p>
+                            <header class="slds-modal__header">EQUIPMENT DETAILS</header>
+                            <div class="slds-grid slds-gutters">
+                                <div class="slds-col slds-size_1-of-4">
+                                    <!--   <lightning:inputField variant= "label-stacked" fieldName="Unit_Type__c" aura:id="unitType" value="{!v.LennoxForm.Unit_Type__c}"  required="true"/>-->
+                                    <!-- <lightning:input variant= "label-stacked" aura:id="formFieldToValidate" name="Unit_Type__c" value="{!v.LennoxForm.Unit_Type__c}" label="Unit Type"/>-->
+                                    <lightning:select aura:id="formFieldToValidate" name="Unit Type" label="Unit Type" value="{!v.ConsumerForm.Unit_Type__c}" disabled="false" required="true" >
+                                        <option value="">None</option>
+                                        <option value="Indoor Unit">Indoor Unit</option>
+                                        <option value="Outdoor Unit">Outdoor Unit</option>
+                                    </lightning:select>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4">
+                                    <!--   <lightning:inputField variant= "label-stacked" fieldName="Unit_Type__c" aura:id="unitType" value="{!v.LennoxForm.Unit_Type__c}"  required="true"/>-->
+                                    <!-- <lightning:input variant= "label-stacked" aura:id="formFieldToValidate" name="Unit_Type__c" value="{!v.LennoxForm.Unit_Type__c}" label="Unit Type"/>-->
+                                    <lightning:select aura:id="formFieldToValidate" name="Type of Backup Fuel" label="Type of Backup Fuel" value="{!v.ConsumerForm.Type_of_Back_up_Fuel__c}" required="true" >
+                                        <option value="">None</option>
+                                        <option value="Electric">Electric</option>
+                                        <option value="Natural Gas">Natural Gas</option>
+                                        <option value="LP/Propane">LP/Propane</option>
+                                    </lightning:select>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4">
+                                    <!--<label for="IndoorUnitModelNumber" class="slds-form-element__label">Unit Model Number</label>
+                                    <lightning:inputField variant="label-hidden" fieldName="IndoorUnitModelNumber__c" aura:id="IndoorUnitModelNumber" value="{!v.LennoxForm.IndoorUnitModelNumber__c}"/>-->
+                                    <lightning:input variant= "label-stacked" aura:id="formFieldToValidate" name="Unit Model Number" value="{!v.ConsumerForm.Unit_Model_Number__c}" label="Unit Model Number" required="true" disabled="false"/>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4">
+                                    <!--<lightning:inputField variant= "label-stacked" fieldName="IndoorUnitSerialNumber__c" aura:id="IndoorUnitSerialNumber" maxlength="10"/>-->
+                                    <lightning:input data-name="temp" name= "SerialNumber" aura:id="formFieldToValidate" label="Unit Serial Number" value="{!v.ConsumerForm.Unit_Serial_Number__c}" maxlength="10" minlength="9" required="true"
+                                                     messageWhenTooShort="The serial number entered is not a valid Lennox serial number."
+                                                     messageWhenPatternMismatch="The serial number entered is not a valid Lennox serial number."
+                                                     disabled="false"
+                                                     pattern="(^\d{4}[A-z]{1}\d{5}|^[A-z]{1}\d{2}[A-z]{1}\d{5}|^[A-z]{2}\d{2}[A-z]{1}\d{5})"
+                                                     />
+                                </div> 
+                            </div>
+                            <!--<lightning:input type="checkbox"
+                         label="certify the dealership above has completed the required replacement of the Time Delay Relay in the above installed referenced air
+                                handler at no cost to the homeowner."
+                         aura:id="hasAgree" class="slds-p-vertical_small"  onclick="{!c.onchange}"/>-->
+                            <header class="slds-modal__header">
+                                HOMEOWNER ACKNOWLEDGEMENT</header>
+                            <div class="slds-grid">
+                                <ui:inputCheckbox aura:id="hasAgree" class="slds-m-vertical_xx-small slds-m-horizontal_small"
+                                                  change="{!c.onchange}" required= "true"/>
+                                <!--   <label>I certify the dealership above has completed the required replacement of the Time Delay Relay in the above installed referenced air handler at no cost to the homeowner.</label> -->
+                                <label>
+                                    <abbr lightning-input_input="" title="required" class="slds-required">*</abbr>By filing this claim for reimbursement and receiving payment in response thereto, I agree that (i) I am not entitled to reimbursement for my utility bills under any applicable Limited Warranty and (ii) as consideration for payment, I am waiving and releasing any and call claims and causes of action (whether in contract, tort, by statute, or otherwise) against Lennox Industries Inc. and its affiliates arising out of or relating to my {!v.ConsumerForm.Serial_Number__c}, including, without limitation, any claims arising out of or relating to any defect, breach of implied or express warranty, misrepresentation, product liability, and/or negligence. I acknowledge that this release covers any and all claims, causes of action, liabilities, defects, and damages, whether currently known or unknown,
+                                    existing to and through the date payment is received.
+                                </label>
+                            </div>
+                            <div class="slds-m-top_medium slds-text-align_center slds-m-bottom_small">
+                                <div>
+                                    <lightning:button aura:Id="submit" value="submit" variant="destructive" disabled="true" type="submit" name="Submit" label="Submit" class="submitbtn"  onclick="{!c.handleOnSuccess}" />
+                                    <!--lightning:button aura:Id="submitNew" variant="destructive" disabled="true" name="SubmitNew" label="Submit &amp; New" class="submitbtn slds-m-left_medium" onclick="{!c.handleOnSuccess}"/-->
+                                </div>
+                            </div>
+                        </lightning:recordEditForm>
+                    </aura:if>
+                    <!-- Consumer Form is not Found -->
+                    <aura:if isTrue="{!v.showToast1}">
+                        <div id="toastMessage" class="toast-msg">
+                            <div class="demo-only" style="height:4rem">
+                                <div class="slds-notify_container slds-is-relative">
+                                    <div class="slds-notify slds-theme_success" style="background: #ba3737;bottom: 245px;font-size:15px;position:relative" role="status">
+                                        <span class="slds-assistive-text">Info</span>
+                                        <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                                            <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                                <lightning:icon iconName="utility:success" alternativeText="Success!" title="Info" />
+                                            </div>
+                                        </span> 
+                                        <div class="slds-notify__content">
+                                            <h2 class="slds-text-heading_medium"  ><center style = "color:#fff;">Lennox Homeowner Form</center></h2><br/>
+                                            It appears you have entered an incorrect or invalid serial number. Please contact your Lennox dealer for the correct serial number. <br/><br/>
+                                            <aura:if isTrue='{!v.condition1}'>&nbsp;&nbsp; Your form has been successfully submitted. Please allow 2 – 4 weeks for processing.<br/></aura:if>
+                                            <aura:if isTrue='{!v.condition2}'>&nbsp;&nbsp;• {!$Label.c.FTL_Nomination_Form_Declined}<br/></aura:if>
+                                            <!--aura:if isTrue='{!v.condition3}'>&nbsp;&nbsp;• {!$Label.c.FTL_Nomination_Form_Ductwork} <br/><br/></aura:if-->
+                                        </div>
+                                        <div class="slds-notify__close">
+                                            <button class="slds-button slds-button_icon slds-button_icon-inverse" onclick="{!c.closeToast}" title="Close">
+                                                <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                                    <lightning:icon iconName="utility:close" class="my-icon" alternativeText="Close!" title="Close" />
+                                                </div>
+                                                <span class="slds-assistive-text">Close</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </aura:if>
+                    <!-- Consumer Form is already exist -->
+                    <aura:if isTrue="{!v.showToast2}">
+                        <div id="toastMessage" class="toast-msg">
+                            <div class="demo-only" style="height:4rem">
+                                <div class="slds-notify_container slds-is-relative">
+                                    <aura:if isTrue='{!v.formAlreadyExist}'>
+                                        <div  class="slds-notify slds-notify_toast slds-theme_success" style="bottom: 250px;font-size:15px" role="status">
+                                            <span class="slds-assistive-text">Info</span>
+                                            <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                                                <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                                    <lightning:icon iconName="utility:success" alternativeText="Success!" title="Info" />
+                                                </div>
+                                            </span> 
+                                            <div class="slds-notify__content">
+                                                <h2 class="slds-text-heading_medium"><center style ="color:#fff;">  &nbsp;&nbsp;  &nbsp;&nbsp;Lennox Homeowner Form</center></h2><br/>
+                                                &nbsp;&nbsp;  &nbsp;&nbsp;A form has already been submitted on this serial number. Please contact your Lennox Dealer with any questions. <br/>
+                                                <br/>
+                                            </div>
+                                            <div class="slds-notify__close">
+                                                <button class="slds-button slds-button_icon slds-button_icon-inverse" onclick="{!c.closeToast}" title="Close">
+                                                    <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                                        <lightning:icon iconName="utility:close" class="my-icon" alternativeText="Close!" title="Close" />
+                                                    </div>
+                                                    <span class="slds-assistive-text">Close</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </aura:if> 
+                                    <aura:if isTrue='{!v.submissionScreenSameSerialNumber}'>
+                                        <div class="slds-notify slds-notify_toast slds-theme_success" style="background: #ba3737;bottom: 750px;font-size:15px" role="status">
+                                            <span class="slds-assistive-text">Info</span>
+                                            <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                                                <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                                    <lightning:icon iconName="utility:success" alternativeText="Success!" title="Info" />
+                                                </div>
+                                            </span> 
+                                            <div class="slds-notify__content">
+                                                <h2 class="slds-text-heading_medium"><center style ="color:#fff;">  &nbsp;&nbsp;  &nbsp;&nbsp;Lennox Homeowner Form</center></h2><br/>
+                                                The serial number you have entered is for the outdoor unit. Per the instructions provided, please enter the serial number for the indoor unit. 
+                                                The indoor unit would either be an air handler or a gas furnace.
+                                                If you are unsure about where to find the serial number and/or model number of your indoor unit, please contact your Lennox dealer.
+                                                <br/>
+                                                <br/>
+                                            </div>
+                                            <div class="slds-notify__close">
+                                                <button class="slds-button slds-button_icon slds-button_icon-inverse" onclick="{!c.dupSerialScreenCloseToast}" title="Close">
+                                                    <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                                        <lightning:icon iconName="utility:close" class="my-icon" alternativeText="Close!" title="Close" />
+                                                    </div>
+                                                    <span class="slds-assistive-text">Close</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </aura:if> 
+                                </div>
+                            </div>
+                        </div>
+                    </aura:if>
+                </div>
+            </aura:set>
+        </aura:if>
+    </aura:if>
+    <aura:if isTrue="{!!v.hasActiveLSAProgram}">
+        <div class="container">
+            <img src="{!$Resource.lennox_logo}" alt="" style="margin-top:20px;"/>
+            <div class="inputLab"> Homeowner Request Form</div>
+            <div class="slds-text-heading_large slds-text-align_center">No Active Homeowner Request Program found.</div>
+        </div>
+    </aura:if>  
+</aura:component>

@@ -1,0 +1,11 @@
+<aura:component >
+    
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    
+    <aura:attribute name="firstDate" type="Date" required="true" />
+    <aura:attribute name="secondDate" type="Date" description="if not provided, assume today's date." />
+    <aura:attribute name="value" type="Integer" />
+    
+    {!v.value}
+	
+</aura:component>

@@ -1,0 +1,70 @@
+<aura:component >
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler event="c:SC_CloseNewSession" action="{!c.handleCloseNewSessionEvent}"/>
+
+
+    <aura:attribute name="upcomingSessions" type="Object" description="Map of user ids to upcoming sessions" />
+
+    <aura:attribute name="coachee" type="User" default="{ 'sobjectType': 'User',
+                                                                         'FirstName': '----',
+                                                                         'LastName': '----',
+                                                                         'SmallPhotoUrl': '',
+                                                                         'Title': '-',
+                                                                         'Phone': 'XXX-XXX-XXXX'
+                                                                         }" />
+
+    <aura:attribute name="upcomingSession"
+                    type="SC_Coaching_Session__c"
+                    description="Coaching Session sobject with date and id." />
+
+    <aura:attribute name="coachingSessionWizard" type="Aura.Component[]" access="GLOBAL" />
+    <aura:registerEvent name="ViewTeam" type="c:SC_ViewTeam"/>
+
+
+    <div class="slds-box">
+        <div class="slds-media">
+            <div class="slds-media__figure">
+                <img src="{!v.coachee.SmallPhotoUrl}" class="slds-avatar--large coachee__profile" alt="Coachee profile picture" />
+            </div>
+            <div class="slds-media__body">
+                <p class="slds-truncate" title="{!v.coachee.FirstName + ' ' + v.coachee.LastName}"><strong>{!v.coachee.FirstName + ' ' + v.coachee.LastName}</strong></p>
+                <p class="slds-truncate" title="{!v.coachee.Title}">{!v.coachee.Title || '-'}</p>
+                <p class="slds-truncate" title="{!v.coachee.Phone}">{!v.coachee.Phone || '-'}</p>
+            </div>
+        </div>
+        <div class="coachee__body slds-m-vertical--medium slds-p-vertical--small">
+            <aura:if isTrue="{!v.upcomingSession}">
+
+                <span class="coachee__icon--success slds-float--left slds-m-right--xx-small">
+                    <lightning:icon iconName="utility:check" class="slds-icon-text-default" size="x-small" />
+
+                </span>
+                <p>Session Scheduled for <c:Link to="{!'/session/' + v.upcomingSession.Id}" label="{!v.upcomingSession.Name}"><ui:outputDate value="{!v.upcomingSession.Start_Date__c}" /></c:Link></p>
+
+                <aura:set attribute="else">
+                    <span class="slds-icon_container coachee__icon--warning slds-float--left slds-m-right--xx-small">
+                        <lightning:icon iconName="utility:priority" class="slds-icon-text-default" size="x-small" />
+                        
+                    </span>
+                    <p>No session scheduled</p>
+                </aura:set>
+            </aura:if>
+        </div>
+        <div class="coachee__footer">
+            <c:Link to="{!'/coachee/' + v.coachee.Id}" label="{!v.coachee.FirstName + ' ' + v.coachee.LastName}" class="slds-button slds-p-horizontal--small">View</c:Link>
+            <button class="slds-button slds-p-horizontal--small" onclick="{!c.handleCoachPress}">Coach</button>
+            <aura:if isTrue="{!and(v.coachee.Title != 'Territory Manager', v.coachee.Title != 'Business Development Manager')}">
+                <aura:if isTrue="{!and(v.coachee.Title != 'Regional Business Manager', v.coachee.Title != 'Area Sales Manager')}">
+                    <button class="slds-button slds-p-horizontal--small" onclick = "{!c.fireViewTeamEvent}">View Team</button>
+                </aura:if>
+            </aura:if>
+        </div>
+    </div>
+     <div Id = 'coachingSessionWizard'>
+         {!v.coachingSessionWizard}
+    </div>
+    
+
+</aura:component>

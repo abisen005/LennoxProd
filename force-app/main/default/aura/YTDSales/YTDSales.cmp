@@ -1,0 +1,52 @@
+<aura:component controller="TMDMConsoleController" extends="c:ConsoleComponent">
+    
+    <aura:handler name="change" value="{!v.account}" action="{!c.handleAccountChange}"/>
+    
+    <aura:set attribute="accessLevel" value="1" />
+
+    <aura:attribute name="YTDSales" type="Decimal" default="0" />
+    <aura:attribute name="deltaYTDSales" type="Decimal" default="0" />
+    <aura:attribute name="percentageChange" type="Integer" default="0" />
+    
+    <aura:attribute name="showYTDSalesInThousands" type="Boolean" default="false" />
+    <aura:attribute name="showDeltaYTDSalesInThousands" type="Boolean" default="false" />
+    <aura:attribute name="isModalOpen" type="Boolean" />
+    
+    <c:Card title="YTD Sales">
+        
+    	<div class="slds-text-heading--large">
+            <aura:if isTrue="{!!v.showYTDSalesInThousands}">
+            	<ui:outputCurrency value="{!v.YTDSales}" />
+                <aura:set attribute="else">
+                    <ui:outputCurrency value="{!v.YTDSales / 1000}" format="$." />k
+                </aura:set>
+            </aura:if>
+            <span class="{!'slds-m-left--small slds-badge slds-theme--' + v.status}">
+                <i class="{!'fa fa-caret-' + (v.deltaYTDSales > 0 ? 'up' : v.deltaYTDSales == 0 ? '' : 'down')}"></i>
+                <aura:if isTrue="{!!v.showDeltaYTDSalesInThousands}">
+                	<ui:outputCurrency value="{!v.deltaYTDSales > 0 ? v.deltaYTDSales : v.deltaYTDSales * -1}" class="{!v.status}" />
+                    <aura:set attribute="else">
+                        <ui:outputCurrency value="{!(v.deltaYTDSales > 0 ? v.deltaYTDSales : v.deltaYTDSales * -1) / 1000}" class="{!v.status}" format="$." />k
+                    </aura:set>
+                </aura:if>
+                 | 
+                <i class="{!'fa fa-caret-' + (v.percentageChange > 0 ? 'up' : v.percentageChange == 0 ? '' : 'down')}"></i>
+                <ui:outputNumber value="{!v.percentageChange > 0 ? v.percentageChange: v.percentageChange * -1}" />%
+                
+            </span>
+        </div>
+        
+        <aura:set attribute="footer">
+            <ui:button class="slds-button slds-text-align--left slds-truncate" label="Update Account Opps/Action Plans" press="{!c.handleOpenModal}" /> 
+        </aura:set>
+        
+    </c:Card>
+    
+    
+    <c:Modal isOpen="{!v.isModalOpen}" header="Update/Create Account Opportunities &amp; Action Plans">
+    	
+        <c:UpdateAccountOppsAndActionPlans account="{!v.account}" isRendered="{!v.isModalOpen}" />
+        
+    </c:Modal>
+	
+</aura:component>

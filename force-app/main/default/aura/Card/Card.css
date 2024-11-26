@@ -1,0 +1,8 @@
+.THIS .slds-card--footer .slds-button {
+    line-height: 1rem;
+}
+.THIS .slds-card--footer .slds-button--neutral {
+    background: transparent;
+    border: none;
+    padding: 0;
+}

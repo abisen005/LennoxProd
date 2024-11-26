@@ -1,0 +1,178 @@
+<apex:page showHeader="false"
+           standardStylesheets="false"
+           sidebar="false"
+           docType="html-5.0"
+           standardcontroller="Account"
+           applyBodyTag="False"
+           applyHtmlTag="False">
+
+<apex:slds />
+<body class="slds-scope">
+<style type="text/css">
+.slds-tabs--scoped__content {
+    display: none;
+}
+    .slds-scope .slds-tabs--scoped__content {
+        padding: 0;
+    }
+</style>
+
+<div class="slds-grid slds-grid--align-spread">
+    <div class="slds-tabs--scoped tabs1 slds-m-horizontal--small">
+        <ul class="slds-tabs--scoped__nav" role="tablist">
+            <li class="slds-tabs--scoped__item slds-active" title="Item One" role="presentation">
+                <a class="slds-tabs--scoped__link" href="#tab-scoped-1" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-scoped-1" id="tab-scoped-1__item">Sales</a>
+            </li>
+            <li class="slds-tabs--scoped__item" title="Item Two" role="presentation">
+                <a class="slds-tabs--scoped__link" href="#tab-scoped-2" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-scoped-2" id="tab-scoped-2__item">Quantity</a>
+            </li>
+        </ul>
+        <div class="slds-tabs--scoped__content slds-show" role="tabpanel" aria-labelledby="tab-scoped-1__item">
+            <c:QlikFrame url="{!$Setup.Qlik_chart_for_Account__c.Url_1_Account__c}" customerNumber="{!Account.SAP_Customer_Number__c}" />
+        </div>
+        <div class="slds-tabs--scoped__content" role="tabpanel" aria-labelledby="tab-scoped-2__item">
+            <c:QlikFrame url="{!$Setup.Qlik_chart_for_Account__c.Url_2_Account__c}" customerNumber="{!Account.SAP_Customer_Number__c}" />
+        </div>
+    </div>
+    <div class="slds-tabs--scoped tabs2 slds-m-horizontal--small">
+        <ul class="slds-tabs--scoped__nav" role="tablist">
+            <li class="slds-tabs--scoped__item slds-active" title="Item One" role="presentation">
+                <a class="slds-tabs--scoped__link" href="javascript:void(0);" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-scoped-1" id="tab-scoped-1__item">Sales</a>
+            </li>
+            <li class="slds-tabs--scoped__item" title="Item Two" role="presentation">
+                <a class="slds-tabs--scoped__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-scoped-2" id="tab-scoped-2__item">Quantity</a>
+            </li>
+        </ul>
+        <div class="slds-tabs--scoped__content slds-show" role="tabpanel" aria-labelledby="tab-scoped-1__item">
+            <c:QlikFrame url="{!$Setup.Qlik_chart_for_Account__c.Url_3_Account__c}" customerNumber="{!Account.SAP_Customer_Number__c}" />
+        </div>
+        <div class="slds-tabs--scoped__content" role="tabpanel" aria-labelledby="tab-scoped-2__item">
+            <c:QlikFrame url="{!$Setup.Qlik_chart_for_Account__c.Url_4_Account__c}" customerNumber="{!Account.SAP_Customer_Number__c}" />
+        </div>
+    </div>
+    <div class="slds-tabs--scoped tabs3 slds-m-horizontal--small">
+        <ul class="slds-tabs--scoped__nav" role="tablist">
+            <li class="slds-tabs--scoped__item slds-active" title="Item One" role="presentation">
+                <a class="slds-tabs--scoped__link" href="javascript:void(0);" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-scoped-1" id="tab-scoped-1__item">Sales</a>
+            </li>
+            <li class="slds-tabs--scoped__item" title="Item Two" role="presentation">
+                <a class="slds-tabs--scoped__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-scoped-2" id="tab-scoped-2__item">Quantity  </a>
+            </li>
+        </ul>
+        <div class="slds-tabs--scoped__content slds-show" role="tabpanel" aria-labelledby="tab-scoped-1__item">
+            <c:QlikFrame url="{!$Setup.Qlik_chart_for_Account__c.Url_5_Account__c}" customerNumber="{!Account.SAP_Customer_Number__c}" />
+        </div>
+        <div class="slds-tabs--scoped__content" role="tabpanel" aria-labelledby="tab-scoped-2__item">
+            <c:QlikFrame url="{!$Setup.Qlik_chart_for_Account__c.Url_6_Account__c}" customerNumber="{!Account.SAP_Customer_Number__c}" />
+        </div>
+    </div>
+</div>
+<script>
+(function() {
+
+    'use strict';
+
+    /**
+    * tabs
+    *
+    * @description The Tabs component.
+    * @param {Object} options The options hash
+    */
+    var tabs = function(options) {
+
+        var el = document.querySelector(options.el);
+        var tabNavigationLinks = el.querySelectorAll(options.tabNavigationLinks);
+        var tabContentContainers = el.querySelectorAll(options.tabContentContainers);
+        var activeIndex = 0;
+        var initCalled = false;
+
+        console.log('doing tabs: ', el, tabNavigationLinks, tabContentContainers);
+
+        /**
+        * init
+        *
+        * @description Initializes the component by removing the no-js class from
+        *   the component, and attaching event listeners to each of the nav items.
+        *   Returns nothing.
+        */
+        var init = function() {
+            console.log('initting tabs');
+            if (!initCalled) {
+                initCalled = true;
+
+                for (var i = 0; i < tabNavigationLinks.length; i++) {
+                    var link = tabNavigationLinks[i];
+                    handleClick(link, i);
+                }
+            }
+        };
+
+        /**
+        * handleClick
+        *
+        * @description Handles click event listeners on each of the links in the
+        *   tab navigation. Returns nothing.
+        * @param {HTMLElement} link The link to listen for events on
+        * @param {Number} index The index of that link
+        */
+        var handleClick = function(link, index) {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                goToTab(index);
+            });
+        };
+
+        /**
+        * goToTab
+        *
+        * @description Goes to a specific tab based on index. Returns nothing.
+        * @param {Number} index The index of the tab to go to
+        */
+        var goToTab = function(index) {
+            if (index !== activeIndex && index >= 0 && index <= tabNavigationLinks.length) {
+                tabNavigationLinks[activeIndex].parentElement.classList.remove('slds-active');
+                tabNavigationLinks[index].parentElement.classList.add('slds-active');
+                tabContentContainers[activeIndex].classList.remove('slds-show');
+                tabContentContainers[index].classList.add('slds-show');
+                activeIndex = index;
+            }
+        };
+
+        /**
+        * Returns init and goToTab
+        */
+        return {
+            init: init,
+            goToTab: goToTab
+        };
+
+    };
+
+    /**
+    * Attach to global namespace
+    */
+    window.tabs = tabs;
+
+})();
+
+var tab1Options = {
+        el: '.tabs1',
+        tabNavigationLinks: '.slds-tabs--scoped__link',
+        tabContentContainers: '.slds-tabs--scoped__content'
+    },
+    tab2Options = {
+        el: '.tabs2',
+        tabNavigationLinks: '.slds-tabs--scoped__link',
+        tabContentContainers: '.slds-tabs--scoped__content'
+    },
+    tab3Options = {
+        el: '.tabs3',
+        tabNavigationLinks: '.slds-tabs--scoped__link',
+        tabContentContainers: '.slds-tabs--scoped__content'
+    };
+tabs(tab1Options).init();
+tabs(tab2Options).init();
+tabs(tab3Options).init();
+</script>
+</body>
+</apex:page>

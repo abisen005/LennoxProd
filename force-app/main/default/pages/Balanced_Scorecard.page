@@ -1,0 +1,196 @@
+<apex:page docType="html-5.0" controller="MonthRegion">
+  <style>
+       body {
+            padding-left: 12%;
+            padding-right: 12%;
+        }
+        
+        
+        .select-list {
+            width: 500px; /* Adjust the width as needed */
+            margin-left: 10px;
+            border:none;
+            white-space: nowrap; /* Prevent options from wrapping */
+            overflow-y: auto;
+        }
+
+        .select-list option {
+            font-size: 15px;
+            text-align:center;
+            padding-left:10px;
+            width: calc(100% / 6); /* Set the width of each option to occupy 1/3 of the container */
+            float: left; /* Float options to create a matrix layout */
+            box-sizing: border-box; /* Include padding and border in width calculation */
+            padding: 5px; /* Optional: Add padding to the options */
+            border: 1px solid #ccc; /* Optional: Add border to the options */
+        }
+        
+        .select-list-region {
+            width: 600px; /* Adjust the width as needed */
+            margin-left: 10px;
+            border:none;
+            white-space: nowrap; /* Prevent options from wrapping */
+            overflow-y: auto;
+        }
+
+        .select-list-region option {
+            font-size: 15px;
+            text-align:center;
+            padding-left:10px;
+            width: calc(100% / 3); /* Set the width of each option to occupy 1/3 of the container */
+            float: left; /* Float options to create a matrix layout */
+            box-sizing: border-box; /* Include padding and border in width calculation */
+            padding: 5px; /* Optional: Add padding to the options */
+            border: 1px solid #ccc; /* Optional: Add border to the options */
+        }
+        
+        
+       .container {
+        display: flex;   
+        align:left;
+        width: 100%;        
+        
+        }
+        .left, .right {
+        width: 100%;
+        align:right;
+        }
+
+    </style>
+    
+            <head>
+                <title>Balanced Scorecard</title>
+                <apex:stylesheet value="{!$Resource.bootstrap}" />
+                <apex:stylesheet value="{!$Resource.AccountPlanStyle}" />
+                     <style type="text/css"> @media all { .page-break { display: none; } } @media print { .page-break { display: block; page-break-before: always; }  
+                   
+                 } @page { margin: 1cm } </style>
+            </head>
+
+    
+    
+    <div class="header">
+
+                        <apex:image url="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCTp&oid=00D80000000LcQA" height="45" styleClass="header__logo pad-left" />
+                     <h1 class="pull-right pad-right" style="margin:30px 0px 5px">Balanced Scorecard: YTD October</h1>
+    </div>  
+    
+     <div style="margin: 0; padding: 0; text-align:right">
+            <apex:form >
+<div class="container">
+        <div class="left">
+        <!-- Region selection -->
+            <apex:selectList styleClass="select-list-region" value="{!selectedRegions}" multiselect="true" size="2">
+                <apex:selectOptions value="{!regions}"/>
+            </apex:selectList>
+       <br/>
+        <apex:commandButton value="Confirm Region Selection" action="{!updateIframeSource}" rerender="iframePanel" />
+        </div>     
+        <div class="right">
+        <apex:selectList styleClass="select-list" label="Month" value="{!selectedValues}" size="2" multiselect="true">
+            <apex:selectOptions value="{!buttonValues}" />
+        </apex:selectList>
+           <br/>
+        <apex:commandButton value="Confirm Fiscal Month" action="{!updateIframeSource}" rerender="iframePanel" />
+        </div>
+                <!-- Region checkboxes -->
+
+</div>
+
+    </apex:form>
+    </div> 
+   
+
+   
+ 
+    
+    
+    <apex:outputPanel id="iframePanel">
+    
+        <div style="margin: 0; padding: 0; background-color:#4477aa; ">
+         <h3 style="color:white">Quality of Revenue </h3>
+    </div>
+        <apex:iframe id="mysales" src="{!iframeSourceSales}" width="100%" height="350px" />
+        
+        <!-- <div style="margin-top: -40px; margin-left:0px; padding: 0; height: 350px">  
+        <apex:iframe id="myVolume" src="{!iframeSource}" width="100%" height="100%"/>
+         </div>
+         -->
+         
+                <div style="margin-top: -90px; padding: 0; height:450px">  
+                
+        <apex:iframe id="myPrice" src="{!iframeSourcePrice}" width="100%" height="450px" />
+                </div>  
+        <div style="margin: 20px; padding: 0; background-color:#4477aa; ">
+         <h3 style="color:white">Customer Acquistion, Retention, and Growth</h3>
+        </div>  
+        
+        <div class="container" style="margin-top: 0px; padding: 0; height: 250px"> 
+
+        <apex:iframe id="myNewBusiness" src="{!iframeNewBusiness}" width="100%" height="250px" />
+      </div>        
+      
+      
+     
+             
+             
+               
+                        
+    <div class="container" style="margin-top: 0px; padding: 0; height: 350px"> 
+     <!--   <apex:iframe id="myCurrentBusinessOverview" src="{!iframeCurrentCustomerOverview}" width="100%" height="400px" />  -->   
+                  <apex:iframe id="myAttritionOverview" src="{!iframeAttritionOverview}" width="100%" height="350px" />  
+
+
+                       </div> 
+                       
+                                     <div class="container" style="margin-top: 0px; padding: 0; height: 250px"> 
+        
+        <div class="left">
+        <apex:iframe id="myParts" src="{!iframeParts}" width="100%" height="250px" />
+              </div>  
+              
+                       <div class="right" style="margin-top: 0px;">
+               
+         <apex:iframe src="{!iframeWillCall}" width="100%" height="250px" /> 
+        
+        
+              </div>  
+
+      </div>     
+ 
+<!--    comment out
+                  
+     <div class="container" style="margin-top: 0px; padding: 0; height: 400px"> 
+          <apex:iframe id="myCurrentBusiness" src="{!iframeCurrentCustomer}" width="100%" height="400px" /> 
+          <apex:iframe id="myAttrition" src="{!iframeAttrition}" width="100%" height="400px" />  
+ 
+
+    </div>                  
+                
+                
+                
+<div style="margin-top: 0px; padding: 0; height: 200px; align:center; background-color:grey; margin-bottom: 15px;">
+
+<h3>PlaceHolder for Will Call Metrics</h3>
+  </div> 
+  
+  --> 
+    </apex:outputPanel>
+    
+    
+        <div style="margin: 0; padding: 0; background-color:#4477aa">
+         <h3 style="color:white">Operations (YTD all region)</h3>
+    </div>    
+
+     <div class="container" style="margin-top: 0px; padding: 0; height: 400px"> 
+          <apex:iframe src="https://qlik.lennoxintl.com/aad/single/?appid=b8e2c0c9-9296-4048-8214-d95e6bb1c413&sheet=507b1923-2405-4f03-b681-2f8f570cb575&select=$::FISCAL_YEAR,2024" width="100%" height="400px" /> 
+
+
+    </div>  
+    
+      <div style="margin-top: -20px; padding: 0; height: 400px"> 
+          <apex:iframe src="https://qlikdev.lennoxintl.com/aad/single/?appid=dbd20b11-7135-4e4d-a093-182ad48be7d8&sheet=cd904470-684e-4d88-be2a-6d7308432e15&opt=noselections&opt=ctxmenu" width="100%" height="400px" /> 
+    </div>  
+  
+    
+</apex:page>

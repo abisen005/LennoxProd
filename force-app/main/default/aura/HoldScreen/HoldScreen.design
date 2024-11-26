@@ -1,0 +1,6 @@
+<design:component>
+<design:attribute name="CaseRec" label="CaseRec" />
+<design:attribute name="modelNo" label="modelNo" />
+<design:attribute name="message" label="message" />
+<design:attribute name="recordId" label="recordId" />
+</design:component>

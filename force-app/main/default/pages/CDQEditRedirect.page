@@ -1,0 +1,19 @@
+<apex:page >
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageMessage title="Success" summary="Redirecting to Vendavo..." severity="CONFIRM" />
+            <script>
+               var base_url = window.location.origin;
+               
+               //redirect user to vendavo page
+               setTimeout(function() {
+                       var recordId = '{!$CurrentPage.parameters.Id}',
+                           viewDealEndpoint = '/apex/Vendavo__VViewDealPage?id='+recordId;
+                window.open(viewDealEndpoint , '_blank');
+                document.location = base_url ;
+                       }, 1000);
+
+               </script>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

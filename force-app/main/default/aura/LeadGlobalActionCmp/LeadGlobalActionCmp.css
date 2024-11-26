@@ -1,0 +1,19 @@
+.THIS .slds-docked-form-footer {
+    position: relative;
+}
+.THIS  .slds-modal__container  .tableParent {
+    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 300px;
+}
+@media (min-width: 48em) {
+.THIS .slds-modal__container {
+width: 100% !important;
+max-width: 90% !important;
+}
+}
+
+.THIS .slds-modal__content {
+min-height: 70px;
+}

@@ -1,0 +1,8 @@
+<aura:component implements="lightning:availableForFlowScreens" access="global" >
+<aura:attribute name="cases" type="Case[]" access="global"/>
+
+<aura:iteration items="{!v.cases}" var="a">
+Case: <a href="{!'/'+a.Id}" target="_blank">{!a.name}</a>&nbsp;|&nbsp;Case Number: {!a.CaseNumber}&nbsp;|&nbsp;Created Date: {!a.CreatedDate}&nbsp;|&nbsp;Subject: {!a.subject}<br />
+</aura:iteration>
+
+</aura:component>

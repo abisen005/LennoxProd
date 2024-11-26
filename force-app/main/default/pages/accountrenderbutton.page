@@ -1,0 +1,15 @@
+<apex:page >
+
+    <h1>Invoice for </h1>
+    <p>Amount Due: </p>
+
+    <!-- JavaScript button to trigger PDF rendering -->
+    <input type="button" value="Generate PDF" onclick="generatePDF();" />
+
+    <script>
+        function generatePDF() {
+            // Reload the page with renderAs=pdf
+            window.location.href = window.location.href + '?isPDF=true';
+        }
+    </script>
+</apex:page>

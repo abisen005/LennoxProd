@@ -1,0 +1,29 @@
+<apex:component layout="none">
+    <apex:attribute name="chartName" type="String" description="Chart Name." required="true" />
+    <apex:attribute name="chartData" type="String" description="Chart Data." required="false" />
+    <div id="{!chartName}" class="chart-container split-bar-chart"></div>
+    <script>
+    var config = {!chartData},
+        {!chartName}Container = document.getElementById('{!chartName}'),
+        render{!chartName} = function(width) {
+            var childNode = {!chartName}Container.childNodes[0];
+            childNode ? {!chartName}Container.removeChild(childNode) : null;
+            {!chartName}Container.style.width = width;
+            config.width = width;
+            rateChart(config, '#{!chartName}');
+        },
+        renderPrint{!chartName} = function() {
+            var childNode = {!chartName}Container.childNodes[0];
+            childNode ? {!chartName}Container.removeChild(childNode) : null;
+            {!chartName}Container.style.width = 260;
+            config.width = 260;
+            config.printing = true;
+            rateChart(config, '#{!chartName}');
+        };
+    window.addEventListener('load', function() {
+        render{!chartName}();
+        retailScorecardApp.addBeforePrintFunction(renderPrint{!chartName});
+    });
+    
+    </script>
+</apex:component>

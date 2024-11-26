@@ -1,0 +1,102 @@
+<aura:component controller="SC_PlanningController" >
+
+    <aura:attribute name="plans"
+                    type="Object[]"
+                    description="List of Plan names and ids used to populate the menu that allows you to change plans" />
+    <aura:attribute name="readOnlyTopics" type="Planning_Topic__c[]" description="sObject representing the selected plan topics" />
+    <aura:attribute name="planningTopics" type="Planning_Topic__c[]" description="sObject representing the selected plan topics" />
+    <aura:attribute name="planningYear" type="String" description="Year of the selected plan in scope" />
+    <aura:attribute name="userId" type="String" default="" description="User id of the use attribute. If not provided, assumes the current user." />
+    <aura:attribute name="user" type="User" description="If not provided, assume the current user." />
+    <aura:attribute name="showPlanningTopics" type="Boolean" description="Don't render the planning topics until ready." />
+    <aura:attribute name="isLoading" type="Boolean" default="false" />
+    <aura:attribute name="coachingInfo"
+                    type="CoachingInfo"
+                    description="An object with information about the current user's coaching role and related data."
+                    default="{'coachees': []}" />
+
+
+
+    <aura:handler event="c:SC_CoachingInfoResponse" action="{!c.handleCoachingInfoResponse}" />
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+
+
+
+    <aura:registerEvent name="coachingInfoRequest" type="c:SC_CoachingInfoRequest" />
+
+
+
+    <section class="slds-p-around--small slds-m-top--small">
+
+        <div class="{!'slds-text-heading--small ' + (empty(v.plans) ? 'slds-hide' : '')}">
+             {!v.planningYear} Planning
+            <lightning:buttonMenu alternativeText="Select Planning" onselect="{!c.handleMenuSelect}" variant="bare  ">
+                <aura:iteration items="{!v.plans}" var="plan">
+                    <lightning:menuItem label="{!plan.year + ' Planning'}" value="{!plan.planningId}" checked="{!plan.isSelected}" />
+                </aura:iteration>
+            </lightning:buttonMenu>
+        </div>
+
+        <div class="{!and(empty(v.readOnlyTopics), empty(v.planningTopics)) ? 'slds-hide' : ''}">
+
+            <div class="{! !v.coachingInfo.isCoach ? 'slds-hide' : ''}">
+
+                <h1 class="slds-text-heading--large slds-m-top--large slds-m-bottom--medium">Residential Sales Strategy</h1>
+
+                <aura:if isTrue="{!v.showPlanningTopics}">
+                    <aura:iteration items="{!v.readOnlyTopics}" var="topic">
+                        <c:SC_Planning_Topic title="{!topic.Title__c}"
+                                             infoBubbleContent="{!topic.Info_Bubble_Content__c}"
+                                             content="{!topic.Planning_Topic_Content__r}"
+                                             topicId="{!topic.Id}"
+                                             strategy="{!topic.Strategy__c}"
+                                             canEditStrategy="{!topic.Strategy_Planning_Topic__c}"
+                                             hasAssignments="{!topic.Strategy_Planning_Topic__c}"
+                                             showTopicContent="true"
+                                             user="{!v.user}" />
+
+                    </aura:iteration>
+                </aura:if>
+
+            </div>
+
+            <h1 class="slds-text-heading--large slds-m-top--xx-large slds-m-bottom--medium">Leadership Focus</h1>
+
+            <aura:if isTrue="{!v.showPlanningTopics}">
+                <aura:iteration items="{!v.planningTopics}" var="topic">
+                    <c:SC_Planning_Topic title="{!topic.Title__c}"
+                                         infoBubbleContent="{!topic.Info_Bubble_Content__c}"
+                                         content="{!topic.Planning_Topic_Content__r}"
+                                         topicId="{!topic.Id}"
+                                         strategy="{!topic.Strategy__c}"
+                                         canEditStrategy="{! and(v.coachingInfo.isCoach, topic.Strategy_Planning_Topic__c)}"
+                                         hasAssignments="{!topic.Strategy_Planning_Topic__c}"
+                                         showTopicContent="{!v.coachingInfo.isCoach}"
+                                         user="{!v.user}"
+                                         assignees="{!v.coachingInfo.coachees}"
+                                         canCreateAssignments="{!v.coachingInfo.isCoach}" />
+
+                </aura:iteration>
+            </aura:if>
+        </div>
+
+        <div class="{!and(empty(v.readOnlyTopics), empty(v.planningTopics)) ? '' : 'slds-hide'}">
+            <p class="slds-m-bottom--medium">There are no planning records.</p>
+
+            <button class="slds-button slds-button--neutral"
+                    name="thisYear"
+                    onclick="{!c.handleCreatePlanningPress}">Plan for This Year</button>
+            <button class="slds-button slds-button--neutral"
+                    name="nextYear"
+                    onclick="{!c.handleCreatePlanningPress}">Plan for Next Year</button>
+        </div>
+
+
+
+        <!-- LOADER -->
+        <span class="{!v.isLoading ? '' : 'slds-hide'}">
+            <c:SC_Loader />
+        </span>
+
+    </section>
+</aura:component>

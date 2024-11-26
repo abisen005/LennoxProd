@@ -1,0 +1,65 @@
+.THIS {
+    background-color: white;
+}
+.THIS .slds-button.tmdm-button {
+    line-height: 1;
+    width: auto;
+    height: auto;
+    border: none;
+}
+.THIS .slds-button.tmdm-button .slds-icon {
+	margin: .75rem;   
+}
+
+.THIS .slds-button.tmdm-button .icon-update-scorecard {
+    background-color: #43B5B5;
+}
+
+.THIS .slds-button.tmdm-button .icon-update-forecast {
+    background-color: #81B4D6;
+}
+
+.THIS .slds-button.tmdm-button .icon-map-dealer {
+    background-color: #76C6EE;
+}
+
+.THIS .slds-button.tmdm-button .icon-new-contact {
+    background-color: #A094ED;
+}
+
+.THIS .slds-button.tmdm-button .icon-lowes-scorecard {
+    background-color: #004990;
+}
+.THIS .slds-button.tmdm-button .icon-costco-scorecard {
+	background-color: #ED3D40;
+}
+.THIS .slds-button.tmdm-button .icon-pre-call-planner {
+    background-color: #88C651;
+}
+
+.THIS .slds-button.tmdm-button .icon-cy-dbr {
+    background-color: #699BE1;
+}
+
+.THIS .slds-button.tmdm-button .icon-py-dbr {
+    background-color: #699BE1;
+}
+
+.THIS .slds-button.tmdm-button .icon-sales-summary {
+    background-color: #f2cf5b;
+}
+.THIS .slds-badge {
+        vertical-align: middle;
+}
+
+.THIS .slds-badge>* {
+    vertical-align: unset;
+}
+/*.THIS .slds-button:not(.slds-button--neutral),
+.THIS .slds-button:not(.slds-button--brand), 
+.THIS .slds-button:not(.slds-button--destructive), 
+.THIS .slds-button:not(.slds-button--inverse) {
+    padding: 0;
+    background: rgba(0, 0, 0, 0);
+    border: 0;
+}*/

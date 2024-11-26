@@ -1,0 +1,125 @@
+<aura:component implements="force:hasSObjectName,force:lightningQuickActionWithoutHeader,force:hasRecordId" 
+                access="global" controller="CreateNewCaseApexController">
+    <aura:attribute name="sObjectName" type="String" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="isSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="recordTypeId" type="String"/> 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="options" type="List"/>
+    <aura:attribute name="origin" type="String"/>
+    <aura:attribute name="selectedValue" type="String"/>    
+    
+    <aura:attribute name="newContact" type="Object"/>
+    <aura:attribute name="newContactError" type="String"/>
+    <aura:attribute name="simpleNewContact" type="Object"/>
+    <aura:attribute name="showCreateContact" type="Boolean" default="false"/>
+    <aura:attribute name="showNewContactCreated" type="Boolean" default="false"/>
+    
+    <lightning:card >
+        <div class="scrollDiv">
+            <aura:if isTrue="{!v.isSpinner}">
+                <div class="slds-spinner_container">
+                    <div role="status" class="slds-spinner slds-spinner_brand slds-spinner_large">
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </aura:if>
+            <header class="slds-modal__header">New Case</header>
+            <lightning:recordEditForm 
+                                      recordTypeId="{!v.recordTypeId}"
+                                      onload="{!c.handleOnload}"
+                                      onsuccess="{!c.handleOnSuccess}" 
+                                      objectApiName="Case" 
+                                      aura:id="createAccountCase" 
+                                      onsubmit="{!c.handleOnSubmit}"
+                                      >
+                <lightning:messages/>
+                <lightning:inputField tabindex="-1" fieldName="AccountId" aura:id="accountLookup" onchange="{!c.onAccountChange}"/>
+                <aura:if isTrue="{!v.sObjectName == 'Contact'}">
+                    <lightning:inputField fieldName="ContactId" aura:id="contactLookup"/>                    
+                </aura:if>
+                <aura:if isTrue="{!and(v.sObjectName != 'Contact',v.showNewContactCreated != true)}">
+                    <lightning:select tabindex="-1" name="SelectedContact" label="Select Contact" aura:id="ContactId" value="{!v.selectedValue}" onchange="{!c.createNewContact}">
+                        <option text="None" value="None" selected="True"/>                            
+                        <aura:iteration items="{!v.options}" var="option">
+                            <option text="{!option.Full_name_obsolete__c}" value="{!option.Id}"/>
+                        </aura:iteration>
+                        <option text="Create New Contact" value="Create New Contact"/>
+                    </lightning:select>
+                </aura:if>
+                <aura:if isTrue="{!v.showNewContactCreated}">
+                    <lightning:inputField fieldName="ContactId" aura:id="contactLookup2"  />
+                </aura:if>
+                <lightning:inputField fieldName="Reason"/>
+                <lightning:inputField fieldName="Origin" value="{!v.origin}" class="customRequired none" onchange = "{!c.removeError}" aura:Id = "OriginField"/>
+                <lightning:inputField fieldName="Subject"/>
+                <lightning:inputField fieldName="Description"/>
+                
+                
+                <lightning:button type="submit" name="Submit" label="Submit" class="slds-m-top_medium"/>
+            </lightning:recordEditForm>
+        </div>
+    </lightning:card>
+    
+    <div>
+        <aura:if isTrue="{!v.showCreateContact}">
+            <force:recordData aura:id="ContactRecordCreator"
+                              layoutType="FULL"
+                              targetRecord="{!v.newContact}"
+                              targetFields="{!v.simpleNewContact}"
+                              fields="FirstName,LastName,AccountId,Phone,Email"
+                              targetError="{!v.newContactError}"
+                              mode="New"/>
+            <div class="slds-page-header" role="banner">
+                <p class="slds-text-heading_label">Create Contact</p>
+            </div>
+            
+            <!-- Display Lightning Data Service errors -->
+            <aura:if isTrue="{!not(empty(v.newContactError))}">
+                <div class="recordError">
+                    <ui:message title="Error" severity="error" closable="true">
+                        {!v.newContactError}
+                    </ui:message>
+                </div>
+            </aura:if>
+            <div class="demo-only" style="height: 640px;">
+                <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                    <div class="slds-modal__container">
+                        <header class="slds-modal__header">
+                            <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick="{!c.closeModel}">
+                                X
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                            <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Create New Contact</h2>
+                        </header>
+                        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                            <!-- Display the new Contact form -->
+                            <div class="slds-form_stacked">
+                                <lightning:input name="FirstName" label="First Name" aura:id="contactField"
+                                                 value="{!v.simpleNewContact.FirstName}" required="true"/>
+                                
+                                <lightning:input name="LastName" label="Last Name" aura:id="contactField"
+                                                 value="{!v.simpleNewContact.LastName}" required="true"/>
+                                
+                                <lightning:input name="AccountId" label="Account Name" aura:id="accountLookup1"
+                                                 value="{!v.simpleNewContact.AccountId}" style="display:none" /> 
+                                
+                                <lightning:input name="Phone" label="Phone"
+                                                 value="{!v.simpleNewContact.Phone}"/>
+                                
+                                <lightning:input name="Email" label="Email"
+                                                 value="{!v.simpleNewContact.Email}"/>
+                            </div>
+                        </div>
+                        <footer class="slds-modal__footer">
+                            <button class="slds-button slds-button_neutral" onclick="{!c.closeModel}">Cancel</button>
+                            <button class="slds-button slds-button_brand" aura:id="saveButtonId" onclick="{!c.handleSaveContact}">Save</button>
+                        </footer>
+                    </div>
+                </section>
+                <div class="slds-backdrop slds-backdrop_open"></div>
+            </div>
+        </aura:if>
+    </div>
+</aura:component>

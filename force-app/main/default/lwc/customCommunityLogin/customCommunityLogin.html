@@ -1,0 +1,48 @@
+<template>
+	<div class="spinner">
+		<template if:true={isLoading}>
+			<lightning-spinner alternative-text="Loading" variant="brand" size="large">
+			</lightning-spinner>
+		</template>
+	</div>
+	<!--lightning-card class="custom-card" title="Community Login"-->
+
+		<div class="slds-p-around_medium">
+			<p if:true={error} class="slds-text-color_error" style="text-align:center">{error}</p>
+    <p if:true={isInvalidEmail} class="valid-email">Enter a valid email address.</p>
+
+			<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left" style="position: relative;">
+
+				<lightning-icon size="x-small"
+					class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default"
+					style=" margin-top: 20px;position: absolute;top: 10px; left: 10px;" icon-name="utility:user"></lightning-icon>
+				<lightning-input icon-name="utility:user" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"  placeholder="Username" size="small" type="Email"
+					label="Username" value={username} onchange={handleUsernameChange} onkeydown={handleKeyPress}>
+				</lightning-input>
+			</div>
+
+			<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_left">
+
+				<lightning-icon size="x-small"
+					class="slds-icon slds-input__icon slds-input__icon_left slds-icon-text-default"
+					style=" margin-top: 5px;" icon-name="utility:lock"></lightning-icon>
+				<lightning-input type="password" label="Password" placeholder="Password" value={password} onkeydown={handleKeyPress}
+					onchange={handlePasswordChange}></lightning-input>
+			</div>
+			<br/>
+			<lightning-input type="checkbox" label="Remember Me" checked={rememberMe} onchange={handleRememberMeChange}>
+			</lightning-input>
+			<br/>
+			<div class="container">
+				<a href="#" class="sfdc_hyperlink" onclick={handleForgotPassword}>Forgot your Password?</a>
+				<span class="spacer"></span>
+				<a href="#" class="sfdc_hyperlink" onclick={handleDealerSignup}>Dealer Signup</a>
+			</div><br/>
+			<div class="cSelfRegister">
+				<!--lightning-button label="Log in" variant="destructive" class="sfdc_button"  onclick={handleLogin}></lightning-button-->
+
+
+				<button class="slds-button slds-button_destructive" style="width:100%" onclick={handleLogin} >Log in</button>
+			</div>
+		</div>
+</template>

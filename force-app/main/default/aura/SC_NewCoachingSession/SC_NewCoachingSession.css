@@ -1,0 +1,38 @@
+.THIS {
+  z-index: 6000; }
+  .THIS.sc-new-session {
+    position: absolute;
+    width: 100%;
+    min-height: 100%;
+    top: 0;
+    left: 0;
+    background: white; }
+  .THIS.sc-new-session--closed {
+    visibility: hidden;
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%);
+    -webkit-transition: -webkit-transform 0.2s ease-in, visibility 0s 0.2s;
+    transition: transform 0.2s ease-in, visibility 0s 0.2s; }
+  .THIS.sc-new-session--open {
+    visibility: visible;
+    -webkit-transform: translateY(0%);
+    transform: translateY(0%);
+    -webkit-transition: -webkit-transform 0.2s ease-out;
+    transition: transform 0.2s ease-out; }
+  .THIS .cs-new-session__step-header {
+    border-top: 1px solid token(colorBorderSeparatorAlt);
+    border-bottom: 1px solid token(colorBorderSeparatorAlt); }
+  .THIS .slds-wizard__progress {
+    z-index: 0; }
+  .THIS .sc-new-session-icon--success {
+    fill: #4bca81; }
+  .THIS .uiInput--datetime + .datePicker-openIcon,
+  .THIS .uiInput--datetime .datePicker-openIcon,
+  .THIS .uiInput--datetime + .timePicker-openIcon,
+  .THIS .uiInput--datetime .timePicker-openIcon {
+    left: auto;
+    right: 10px;
+    float: right;
+    top: -23px; }
+  .THIS .slds-box {
+    padding: 0; }

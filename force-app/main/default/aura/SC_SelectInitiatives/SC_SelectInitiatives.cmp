@@ -1,0 +1,75 @@
+<aura:component controller="SC_SelectInitiativesController">
+
+
+    <aura:registerEvent name="coachingInfoRequest" type="c:SC_CoachingInfoRequest" />
+    <aura:registerEvent name="routeChangeAttempt" type="c:routeChangeAttempt" />
+    <aura:registerEvent name="initiativeSelected" type="c:SC_EvtInitiativeSelected" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler event="c:SC_ListItemActionPress" action="{!c.handleListItemActionPress}" />
+    <aura:handler event="c:SC_CoachingInfoResponse" action="{!c.handleCoachingInfoResponse}" />
+
+    <aura:attribute name="coachingInfo"
+                    type="CoachingInfo"
+                    description="An object with information about the current user's coaching role and related data." />
+    <aura:attribute name="isLoading" type="Boolean" default="true" />
+    <aura:attribute name="initiatives" type="SC_Initiative__c[]" />
+    <aura:attribute name="parentId" type="String" description="Id of parent Initiative." />
+    <aura:attribute name="selectedInitiativeLabel" type="String" />
+    <aura:attribute name="breadcrumbs" type="Object[]" description="A list of initiative history." />
+
+
+
+    <section class="{!$Browser.formFactor != 'PHONE' ? 'null' : 'slds-tabs--scoped__content slds-m-horizontal--small slds-p-around--none'}">
+
+
+        <!-- Has Data -->
+        <div class="{!!empty(v.initiatives) ? '' : 'slds-hide'}">
+            <nav role="navigation" aria-label="Breadcrumbs" class="slds-p-around--small slds-theme--shade">
+                <ol class="slds-breadcrumb slds-list--horizontal">
+                    <aura:iteration items="{!v.breadcrumbs}" var="b" indexVar="i">
+                        <li class="slds-breadcrumb__item slds-text-title--caps slds-truncate">
+                            <a href="#"
+                               onclick="{!c.handleBreadcrumbClick}"
+                               class="{!v.breadcrumbs.length != i + 1 ? '' : 'slds-text-link--reset'}">{!b.label}</a>
+                        </li>
+                    </aura:iteration>
+                </ol>
+            </nav>
+
+
+            <ul>
+                <aura:iteration items="{!v.initiatives}" var="initiative">
+                    <li>
+                        <c:SC_ListItemAction label="{!initiative.Name}"
+                                             content="{!initiative.Description__c}"
+                                             param="{!initiative.Id}"
+                                             iconClass="slds-icon-custom-custom26"
+                                             iconPath="custom:custom26"
+                                             hasChildren="{!initiative.Child_Initiatives__r}" />
+                    </li>
+                </aura:iteration>
+            </ul>
+        </div>
+
+
+
+        <!-- No Data -->
+        <div class="{!'slds-p-around--small ' + (!empty(v.initiatives) ? 'slds-hide' : '')}">
+            <div class="slds-box slds-theme--shade">
+                <p>There are no Initiatives.</p>
+            </div>
+        </div>
+
+
+
+        <!-- Loading -->
+        <span class="{!v.isLoading ? '' : 'slds-hide'}">
+            <c:SC_Loader />
+        </span>
+
+
+
+    </section>
+
+</aura:component>

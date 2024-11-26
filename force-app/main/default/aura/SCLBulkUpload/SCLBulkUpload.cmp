@@ -1,0 +1,75 @@
+<aura:component
+    controller="SCLBulkUploadController"
+    description="allow csv uploads for SCL"
+    implements="force:hasRecordId,flexipage:availableForRecordHome"
+    access="Global"
+>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="fileToBeUploaded" type="Object[]"/>
+    <aura:attribute name="columns" type="List"/>
+    <aura:attribute name="result" type="Object"/>
+    <aura:attribute name="errors" type="Object"/>
+    <aura:attribute name="resultMsg" type="string"/>
+
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+
+    <lightning:card footer="" title="Bulk Forecast Upload">
+        <p class="slds-p-horizontal_small">
+            <div class="slds-box">
+                <p>To upload multiple materials to a Forecast Request, please use the SCL Template button at the top of this record to download the Bulk Upload worksheet. You must add your items as indicated and then save the file with a .csv extension.</p>
+                <br/>
+                <p>If your upload is missing any of the required fields or has errors, you will have the opportunity to correct those errors from the <b>File Review</b> section, below, before completing your upload.</p>
+            </div>
+        </p>
+        <lightning:spinner aura:id="mySpinner" class="slds-hide"/>
+
+        <p class="slds-p-horizontal_small">
+            <div class="slds-box">
+                <div class="slds-grid slds-wrap">
+                   <lightning:input
+                        aura:id="file-input"
+                        type="file"
+                        files="{!v.fileToBeUploaded}"
+                        onchange="{!c.onFileUploaded}"
+                        accept="application/csv"
+                        label="Please upload your CSV file here to be processed."
+                        name="file"
+                        multiple="false"
+                    />
+                </div>
+            </div>
+        </p>
+        <aura:if isTrue="{! v.result.Filename }">
+            <p class="slds-p-horizontal_small">
+                <div class="slds-box">
+                    <div class="slds-text-heading_small">File Review: {!v.result.Filename}</div>
+                    <div class="slds-grid slds-wrap">
+                        <aura:if isTrue="{! and(v.result.Parsed,!v.result.Uploaded) }">
+                            <div><p>Please review and correct the following issues:</p></div>
+                            <lightning:datatable
+                                aura:id="DataTable"
+                                keyField="Id"
+                                data="{!v.result.skus}"
+                                errors="{!v.errors}"
+                                columns="{!v.columns}"
+                                onsave="{!c.saveData}"
+                                hideCheckboxColumn="true"
+                                showRowNumberColumn="false"
+                            />
+                            <!--draftValues="{!v.draftValues}"-->
+
+                            <aura:set attribute="else">
+                                <aura:iteration var="item" items="{!v.result.Messages}">
+                                    <span class="custom-error">
+                                    <aura:if isTrue="{!item.Row}">[{!item.Row}]</aura:if>{!item.Message}
+                                    </span>
+                                    <br/>
+                                </aura:iteration>
+                            </aura:set>
+                        </aura:if>
+                    </div>
+                </div>
+            </p>
+        </aura:if>
+    </lightning:card>
+</aura:component>

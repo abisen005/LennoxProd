@@ -1,0 +1,6 @@
+<design:component>
+	<design:attribute name="stringResponseRFC" label="Response" />
+    <design:attribute name="searchName" label="Search-Flow" />
+    <design:attribute name="accName" label="Account Name" />
+    <design:attribute name="custNumber" label="Customer Number" />
+</design:component>

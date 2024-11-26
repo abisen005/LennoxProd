@@ -1,0 +1,7 @@
+.THIS .container{
+    background: #f7fafd!important;
+    padding:10px;
+    border-radius: 5px;
+}
+
+.THIS .slds-accordion__summary-action-icon{display:none}

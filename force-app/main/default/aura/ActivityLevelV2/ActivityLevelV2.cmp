@@ -1,0 +1,308 @@
+<aura:component controller="TMDMConsoleControllerV2" extends="c:ConsoleComponentV2">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    
+    <aura:registerEvent name="ModalAlert" type="c:ModalAlert" />
+    
+    <aura:set attribute="accessLevel" value="2" />
+    
+    <!--<aura:attribute name="accountId" type="String" />-->
+    <aura:attribute name="event" type="Event" />
+    <aura:attribute name="numberDays" type="Integer" default="0" />
+    <aura:attribute name="hasMeeting" type="Boolean" />
+    <aura:attribute name="isModalOpen" type="Boolean" default="false" />
+    <aura:attribute name="isSf1" type="Boolean" />
+    <aura:attribute name="newEvent" type="Event" default="{sobjectType: 'Event'}" />
+    <aura:attribute name="pickListValues" type="Map" />
+    <!--<aura:attribute name="eventTypeOptions" 
+                    type="String[]" 
+                    description="Temporarily store the picklist options here until force:inputField works with lightning out." 
+                     default="Meeting, Phone Call - Outbound, Phone Call - Inbound, Email, Retail Outlet Review, Retail Ride-a-long, Training, Office, Other (Include Details)"/>-->
+    
+    <aura:attribute name="eventTypeOptions" 
+                    type="String[]" 
+                    default="Meeting1"
+                    description="Temporarily store the picklist options here until force:inputField works with lightning out." />
+    <aura:attribute name="eventTopicOptions" 
+                    type="String[]" 
+                    description="Temporarily store the picklist options here until force:inputField works with lightning out." 
+                    default="Prospecting1" />
+    <aura:attribute name="defaultEventType" type="String" default="Meeting"/>
+    
+    
+    <c:Card title="{!v.title}">
+        
+        <div class="slds-text-heading--large">
+            
+            <aura:renderIf isTrue="{!v.numberDays != null}">
+                
+                <ui:outputNumber value="{!v.numberDays}" class="{!v.status}" /> 
+                
+                <span class="{!'slds-m-left--small slds-badge slds-theme--' + v.status}">
+                    
+                    <ui:outputDate value="{!v.event.StartDateTime}" />
+                    
+                </span>
+                
+            </aura:renderIf>
+            
+            <aura:renderIf isTrue="{!v.numberDays == null}">
+                
+                <span class="{!v.status}">
+                    
+                    N/A
+                    
+                </span>
+                
+                <span class="{!'slds-m-left--small slds-badge slds-theme--' + v.status}">
+                    
+                    No Meetings Recorded
+                    
+                </span>
+                
+            </aura:renderIf>
+            
+        </div>
+        
+        <aura:set attribute="footer">
+            
+            <span class="{!v.hasMeeting ? 'slds-show' : 'slds-hide'}">
+                
+                <!--<ui:button class="{!'slds-button slds-text-align- -left slds-truncate ' + (v.isSf1 ? '' : 'slds-hide')}" 
+                           label=""
+                           press="{!c.handleHasMeetingPress}">
+                    
+                    Open Pre-Call Planner
+                    
+                </ui:button>
+                
+                <a href="{!'/apex/TMPreCallPlanner?id=' + v.event.Id}"
+                   class="{!'slds-button slds-text-align- -left slds-truncate ' + (v.isSf1 ? 'slds-hide' : '')}" 
+                   target="_parent"
+                   id="planNextMeetingLink">
+                    
+                    Open Pre-Call Planner
+                    
+                </a>-->
+                
+                <a href="{!'/apex/TMPreCallPlanner?id=' + v.event.Id}"
+                   class="{!'slds-button slds-text-align--left slds-truncate'}" 
+                   target="_parent"
+                   id="planNextMeetingLink">
+                    
+                    Open Pre-Call Planner
+                    
+                </a>
+                
+            </span>
+            
+            <span class="{!!v.hasMeeting ? 'slds-show' : 'slds-hide'}">
+                
+                <ui:button class="slds-button slds-text-align--left slds-truncate" 
+                           press="{!c.handleHasNoMeetingPress}" 
+                           label="Plan the Next Meeting" />
+                
+            </span>
+            
+        </aura:set>
+        
+    </c:Card>
+    
+    <c:ModalV2 isOpen="{!v.isModalOpen}" header="New Meeting">
+        
+        <div class="slds-form--stacked slds-m-around--medium">
+            
+            <!-- <div class="slds-form-element">                
+                <label class="slds-form-element__label">                    
+                    Start Date/Time                    
+                </label>                
+                <div class="slds-form-element__control">                    
+                    <ui:inputDateTime aura:id="startDateTime" change="{!c.changeOne}" class="slds-input required required-date" value="{!v.newEvent.StartDateTime}" 
+                                      displayDatePicker="true" required="true" disabled="{!v.isLoading}" />                    
+                    <br/>                    
+                    <aura:if isTrue="{!v.showEMTwo}">                        
+                        <span style="color:red">This field is required</span>                        
+                    </aura:if>                    
+                </div>                
+            </div> -->
+            
+            
+            <div class="slds-form-element">
+                <!-- <label class="slds-form-element__label ">Start Date/Time</label> -->
+                <div class="slds-form-element__control">
+                    <ui:inputDateTime aura:id="startDateTime" change="{!c.changeOne}"
+                                      class="slds-input" label="Start Date/Time" 
+                                      value="{!v.newEvent.StartDateTime}" 
+                                      displayDatePicker="true" 
+                                      required="true"
+                                      disabled="{!v.isLoading}" /> 
+                    <aura:if isTrue="{!v.showEMOne}">
+                        <span style="color:red">This field is required</span> 
+                    </aura:if>
+                </div>
+            </div>
+            <div class="slds-form-element">
+                <label class="slds-form-element__label">Duration (minutes) </label>
+                <div class="slds-form-element__control">
+                    <ui:inputNumber aura:id="duration" 
+                                    class="slds-input " 
+                                    value="{!v.newEvent.DurationInMinutes}" 
+                                    maxLength="3"
+                                    required="true"
+                                    disabled="{!v.isLoading}" />
+                </div>
+            </div>
+            <div class="slds-form-element">
+                <label class="slds-form-element__label">Event Type</label>
+                <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                        <select aura:id="eventType" id="eventTypeId2" class="slds-select " disabled="{!v.isLoading}">
+                            
+                            <aura:iteration items="{!v.eventTypeOptions}" var="i">
+                                <option value="{!i}" label="{!i}" selected="{!i == v.defaultEventType}"></option>
+                            </aura:iteration>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="slds-form-element">
+                <label class="slds-form-element__label">Event Topic</label>
+                <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                        <select aura:id="eventTopic" id="eventTopicId" class="slds-select" disabled="{!v.isLoading}" multiple="true">
+                            <aura:iteration items="{!v.eventTopicOptions}" var="i">
+                                <option value="{!i}">{!i}</option>
+                            </aura:iteration>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="slds-form-element">
+                <label class="slds-form-element__label">Subject</label> 
+                <div class="slds-form-element__control">
+                    <ui:inputText aura:id="subject" change="{!c.changeTwo}"
+                                  value="{!v.newEvent.Subject}"  
+                                  class="slds-input"
+                                  required="true"
+                                  disabled="{!v.isLoading}"/>
+                    <aura:if isTrue="{!v.showEMTwo}">
+                        <span style="color:red">This field is required</span>
+                    </aura:if>
+                </div>
+            </div>
+            <!--
+            <div class="slds-form-element">
+                <label class="slds-form-element__label">Duration (minutes) </label>
+                <div class="slds-form-element__control">
+                    <ui:inputNumber aura:id="duration" 
+                                    class="slds-input " 
+                                    value="{!v.newEvent.DurationInMinutes}" 
+                                    maxLength="3"
+                                    required="true"
+                                    disabled="{!v.isLoading}" />
+                </div>
+            </div>  
+            <div class="slds-form-element">                
+                <label class="slds-form-element__label">                    
+                    Duration (minutes)                     
+                </label>                
+                <div class="slds-form-element__control">                    
+                    <ui:inputNumber aura:id="duration" class="slds-input" value="{!v.newEvent.DurationInMinutes}" maxLength="3" required="true" 
+                                    disabled="{!v.isLoading}" />                    
+                </div>
+                
+            </div>
+            
+            <div class="slds-form-element">
+                
+                <label class="slds-form-element__label">
+                    
+                    Subject
+                    
+                </label>
+                
+                <div class="slds-form-element__control">
+                    
+                    <ui:inputText aura:id="subject" change="{!c.changeTwo}" value="{!v.newEvent.Subject}" class="slds-input required required-string" 
+                                  disabled="{!v.isLoading}"/>
+                    
+                    <br/>
+                    
+                    <aura:if isTrue="{!v.showEMTwo}">
+                        
+                        <span style="color:red">
+                            
+                            This field is required
+                            
+                        </span>
+                        
+                    </aura:if>
+                    
+                </div>
+                
+            </div>
+            
+            <div class="slds-form-element">
+                
+                <label class="slds-form-element__label">
+                    
+                    Event Type
+                    
+                </label>
+                
+                <div class="slds-form-element__control">
+                    
+                    <div class="slds-select_container">
+                        <select aura:id="eventType" class="slds-select required required-string"
+                                disabled="{!v.isLoading}" 
+                                value="{!v.newEvent.Event_Type__c}" >
+                            <aura:iteration items="{!v.pickListValues.Event_Type__c}" var="i">
+                                <option value="{!i}" label="{!i}"></option>
+                            </aura:iteration>
+                        </select>
+                        
+                    </div>
+                    
+                </div>
+                
+            </div>
+            
+            <div class="slds-form-element">
+                
+                <label class="slds-form-element__label">
+                    
+                    Event Topic
+                    
+                </label>
+                
+                <div class="slds-form-element__control">
+                    
+                    <div class="slds-select_container">
+                        
+                        <ui:inputSelect aura:id="eventTopic" class="slds-select required required-string"
+                                        disabled="{!v.isLoading}" multiple="true"
+                                        value="{!v.newEvent.Event_Topic__c}"   >
+                            <aura:iteration items="{!v.pickListValues.Event_Topic__c}" var="i">
+                                <ui:inputSelectOption text="{!i}">{!i}</ui:inputSelectOption>
+                            </aura:iteration>
+                        </ui:inputSelect>
+                    </div>
+                    
+                </div>
+                
+            </div> -->
+            
+        </div>
+        
+        <aura:set attribute="footer">
+            
+            <ui:button class="slds-button slds-button--neutral" press="{!c.handleCloseModalPress}" label="Cancel" disabled="{!v.isLoading}" />
+            
+            <ui:button class="slds-button slds-button--neutral slds-button--brand" press="{!c.handleSavePress}" label="Save" disabled="{!v.isLoading}" />
+            
+        </aura:set>
+        
+    </c:ModalV2>
+    
+</aura:component>

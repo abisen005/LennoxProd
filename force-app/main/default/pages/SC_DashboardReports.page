@@ -1,0 +1,53 @@
+<apex:page controller="SC_DashboardReportsController" showHeader="false" sidebar="false" standardStylesheets="false" >
+
+	<style>
+		.analyticsEmbeddedReportChart.width_small {margin: auto}
+		table { width: 100% }
+		td { vertical-align: top }
+	</style>
+
+
+	<!-- MULTIPLE COLUMNS IF NOT PHONE -->
+	<apex:outputPanel layout="none" rendered="{!formFactor != 'PHONE'}">
+		<table>
+			<tbody>
+					<tr>
+						<apex:outputPanel layout="none" rendered="{!reportIdsSize > 0}">
+							<td>
+								<analytics:reportChart reportId="{!reportIds[0]}" size="small" showRefreshButton="false" />
+							</td>
+						</apex:outputPanel>
+						<apex:outputPanel layout="none" rendered="{!reportIdsSize > 1}">
+							<td>
+								<analytics:reportChart reportId="{!reportIds[1]}" size="small" showRefreshButton="false" />
+							</td>
+						</apex:outputPanel>
+						<apex:outputPanel layout="none" rendered="{!reportIdsSize > 2}">
+							<td>
+								<analytics:reportChart reportId="{!reportIds[2]}" size="small" showRefreshButton="false" />
+							</td>
+						</apex:outputPanel>
+					</tr>
+			</tbody>
+		</table>
+	</apex:outputPanel>
+
+
+	<!-- ONE COLUMN IF PHONE -->
+	<apex:outputPanel layout="none" rendered="{!formFactor == 'PHONE'}">
+		<table>
+			<tbody>
+				<apex:repeat value="{!reportIdsMap}" var="key">
+					<apex:repeat value="{!reportIdsMap[key]}" var="reportIdVal">
+						<tr>
+							<td>
+								<analytics:reportChart reportId="{!reportIdVal}" size="small" showRefreshButton="false" />
+							</td>
+						</tr>
+					</apex:repeat>
+				</apex:repeat>
+			</tbody>
+		</table>
+	</apex:outputPanel>
+
+</apex:page>

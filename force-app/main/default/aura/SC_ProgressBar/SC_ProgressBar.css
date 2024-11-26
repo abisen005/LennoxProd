@@ -1,0 +1,16 @@
+.THIS.progress-bar {
+  background-color: token(colorBackground);
+  border: 1px solid token(colorBorder);
+  border-radius: token(borderRadiusLarge);
+  height: 15px;
+  position: relative;
+  width: 100%;
+  min-width: 75px; }
+  .THIS.progress-bar .progress-bar-progression {
+    border-radius: token(borderRadiusLarge);
+    height: 13px;
+    transition: .2s width ease-in-out; }
+    .THIS.progress-bar .progress-bar-progression--incomplete {
+      background-color: #ffb75d; }
+    .THIS.progress-bar .progress-bar-progression--complete {
+      background-color: #4bca81; }

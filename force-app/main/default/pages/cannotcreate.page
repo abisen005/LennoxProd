@@ -1,0 +1,4 @@
+<apex:page standardController="Lennox_LSA__c">
+<apex:outputText style="font-style:italic" value="**NEW** button is not valid.  Please use the appropriate process to create your LSA."/>
+
+</apex:page>

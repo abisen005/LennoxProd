@@ -1,0 +1,9 @@
+<design:component label="SCL Bulk Upload">
+    <design:supportedFormFactors>
+        <design:supportedFormFactor type="Large"/>
+        <design:supportedFormFactor type="Small"/>
+    </design:supportedFormFactors>
+    <sfdc:objects>
+        <sfdc:object>SupplyChain__c</sfdc:object>
+    </sfdc:objects>
+</design:component>

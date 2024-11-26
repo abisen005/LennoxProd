@@ -1,0 +1,81 @@
+<aura:component controller="TMDMConsoleController" extends="c:ConsoleComponent">
+        
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    
+    <aura:set attribute="accessLevel" value="1" />
+    
+    <aura:attribute name="scorecard" type="Scorecard__c" />
+    <aura:attribute name="shareOfWallet" type="Decimal" default="0" />
+    <aura:attribute name="chartLabel" type="String" />
+    <aura:attribute name="scorecardUpToDate" type="Boolean" />
+    <aura:attribute name="isSf1" type="Boolean" />
+    <aura:attribute name="isModalOpen" type="Boolean" />
+    <aura:attribute name="createScorecardLink" type="String" />
+    
+    
+    <c:ConsoleMetric title="Estimated Lennox Purchases">
+
+        <c:ProgressChart label="{!v.chartLabel}" class="scorecard-sow" percentageComplete="{!v.shareOfWallet}" status="{!v.status}" />        
+        
+        <aura:set attribute="actionArea">
+            
+            <!-- IF HAS SCORECARD -->
+            <aura:if isTrue="{!v.scorecard}">
+                
+                <!-- IF SCORECARD IS UP TO DATE -->
+                <aura:if isTrue="{!v.scorecardUpToDate}">
+                    
+                    <ui:button class="slds-button slds-text-align--left" 
+                               label="Update Account Opps/Action Plans" 
+                               press="{!c.handleOpenModal}" />
+                    
+                    <!-- IF SCORECARD IS NOT UP TO DATE -->
+                    <aura:set attribute="else">
+                        
+                        <aura:if isTrue="{!v.isSf1}">
+                            
+                            <ui:button class="slds-button" label="Update Scorecard" press="{!c.handleUpdateScorecardPress}" />
+                            
+                            <aura:set attribute="else">
+                                <a href="{!'/' + v.scorecard.Id}" target="_parent">Update Scorecard</a>
+                            </aura:set>
+                            
+                        </aura:if>
+                        
+                    </aura:set>
+                    
+                </aura:if>
+                
+                <!-- IF NO SCORECARD -->
+                <aura:set attribute="else">
+                
+                    <aura:if isTrue="{!v.isSf1}">
+                                            
+                        <ui:button class="slds-button" label="" press="{!c.handlecreateScorecardPress}">
+                            Create Scorecard
+                        </ui:button>
+                        
+                        <aura:set attribute="else">
+                            
+                            <a class="slds-button" target="_parent" href="{!v.createScorecardLink}">
+                                Create Scorecard
+                            </a>
+                            
+                        </aura:set>
+                        
+                    </aura:if>
+                    
+                </aura:set>
+                
+            </aura:if>
+        </aura:set>
+         
+    </c:ConsoleMetric>
+    
+    <c:Modal isOpen="{!v.isModalOpen}" header="Update/Create Account Opportunities &amp; Action Plans">
+    	
+        <c:UpdateAccountOppsAndActionPlans account="{!v.account}" isRendered="{!v.isModalOpen}" />
+        
+    </c:Modal>
+	
+</aura:component>

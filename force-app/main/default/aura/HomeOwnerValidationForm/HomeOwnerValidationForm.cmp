@@ -1,0 +1,197 @@
+<aura:component controller="HomeOwnerValidationFormController"
+                implements="force:appHostable,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:actionOverride,flexipage:availableForRecordHome" 
+                access="Global">
+    <aura:attribute name="homeOwner" type="Object" />
+    <aura:attribute name="isSpinner" type="boolean" default="false"/>
+    <aura:attribute name="errorMsg" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInIt}"/> 
+    <div class="slds-card slds-form-element" style="max-width:800px; margin:0 auto; padding:30px;">
+        <aura:if isTrue="{!v.isSpinner}">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </aura:if>
+        <div class="slds-align_absolute-center">
+            <img src="{!$Resource.feel_the_love}" width="240" style="margin-bottom:20px;"/>
+
+        </div>
+        <div class="slds-align_absolute-center" style="padding-bottom:30px;">
+            <h2 class="header" style="font-size:20px;">HomeOwner Finalist Validation Form</h2>
+        </div>
+        
+        
+        <aura:if isTrue="{!v.errorMsg != null}">
+            <div class="slds-notify slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert" style="margin-bottom:10px;">
+                <span class="slds-assistive-text">error</span>
+                <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small">
+                    <lightning:icon iconName="utility:error" alternativeText="Error!" variant="error" size="small"/>
+                </span>
+                <h2>{!v.errorMsg}</h2>
+                
+            </div>
+        </aura:if>
+        
+        <div class="slds-grid slds-wrap slds-card">
+            
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                    <span class="required">*</span> Nominee Name
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:input  aura:id="formFieldToValidate" label="" messageWhenValueMissing="This Field is required!" required="true" value="{!v.homeOwner.Nominee_Name__c}"/>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                   <span class="required">*</span> Street Address
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:input   aura:id="formFieldToValidate" label="" messageWhenValueMissing="This Field is required!" required="true" value="{!v.homeOwner.Nominee_Street_Address__c}"/>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                  <span class="required">*</span> City
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:input type="text"  aura:id="formFieldToValidate" label="" messageWhenValueMissing="This Field is required!" required="true" value="{!v.homeOwner.Nominee_City__c}"/>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                   <span class="required">*</span> State
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:input  aura:id="formFieldToValidate" label="" messageWhenValueMissing="This Field is required!" required="true" value="{!v.homeOwner.Nominee_State__c}"/>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                   <span class="required">*</span> Zip Code
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:input   aura:id="formFieldToValidate" label=""  messageWhenValueMissing="This Field is required!" required="true" value="{!v.homeOwner.Nominee_Zip_Code__c}"/>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                  <span class="required">*</span>  Phone Number
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:input   aura:id="formFieldToValidate" label="" messageWhenValueMissing="This Field is required!" required="true" value="{!v.homeOwner.Nominee_Phone_Number__c}"/>
+            </div>
+        </div>
+        <p style="font-weight:bold; margin-bottom:10px; margin-top:17px;"> CONFIRM THE INSTALLATION DATE OF {!v.homeOwner.Installation_Date__c} WITH POTENTIAL RECIPIENT.</p>
+        
+        <p style="margin-bottom:10px;">Have recipient sign Finalist Agreement form, which acknowledges the detail of the 
+            program and also allow us to share the event with the media and on your website, 
+            including photos, if they are choosen.</p>
+        
+        <p style="margin-bottom:10px; font-weight:bold; margin-top:15px;"> Home Eligibility Criteria :</p>
+        <div class="slds-grid slds-wrap">
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                    Does This Install Fall within the scope of 5-7 hours install?
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:select  label="" value="{!v.homeOwner.Installation_falls_in_5_7_hour_window__c}">
+                    <option value="">--None--</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </lightning:select>
+            </div>
+            
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                    Is it a gas furnace?
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:select  label="" value="{!v.homeOwner.Is_it_a_gas_furnace__c}">
+                    <option value="">--None--</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </lightning:select>
+            </div>
+            
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                    Does it have complete ductwork?
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:select  label="" value="{!v.homeOwner.Complete_ductwork_system_in_place__c}">
+                    <option value="">--None--</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </lightning:select>
+            </div>
+            
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                    Which model furnace to use?
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:select  label="" value="{!v.homeOwner.Which_model_of_furnace_to_use__c}">
+                    <option value="">--None--</option>
+                    <option value="ML 180">ML 180</option>
+                    <option value="ML 193">ML 193</option>
+                    <option value="Other">Other</option>
+                </lightning:select>
+            </div>
+            
+            <aura:if isTrue="{!v.homeOwner.Which_model_of_furnace_to_use__c == 'Other'}">
+                <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                    Other
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:input   aura:id="formFieldToValidate" label="" messageWhenValueMissing="This Field is required!" value="{!v.homeOwner.Other_Furnace__c}" required="true"/>
+            </div>
+            </aura:if>
+            
+            
+            
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                    LP kit needed?
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:select  label="" value="{!v.homeOwner.LP_Kit_needed__c}">
+                    <option value="">--None--</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </lightning:select>
+            </div>
+            
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                    Other materials /supplies needed:
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:textarea value="{!v.homeOwner.Other_materials_supplies_needed__c}" label="" maxlength="300" />
+            </div>
+            
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">                        
+                <div class="slds-text-align_left slds-m-around_x-small">
+                    Optional: Other house/ yard work maintenance needed(this is up to each dealer to decide)? List
+                </div>
+            </div>
+            <div class="slds-size_1-of-2 slds-m-bottom_x-small">
+                <lightning:textarea value="{!v.homeOwner.Optional_Other_house_yard_work__c}" label="" maxlength="300" />
+            </div>
+        </div> 
+        <p>Note: If there's 'For Sale' sign on the lawn, conduct the inspection interview,
+                 but this probably is not the best candidate. You may have to make a tough call
+                 if you have several qualified finalists.</p>
+        <p>Continuing is up to your discretion.</p>
+        
+        <div>
+            <lightning:button class="slds-align_absolute-center" variant="brand" label="Save"  onclick="{! c.save }" />
+        </div>
+        </div>
+</aura:component>

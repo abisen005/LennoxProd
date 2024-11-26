@@ -1,0 +1,46 @@
+.THIS {
+}
+.THIS .tab-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+    margin: 20px auto;
+}
+.THIS .tab-navigation
+{
+    display: flex;
+    border: 1px solid #ccc;
+    max-width: 157px;
+    padding: 15px;
+    font-size: 12px;
+    text-align: center;
+    margin: 0px 20px;
+    height: 100%;
+    vertical-align: top;
+    flex-direction: column;
+    align-items: center;
+    cursor:pointer;
+}
+
+.THIS .tab-navigation1
+{
+    display: flex;
+    border: 1px solid #ccc;
+    max-width: 145px;
+    padding: 15px;
+    font-size: 12px;
+    text-align: center;
+    margin: 0px 20px;
+    height: 100%;
+    vertical-align: top;
+    flex-direction: column;
+    align-items: center;
+    cursor:pointer;
+}
+
+.THIS .tab-nameCss{padding: 9px;}
+
+.THIS .tab-navigation lightning-icon {
+    margin-bottom: 10px;
+}

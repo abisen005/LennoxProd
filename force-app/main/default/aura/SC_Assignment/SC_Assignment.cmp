@@ -1,0 +1,183 @@
+<aura:component controller="SC_AssignmentController" access="GLOBAL">
+
+
+    <!--
+    TODO:
+        -Get Coaching Info to determine if the current user is the assignee or the coach
+        -If user is the assignee, allow the user to Complete and/or increment the Progress
+        -If user is the assignee, allow the user to add a note
+        -If user is the coach (record owner?), they can edit the assignment
+    -->
+
+
+    <aura:attribute name="assignmentId" type="String" />
+    <aura:attribute name="assignment" type="SC_Assignment__c" />
+    <aura:attribute name="coachingInfo"
+                    type="CoachingInfo"
+                    description="An object with information about the current user's coaching role and related data."
+                    access="PRIVATE" />
+    <aura:attribute name="isAssignee" type="Boolean" access="PRIVATE" />
+    <aura:attribute name="isCoach" type="Boolean" access="PRIVATE" />
+    <aura:attribute name="assignmentProgress" type="Decimal" default="0" access="Private" />
+    <aura:attribute name="assignmentNumberComplete" type="Decimal" default="0" access="Private" />
+    <aura:attribute name="isEditingNote" type="Boolean" default="false" />
+    <aura:attribute name="isLoading" type="Boolean" default="false" />
+    <aura:attribute name="editingNoteValue" type="String" />
+
+
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler name="change" value="{!v.assignmentId}" action="{!c.handleAssignmentIdChange}" />
+    <aura:handler event="c:SC_CoachingInfoResponse" action="{!c.handleCoachingInfoResponse}" />
+    <aura:handler name="onSaveSuccess" event="force:recordSaveSuccess" action="{!c.handleRecordSaveSuccess}" />
+
+
+
+    <aura:registerEvent name="coachingInfoRequest" type="c:SC_CoachingInfoRequest" />
+
+    <section>
+        <div class="slds-page-header" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media slds-no-space slds-grow">
+                        <div class="slds-media__figure">
+
+                            <lightning:icon iconName="custom:custom83" />
+
+                        </div>
+                        <div class="slds-media__body">
+                            <p class="slds-text-title--caps slds-line-height--reset">Assignment</p>
+                            <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate" title="{!v.assignment.Name}">{!v.assignment.Name}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-grid slds-align-top">
+
+                    <lightning:buttonGroup >
+                        <lightning:button class="slds-button slds-button--neutral"
+                                          label="Edit"
+                                          onclick="{!c.handleEditPress}" />
+
+                      <lightning:button class="{!'slds-button slds-button--neutral ' + (v.assignment.Status__c == 'Incomplete' ? '' : 'slds-hide')}"
+                                        label="Complete"
+                                        onclick="{!c.handleCompletePress}" />
+
+                    </lightning:buttonGroup>
+
+                </div>
+            </div>
+
+            <ul class="slds-grid slds-page-header__detail-row">
+                <li class="slds-page-header__detail-block">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" title="Assignee">Assignee</p>
+                    <p class="slds-text-body--regular" >{!v.assignment.Assignee__r.Name}</p>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" title="Session">Session</p>
+                    <p class="slds-text-body--regular">{!v.assignment.Coaching_Session__r.Name}</p>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" title="Initiative">Initiative</p>
+                    <p class="slds-text-body--regular">{!v.assignment.Coaching_Session__r.Initiative__r.Name}</p>
+                </li>
+            </ul>
+
+        </div>
+
+
+
+        <c:SC_Breadcrumbs class="slds-m-around--medium" />
+
+
+        <hr class="slds-m-around--none" />
+
+        <div class="slds-text-align--center slds-m-around--large">
+
+
+
+            <div class="description">
+                <p class="slds-text-heading--large">
+                    {!v.assignment.Description__c}
+                </p>
+                <p class="{!v.assignment.Progress_Assignment__c ? 'slds-show slds-p-top--small' : 'slds-hide'}">
+                    <div class="slds-grid">
+                        <div>
+                            <lightning:buttonIcon class="{!'' + (and(v.isAssignee, v.assignment.Progress_Assignment__c) ? '' : 'slds-hide')}"
+                                                  alternativeText="Decrement"
+                                                  iconName="utility:dash"
+                                                  variant="bare"
+                                                  onclick="{!c.handleDecrementPress}" />
+                        </div>
+                        <div class="slds-col slds-p-horizontal--small">
+                            <c:SC_ProgressBar progress="{!v.assignmentProgress}"  />
+                        </div>
+                        <div>
+                            <lightning:buttonIcon class="{!'' + (and(v.isAssignee, v.assignment.Progress_Assignment__c) ? '' : 'slds-hide')}"
+                                                  alternativeText="Increment"
+                                                  iconName="utility:add"
+                                                  variant="bare"
+                                                  onclick="{!c.handleIncrementPress}" />
+                        </div>
+                    </div>
+                    {!v.assignmentNumberComplete} of {!v.assignment.to_Complete__c} completed
+                </p>
+                <p class="slds-text-body--regular slds-p-top--small">
+                    Due on <ui:outputDate value="{!v.assignment.Due_Date__c}" />
+                </p>
+                <p class="{!'slds-text-body--regular status status--' + (v.assignment.Status__c == 'Incomplete' ? 'incomplete' : 'complete')}">{!v.assignment.Status__c}</p>
+            </div>
+
+            <div class="slds-form-element">
+                <label class="slds-form-element__label">
+                    Assignee Follow-Up Notes
+                    <lightning:buttonIcon iconName="{!v.isEditingNote ? 'utility:close' : 'utility:edit'}"
+                                          class="{!v.isCoach ? 'slds-hide' : ''}"
+                                          variant="bare"
+                                          disabled="{!v.isLoading}"
+                                          onclick="{!c.handleEditNotePress}"
+                                          alternativeText="Edit Note" />
+                </label>
+                <div class="slds-form-element__control">
+
+                    <div class="{!v.isEditingNote ? '' : 'slds-hide'}">
+                        <ui:inputRichText class="slds-textarea"
+                                          disabled="{!v.isLoading}"
+                                          value="{!v.editingNoteValue}" />
+                        <lightning:button class="slds-float--right slds-m-top--x-small"
+                                          variant="brand"
+                                          disabled="{!v.isLoading}"
+                                          onclick="{!c.handleSaveNotePress}"
+                                          label="Save" />
+                    </div>
+                    <span class="{!v.isEditingNote ? 'slds-hide' : ''}">
+                        <p class="{!empty(v.assignment.Follow_Up_Notes__c) ? 'slds-show' : 'slds-hide'}"><i>No notes yet</i></p>
+                        <ui:outputText value="{!v.assignment.Follow_Up_Notes__c}" />
+                    </span>
+
+                </div>
+            </div>
+
+
+        </div>
+
+        <c:SC_ModalOverlay aura:id="editAssignmentModal">
+
+            <aura:set attribute="header">
+                Edit Assignment
+            </aura:set>
+
+            <force:recordEdit aura:id="editAssignment" recordId="{!v.assignmentId}" />
+
+            <aura:set attribute="footer">
+                <lightning:button class="slds-button slds-button--neutral" label="Cancel" onclick="{!c.handleCancelEditPress}" disabled="{!v.isLoading}" />
+                <lightning:button class="slds-button slds-button--brand" label="Save" onclick="{!c.handleSavePress}" disabled="{!v.isLoading}" />
+            </aura:set>
+
+        </c:SC_ModalOverlay>
+
+    </section>
+
+
+
+</aura:component>

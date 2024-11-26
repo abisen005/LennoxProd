@@ -1,0 +1,1 @@
+<aura:event type="APPLICATION" description="Fired when the coaching session wizard should be closed" />

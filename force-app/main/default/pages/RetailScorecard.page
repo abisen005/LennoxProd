@@ -1,0 +1,224 @@
+<apex:page controller="RetailScorecardController" standardStylesheets="false" showHeader="false" applyBodyTag="false" applyHtmlTag="false" >
+    <html >
+        <head>
+            <meta charset="utf-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Retail Scorecard</title>
+            <link href="{!URLFOR($Resource.RetailScorecardStyle)}" rel="stylesheet" />
+
+        </head>
+        <apex:pageMessages ></apex:pageMessages>
+        <body>
+            <div class="container-fluid">
+                <br />
+                <div class="row">
+                    <div class="col-xs-12 hide-for-print">
+
+                       <div class="pull-right">
+                           <c:printPDF orientation="portrait" buttonClass="btn btn-default" accountId="{!id}" name="Lowe's Scorecard" />
+                       </div>
+                       <div class="pull-right">
+                           &nbsp;&nbsp;
+                           <button type="button" class="btn btn-default" id="js-dealer-view">Show Dealer View</button>
+                           <button type="button" class="btn btn-default" style="display: none" id="js-internal-view">Show Internal View</button>
+                           &nbsp;&nbsp;
+                       </div>
+
+                    </div>
+                </div>
+                <br />
+            </div>
+
+            <c:RetailScoreCard_Header subHeader="{!'YTD Performance Through ' + lastUpdated}" level="{!level}" scorecardId="{!id}" img="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCU4&oid=00D80000000LcQA" retailType="{!retailInfo.type}" retailLabel="{!retailInfo.label}" />
+
+            <div class="container-fluid">
+                <div class="row js-even-col-height">
+                    <div class="col-xs-12 col-sm-6 col-pr-6 ">
+                        <div class="page-item">
+                            <h2 class="text-center">Lead to In-home Spill/Conversion Rates</h2>
+                            <c:RetailScorecard_SplitBarChart chartName="ldPropConversionRates" chartData="{!splitBarChartString}" />
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-pr-6">
+                        <div class="page-item">
+                            <h2 class="text-center">Proposal Close Rate</h2>
+                            <c:RetailScorecard_GaugeChart chartName="proposalToClose" chartLabel="{!proposalCloseRates[0].label}" chartValue="{!proposalCloseRates[0].value}" dangerThreshold="{!targets.Proposal_Rate_Danger_Percentage__c / 100}" successThreshold="{!targets.Proposal_Rate_Success_Percentage__c / 100}"  />
+                            <table class="table table-condensed">
+                                <apex:repeat value="{!proposalCloseRates}" var="p" first="1">
+                                    <tr>
+                                        <td class="text-left">{!p.label}</td>
+                                        <td class="text-right"><strong>{!ROUND(p.value,1)}%</strong></td>
+                                    </tr>
+                                </apex:repeat>
+                            </table>
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row js-even-col-height">
+                    <div class="col-xs-12 col-sm-8 col-pr-8">
+                        <c:RetailScorecard_SalesPerfComponent level="{!level}" scorecardId="{!id}" title="" retailType="{!retailInfo.type}" retailLabel="{!retailInfo.label}" />
+                    </div>
+                    <div class="col-xs-12 col-sm-4 col-pr-4">
+                        <div class="page-item overall-performance">
+                            <h2 class="text-center">Overall Sales Performance</h2>
+                            <img src="{!CASE(storeSummaryData.performanceRating,
+                                             'success', 'https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nDQc&oid=00D80000000LcQA',
+                                             'warning', 'https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nDQI&oid=00D80000000LcQA',
+                                             'danger', 'https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nDQS&oid=00D80000000LcQA',
+                                             null)}" class="overall-performance-indicator" />
+                            <h1 class="text-center overall-performance-title">
+                                {!CASE(storeSummaryData.performanceRating, 'success', 'On Target', 'warning', 'Needs Attention', 'danger', 'Below Target', null)}
+                            </h1>
+                            <table class="table table-condensed">
+                                <tr>
+                                    <td class="text-left">YTD Sales - YTD Change %</td>
+                                    <td class="text-right sales-{!IF(storeSummaryData.ytdChangePercentage > 0, 'success', 'danger')}">
+                                        <strong>
+                                            {!ROUND(storeSummaryData.ytdChangePercentage, 1)}%
+                                        </strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-left">Avg Sales $/Store - % to YTD Target</td>
+                                    <td class="text-right sales-{!IF((storeSummaryData.ytdSales / (storeSummaryData.avgSalesStoreTarget * storeSummaryData.storeLength)) * 100 >= 100, 'success', 'danger')}"><strong>{!ROUND((storeSummaryData.ytdSales / (storeSummaryData.avgSalesStoreTarget * storeSummaryData.storeLength)) * 100, 1)}%</strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-break" style="page-break-after:always;"></div>
+
+            <span class="hide-for-web"><c:RetailScoreCard_Header lastUpdated="{!lastUpdated}" level="{!level}" scorecardId="{!id}" img="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCU4&oid=00D80000000LcQA" retailType="{!retailInfo.type}" retailLabel="{!retailInfo.label}" /></span>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="page-item">
+                            <h2 class="text-center">Leads / Close Rates</h2>
+                            <table class="table table-striped table--{!retailInfo.type} table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th>Store Name</th>
+                                        <th class="text-center">Store Number</th>
+                                        <th class="text-center">YTD Leads</th>
+                                        <th class="text-center">YTD In-Homes</th>
+                                        <th class="text-center">Lead to IH Spill Rate</th>
+                                        <th class="text.center">YTD Proposals</th>
+                                        <th class="text-center">YTD Proposals Closed</th>
+                                        <th class="text-center">Proposal Close Rate</th>
+                                        <th class="text-center">YTD Sales $</th>
+                                        <th class="text-center">Prior Year YTD Sales $</th>
+                                        <th class="text-center">YTD Change $</th>
+                                        <th class="text-center">YTD Change %</th>
+                                        <th class="text-center">Annual Store Goal</th>
+                                        <th class="text-center">% to Annual Store Goal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <apex:repeat value="{!storeData}" var="i">
+                                        <tr>
+                                            <td><a class="hide-for-print" href="/{!i.Id}" target="_blank">{!i.Store_Name__c}</a><span class="hide-for-web">{!i.Store_Name__c}</span></td>
+                                            <td class="text-center">{!i.Store_Number__c}</td>
+                                            <td class="text-center">{!i.YTD_Leads__c}</td>
+                                            <td class="text-center">{!i.YTD_In_Homes__c}</td>
+                                            <td class="text-center"><apex:outputField value="{!i.Lead_to_IH_Spill_Rate__c}" /></td>
+                                            <td class="text-center">{!i.YTD_Proposals__c}</td>
+                                            <td class="text-center">{!i.YTD_Proposals_Closed__c}</td>
+                                            <td class="text-center"><apex:outputField value="{!i.Proposal_Close_Rate__c}" /></td>
+                                            <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!i.YTD_Sales__c}" /></apex:outputText></td>
+                                            <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!i.PY_YTD_Sales__c}" /></apex:outputText></td>
+                                            <td class="text-right sales-{!IF(i.YTD_Change_per__c >= 0, 'success', 'danger')}">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!i.YTD_Change__c}" /></apex:outputText></td>
+                                            <td class="text-center sales-{!IF(i.YTD_Change_per__c >= 0, 'success', 'danger')}">{!ROUND(i.YTD_Change_per__c, 1)}%</td>
+                                            <td class="text-right">$<apex:outputText value="{0,number,###,###}"><apex:param value="{!i.Annual_Store_Goal__c}" /></apex:outputText></td>
+                                            <td class="text-center"><apex:outputField value="{!i.to_Annual_Store_Goal__c}" /></td>
+                                        </tr>
+                                    </apex:repeat>
+                                </tbody>
+                                <tfoot>
+                                    <th colspan="2" class="text-right">Totals:</th>
+                                    <td class="text-center"><strong>{!storeSummaryData.ytdLeads}</strong></td>
+                                    <td class="text-center"><strong>{!storeSummaryData.ytdInHomes}</strong></td>
+                                    <td class="text-center"><strong>{!ROUND(storeSummaryData.ldProposalSpillRatio, 1)}%</strong></td>
+                                    <td class="text-center"><strong>{!storeSummaryData.ytdProposals}</strong></td>
+                                    <td class="text-center"><strong>{!storeSummaryData.ytdProposalsClosed}</strong></td>
+                                    <td class="text-center"><strong>{!ROUND(storeSummaryData.proposalCloseRatio, 1)}%</strong></td>
+                                    <td class="text-right"><strong>$<apex:outputText value="{0,number,###,###}"><apex:param value="{!storeSummaryData.ytdSales}" /></apex:outputText></strong></td>
+                                    <td class="text-right"><strong>$<apex:outputText value="{0,number,###,###}"><apex:param value="{!storeSummaryData.priorYtdSales}" /></apex:outputText></strong></td>
+                                    <td class="text-right sales-{!IF(storeSummaryData.ytdChangePercentage >= 0, 'success', 'danger')}"><strong>$<apex:outputText value="{0,number,###,###}"><apex:param value="{!storeSummaryData.ytdChange}" /></apex:outputText></strong></td>
+                                    <td class="text-center sales-{!IF(storeSummaryData.ytdChangePercentage>= 0, 'success', 'danger')}"><strong>{!ROUND(storeSummaryData.ytdChangePercentage, 1)}%</strong></td>
+                                    <td class="text-right"><strong>$<apex:outputText value="{0,number,###,###}"><apex:param value="{!storeSummaryData.annualStoreGoal}" /></apex:outputText></strong></td>
+                                    <td class="text-center"><strong>{!ROUND(storeSummaryData.percentToAnnualStoreGoal, 1)}%</strong></td>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <span class="js-hide-dealer-view">
+                <div class="page-break" style="page-break-after:always;"></div>
+
+                <span class="hide-for-web"><c:RetailScoreCard_Header lastUpdated="{!lastUpdated}" level="{!level}" scorecardId="{!id}" img="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCU4&oid=00D80000000LcQA" retailType="{!retailInfo.type}" retailLabel="{!retailInfo.label}" /></span>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="page-item">
+                                <h2 class="text-center">TM Questions - For Lennox Use Only</h2>
+                                <table class="table table-bordered table-responsive retail-questions">
+                                    <thead>
+                                        <tr>
+                                            <th>Main Questions:</th>
+                                            <th>Additional Questions:</th>
+                                        </tr>
+                                    </thead>
+                                    <tr>
+                                        <td class="col-xs-6">
+                                            <ol class="retail-questions-main">
+                                                <li>Are you pleased with your Lowe’s performance and results? Why?</li>
+                                                <li>The retail sales goal per store is $70K (10 sales per store).  Are we there yet or tracking to get there?  If not how do we get there?</li>
+                                                <li>How do you manage the relationships with Lowe’s personnel?  (Lowe’s Store Managers, PSE, MSM, FSM) Are relationships good?</li>
+                                                <li>How can Lennox help make the partnership more successful?</li>
+                                                <li>Identify any specific action items to be followed up on either by the Dealer or Lennox by the next review meeting.</li>
+                                            </ol>
+                                        </td>
+                                        <td>
+                                            <ul class="retail-questions-additional">
+                                                <li>Did the Dealer have lead generators present in their retail locations during the last month? Do they need more training? Where in the store are they?</li>
+                                                <li>How many quality leads were generated during the last month, YTD?  How many resulted in sales?  What was their close rate?</li>
+                                                <li>Did the Dealer conduct any “special events” during the last month?</li>
+                                                <li>Are lead generators able to provide “reference pricing” to customers in the store?  If not, how do they respond to questions on price?</li>
+                                                <li>Is the Dealer’s pricing to retail customers the same (or better) than pricing offered in the core business?  Does the Dealer offer any “System Special Packages” or Best/Better/Good options for the retail customer? </li>
+                                                <li>Have the Dealer’s Comfort Advisors found any differences in selling through the retail partner vs. their own internal leads?</li>
+                                                <li>If the Dealer is in multiple locations and there are significant differences in performance from one to another, what are the Dealer’s thoughts on why?</li>
+                                                <li>Does the Dealer have internal staff assigned to handling the administrative side of the retail program?</li>
+                                                <li>Is the Dealer in full compliance with all of the retailer’s requirements regarding signage, literature, staffing, etc.?</li>
+                                                <li>Does the Dealer have a process in place for responding to retail customer complaints or escalations?</li>
+                                                <li>If performance for the most recent update was below expectations, what specific issues or challenges had an impact on results?</li>
+                                                <li>If performance was positive, what specific actions or activities contributed to those results?  What “best practices” can be shared with other Dealers?</li>
+                                            </ul>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </span>
+
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+            <script src="{!URLFOR($Resource.d3BulletChart)}"></script>
+            <script src="{!URLFOR($Resource.d3GaugeChart)}"></script>
+            <script src="{!URLFOR($Resource.d3SplitBarChart)}"></script>
+            <script src="{!URLFOR($Resource.RetailScorecardApp)}"></script>
+
+            <c:TrackPageView lenPageName="Lowe's Retail Scorecard" />
+
+        </body>
+    </html>
+</apex:page>

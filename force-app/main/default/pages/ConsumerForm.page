@@ -1,0 +1,22 @@
+<apex:page sidebar="false" showHeader="false">
+    <apex:includeLightning />
+    <div id ="LSAFormdiv"/>  
+ <script src="{!$Label.SiteBaseURL}/LSAReportingForm/lightning/lightning.out.js">  </script>
+<!-- <script src="{!$Label.SiteBaseURL}/ConsumerLSAReportingForm/lightning/lightning.out.js">  </script> --> 
+    <script>
+    $Lightning.use("c:LSAHomeOwnerOutApp",    // name of the Lightning app
+                   function() {                  // Callback once framework and app loaded
+                       $Lightning.createComponent(
+                           "c:LSAHomeOwnerForm", // top-level component of your app
+                           { },                  // attributes to set on the component when created
+                           "LSAFormdiv",   // the DOM location to insert the component
+                           function(cmp) {
+                               //colsole.log(JSON.stringify(cmp));
+                               // callback when component is created and active on the page
+                           }
+                       );
+                   },
+                   '{!$Label.SiteBaseURL}/ConsumerLSAReportingForm'  // Community endpoint 
+                  );
+    </script>    
+</apex:page>

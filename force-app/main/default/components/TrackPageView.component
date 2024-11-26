@@ -1,0 +1,16 @@
+<apex:component layout="none" controller="TrackPageViewController">
+    <apex:attribute name="lenPageName" type="String" description="Used to populate user page name when tracking" />
+    <script type="text/javascript" src="//wurfl.io/wurfl.js"></script>
+    <script>
+        Visualforce.remoting.Manager.invokeAction(
+            'TrackPageViewController.TrackPageView',
+            '{!JSENCODE(lenPageName)}',
+            WURFL,
+            function(result, event){
+                if (!event.status) {
+                    console.log('Error creating UPV: ' + event.message);
+                }
+            }
+        )
+    </script>
+</apex:component>

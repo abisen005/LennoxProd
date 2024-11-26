@@ -1,0 +1,289 @@
+[ {
+  "picklistValues" : [ {
+    "useIcon" : "true",
+    "optionValue" : "Transportation Question",
+    "optionLabel" : "Transportation Question",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "custom:custom98",
+    "description" : "Questions on what carrier to use, freight claim or tracking a shipment"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Increase Demand",
+    "optionLabel" : "Increase Demand",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product_required",
+    "description" : ""
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Product Shortage/STO",
+    "optionLabel" : "Product Shortage/STO",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product_request",
+    "description" : "Request for Stock Transfer Order to address one-time stock issues"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Phase In/Phase Out",
+    "optionLabel" : "Phase In/Phase Out",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product_transfer",
+    "description" : "Requests for SKU's that are phasing in or out to find the replacement or timing on launch"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Other",
+    "optionLabel" : "Other",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:relationship",
+    "description" : "Requests that don't fit in the other choices"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Forecast Request",
+    "optionLabel" : "Forecast Request",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product_required",
+    "description" : "Requests for more stock or non-stock to stock; Forecast Request Tool"
+  } ],
+  "objectName" : "SupplyChain__c",
+  "fieldName" : "Request_Picklist__c"
+}, {
+  "picklistValues" : [ {
+    "useIcon" : "true",
+    "optionValue" : "Create CDQ",
+    "optionLabel" : "Create CDQ",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:price_book_entries",
+    "description" : "To request a new CDQ is created"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Modify CDQ",
+    "optionLabel" : "Modify CDQ",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:pricing_workspace",
+    "description" : "To request a modification to a CDQ"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Customer Zone Assignment (Single)",
+    "optionLabel" : "Customer Zone Assignment (Single)",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:performance",
+    "description" : "To reassign one Dealer to a different Finished Goods or Parts Zone\n"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Customer Zone Assignment (Multiple)",
+    "optionLabel" : "Customer Zone Assignment (Multiple)",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "custom:custom103",
+    "description" : "To reassign more than one Dealer to different Finished Goods or Parts Zones"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Zone Creation",
+    "optionLabel" : "Create Zone",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:partners",
+    "description" : "To request a new Zone to be created\n"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Zone Modification",
+    "optionLabel" : "Modify Zone",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "custom:custom95",
+    "description" : "To request that an existing Zone be either changed or deleted"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Price Book Request",
+    "optionLabel" : "Price Book Request",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:price_books",
+    "description" : "To request a price book"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Customer Freight Tier Adjustment",
+    "optionLabel" : "Customer Freight Tier Adjustment",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:shipment",
+    "description" : "To request that a Dealer be moved to a different Freight Zone"
+  } ],
+  "objectName" : "Pricing_Requests__c",
+  "fieldName" : "Request_Picklist__c"
+}, {
+  "picklistValues" : [ {
+    "useIcon" : "true",
+    "optionValue" : "Pricing & Availability",
+    "optionLabel" : "Pricing & Availability",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:pricebook",
+    "description" : "Use when needing price and availability for items purchased from a third party vendor for sale to a Lennox customer. AMS will also provide shipping & billing information when an order is placed and shipped from a vendor."
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Sales Order Tracking",
+    "optionLabel" : "Sales Order Tracking",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:orders",
+    "description" : "Use when price and availability have been obtained in the field direct from the vendor, from the Weekly Bulk Price List link on this page or when the order is for a known Lennox catalog number shipping from the vendor."
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Warranty & Returns",
+    "optionLabel" : "Vendor Direct Returns",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:return_order",
+    "description" : "Use when requesting return approval and instructions for Vendor Direct purchased items."
+  } ],
+  "objectName" : "Vendor_Direct__c",
+  "fieldName" : "Request_Picklist__c"
+}, {
+  "picklistValues" : [ {
+    "useIcon" : "true",
+    "optionValue" : "Pricing & Availability",
+    "optionLabel" : "Pricing & Availability",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product",
+    "description" : "Use when needing price and availability for items purchased from a third party vendor for sale to a Lennox customer."
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Warranty & Returns",
+    "optionLabel" : "Vendor Direct Returns",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:return_order",
+    "description" : "Use when requesting return approval and instructions for Vendor Direct purchased items."
+  } ],
+  "objectName" : "Vendor_Direct__c",
+  "fieldName" : "Request_Picklist_NONOrder_Entry_User__c"
+}, {
+  "picklistValues" : [ {
+    "useIcon" : "true",
+    "optionValue" : "Bulk Price List",
+    "optionLabel" : "Bulk Price List",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "custom:custom17",
+    "description" : "Weekly Bulk Price List"
+  } ],
+  "objectName" : "Vendor_Direct__c",
+  "fieldName" : "Bulk__c"
+}, {
+  "picklistValues" : [ {
+    "useIcon" : "true",
+    "optionValue" : "Increase Demand",
+    "optionLabel" : "Increase Demand",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product_request",
+    "description" : "New dealer adding $300k or existing dealer adding/changing more than 30%"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Product Shortage/STO",
+    "optionLabel" : "Product Shortage/STO",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product_required",
+    "description" : "Request for Stock Transfer Order to address one-time stock issues"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Phase In/Phase Out",
+    "optionLabel" : "Phase In/Phase Out",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product_transfer",
+    "description" : "Requests for SKU's that are phasing in or out to find the replacement or timing on launch\n"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Transportation Question",
+    "optionLabel" : "Transportation Question",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "custom:custom98",
+    "description" : "Questions on what carrier to use, freight claim or tracking a shipment"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Other",
+    "optionLabel" : "Other",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:relationship",
+    "description" : "Requests that don't fit in the other choices"
+  } ],
+  "objectName" : "SupplyChain__c",
+  "fieldName" : "Request_Picklist_NON_Order_Entry_User__c"
+}, {
+  "picklistValues" : [ {
+    "useIcon" : "true",
+    "optionValue" : "Forecast Request",
+    "optionLabel" : "Forecast Request",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:forecasts",
+    "description" : "Requests for more stock or non-stock to stock; Forecast Request Tool\n"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Transportation Question",
+    "optionLabel" : "Transportation Question",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "custom:custom98",
+    "description" : "Questions on what carrier to use, freight claim or tracking a shipment"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Product Shortage/STO",
+    "optionLabel" : "Product Shortage/STO",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product_required",
+    "description" : "New dealer adding $300k or existing dealer adding/changing more than 30%"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Phase In/Phase Out",
+    "optionLabel" : "Phase In/Phase Out",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product_transfer",
+    "description" : "Requests for SKU's that are phasing in or out to find the replacement or timing on launch"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Other",
+    "optionLabel" : "Other",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:quotes",
+    "description" : "Requests that don't fit in the other choices"
+  } ],
+  "objectName" : "SupplyChain__c",
+  "fieldName" : "Request_Picklist_Order_Entry__c"
+}, {
+  "picklistValues" : [ {
+    "useIcon" : "true",
+    "optionValue" : "RNC_builder",
+    "optionLabel" : "RNC Builder",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "custom:custom107",
+    "description" : "Click the below Go! button to start your new builder flow and create your new builder record.  You will then be able to complete the Builder Scorecard to outline the potential opportunity with the Builder."
+  } ],
+  "objectName" : "Account",
+  "fieldName" : "Nat_or_Reg__c"
+}, {
+  "picklistValues" : [ {
+    "useIcon" : "true",
+    "optionValue" : "Regional Increase",
+    "optionLabel" : "Regional Increase",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product_request",
+    "description" : "Region Increase Request for Lennox Stores"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Product Shortage/STO",
+    "optionLabel" : "Product Shortage/STO",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product_required",
+    "description" : "Request for Stock Transfer Order to address one-time stock issues"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Phase In/Phase Out",
+    "optionLabel" : "Phase In/Phase Out",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:product_transfer",
+    "description" : "Requests for SKU's that are phasing in or out to find the replacement or timing on launch"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Transportation Question",
+    "optionLabel" : "Transportation Question",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "custom:custom98",
+    "description" : "Questions on what carrier to use, freight claim or tracking a shipment"
+  }, {
+    "useIcon" : "true",
+    "optionValue" : "Other",
+    "optionLabel" : "Other",
+    "imageUrl" : "https://www.lightningdesignsystem.com/assets/images/logo.svg",
+    "iconName" : "standard:relationship",
+    "description" : "Requests that don't fit in the other choices"
+  } ],
+  "objectName" : "SupplyChain__c",
+  "fieldName" : "Request_Type_P_S_Specialist__c"
+} ]

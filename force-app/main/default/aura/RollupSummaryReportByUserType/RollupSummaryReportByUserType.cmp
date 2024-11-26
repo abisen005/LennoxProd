@@ -1,0 +1,27 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" controller="RollupSummaryReportByUserController">
+  
+  <ltng:require styles="/resource/LightningDesignSystem/styles/salesforce-lightning-design-system-ltng.min.css,
+                        /resource/TMDMStyle" />
+  
+  <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+  
+  <aura:attribute name="isSf1" type="Boolean" />
+  <aura:attribute name="isLoading" type="Boolean" default="true" />
+  <aura:attribute name="reportVFPageName" type="String" />
+  
+  <div class="slds">
+    <aura:if isTrue="{!!v.isLoading}">
+      <div>
+          <nav class="ss-nav slds-p-around--small">
+            <ui:button press="{!c.handleTerritoryRollupPress}" aura:id="rollupReport" >
+                <span class="slds-icon__container">
+                    <c:svgIcon class="slds-icon slds-icon--medium territory-roll-up" 
+                               xlinkHref="/resource/LightningDesignSystem/icons/action-sprite/svg/symbols.svg#web_link" />
+                </span>
+                <div>Roll-Up Report</div>
+            </ui:button>
+          </nav>
+      </div>
+    </aura:if>
+  </div>
+</aura:component>

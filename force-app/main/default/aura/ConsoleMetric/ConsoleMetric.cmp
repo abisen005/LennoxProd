@@ -1,0 +1,14 @@
+<aura:component >
+    
+    <aura:attribute name="actionArea" type="Aura.Component[]" description="Content area for an action." />
+    
+    <aura:attribute name="title" type="String" />
+    
+    <div class="slds-text-align--center">
+        <h1 class="slds-text-heading--label slds-truncate slds-text-align--center">{!v.title}</h1>
+        <div class="action-area">{!v.actionArea}</div>
+        <div class="slds-m-around--small body">
+            {!v.body}
+        </div>
+	</div>
+</aura:component>

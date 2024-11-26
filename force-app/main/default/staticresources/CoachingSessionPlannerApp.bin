@@ -1,0 +1,280 @@
+//INITIAL FUNCTIONS
+
+
+//query users and populate users array
+var initializeApp = (function() {
+
+    var p = {};
+    p.multiSelectVals = []
+    p.getUsers = function() {
+        var result = sforce.connection.query('SELECT FirstName, LastName, Id, Email FROM User WHERE IsActive = true'),
+        records = result.getArray('records'),
+        i;
+        for (i=0; i < records.length; i++) {
+            user = {};
+            user.name = records[i].FirstName + ' ' + records[i].LastName;
+            user.id = records[i].Id;
+            user.email = records[i].Email;
+            users.push(user);
+        }
+    };
+    p.processMultiSelect = function() {
+        $('select.coaching-category:first option').each(function() {
+            var optionVal = $(this).text();
+            initializeApp.multiSelectVals.push(optionVal);
+        });
+    };
+    return p;
+
+})();
+
+//angular app
+(function() {
+
+    var app = angular.module('CoachingSessionPlanner', []);
+    
+    app.controller('CoachingPlan', function($scope) {
+        $scope.eventId = serverValuesModule.getServerValue('eventId');
+        $scope.ownerId = serverValuesModule.getServerValue('ownerId');
+        $scope.userName = serverValuesModule.getServerValue('userName');
+        $scope.isUserSaved = serverValuesModule.getServerValue('attendeeAdded');
+        $scope.attendeeName = serverValuesModule.getServerValue('attendeeName');
+        $scope.coachingCategory = serverValuesModule.getServerValue('coachingCategory');
+        $scope.coachingCategoryOutput = $scope.coachingCategory.replace(';', ', ');
+        $scope.isAccepted = serverValuesModule.isAttendeeAdded();
+        $scope.assignee = serverValuesModule.getAssigneeName();
+        $scope.assigneeEmail = serverValuesModule.getAssigneeEmail();
+        $scope.mode;
+        this.profile = serverValuesModule.getServerValue('userProfile');
+        this.isTMCompleted = serverValuesModule.getServerValue('isTMCompleted');
+        if(this.profile.indexOf('DM') !== -1) {
+            $scope.mode = 'DM';
+        } else if (this.profile.indexOf('TM') !== -1 || this.profile.indexOf('Store') !== -1) {
+        	$scope.mode = 'TMSM';
+        } else {
+            $scope.mode = 'Global';
+        }
+        this.Activities_TM_Input__c = serverValuesModule.getServerValue('Activities_TM_Input__c');
+        this.Current_Challenges_TM_Input__c = serverValuesModule.getServerValue('Current_Challenges_TM_Input__c');
+        this.Expectations_TM_Input__c = serverValuesModule.getServerValue('Expectations_TM_Input__c');
+        this.Job_Related_TM_Input__c = serverValuesModule.getServerValue('Job_Related_TM_Input__c');
+        this.Personal_Development_TM_Input__c = serverValuesModule.getServerValue('Personal_Development_TM_Input__c');
+        this.Activities_DM_Input__c = serverValuesModule.getServerValue('Activities_DM_Input__c');
+        this.Current_Challenges_DM_Input__c = serverValuesModule.getServerValue('Current_Challenges_DM_Input__c');
+        this.Expectations_DM_Input__c = serverValuesModule.getServerValue('Expectations_DM_Input__c');
+        this.Job_Related_DM_Input__c = serverValuesModule.getServerValue('Job_Related_DM_Input__c');
+        this.Personal_Development_DM_Input__c = serverValuesModule.getServerValue('Personal_Development_DM_Input__c');
+        this.Manager_Notes_and_Follow_Up_Actions_1__c = serverValuesModule.getServerValue('Manager_Notes_and_Follow_Up_Actions_1__c');
+        this.Manager_Notes_and_Follow_Up_Actions_2__c = serverValuesModule.getServerValue('Manager_Notes_and_Follow_Up_Actions_3__c');
+        this.Manager_Notes_and_Follow_Up_Actions_3__c = serverValuesModule.getServerValue('Manager_Notes_and_Follow_Up_Actions_3__c');
+        this.updateFields = function(type) {
+            console.log('updateTMFields called');
+            var event = new sforce.SObject('Event');
+            event.Id = $scope.eventId;
+            if(type == 'TMSM' || type== 'Global') {
+                event.Activities_TM_Input__c = this.Activities_TM_Input__c;
+                console.log(this.Activities_TM_Input__c);
+                event.Current_Challenges_TM_Input__c = this.Current_Challenges_TM_Input__c;
+                event.Expectations_TM_Input__c = this.Expectations_TM_Input__c;
+                event.Job_Related_TM_Input__c = this.Job_Related_TM_Input__c;
+                event.Personal_Development_TM_Input__c = this.Personal_Development_TM_Input__c;
+            } else if (type == 'DM' || type== 'Global') {
+                event.Activities_DM_Input__c = this.Activities_DM_Input__c;
+                event.Current_Challenges_DM_Input__c = this.Current_Challenges_DM_Input__c;
+                event.Expectations_DM_Input__c = this.Expectations_DM_Input__c;
+                event.Job_Related_DM_Input__c = this.Job_Related_DM_Input__c;
+                event.Personal_Development_DM_Input__c = this.Personal_Development_DM_Input__c;
+                event.Manager_Notes_and_Follow_Up_Actions_1__c = this.Manager_Notes_and_Follow_Up_Actions_1__c;
+                event.Manager_Notes_and_Follow_Up_Actions_2__c = this.Manager_Notes_and_Follow_Up_Actions_2__c;
+                event.Manager_Notes_and_Follow_Up_Actions_3__c = this.Manager_Notes_and_Follow_Up_Actions_3__c; 
+            }
+            var result = sforce.connection.update([event]);
+            if(result[0].getBoolean('success')) {
+                console.log(result[0].id);
+                $('.notification').fadeIn('slow', function() {
+                    window.setTimeout( hideNot, 1000 );
+                });
+                function hideNot() {
+                    $('.notification').fadeOut()
+                }
+            } else {
+                window.alert('Failed to update Event: ' + result[0].errors.message);
+            }
+        }
+        this.toggleLock = function(tf) {
+            console.log(tf);
+            var event = new sforce.SObject('Event');
+            event.TM_Coaching_Planner_Locked__c = tf;
+            event.Id = $scope.eventId;
+            var result = sforce.connection.update([event]);
+            if(result[0].getBoolean('success')) {
+                this.isTMCompleted = tf;
+            } else {
+                window.alert('Failed to update Event: ' + result[0].errors.message);
+            }
+        }
+        this.saveReturn = function() {
+            this.updateFields($scope.mode);
+            location.href = '/' + $scope.eventId;
+        }
+    });
+    
+    app.controller('AcceptDenyInvite', function($scope) {
+        if($scope.$parent.mode == 'TMSM' && !$scope.$parent.isAccepted) {
+            $('.acceptDeny').modal({
+                show: true,
+                backdrop: 'static'
+            });
+        };
+        
+        $scope.assigneeName = serverValuesModule.getAssigneeName();
+        this.response;
+        this.status;
+        this.isError = false;
+        this.errorMsg;
+        this.respond = function(status, response, replyTo) {
+            $('.accept, .decline').button('loading');
+            var result = sforce.connection.query("SELECT Id FROM EventRelation WHERE EventId = '" + $scope.$parent.eventId + "' AND RelationId = '" + $scope.$parent.ownerId + "' LIMIT 1");
+            var records = result.getArray("records");
+            var attendee = new sforce.SObject("EventRelation");
+            attendee.id = records[0].Id;
+            attendee.Status = status;
+            attendee.Response = response;
+            var attendeeResult = sforce.connection.update([attendee]);
+            function sendEmail() {
+                var url;
+                var curPage;
+                var server;
+                if(status === 'Accepted') {
+                    url = document.URL;
+                } else {
+                    curPage = document.URL;
+                    server = curPage.substr(13, 1) === '.' ? curPage.substr(10, 3) : curPage.substr(10, 4);
+                    url = 'https://' + server + '.salesforce.com/' + $scope.$parent.eventId;
+                }
+                var emailBody = $scope.userName + ' ' + status.toLowerCase() + ' your coaching session invitation.\n\nResponse\n' + response + '\n\nView Session\n' + url; 
+                var singleRequest = new sforce.SingleEmailMessage();
+                singleRequest.replyTo = replyTo;
+                singleRequest.toAddresses = [$scope.assigneeEmail];
+                singleRequest.subject = "Response to Coaching Session Invite";                
+                singleRequest.plainTextBody = emailBody;
+                var sendMailRes = sforce.connection.sendEmail([singleRequest]);
+                $scope.$parent.isUserSaved = true;
+                $scope.$parent.attendeeName = this.selectedUserName;
+                console.log('email sent');
+                if(status === 'Accepted') {
+                    $('.acceptDeny').modal('hide');
+                } else {
+                    location.href = '/home/home.jsp';
+                }
+            }
+            if (attendeeResult[0].getBoolean("success")) {
+                sendEmail();
+            } else {
+                if(attendeeResult[0].errors.message == 'Unable to obtain exclusive access to this record.') {
+                    sendEmail();
+                } else {
+                 	this.isError = true;
+              		this.errorMsg = attendeeResult[0].errors.message;   
+                }
+            }
+        }
+    });
+
+    app.controller('SelectUser', function($scope) {
+        this.selUsers = users;
+        this.multiSelectVals = initializeApp.multiSelectVals;
+        this.userSearchVal;
+        this.isUserSelected = false;
+        this.selectedUserName;
+        this.selectedUserId;
+        this.selectedUserEmail;
+        this.coachingCategory;
+        this.showSuccess = true;
+        this.showRemove = false;
+        this.isError = false;
+        this.errorMsg;
+        this.searchUsers = function(userSearchVal) {
+            this.userSearchVal = userSearchVal;
+        }
+        this.selectUser = function(userName, userId, email) {
+            this.selectedUserName = userName;
+            this.selectedUserId = userId;
+            this.isUserSelected = true;
+            this.selectedUserEmail = email;
+            $('#user-modal').modal('hide');
+        }
+        this.showRemoveUser = function() {
+            this.showRemove = true;
+            this.showSuccess = false;
+        }
+        this.hideRemoveUser = function() {
+            this.showRemove = false;
+            this.showSuccess = true;
+        }
+        this.removeUser = function() {
+            this.isUserSelected = false;
+            this.selectedUserName = '';
+            this.selectedUserId = '';
+            this.selectedUserEmail = '';
+        }
+        this.createNotifyAttendee = function(userId, eventId, assigneeEmail, url) {
+            //Update event
+            var selectedVals = [];
+            $('.coaching-category-values input:checked').each(function() {
+                selectedVals.push($(this).val());
+            });
+            var event = new sforce.SObject('Event');
+            event.id = eventId;
+            event.Coaching_Session_Category__c = selectedVals.join(';');
+            $scope.$parent.coachingCategory = selectedVals.join(';');
+            $scope.$parent.coachingCategoryOutput = selectedVals.join(', ');
+            event.Coaching_Session_Attendee__c = this.selectedUserName;
+            event.Coaching_Session_URL__c = document.URL;
+            var eventResult = sforce.connection.update([event]);
+            if (eventResult[0].getBoolean("success")) {
+                //Create attendee
+                var attendee = new sforce.SObject("EventRelation");
+                attendee.EventId = eventId;
+                attendee.RelationId = userId;
+                var attendeeResult = sforce.connection.create([attendee]);
+                if (attendeeResult[0].getBoolean("success")) {
+                    //Send email & update data model
+                    var emailBody = 'You have been added to a new coaching session.  To view the coaching session click on the link below:\n\n' + url + '\n\n Coaching Category: ' + $scope.$parent.coachingCategory;
+                    var singleRequest = new sforce.SingleEmailMessage();
+                        singleRequest.replyTo = assigneeEmail;
+                        singleRequest.toAddresses = [this.selectedUserEmail];
+                    	singleRequest.subject = "New Coaching Session Scheduled: " + $scope.$parent.coachingCategoryOutput;
+                        singleRequest.plainTextBody = emailBody;
+                    var sendMailRes = sforce.connection.sendEmail([singleRequest]);
+                    $scope.$parent.isUserSaved = true;
+                    $scope.$parent.attendeeName = this.selectedUserName;
+                } else {
+                    this.isError = true;
+                    this.errorMsg = attendeeResult[0].errors.message;
+                }
+            } else {
+                this.isError = true;
+                this.errorMsg = eventResult[0].errors.message;
+            }
+        }
+    });
+    
+    app.directive('ngEnter', function () {
+        return function (scope, element, attrs) {
+            element.bind("keydown keypress", function (event) {
+                if(event.which === 13) {
+                    scope.$apply(function (){
+                        scope.$eval(attrs.ngEnter);
+                    });
+                    event.preventDefault();
+                }
+            });
+        };
+    });
+
+})();
+
+
+initializeApp.getUsers();
+initializeApp.processMultiSelect(); 

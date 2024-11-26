@@ -1,0 +1,9 @@
+<aura:event type="APPLICATION" description="Event fired when the list item action is clicked">
+
+    <!-- TODO: When updated to Winter 17, change this to a component event and set includeFacets to true
+                on handler: https://releasenotes.docs.salesforce.com/en-us/winter17/release-notes/rn_lightning_events_container.htm?edition=&impact= -->
+
+    <aura:attribute name="param" type="String" description="Param value from ListItemAction component" />
+    <aura:attribute name="label" type="String" description="Label value from ListItemAction component." />
+
+</aura:event>

@@ -1,0 +1,151 @@
+<aura:component controller="TMDMConsoleControllerV2" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickActionWithoutHeader" access="global" >
+    <!--Custom Styles for Modal Header and Footer--> 
+    <aura:html tag="style">
+        .slds-modal__header, .slds-modal__content {background:none;}
+        .slds-modal__container { margin: 0 auto; width: 100%;  }
+    </aura:html>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="isSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="defaultEventType" type="String" default="Phone Call - Outbound"/>    
+    
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    
+    <aura:registerEvent name="ModalAlert" type="c:ModalAlert" />
+    
+    <!--Spinner element-->
+    <aura:if isTrue="{!v.isSpinner}">
+        <div class="demo-only" style="height:6rem">
+            <div class="slds-spinner_container">
+                <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <aura:set attribute="accessLevel" value="2" />
+    
+    <aura:attribute name="event" type="Event" />
+    <aura:attribute name="numberDays" type="Integer" default="0" />
+    <aura:attribute name="hasMeeting" type="Boolean" />
+    <aura:attribute name="isModalOpen" type="Boolean" default="true" />
+    <aura:attribute name="isSf1" type="Boolean" />
+    <aura:attribute name="newEvent" type="Event" default="{sobjectType: 'Event'}" />
+    <aura:attribute name="showEMOne" type="Boolean" default="false"/>
+    <aura:attribute name="showEMTwo" type="Boolean" default="false"/>
+    <aura:attribute name="isOpen" type="Boolean" required="true" default="false" />
+    
+    <aura:attribute name="eventTypeOptions" 
+                    type="String[]" 
+                    description="Temporarily store the picklist options here until force:inputField works with lightning out." 
+                    default="Phone Call - Outbound" />
+    
+    <aura:attribute name="eventTopicOptions" 
+                    type="String[]" 
+                    description="Temporarily store the picklist options here until force:inputField works with lightning out." 
+                    default="Prospecting)" /> 
+    <div class="parentDiv">
+        <div aria-hidden="false" role="dialog" class="{!'slds-modal slds-fade-in-' + (v.isModalOpen ? 'open' : 'close')}">
+            <div class="modal-container slds-modal__container">
+                <!--Modal Header-->  
+                <div class="modal-header slds-modal__header slds-size_1-of-1" style="background:#fff;">
+                    <h4 class="title slds-text-heading--medium">New Outbound Phone Call</h4>
+                    <ui:button press="{!c.handleCloseModalPress}" label="" class="slds-button slds-button--icon-inverse slds-modal__close">
+                        <span class="slds-icon__container">
+                            <img src="/resource/LightningDesignSystem/icons/action/close_60.png" />
+                        </span>
+                        <span class="slds-assistive-text">
+                            Close
+                        </span>
+                    </ui:button>
+                </div>
+                <!--End Modal Header-->  
+             
+                <!--Modal Body-->   
+                <div class="modalScroller">
+                    <div class="slds-form--stacked slds-m-around--medium slds-text-align_left">
+                        <div class="slds-form-element">
+                            <!-- <label class="slds-form-element__label ">Start Date/Time</label> -->
+                            <div class="slds-form-element__control">
+                                <ui:inputDateTime aura:id="startDateTime" change="{!c.changeOne}"
+                                                  class="slds-input" label="Start Date/Time" 
+                                                  value="{!v.newEvent.StartDateTime}" 
+                                                  displayDatePicker="true" 
+                                                  required="true"
+                                                  disabled="{!v.isLoading}" /> 
+                                <aura:if isTrue="{!v.showEMOne}">
+                                    <span style="color:red">This field is required</span> 
+                                </aura:if>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label">Event Type</label>
+                            <div class="slds-form-element__control">
+                                <div class="slds-select_container">
+                                    <select aura:id="eventType" id="eventTypeId1" class="slds-select " disabled="{!v.isLoading}">
+                                        <aura:iteration items="{!v.eventTypeOptions}" var="i">
+                                            <option value="{!i}" selected="{!i == v.defaultEventType}">{!i}</option>
+                                        </aura:iteration>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label">Event Topic</label>
+                            <div class="slds-form-element__control">
+                                <div class="slds-select_container">
+                                    <select aura:id="eventTopic" id="eventTopicId1" class="slds-select " disabled="{!v.isLoading}" multiple="true" style="height: 135px" value="">
+                                        <aura:iteration items="{!v.eventTopicOptions}" var="i">
+                                            <option value="{!i}">{!i}</option>
+                                        </aura:iteration>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                             <label class="slds-form-element__label">Subject</label> 
+                            <div class="slds-form-element__control">
+                                <ui:inputText aura:id="subject" change="{!c.changeTwo}"
+                                              value="{!v.newEvent.Subject}"  
+                                              class="slds-input"
+                                              required="true"
+                                              disabled="{!v.isLoading}"/>
+                                <aura:if isTrue="{!v.showEMTwo}">
+                                    <span style="color:red">This field is required</span>
+                                </aura:if>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label">Duration (minutes) </label>
+                            <div class="slds-form-element__control">
+                                <ui:inputNumber aura:id="duration" 
+                                                class="slds-input " 
+                                                value="{!v.newEvent.DurationInMinutes}" 
+                                                maxLength="3"
+                                                required="true"
+                                                disabled="{!v.isLoading}" />
+                            </div>
+                        </div>  
+                        
+                    </div>
+                </div>
+                <!--End of Modal Body--> 
+             
+                <!--Modal Footer-->
+                <div>
+                    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+                        <lightning:button variant="Neutral" class="slds-button" label="Cancel" onclick="{!c.handleCloseModalPress}"/>
+                        <ui:button class="slds-button slds-button--neutral slds-button--brand" 
+                                   press="{!c.handleSavePress}" label="Save"/>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="{!'slds-backdrop slds-backdrop--' + (v.isOpen ? 'open' : 'close')}"></div>
+        </div>
+    </div>
+    <!--End of Modal Footer-->
+</aura:component>

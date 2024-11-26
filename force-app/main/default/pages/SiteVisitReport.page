@@ -1,0 +1,909 @@
+<apex:page standardController="Site_Visits__c" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false"
+    applyBodyTag="false" docType="html-5.0" lightningStylesheets="true">
+    <apex:slds />
+
+    <style>
+        .mincontent-h {
+            min-height: 20px;
+            
+        }
+        .slds-scope .slds-page-header.btn-background {
+            background-color: #FFF;
+            padding: 1rem 1.5rem;
+        }
+
+        .costco{ border-bottom: 10px solid #E31936 !important; }
+        .lowes{ border-bottom: 10px solid #004990 !important; }
+        .homedepot{ border-bottom: 10px solid #f96305 !important; }
+
+        .noHpadding{
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .imgRightAlign{
+            float: left;
+        }
+        .headerRight{
+            float: right;
+        }
+        .full-width{
+            width: 100%;
+        }
+        
+        .slds-scope .slds-text-title{
+            font-size: 16px;
+        }
+        
+        .slds-scope .slds-theme--shade, .slds-scope .slds-theme_shade{
+            background: #f4f6f9 !important;
+        }
+        
+        .slds-scope img{
+            height: 45px;
+        
+        }
+        .
+        
+       
+        
+        .slds-scope .slds-page-header .slds-truncate.slds-p-horizontal_small{
+            font-size: 20px;
+        }
+        
+        @page {
+            margin: 1.5cm;
+        }
+        
+        <!--
+        @page { size:8.5in 11in; margin: 1.5cm; orphans:4; widows:2; }
+        -->
+
+        @media (min-width: 48em){
+            .slds-scope .slds-page-header {
+                padding: 0 1rem;
+                border-bottom: none;
+            }
+        }
+
+        @media print{
+            body{
+                margin: 5mm;
+            }
+            
+            .slds-scope .slds-button{
+                display: none;
+            }
+            table { page-break-inside:auto }
+            tr    { page-break-inside:avoid; page-break-after:auto } 
+            .print-spacer {
+                display: block;
+                height: 20px; 
+            }
+            .slds-scope .slds-grid{
+                display: block;
+                overflow: hidden !important;
+            }
+            .slds-scope .slds-col, .slds-scope [class*=slds-col_padded], .slds-scope [class*=slds-col--padded]{
+                /*display: inline-block;*/
+                flex: none;
+                float: left;
+            }
+            .float-right{
+                float: right !important;
+            }
+            .inlineblockNegSpace{
+                margin-left: -4px !important;
+            }
+            .hidden-print {
+                display: none !important;
+           }
+           .leftPanelPrint{
+               padding-left: 30px !important;
+           }
+            .slds-scope .slds-text-title{
+                font-size: 10pt;
+                color: #54698d !important;
+            }
+            .mincontent-h {
+                font-size: 9pt;
+            }
+            .slds-scope .slds-page-header .slds-truncate.slds-p-horizontal_small{
+                font-size: 12pt;
+            }
+            .slds-scope .slds-section__title{
+                line-height: 3pt;
+            }
+            .slds-scope .slds-page-header{
+                height: 24pt;
+            }
+        
+            .slds-scope .slds-p-vertical--large, .slds-scope .slds-p-vertical_large{
+                padding-top: 8pt;
+                padding-bottom: 8pt;
+            }
+            .slds-scope .slds-m-top--medium, .slds-scope .slds-m-top_medium{
+                margin-top: 10pt;
+            }
+            .marginAdd{
+                padding-bottom: 50pt !important;
+            }
+            .slds-media__figure{
+                padding-bottom: 20pt;
+            
+        
+            }
+            
+            .slds-scope img{
+            height: 45px;
+                
+
+        }
+    </style>
+    <script>
+  function showhide()
+     {
+       var div = document.getElementById("aCHP");
+
+        if (div.style.display !== "none") {
+        div.style.display = "none";
+    }
+    else{
+        div.style.display = "block";
+    }
+    var change = document.getElementById("button");
+                    if (change.innerHTML == "Show Diagnostics")
+                    {
+                        change.innerHTML = "Hide Diagnostics";
+                    }
+                    else {
+                        change.innerHTML = "Show Diagnostics";
+                    }
+ }
+</script>
+
+    <div class="slds-scope">
+
+        <!-- PAGE HEADER -->
+        <div class="slds-page-header btn-background">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <!-- HEADING AREA -->
+                    <p class="slds-text-title--caps slds-line-height--reset"></p>
+                    <h1 class="slds-page-header__title slds-truncate" title="My Accounts"></h1>
+                    <!-- / HEADING AREA -->
+                </div>
+                <div class="slds-col slds-no-flex slds-grid slds-align-top hidden-print">
+                    
+                    <apex:form >
+                    
+                    <apex:commandButton action="{!URLFOR($Action.Site_Visits__c.View, Site_Visits__c.Id)}" value="Back" styleClass=" slds-button slds-button_neutral " />
+                    
+                    </apex:form>
+                    
+                    <c:printPDF accountId="{!Site_Visits__c.Account__r.id}" orientation=" Portrait" buttonclass="slds-button slds-button_brand slds-m-left--large"/>
+                    
+                    
+                </div>
+                
+
+            </div>
+        </div>
+        <!-- / PAGE HEADER -->
+        <!-- PAGE CONTENT -->
+        <article class="slds-grid slds-wrap slds-container--large slds-container--center slds-order-1 slds-medium-order--2 slds-p-vertical--large">
+            <!-- PAGE LOGO -->
+            <article class="slds-grid slds-wrap slds-grow slds-scrollable--y slds-p-vertical_small {!CASE(JSENCODE(Site_Visits__c.Name_of_Retailer__c), 'Costco', 'costco', 'Lowes', 'lowes', 'Home Depot', 'homedepot', '')}">
+                <div class="slds-grow slds-size--1-of-1 slds-medium-size--1-of-1 slds-large-size--1-of-1 slds-col-rule--right noHpadding">
+                    <img class="imgRightAlign slds-p-right_xx-large" height="45" src="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000003N1oZ&oid=00D80000000LcQA"
+                    />
+                    <apex:outputpanel rendered="{! If(Site_Visits__c.Name_of_Retailer__c=='Costco' ,true,false) }">
+                        <img class="headerRight slds-scope img" src="
+                        https://lennox.my.salesforce.com/015C0000002nLjh&oid=00D0U0000008k47" height="20"
+                        />
+                    </apex:outputpanel>
+                    <apex:outputpanel rendered="{! If(Site_Visits__c.Name_of_Retailer__c=='Home Depot',true,false) }">
+                        <img class="headerRight slds-scope img" src="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000003N1oY&oid=00D80000000LcQA" height="45"
+                        />
+                        
+                    </apex:outputpanel>
+                    
+                    <apex:outputpanel rendered="{! If(Site_Visits__c.Name_of_Retailer__c== 'Lowes',true,false) }">
+                       <img class="headerRight" src="https://lennox.my.salesforce.com/servlet/servlet.ImageServer?id=015C0000002nCU4&oid=00D80000000LcQA" height="45"/>
+                        
+                    </apex:outputpanel>
+                </div>
+            </article>
+            <!-- / PAGE LOGO -->
+            <article class="slds-grid slds-wrap slds-size_1-of-1">
+                
+                <section class="slds-size_1-of-1">
+                    <div class="slds-grid slds-wrap slds-container--medium slds-container--center slds-order-1 slds-medium-order--2 slds-p-vertical--large">
+                        <div class="slds-col slds-p-horizontal_small slds-size_1-of-2 slds-medium-size_2-of-3 leftPanelPrint">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Job Name</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Home_Owner__r.FirstName__c} {! Site_Visits__c.Home_Owner__r.LastName__c} </div>
+                            </div>
+                            
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Job Address</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Home_Owner__r.Address__c}</div>
+                            </div>
+                            
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">City</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Home_Owner__r.City__c}</div>
+                            </div>
+                            
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> State </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Home_owner__r.StateProvince__c}</div>
+                            </div>
+                            
+                            
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Zip Code </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Home_Owner__r.Postal_Code__c}</div>
+                            </div>
+
+                    
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Phone </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Home_Owner__r.Phone__c}</div>
+                            </div>
+                            
+                        </div>
+                        <div class="slds-col slds-p-horizontal_small slds-size_1-of-2 slds-medium-size_1-of-3 inlineblockNegSpace">
+                            
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Date of Site Visit </div>
+                                <div class="mincontent-h"> 
+                                    <apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!Site_Visits__c.Scheduled_Date__c}" /> </apex:outputText> 
+                                    
+                                   </div>
+                            </div>
+                            
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">FTC </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Responsible_FTC__r.Name}</div>
+                            </div>
+
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Reason for Visit </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Reason_for_Visit__c}</div>
+                            </div>
+                            
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Account# </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Customer_Number__c}</div>
+                            </div>
+                            
+                            
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Contractor </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Account__r.Name}</div>
+                            </div>
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Technician </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Technician__c}</div>
+                            </div>
+
+                           
+                        </div>
+                    </div>
+                </section>
+            </article>
+            
+            <div class="page-break" style="page-break-after:always;"></div>
+            <div class="print-spacer"></div>
+
+            <article class="slds-grid slds-wrap slds-size_1-of-1">
+                <section class="slds-size_1-of-1 slds-section__title slds-theme--shade">
+                    <div class="slds-page-header">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <span class="slds-truncate slds-p-horizontal_small" title="Section Title">System Equipment Information</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="slds-size_1-of-1">
+                    <div class="slds-grid slds-wrap slds-container--large slds-container--center slds-order-1 slds-medium-order--2 slds-p-vertical--large marginAdd">
+                        <table class="slds-table slds-table_bordered slds-table_cell-buffer table-space">
+                            <thead>
+                                <tr class="slds-text-title_caps">
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Unit">Unit</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Model">Model</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Serial">Serial</div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Start-up/Install Date">Start-up/Install Date </div>
+                                    </th>
+                                    <th scope="col">
+                                        <div class="slds-truncate" title="Manufacturer"> Manufacturer </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <apex:repeat value="{!Site_Visits__c.Case_Equip_Junctions__r}" var="equipment">
+                                    <tr>
+                                        <td data-label="Account Name">
+                                            <div class="slds-truncate" title="{!equipment.type__c}">{!equipment.type__c}</div>
+                                        </td>
+                                        <td data-label="Account Name">
+                                            <div class="slds-truncate" title="{!equipment.Model_Number__c}">{!equipment.Model_Number__c}</div>
+                                        </td>
+                                        <td data-label="Account Name">
+                                            <div class="slds-truncate" title="{!equipment.Serial_Number__c}">{!equipment.Serial_Number__c}</div>
+                                        </td>
+                                        <td data-label="Account Name">
+                                            <div class="slds-truncate" title="{!equipment.Installation_Date__c}">
+                                            <apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!equipment.Installation_Date__c}" /> </apex:outputText></div>
+                                        </td>
+                                        <td data-label="Account Name">
+                                            <div class="slds-truncate" title="{!equipment.Manufacturer__c}">{!equipment.Manufacturer__c}</div>
+                                        </td>
+                                        
+                                    </tr>
+                                </apex:repeat>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </article>
+            
+            <div class="page-break" style="page-break-after:always;"></div>
+            <div class="print-spacer"></div>
+            
+            <article class="slds-grid slds-wrap slds-size_1-of-1">
+                <section class="slds-size_1-of-1 slds-section__title slds-theme--shade">
+                    <div class="slds-page-header">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <span class="slds-truncate slds-p-horizontal_small"  title="Section Title">Visit Information</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="slds-size_1-of-1">
+                    <div class="slds-grid slds-wrap slds-container--medium slds-container--center slds-order-1 slds-medium-order--2 slds-p-vertical--large">
+                        <div class="slds-col slds-p-horizontal_small slds-size_1-of-1 slds-medium-size_2-of-3 leftPanelPrint">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Reported Issue/Reason for Visit</div>
+                                <div class="mincontent-h">
+                                
+                                <apex:outputText escape="false" id="sVReason" value="{! Site_Visits__c.Reported_Issue_Reason_for_Visit__c}">
+                                
+                                </apex:outputText>
+                                    
+                                 </div>
+                            </div>
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Findings/Summary</div>
+                                <div class="mincontent-h">
+                                <apex:outputText escape="false" id="sVF" value="{! Site_Visits__c.Findings__c}">
+                                
+                                </apex:outputText>
+                                    </div>
+                            </div>
+         
+                            
+                            
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> The System is </div>
+                                <div class="mincontent-h">{! Site_Visits__c.The_system_is__c}</div>
+                            </div>
+                        
+                        
+
+                        <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Recommendations</div>
+                                <apex:outputText escape="false" id="sVR" value="{! Site_Visits__c.Recommendations__c}">
+                               
+                                </apex:outputText>
+                            </div> 
+                    </div> 
+ </div>
+                </section>
+            
+            </article>
+            <article class="slds-grid slds-wrap slds-size_1-of-1 slds-p-bottom_x-large" >
+            <button id="button" class=" slds-button slds-button_neutral hiddenClass  " onclick="showhide();">Show Diagnostics</button>
+            </article>
+
+            
+
+            <article class="slds-grid slds-wrap slds-size_1-of-1" id="aCHP"  style="display: none;">
+                <section class="slds-size_1-of-1 slds-section__title slds-theme--shade">
+                    <div class="slds-page-header">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <span class="slds-truncate slds-p-horizontal_small"  title="Section Title">Diagnostics</span>
+                            </div>
+                        </div>
+                    </div>
+      </section>
+          
+      
+
+                        
+                    <div class="slds-page-header">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <span class="slds-truncate slds-p-horizontal_small"  title="Section Title">A/C</span>
+                            </div>   </div>   </div>
+                        
+                     
+                <section class="slds-size_1-of-1">
+                    <div class="slds-grid slds-wrap slds-container--medium slds-container--center slds-order-1 slds-medium-order--2 slds-p-vertical--large">
+                        <div class="slds-col slds-p-horizontal_small slds-size_1-of-2 slds-medium-size_2-of-3 leftPanelPrint">
+
+
+                        <apex:outputPanel id="rLL" rendered="{! Site_Visits__c.Refrig_Line_Length__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Refrig Line Length</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Refrig_Line_Length__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <div class="slds-m-top_medium">
+                            <apex:outputPanel id="rLR" rendered="{! Site_Visits__c.Refrig_Line_Rise__c!=null}">
+                            
+                                <div class="slds-text-title"> Refrig Line Rise </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Refrig_Line_Rise__c}</div>
+                            
+                            </apex:outputpanel>
+                                </div>
+                            <apex:outputPanel id="lLS" rendered="{! Site_Visits__c.Liquid_Line_Size__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Liquid Line Size</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Liquid_Line_Size__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="vLS" rendered="{! Site_Visits__c.Vapor_Line_Size__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Vapor Line Size</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Vapor_Line_Size__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="nE" rendered="{! Site_Visits__c.Nbr_Elbows__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Nbr Elbows </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Nbr_Elbows__c}</div>
+                            </div>
+                            
+                            </apex:outputpanel>
+                            
+                            <apex:outputPanel id="r" rendered="{! Site_Visits__c.Refrigerant__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Refrigerant </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Refrigerant__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="sC" rendered="{! Site_Visits__c.Superheat_compressor__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Superheat @ compressor </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Superheat_compressor__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="dTC" rendered="{! Site_Visits__c.Discharge_Temp_Compressor__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Discharge Temp @ compressor </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Discharge_Temp_Compressor__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="sTC" rendered="{! Site_Visits__c.Suction_Temp_compressor__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Suction Temp @ compressor </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Suction_Temp_compressor__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="dPC" rendered="{! Site_Visits__c.Discharge_psig_Compressor__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Discharge psig @ compressor </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Discharge_psig_Compressor__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="sPC" rendered="{! Site_Visits__c.Suction_psig_Compressor__c!=null}">
+                            <div class="page-break" style="page-break-after:always;"></div>
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Suction psig @ compresor </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Suction_psig_Compressor__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="cACLO" rendered="{! Site_Visits__c.Compressor_Amps_C_L1__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Compressor Amps "C"(L1) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Compressor_Amps_C_L1__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="cACLTW" rendered="{! Site_Visits__c.Compressor_Amps_R_L2__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Compressor Amps "R"(L2) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Compressor_Amps_R_L2__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="cACLTH" rendered="{! Site_Visits__c.Compressor_Amps_S_L3__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Compressor Amps "S"(L3) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Compressor_Amps_S_L3__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="fDRV" rendered="{! Site_Visits__c.F_difference_reversing_valve__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">F difference Reversing Value </div>
+                                <div class="mincontent-h">{! Site_Visits__c.F_difference_reversing_valve__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="fDID" rendered="{! Site_Visits__c.F_difference_Indoor_Drop__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> F difference Indoor Drop </div>
+                                <div class="mincontent-h">{! Site_Visits__c.F_difference_Indoor_Drop__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="fDIR" rendered="{! Site_Visits__c.F_difference_Indoor_Rise__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">F difference Indoor Rise </div>
+                                <div class="mincontent-h">{! Site_Visits__c.F_difference_Indoor_Rise__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="lOTG" rendered="{! Site_Visits__c.L1_to_Ground__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> L1 to Ground </div>
+                                <div class="mincontent-h">{! Site_Visits__c.L1_to_Ground__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="lTWTG" rendered="{! Site_Visits__c.L2_to_Ground__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> L2 to Ground </div>
+                                <div class="mincontent-h">{! Site_Visits__c.L2_to_Ground__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="lTHTG" rendered="{! Site_Visits__c.L3_to_Ground__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> L3 to Ground </div>
+                                <div class="mincontent-h">{! Site_Visits__c.L3_to_Ground__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                        </div>
+                        <div class="slds-col slds-p-horizontal_small slds-size_1-of-2 slds-medium-size_1-of-3 inlineblockNegSpace">
+                        <apex:outputPanel id="sAWB" rendered="{! Site_Visits__c.Supply_Air_Wet_Bulb__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Supply Air Wet Bulb </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Supply_Air_Wet_Bulb__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="rAWB" rendered="{! Site_Visits__c.Return_Air_Wet_Bulb__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Return Air Wet Bulb </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Return_Air_Wet_Bulb__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="sADB" rendered="{! Site_Visits__c.Supply_Air_Dry_Bulb__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Supply Air Dry Bulb</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Supply_Air_Dry_Bulb__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="rADB" rendered="{! Site_Visits__c.Return_Air_Dry_Bulb__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Return Air Dry Bulb</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Return_Air_Dry_Bulb__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="oADB" rendered="{! Site_Visits__c.Outdoor_Ambient_Dry_Bulb__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Outdoor Ambinent Dry Bulb </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Outdoor_Ambient_Dry_Bulb__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="iC" rendered="{! Site_Visits__c.Indoor_CFM__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Indoor CFM </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Indoor_CFM__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="vTIU" rendered="{! Site_Visits__c.Vapor_Temp_indoor_unit__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Vapor Temp @indoor unit </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Vapor_Temp_indoor_unit__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="vPIU" rendered="{! Site_Visits__c.Vapor_psig_indoor_unit__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Vapor psig @indoor unit </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Vapor_psig_indoor_unit__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="aTOU" rendered="{! Site_Visits__c.Approach_Temp_Outdoor_Unit__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Approach Temp @outdoor unit </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Approach_Temp_Outdoor_Unit__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="lPOU" rendered="{! Site_Visits__c.Liquid_psig_outdoor_unit__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Liquid psig @outdoor unit </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Liquid_psig_outdoor_unit__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="sPOU" rendered="{! Site_Visits__c.Suction_psig_Outdoor_Unit__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Suction psig @outdoor uint </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Suction_psig_Outdoor_Unit__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="cV" rendered="{! Site_Visits__c.Control_Voltage__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Controll Voltage </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Control_Voltage__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="iLV" rendered="{! Site_Visits__c.Indoor_Line_Voltage__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Indoor Line Voltage</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Indoor_Line_Voltage__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="oFA" rendered="{! Site_Visits__c.Outdoor_Fan_Amps__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Outdor Fan Amps </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Outdoor_Fan_Amps__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="iBA" rendered="{! Site_Visits__c.Indoor_Blower_Amps__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Indoor Blower Amps </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Indoor_Blower_Amps__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="tESW" rendered="{! Site_Visits__c.Total_External_Static_wc__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Total External Static(in.w/c) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Total_External_Static_wc__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="sSC" rendered="{! Site_Visits__c.Supply_Static_wc__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Supply Static(in.w/c) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Supply_Static_wc__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="rSC" rendered="{! Site_Visits__c.Return_Static_wc__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Return Static(in.w/c) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Return_Static_wc__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="oS" rendered="{! Site_Visits__c.Orifice_Size__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Orifice Size </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Orifice_Size__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="lOLTW" rendered="{! Site_Visits__c.L1_L2__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">L1-L2</div>
+                                <div class="mincontent-h">{! Site_Visits__c.L1_L2__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="lOLTH" rendered="{! Site_Visits__c.L1_L3__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">L1-L3 </div>
+                                <div class="mincontent-h">{! Site_Visits__c.L1_L3__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="lTWLTH" rendered="{! Site_Visits__c.L2_L3__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">L2-L3 </div>
+                                <div class="mincontent-h">{! Site_Visits__c.L2_L3__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                        </div>
+                    </div>
+
+                    <div class="slds-page-header">
+                        <div class="slds-media">
+                            <div class="slds-media__figure">
+                                <span class="slds-truncate slds-p-horizontal_small"  title="Section Title">Heating</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="slds-size_1-of-1">
+                    <div class="slds-grid slds-wrap slds-container--medium slds-container--center slds-order-1 slds-medium-order--2 slds-p-vertical--large">
+                        <div class="slds-col slds-p-horizontal_small slds-size_1-of-2 slds-medium-size_2-of-3 leftPanelPrint">
+
+
+
+
+
+                        <apex:outputPanel id="vType" rendered="{! Site_Visits__c.vent_type__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Vent Type</div>
+                                <div class="mincontent-h">{! Site_Visits__c.vent_type__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <div class="slds-m-top_medium">
+                            <apex:outputPanel id="lLen" rendered="{! Site_Visits__c.linear_length__c!=null}">
+                                <div class="slds-text-title"> Linear Length </div>
+                                <div class="mincontent-h">{! Site_Visits__c.linear_length__c}</div>
+                            
+                            </apex:outputpanel>
+                                </div>
+                            <apex:outputPanel id="eLen" rendered="{! Site_Visits__c.equiv_length__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Equiv. Length</div>
+                                <div class="mincontent-h">{! Site_Visits__c.equiv_length__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="pSiz" rendered="{! Site_Visits__c.pipe_size__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Pipe Size (in)</div>
+                                <div class="mincontent-h">{! Site_Visits__c.pipe_Size__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="nE2" rendered="{! Site_Visits__c.Nbr_Elbows__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Nbr Elbows </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Nbr_Elbows__c}</div>
+                            </div>
+                            
+                            </apex:outputpanel>
+                            
+                            <apex:outputPanel id="tErm" rendered="{! Site_Visits__c.termination__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Termination </div>
+                                <div class="mincontent-h">{! Site_Visits__c.termination__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="fUe" rendered="{! Site_Visits__c.fuel__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Fuel </div>
+                                <div class="mincontent-h">{! Site_Visits__c.fuel__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="fSi" rendered="{! Site_Visits__c.Flame_signal__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Flame Signal</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Flame_signal__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="cOPPM" rendered="{! Site_Visits__c.CO_PPM__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">CO PPM</div>
+                                <div class="mincontent-h">{! Site_Visits__c.CO_PPM__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="dOo" rendered="{! Site_Visits__c.Percent__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Percent of Oxygen </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Percent__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="cFm" rendered="{! Site_Visits__c.CFM__c!=null}">
+                            <div class="page-break" style="page-break-after:always;"></div>
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">CFM </div>
+                                <div class="mincontent-h">{! Site_Visits__c.CFM__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="sTsn" rendered="{! Site_Visits__c.Smoke_Test_Spot_Number__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Smoke test Spot Number </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Smoke_Test_Spot_Number__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="aHS1a" rendered="{! Site_Visits__c.Amps_Heat_Section_1_A__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Amps Heat Section 1 (A) </div>
+                                <div class="mincontent-h">{!Site_Visits__c.Amps_Heat_Section_1_A__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="aHS1b" rendered="{! Site_Visits__c.Amps_Heat_Section_1_B__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Amps Heat Section 1 (B) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Amps_Heat_Section_1_B__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="aHS1c" rendered="{! Site_Visits__c.Amps_Heat_Section_1_C__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Amps Heat Section 1 (C) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Amps_Heat_Section_1_C__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                         
+                        </div>
+
+
+
+
+                        <div class="slds-col slds-p-horizontal_small slds-size_1-of-2 slds-medium-size_1-of-3 inlineblockNegSpace">
+                        <apex:outputPanel id="cSd" rendered="{! Site_Visits__c.Cold_Stack_Draft_wc__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Cold Stack Draft (in.w/c) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Cold_Stack_Draft_wc__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="oSd" rendered="{! Site_Visits__c.Operating_Stack_Draft_wc__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Operating Stack Draft (in.w/c)  </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Operating_Stack_Draft_wc__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="oD" rendered="{! Site_Visits__c.Overfire_Draft_wc__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Overfire Draft (in. w/c) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Overfire_Draft_wc__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="sDr" rendered="{! Site_Visits__c.Stack_Temp__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Stack Temp</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Stack_Temp__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="iTem" rendered="{! Site_Visits__c.Indoor_Temp_F__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Indoor Temp </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Indoor_Temp_F__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="netS" rendered="{! Site_Visits__c.Net_Stack_F__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Net Stack</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Net_Stack_F__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="pPp" rendered="{! Site_Visits__c.Pump_Pressure_psig__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Pump pressure psig </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Pump_Pressure_psig__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="pCUp" rendered="{! Site_Visits__c.Pump_Cut_Off_Pressure_psig__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Pump Cut Off Pressure psig</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Pump_Cut_Off_Pressure_psig__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="nTG" rendered="{!Site_Visits__c.Nozzle_type_gph_angle__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Nozzle Type/gph/angle</div>
+                                <div class="mincontent-h">{! Site_Visits__c.Nozzle_type_gph_angle__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="aHS2a" rendered="{! Site_Visits__c.Amps_Heat_Section_2_A__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Amps Heat Section 2 (A) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Amps_Heat_Section_2_A__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="aHS2b" rendered="{! Site_Visits__c.Amps_Heat_Section_2_B__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title"> Amps Heat Section 2 (B) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Amps_Heat_Section_2_B__c}</div>
+                            </div>
+                            </apex:outputpanel>
+                            <apex:outputPanel id="aHS2c" rendered="{!Site_Visits__c.Amps_Heat_Section_2_C__c!=null}">
+                            <div class="slds-m-top_medium">
+                                <div class="slds-text-title">Amps Heat Section 2 (C) </div>
+                                <div class="mincontent-h">{! Site_Visits__c.Amps_Heat_Section_2_C__c}</div>
+                            </div>
+                            </apex:outputpanel>
+              
+                        </div>
+                    </div>
+                </section>
+         </article>   
+            
+
+  </article>   
+
+        <!-- PAGE CONTENT -->
+    </div>
+</apex:page>

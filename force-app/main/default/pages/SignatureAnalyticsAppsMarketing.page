@@ -1,0 +1,96 @@
+<apex:page sidebar="false" showChat="false" controller="SignatureAnalyticsAppsControllerMktg" lightningStylesheets="true">
+    <apex:slds />
+
+    <style>
+        .column-grid {
+            width: 49%;
+            padding: 0.75rem;
+            display: inline-block;
+        }
+
+        .slds-scope .block-elem {
+            width: 100%;
+            display: block;
+        }
+
+        .brand-block {
+            padding: 10px;
+            margin-bottom: 10px;
+            color: #FFF;
+            background-color: #0070d2;
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+        }
+
+        .icon-container {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .icon-description {
+            margin-bottom: 10px;
+        }
+
+        @media (min-width: 48em) {
+            .column-grid {
+                width: 24%;
+                padding: 0.75rem;
+            }
+        }
+    </style>
+
+    <div class="slds-scope">
+
+
+
+        <div id="multipleApp" class="slds-grid slds-wrap slds-m-top_medium slds-grid_align-space ">
+            <apex:repeat value="{!sap}" var="app">
+
+                    <apex:outputPanel styleClass=" slds-p-horizontal_medium slds-m-bottom_medium slds-size_1-of-1 slds-medium-size_1-of-3" rendered="{!$Permission['Can_View_' + app.DeveloperName]}" layout="block">
+                        <div class="brand-block slds-text-align_center">
+                            <div class=" icon-container">
+                                <apex:variable var="utilityIcon" value="{!app.Icon__c}" />
+                                <apex:image url="{!URLFOR($Resource.SLDSIcons, utilityIcon)}" />
+                            </div>
+                            <div class="slds-text-heading_medium">
+                                {!app.label}
+                            </div>
+                            <div class="slds-text-align_center icon-description">{!app.Description__c}</div>
+                        </div>
+                        <div class="slds-text-align_center">
+                            <button class="slds-button slds-button_neutral" data-url="{!app.URL__c}" data-label="{!app.label}" onclick="handleButtonClick(this)">
+                            Go </button>
+                        </div>
+                    </apex:outputPanel>
+
+            </apex:repeat>
+        </div>
+
+    </div>
+
+    <apex:iframe id="theIframe" />
+    <script>
+        function handleButtonClick(btn) {
+            var url = btn.dataset.url;
+            var label = btn.dataset.label;
+            document.getElementById('theIframe').setAttribute('src', url);
+            //document.getElementById('theIframe').height = window.innerHeight;
+            document.getElementById('theIframe').height = window.innerWidth;
+            document.getElementById('multipleApp').classList.add('slds-hide');
+            document.getElementById('appName').innerHTML = label;
+            document.getElementById('backButton').classList.remove('slds-hide');
+        }
+
+        function handleBackButtonClick() {
+            document.getElementById('theIframe').setAttribute('src', '');
+            document.getElementById('theIframe').height = 0;
+            document.getElementById('multipleApp').classList.remove('slds-hide');
+            document.getElementById('appName').innerHTML = 'Signature Analytics';
+            document.getElementById('backButton').classList.add('slds-hide');
+        }
+
+        function reloadPage() {
+            location.reload();
+        }
+    </script>
+</apex:page>

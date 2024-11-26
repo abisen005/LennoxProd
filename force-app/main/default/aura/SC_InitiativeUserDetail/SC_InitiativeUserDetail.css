@@ -1,0 +1,18 @@
+.THIS .bg-alt-inverse {
+  background: token(colorBackgroundAltInverse); }
+
+.THIS .color-success {
+  color: #4BCA81; }
+
+.THIS .slds-box {
+  height: 100%; }
+
+.THIS .line-height-reset {
+  line-height: 1; }
+
+.THIS .slds-tabs--default__content {
+  padding-top: 0; }
+
+@media only screen and (min-width: 48em) {
+  .THIS .max-height {
+    max-height: 175px; } }

@@ -1,0 +1,60 @@
+.sfdc_button {
+    width: 100%;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #ba0517;
+    background-color: #ba0517;
+    border-color: #357ebd;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 10px 12px;
+    font-size: 16px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.42857143;
+    border-radius: 7px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.sfdc_button:hover {
+    background-color: #dc5f4f; /* Change the background color on hover */
+}
+.custom-card {
+	display: inline-block;
+    width: 100%; 
+}
+
+.sfdc_hyperlink {
+ color: rgb(156, 42, 60);
+}
+
+.sfdc_username_container{
+    margin-bottom:10px;
+    padding: 12px;
+    background-color:white;
+    border: 1px solid #CCC;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+	width: 50%;
+}
+
+.container {
+    display: flex; /* Use flexbox layout */
+    justify-content: space-between; /* Distribute items along the main axis */
+}
+
+.spacer {
+    flex: 1; /* Take up remaining space */
+}
+
+.cSelfRegisterCustom {
+    border-color: #e23d56;
+    border-width: 2px;
+}

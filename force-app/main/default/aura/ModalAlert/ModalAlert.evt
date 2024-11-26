@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Fires when a modal needs to provide feedback to the user.">
+    <aura:attribute name="alertType" type="String"  description="success, warning, error or leave blank for generic alert" />
+    <aura:attribute name="alertMessage" type="String"  />
+</aura:event>

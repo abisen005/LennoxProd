@@ -1,0 +1,170 @@
+<aura:component controller="SC_UserBadgesConroller" access="GLOBAL">
+
+    <aura:attribute name="userId" type="String" />
+    <aura:attribute name="userBadges" type="Object[]" />
+    <aura:attribute name="otherlist" type="Object[]" access="GLOBAL" />
+    <aura:attribute name="isLoading" type="Boolean" default="true" />
+    <aura:attribute name="isPhone" type="Boolean" default="{!$Browser.formFactor == 'PHONE'}" />
+
+    <aura:attribute name="limit"
+                    type="Integer"
+                    default="10"
+                    description="Used internally to keep track of pagination." />
+
+    <aura:attribute name="offset"
+                    type="Integer"
+                    default="0"
+                    description="Used internally to keep track of pagination." />
+
+    <aura:attribute name="hasMoreRecords"
+                    type="Boolean"
+                    default="false"
+                    description="Used internally to know if there are more records available to query." />
+
+
+
+    <aura:handler name="change" value="{!v.userId}" action="{!c.handleUserIdChange}" />
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler event="c:SC_EvtBadgeGiven" action="{!c.handleBadgeGiven}" />
+
+
+
+    <section>
+
+
+        <aura:if isTrue="{!v.isPhone}">
+
+            <!-- Has Data - MOBILE -->
+            <ul class="slds-has-dividers--bottom-space">
+                <aura:iteration items="{!v.userBadges}" var="badge">
+                    <li class="slds-item">
+                        <div class="slds-tile slds-media">
+                            <div class="slds-media__figure">
+                                <img src="{!badge.ImageUrl}" class="slds-avatar--small" alt="Placeholder" />
+                            </div>
+                            <div class="slds-media__body">
+                                <h3 class="slds-truncate" title="{!badge.Description}">
+                                    {!badge.Description}
+                                </h3>
+                                <div class="slds-tile__detail slds-text-body--small">
+                                    <dl class="slds-dl--horizontal">
+                                        <dt class="slds-dl--horizontal__label">
+                                            <p class="slds-truncate" title="Message">Message:</p>
+                                        </dt>
+                                        <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                                            <p class="slds-truncate" title="{!badge.Message}">
+                                                {!badge.Message}
+                                            </p>
+                                        </dd>
+                                        <dl class="slds-dl--horizontal">
+                                            <dt class="slds-dl--horizontal__label">
+                                                <p class="slds-truncate" title="Rewarded on">Rewarded on:</p>
+                                            </dt>
+                                            <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                                                <p class="slds-truncate" title="{!badge.CreatedDate}">
+                                                    <ui:outputDateTime value="{!badge.CreatedDate}" />
+                                                </p>
+                                            </dd>
+                                        </dl>
+                                        <dl class="slds-dl--horizontal">
+                                            <dt class="slds-dl--horizontal__label">
+                                                <p class="slds-truncate" title="Rewarded on">Given by:</p>
+                                            </dt>
+                                            <dd class="slds-dl--horizontal__detail slds-tile__meta">
+                                                <p class="slds-truncate" title="{!badge.CreatedBy.Name}">
+                                                    {!badge.CreatedBy.Name}
+                                                </p>
+                                            </dd>
+                                        </dl>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </aura:iteration>
+            </ul>
+
+            <!-- Has Data -->
+
+            <aura:set attribute="else">
+                <table class="{!'slds-table slds-table--bordered slds-table--cell-buffer ' + (empty(v.userBadges) ? 'slds-hide' : '')}">
+                    <thead>
+                        <tr class="slds-text-title--caps">
+                            <th scope="col">
+                                <div class="slds-truncate" title="Name">Badge</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Message">Message</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Rewarded on">Rewarded on</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Rewarded on">Given by</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.userBadges}" var="badge">
+                            <tr>
+                                <th scope="row" data-label="Name" class="slds-cell-wrap">
+                                    <div class="slds-media slds-media--center">
+                                        <div class="slds-media__figure">
+                                            <img src="{!badge.ImageUrl}" class="slds-avatar--large" alt="Placeholder" />
+                                        </div>
+                                        <div class="slds-media__body">
+                                            <p title="{!badge.Description}">{!badge.Description}</p>
+                                        </div>
+                                    </div>
+                                </th>
+                                <td data-label="Message" class="slds-cell-wrap">
+                                    {!badge.Message}
+                                </td>
+                                <td data-label="Rewarded on">
+                                    <div class="slds-truncate">
+                                        <ui:outputDateTime value="{!badge.CreatedDate}" />
+                                    </div>
+                                </td>
+                                <td data-label="Given by">
+                                    <div class="slds-truncate">
+                                        {!badge.CreatedBy.Name}
+                                    </div>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+
+            </aura:set>
+
+        </aura:if>
+
+        <div class="{!'slds-text-align--center slds-p-around--medium ' + (!v.hasMoreRecords ? 'slds-hide' : '')}">
+            <lightning:button label="Show More"
+                              iconName="utility:arrowdown"
+                              iconPosition="right"
+                              variant="base"
+                              onclick="{!c.handleShowMoreClick}" />
+        </div>
+
+
+
+        <!-- No Data -->
+        <div class="{!'slds-p-around--small ' + (!empty(v.userBadges) ? 'slds-hide' : '')}">
+            <div class="slds-box slds-theme--shade">
+                <p>There are no badges.</p>
+            </div>
+        </div>
+
+
+
+        <!-- Loading -->
+        <span class="{!v.isLoading ? '' : 'slds-hide'}">
+            <c:SC_Loader />
+        </span>
+
+
+
+    </section>
+
+</aura:component>

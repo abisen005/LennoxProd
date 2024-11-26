@@ -1,0 +1,2587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EfxTransmit>
+  <EfxReport requestNumber="1" reportId="USConsumerCreditReport6">
+    <USConsumerCreditReports>
+      <USConsumerCreditReport relationshipIdentifier="Primary" multipleNumber="1">
+        <USHeader>
+          <USRequest>
+            <CustomerReferenceNumber>XXXXXXXXXX</CustomerReferenceNumber>
+            <CustomerNumber>999ZZ56588</CustomerNumber>
+            <ConsumerReferralCode>285</ConsumerReferralCode>
+            <ECOAInquiryType>I</ECOAInquiryType>
+          </USRequest>
+          <USCreditFile>
+            <HitCode code="6" description="Hit and Automated Consumer Narrative"/>
+            <FileSinceDate format="MM/DD/CCYY">05/01/2006</FileSinceDate>
+            <DateOfLastActivity format="MM/DD/CCYY">09/17/2011</DateOfLastActivity>
+            <DateOfRequest format="MM/DD/CCYY">11/29/2011</DateOfRequest>
+            <DoNotCombineIndicator code="C" description="Do Not Combine"/>
+            <FraudVictimIndicator code="W" description="Active Duty Alert with Fraud Victim - Extended Alert"/>
+            <AddressDiscrepancyIndicator>N</AddressDiscrepancyIndicator>
+          </USCreditFile>
+          <USConsumerSubject>
+            <PersonName>
+              <LastName>BBIGFILETEST</LastName>
+              <FirstName>BERTHA</FirstName>
+              <MiddleName>B</MiddleName>
+            </PersonName>
+            <DateOfBirth format="MM/DD/CCYY">05/01/1971</DateOfBirth>
+            <SocialSecurityNumber>799232221</SocialSecurityNumber>
+          </USConsumerSubject>
+        </USHeader>
+        <USAddresses>
+          <USAddress code="CA" description="Current Address">
+            <StreetNumber>12345678</StreetNumber>
+            <StreetName>SOME RANDOM RD</StreetName>
+            <StreetType>PL</StreetType>
+            <City>JONESBORO</City>
+            <State>AR</State>
+            <PostalCode>72401</PostalCode>
+            <DateAddressFirstReported format="MM/DD/CCYY">09/00/2011</DateAddressFirstReported>
+            <AddressSource code="C" description="Equifax"/>
+            <DateAddressLastReported format="MM/DD/CCYY">09/03/2011</DateAddressLastReported>
+          </USAddress>
+          <USAddress code="FA" description="Former Address">
+            <StreetPreDirection/>
+            <StreetNumber>987654</StreetNumber>
+            <StreetName>COUNTRY CROSSING</StreetName>
+            <StreetType>RD</StreetType>
+            <City>MEMPHIS</City>
+            <State>TN</State>
+            <PostalCode>38116</PostalCode>
+            <DateAddressFirstReported format="MM/DD/CCYY">09/00/2011</DateAddressFirstReported>
+            <AddressSource code="C" description="Equifax"/>
+            <DateAddressLastReported format="MM/DD/CCYY">09/03/2011</DateAddressLastReported>
+          </USAddress>
+          <USAddress code="FA" description="Former Address">
+            <StreetPreDirection/>
+            <StreetNumber>12345</StreetNumber>
+            <StreetName>WILD WEST HWY</StreetName>
+            <StreetType>ST</StreetType>
+            <City>PHOENIX</City>
+            <State>AZ</State>
+            <PostalCode>85029</PostalCode>
+            <DateAddressFirstReported format="MM/DD/CCYY">09/00/2011</DateAddressFirstReported>
+            <AddressSource code="C" description="Equifax"/>
+            <DateAddressLastReported format="MM/DD/CCYY">09/03/2011</DateAddressLastReported>
+          </USAddress>
+        </USAddresses>
+        <USOtherNames>
+          <USOtherName code="FN" description="Former Name">
+            <LastName>BBIGGIE</LastName>
+            <FirstName>B</FirstName>
+          </USOtherName>
+          <USOtherName code="FN" description="Former Name">
+            <LastName>BBIGGIRL</LastName>
+            <FirstName>BERTHA</FirstName>
+          </USOtherName>
+          <USOtherName code="FN" description="Former Name">
+            <LastName>BBANKSTEST</LastName>
+            <FirstName>TEENY</FirstName>
+            <MiddleName>B</MiddleName>
+          </USOtherName>
+          <USOtherName code="FN" description="Former Name">
+            <LastName>BBANKSTEST</LastName>
+            <FirstName>BERTHA</FirstName>
+          </USOtherName>
+        </USOtherNames>
+        <USEmployments>
+          <USEmployment code="ES" description="Current Employment">
+            <Occupation>CEO OF HULLA HOOP OPS</Occupation>
+          </USEmployment>
+          <USEmployment code="EF" description="Previous Employment">
+            <Occupation>HULLA HOOP SALES</Occupation>
+          </USEmployment>
+          <USEmployment code="EF" description="Previous Employment">
+            <Occupation>HULLA HOOP MAKER</Occupation>
+          </USEmployment>
+        </USEmployments>
+        <USBankruptcies>
+          <USBankruptcy>
+            <DateFiled format="MM/DD/CCYY">02/00/2003</DateFiled>
+            <CourtId>
+              <CustomerNumber>404VF00025</CustomerNumber>
+              <Industry code="VF" description="Federal"/>
+            </CourtId>
+            <CaseNumber>00018993473</CaseNumber>
+            <Type code="I" description="Individual"/>
+            <Filer code="J" description="Joint"/>
+            <Disposition code="D" description="CH-11 Filed">
+              <Date format="MM/DD/CCYY">11/00/2003</Date>
+            </Disposition>
+            <DateReported format="MM/DD/CCYY">09/15/2011</DateReported>
+          </USBankruptcy>
+          <USBankruptcy>
+            <DateFiled format="MM/DD/CCYY">11/00/2010</DateFiled>
+            <CourtId>
+              <CustomerNumber>401VF00036</CustomerNumber>
+              <Industry code="VF" description="Federal"/>
+            </CourtId>
+            <CaseNumber>97-1234567890</CaseNumber>
+            <Type code="I" description="Individual"/>
+            <Filer code="I" description="Individual"/>
+            <Disposition code="D" description="CH-11 Filed"/>
+            <DateReported format="MM/DD/CCYY">09/15/2011</DateReported>
+            <Narratives>
+              <Narrative code="CP" description="Consumer says personal bankruptcy filed due to business failure"/>
+            </Narratives>
+          </USBankruptcy>
+        </USBankruptcies>
+        <USCollections>
+          <USCollection>
+            <DateReported format="MM/DD/CCYY">03/00/2010</DateReported>
+            <AssignedDate format="MM/DD/CCYY">12/00/2009</AssignedDate>
+            <CustomerId>
+              <CustomerNumber>155YC00897</CustomerNumber>
+              <Name/>
+              <Industry code="YC" description="Other"/>
+            </CustomerId>
+            <ClientNameNumber>SWEDISH COVENAN</ClientNameNumber>
+            <AccountNumber>197</AccountNumber>
+            <OriginalAmount currency="USD">000000076</OriginalAmount>
+            <BalanceAmount currency="USD">000000076</BalanceAmount>
+            <StatusDate format="MM/DD/CCYY">03/00/2010</StatusDate>
+            <Status code="N" description="New Listing"/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">11/00/2005</DateOfFirstDelinquency>
+            <AccountDesignator code="I" description="Individual Account."/>
+          </USCollection>
+        </USCollections>
+        <USLegalItems>
+          <USLegalItem code="A" description="Judgment">
+            <DateFiled format="MM/DD/CCYY">11/00/2010</DateFiled>
+            <CourtId>
+              <CustomerNumber>401VS00014</CustomerNumber>
+              <Name/>
+              <Industry code="VS" description="State"/>
+            </CourtId>
+            <CaseNumber>97-1234567890</CaseNumber>
+            <Amount currency="USD">000012345</Amount>
+            <Status code="P" description="Pending"/>
+            <VerificationDate format="MM/DD/CCYY">02/00/2011</VerificationDate>
+            <Defendant>SUBJECT</Defendant>
+            <Plaintiff>SOCKITTOYA</Plaintiff>
+            <Narratives>
+              <Narrative code="CQ" description="Pltff verified judgment paid/satisfaction not recorded with court"/>
+            </Narratives>
+          </USLegalItem>
+          <USLegalItem code="J" description="Satisfied Judgment">
+            <DateFiled format="MM/DD/CCYY">11/00/2010</DateFiled>
+            <CourtId>
+              <CustomerNumber>401VS00014</CustomerNumber>
+              <Name/>
+              <Industry code="VS" description="State"/>
+            </CourtId>
+            <CaseNumber>97-1234567890</CaseNumber>
+            <Amount currency="USD">000012345</Amount>
+            <Status code="D" description="Dismissed"/>
+            <VerificationDate format="MM/DD/CCYY">02/00/2011</VerificationDate>
+            <Defendant>SUBJECT</Defendant>
+            <Plaintiff>SOCKITTOYA</Plaintiff>
+          </USLegalItem>
+          <USLegalItem code="J" description="Satisfied Judgment">
+            <DateFiled format="MM/DD/CCYY">08/00/2006</DateFiled>
+            <CourtId>
+              <CustomerNumber>152VS00525</CustomerNumber>
+              <Name/>
+              <Industry code="VS" description="State"/>
+            </CourtId>
+            <CaseNumber>SC931410</CaseNumber>
+            <Amount currency="USD">000000518</Amount>
+            <DateSatisfied format="MM/DD/CCYY">09/00/2006</DateSatisfied>
+            <Status code="D" description="Dismissed"/>
+            <Defendant>JURYHU PHHQD</Defendant>
+            <Plaintiff>KATHLEEN WINSTEAD</Plaintiff>
+          </USLegalItem>
+        </USLegalItems>
+        <USAlertContacts>
+          <USAlertContact>
+            <AlertType code="M" description="Military"/>
+            <DateReported format="MM/DD/CCYY">01/15/2011</DateReported>
+            <DateEffective format="MM/DD/CCYY">01/15/2011</DateEffective>
+          </USAlertContact>
+          <USAlertContact>
+            <AlertType code="E" description="Extended Fraud"/>
+            <DateReported format="MM/DD/CCYY">01/15/2011</DateReported>
+            <DateEffective format="MM/DD/CCYY">01/15/2011</DateEffective>
+          </USAlertContact>
+        </USAlertContacts>
+        <USTrades>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>484BB01456</CustomerNumber>
+              <Name>CAPITAL ONE NATIONAL</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">04/00/2006</DateOpened>
+            <AccountNumber>1234237800127</AccountNumber>
+            <HighCreditAmount>000002283</HighCreditAmount>
+            <BalanceAmount currency="USD">000001617</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>22</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+            <Narratives>
+              <Narrative code="FE" description="Credit card"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906DC00656</CustomerNumber>
+              <Name>HSBC/NEIMAN MARCUS</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">08/00/1991</DateOpened>
+            <AccountNumber>0-62364810000</AccountNumber>
+            <HighCreditAmount>000000593</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>99</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+            <Narratives>
+              <Narrative code="AV" description="Charge"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>701DC00529</CustomerNumber>
+              <Name>NORDSTROM FSB</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">09/00/2010</DateReported>
+            <DateOpened format="MM/DD/CCYY">11/00/1999</DateOpened>
+            <AccountNumber>0-1972</AccountNumber>
+            <HighCreditAmount>000000517</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>99</MonthsReviewed>
+            <AccountDesignator code="S" description="Shared, but otherwise undesignated"/>
+            <DateOfLastActivity format="MM/DD/CCYY">09/00/2010</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>444ON00358</CustomerNumber>
+              <Name>UNIVERSAL BANK-CUSTO</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">08/00/2004</DateOpened>
+            <AccountNumber>1256901234900</AccountNumber>
+            <HighCreditAmount>000002592</HighCreditAmount>
+            <BalanceAmount currency="USD">000002338</BalanceAmount>
+            <PastDueAmount currency="USD">000002338</PastDueAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="9" description="Charge-off"/>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">09/00/2005</DateOfFirstDelinquency>
+            <Narratives>
+              <Narrative code="FW" description="Consumer disputes - reinvestigation in progress"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>404DC01938</CustomerNumber>
+              <Name>MACYS/GEMB</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">07/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">08/00/1997</DateOpened>
+            <AccountNumber>1234001230000</AccountNumber>
+            <HighCreditAmount>000001625</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>36</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">07/00/2011</DateOfLastActivity>
+            <Narratives>
+              <Narrative code="AV" description="Charge"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>850BB01498</CustomerNumber>
+              <Name>CAPITAL ONE BANK USA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">04/00/2006</DateOpened>
+            <AccountNumber>1234237812002</AccountNumber>
+            <Status code="B" description="Lost or stolen card"/>
+            <DateOfLastActivity format="MM/DD/CCYY">12/00/2009</DateOfLastActivity>
+            <Narratives>
+              <Narrative code="FE" description="Credit card"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>496ON00309</CustomerNumber>
+              <Name>BANK OF AMERICA</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">09/00/2003</DateOpened>
+            <AccountNumber>9056785600787</AccountNumber>
+            <HighCreditAmount>000003001</HighCreditAmount>
+            <BalanceAmount currency="USD">000003001</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="9" description="Charge-off"/>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">12/00/2005</DateOfFirstDelinquency>
+            <Narratives>
+              <Narrative code="FW" description="Consumer disputes - reinvestigation in progress"/>
+              <Narrative code="DB" description="Charged off account"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>180BB19097</CustomerNumber>
+              <Name>BANK OF AMERICA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">12/00/2005</DateReported>
+            <DateOpened format="MM/DD/CCYY">03/00/1997</DateOpened>
+            <AccountNumber>9056409034004</AccountNumber>
+            <HighCreditAmount>000005655</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="9" description="Charge-off"/>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">09/00/2005</DateOfFirstDelinquency>
+            <Narratives>
+              <Narrative code="FW" description="Consumer disputes - reinvestigation in progress"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>180BB27499</CustomerNumber>
+              <Name>BANK OF AMERICA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">12/00/2005</DateReported>
+            <DateOpened format="MM/DD/CCYY">11/00/2002</DateOpened>
+            <AccountNumber>5656403456341</AccountNumber>
+            <HighCreditAmount>000004653</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="9" description="Charge-off"/>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">09/00/2005</DateOfFirstDelinquency>
+            <Narratives>
+              <Narrative code="FW" description="Consumer disputes - reinvestigation in progress"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>180FM00683</CustomerNumber>
+              <Name>CHASE</Name>
+              <Industry code="FM" description="Mortgage Cos."/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">07/00/2003</DateOpened>
+            <AccountNumber>2301900130000</AccountNumber>
+            <HighCreditAmount>000212000</HighCreditAmount>
+            <BalanceAmount currency="USD">000194000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="7" description="Included in Chapter 13"/>
+            <MonthsReviewed>94</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">09/00/2009</DateOfFirstDelinquency>
+            <Narratives>
+              <Narrative code="FW" description="Consumer disputes - reinvestigation in progress"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>163BB25287</CustomerNumber>
+              <Name>PROVIDIAN BANCORP</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">04/00/2007</DateReported>
+            <DateOpened format="MM/DD/CCYY">07/00/2004</DateOpened>
+            <AccountNumber>89</AccountNumber>
+            <HighCreditAmount>000009410</HighCreditAmount>
+            <BalanceAmount currency="USD">000009410</BalanceAmount>
+            <PastDueAmount currency="USD">000003193</PastDueAmount>
+            <Status code="7" description="Included in Chapter 13"/>
+            <MonthsReviewed>01</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">10/00/2005</DateOfFirstDelinquency>
+            <Narratives>
+              <Narrative code="DO" description="Bankruptcy chapter 13"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>172WA00322</CustomerNumber>
+              <Industry code="WA" description="Automotive Supplies"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">04/00/2006</DateOpened>
+            <AccountNumber>12342378120020000</AccountNumber>
+            <Status code="B" description="Lost or stolen card"/>
+            <DateOfLastActivity format="MM/DD/CCYY">12/00/2009</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>169ZY00092</CustomerNumber>
+              <Industry code="ZY" description="Credit Services Inc"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">08/00/1991</DateOpened>
+            <AccountNumber>0-62364810000</AccountNumber>
+            <HighCreditAmount>000000593</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>99</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>163WH00508</CustomerNumber>
+              <Industry code="WH" description="Home Furnishings"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">11/00/2010</DateReported>
+            <DateOpened format="MM/DD/CCYY">07/00/2004</DateOpened>
+            <AccountNumber>90345689901230000</AccountNumber>
+            <Status code="Z" description="Included in Bankruptcy"/>
+            <MonthsReviewed>70</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">10/00/2005</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906FA00034</CustomerNumber>
+              <Name>GMAC</Name>
+              <Industry code="FA" description="Auto Financing"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">12/00/2006</DateOpened>
+            <AccountNumber>655-6422-60000</AccountNumber>
+            <HighCreditAmount>000007989</HighCreditAmount>
+            <BalanceAmount currency="USD">000001198</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>53</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">05/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>444DC10817</CustomerNumber>
+              <Name>FASHION BUG</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">05/00/2010</DateReported>
+            <DateOpened format="MM/DD/CCYY">12/00/2004</DateOpened>
+            <AccountNumber>34121234781210000</AccountNumber>
+            <HighCreditAmount>000000492</HighCreditAmount>
+            <BalanceAmount currency="USD">000000383</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="9" description="Charge-off"/>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">03/00/2007</DateOfFirstDelinquency>
+            <Narratives>
+              <Narrative code="DB" description="Charged off account"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>805BB09224</CustomerNumber>
+              <Name>WACHOVIA BANK, NA/FT</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">05/00/2007</DateReported>
+            <DateOpened format="MM/DD/CCYY">07/00/1982</DateOpened>
+            <AccountNumber>12909078348970000</AccountNumber>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="9" description="Charge-off"/>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">05/00/2007</DateOfFirstDelinquency>
+            <ActivityDesignator code="D" description="Transfer/Sold/Paid"/>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906FA00034</CustomerNumber>
+              <Name>GMAC</Name>
+              <Industry code="FA" description="Auto Financing"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">12/00/2006</DateOpened>
+            <AccountNumber>655-6422-60000</AccountNumber>
+            <HighCreditAmount>000007989</HighCreditAmount>
+            <BalanceAmount currency="USD">000001198</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>53</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">05/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>152FC00936</CustomerNumber>
+              <Name>DESERT SCHOOLS FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">08/00/2009</DateReported>
+            <DateOpened format="MM/DD/CCYY">09/00/2008</DateOpened>
+            <AccountNumber>567850000</AccountNumber>
+            <HighCreditAmount>000017553</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>11</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">08/00/2009</DateOfLastActivity>
+            <ActivityDesignator code="P" description="Paid"/>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>667CG30059</CustomerNumber>
+              <Name>WFN EXPRESS/STRUCTUR</Name>
+              <Industry code="CG" description="General Clothing Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">12/00/2008</DateReported>
+            <DateOpened format="MM/DD/CCYY">07/00/2008</DateOpened>
+            <AccountNumber>123513  3450000</AccountNumber>
+            <HighCreditAmount>000000500</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>05</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">12/00/2008</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>152FC00936</CustomerNumber>
+              <Name>DESERT SCHOOLS FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">09/00/2008</DateReported>
+            <DateOpened format="MM/DD/CCYY">01/00/2008</DateOpened>
+            <AccountNumber>567850000</AccountNumber>
+            <HighCreditAmount>000008073</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>07</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">09/00/2008</DateOfLastActivity>
+            <ActivityDesignator code="P" description="Paid"/>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>456FP04005</CustomerNumber>
+              <Name>SPRINGLEAF FIN SRVCS</Name>
+              <Industry code="FP" description="Personal Loans Cos."/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">04/00/2009</DateOpened>
+            <AccountNumber>78457878343470000</AccountNumber>
+            <HighCreditAmount>000016000</HighCreditAmount>
+            <BalanceAmount currency="USD">000015000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>25</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>163BB17526</CustomerNumber>
+              <Name>HSBC BANK</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">05/00/2008</DateOpened>
+            <AccountNumber>9034231250000</AccountNumber>
+            <CreditLimit currency="USD">000003500</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>37</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">10/00/2010</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906OC00024</CustomerNumber>
+              <Name>CHEVRON</Name>
+              <Industry code="OC" description="Oil Companies"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">04/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">03/00/2009</DateOpened>
+            <AccountNumber>56007800000</AccountNumber>
+            <HighCreditAmount>000000147</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="6" description="Collection account"/>
+            <MonthsReviewed>24</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">09/00/2010</DateOfFirstDelinquency>
+            <ActivityDesignator code="P" description="Paid"/>
+            <Narratives>
+              <Narrative code="ER" description="Paid collection"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906BB02525</CustomerNumber>
+              <Name>BANK ONE</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">10/00/2010</DateReported>
+            <DateOpened format="MM/DD/CCYY">08/00/2009</DateOpened>
+            <AccountNumber>3445006050000</AccountNumber>
+            <HighCreditAmount>000014857</HighCreditAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>13</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">10/00/2010</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>644BB09613</CustomerNumber>
+              <Name>FNB OMAHA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">10/00/2010</DateReported>
+            <DateOpened format="MM/DD/CCYY">12/00/2006</DateOpened>
+            <AccountNumber>3434780050000</AccountNumber>
+            <HighCreditAmount>000001300</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>02</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">03/00/2010</DateOfLastActivity>
+            <ActivityDesignator code="B" description="Paid and Closed"/>
+            <Narratives>
+              <Narrative code="DA" description="Account closed by consumer"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>152FC00936</CustomerNumber>
+              <Name>DESERT SCHOOLS FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">08/00/2010</DateOpened>
+            <AccountNumber>567850000</AccountNumber>
+            <HighCreditAmount>000015300</HighCreditAmount>
+            <BalanceAmount currency="USD">000013237</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>08</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906BB00115</CustomerNumber>
+              <Name>CITICARDS CBNA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">08/00/2010</DateOpened>
+            <AccountNumber>9078909056569</AccountNumber>
+            <CreditLimit currency="USD">000001700</CreditLimit>
+            <BalanceAmount currency="USD">000000877</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>10</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>152DC11085</CustomerNumber>
+              <Name>MACYS/FDSB</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">11/00/2010</DateOpened>
+            <AccountNumber>5612789090000</AccountNumber>
+            <CreditLimit currency="USD">000000300</CreditLimit>
+            <BalanceAmount currency="USD">000000293</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>06</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906DC00755</CustomerNumber>
+              <Name>GEMB/DILLARDS</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">03/00/2009</DateOpened>
+            <AccountNumber>787850000</AccountNumber>
+            <HighCreditAmount>000000199</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>26</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">05/00/2009</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>401HZ00615</CustomerNumber>
+              <Name>CHASE/CIRCUIT CITY</Name>
+              <Industry code="HZ" description="Miscellaneous"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">07/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">09/00/2009</DateOpened>
+            <AccountNumber>34564578343410000</AccountNumber>
+            <CreditLimit currency="USD">000001200</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>22</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">05/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>152FC00936</CustomerNumber>
+              <Name>DESERT SCHOOLS FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">01/00/2008</DateOpened>
+            <AccountNumber>90121267125610000</AccountNumber>
+            <CreditLimit currency="USD">000002500</CreditLimit>
+            <BalanceAmount currency="USD">000002163</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>41</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>496ON00317</CustomerNumber>
+              <Name>FIRST USA BANK</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">02/00/2009</DateOpened>
+            <AccountNumber>9012787856349</AccountNumber>
+            <CreditLimit currency="USD">000003300</CreditLimit>
+            <BalanceAmount currency="USD">000001358</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>28</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">05/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>180DC00127</CustomerNumber>
+              <Name>ROBINSONS-MAY</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">07/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">03/00/2008</DateOpened>
+            <AccountNumber>7834561</AccountNumber>
+            <HighCreditAmount>000000504</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>39</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">11/00/2008</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>133MF00000</CustomerNumber>
+              <Industry code="MF" description="Funeral Homes, Cemeteries"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">10/00/2010</DateReported>
+            <DateOpened format="MM/DD/CCYY">08/00/2009</DateOpened>
+            <AccountNumber>3445006050000</AccountNumber>
+            <HighCreditAmount>000015000</HighCreditAmount>
+            <BalanceAmount currency="USD">000012000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>13</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">10/00/2010</DateOfLastActivity>
+            <Narratives>
+              <Narrative code="GS" description="Medical"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>190PA00302</CustomerNumber>
+              <Industry code="PA" description="Accountants, etc."/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">08/00/2009</DateReported>
+            <DateOpened format="MM/DD/CCYY">09/00/2008</DateOpened>
+            <AccountNumber>567850000</AccountNumber>
+            <HighCreditAmount>000018000</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>11</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">08/00/2009</DateOfLastActivity>
+            <ActivityDesignator code="P" description="Paid"/>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>636PL00097</CustomerNumber>
+              <Name>IMMERMAN &amp; TOBIN CO.</Name>
+              <Industry code="PL" description="Legal &amp; Related Services"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">09/00/2008</DateReported>
+            <DateOpened format="MM/DD/CCYY">01/00/2008</DateOpened>
+            <AccountNumber>567850000</AccountNumber>
+            <HighCreditAmount>000008073</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>07</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">09/00/2008</DateOfLastActivity>
+            <ActivityDesignator code="P" description="Paid"/>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>701PZ00963</CustomerNumber>
+              <Name>AIRTOUCH</Name>
+              <Industry code="PZ" description="Miscellaneous"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">02/00/2009</DateOpened>
+            <AccountNumber>1210000</AccountNumber>
+            <HighCreditAmount>000000136</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="O" description="Open Account"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>27</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>458ON02941</CustomerNumber>
+              <Name>FIRST USA BANK</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">05/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">12/00/2010</DateOpened>
+            <AccountNumber>9012785601780</AccountNumber>
+            <CreditLimit currency="USD">000008500</CreditLimit>
+            <BalanceAmount currency="USD">000005957</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>05</MonthsReviewed>
+            <AccountDesignator code="A" description="Authorized User"/>
+            <DateOfLastActivity format="MM/DD/CCYY">05/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>401BB00755</CustomerNumber>
+              <Name>WACHOVIA BANKCARD</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">02/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">02/00/2003</DateOpened>
+            <AccountNumber>12345</AccountNumber>
+            <HighCreditAmount>000054321</HighCreditAmount>
+            <BalanceAmount currency="USD">000043210</BalanceAmount>
+            <PastDueAmount currency="USD">000003210</PastDueAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="3" description="Not more than three payments past due"/>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">11/00/2010</DateOfFirstDelinquency>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>401BB00755</CustomerNumber>
+              <Name>WACHOVIA BANKCARD</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">02/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">02/00/2003</DateOpened>
+            <AccountNumber>12345</AccountNumber>
+            <HighCreditAmount>000054321</HighCreditAmount>
+            <BalanceAmount currency="USD">000043210</BalanceAmount>
+            <PastDueAmount currency="USD">000003210</PastDueAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="3" description="Not more than three payments past due"/>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">11/00/2010</DateOfFirstDelinquency>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>288KZ00010</CustomerNumber>
+              <Name>C&amp;G SUSPENDED CEILIN</Name>
+              <Industry code="KZ" description="Miscellaneous"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">08/00/2010</DateOpened>
+            <AccountNumber>90789090565690000</AccountNumber>
+            <CreditLimit currency="USD">000001700</CreditLimit>
+            <BalanceAmount currency="USD">000000877</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>10</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>152DC11085</CustomerNumber>
+              <Name>MACYS/FDSB</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">02/00/2002</DateOpened>
+            <AccountNumber>5678123400000</AccountNumber>
+            <HighCreditAmount>000000800</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>99</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">07/00/2007</DateOfLastActivity>
+            <ActivityDesignator code="B" description="Paid and Closed"/>
+            <Narratives>
+              <Narrative code="DA" description="Account closed by consumer"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>674BB07922</CustomerNumber>
+              <Name>ADS/SERVICE MERCHADI</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">04/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">04/00/2005</DateOpened>
+            <AccountNumber>1256903499001</AccountNumber>
+            <CreditLimit currency="USD">000001700</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>71</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">01/00/2010</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906ON00259</CustomerNumber>
+              <Name>AMERICAN EXPRESS</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">08/00/2009</DateReported>
+            <DateOpened format="MM/DD/CCYY">07/00/2005</DateOpened>
+            <AccountNumber>87800000</AccountNumber>
+            <HighCreditAmount>000000000</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="O" description="Open Account"/>
+            <MonthsReviewed>48</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">07/00/2009</DateOfLastActivity>
+            <HistoryDerogatoryCounters>
+              <Count30DayPastDue>00</Count30DayPastDue>
+              <Count60DayPastDue>00</Count60DayPastDue>
+              <Count90DayPastDue>00</Count90DayPastDue>
+            </HistoryDerogatoryCounters>
+            <ActivityDesignator code="B" description="Paid and Closed"/>
+            <Narratives>
+              <Narrative code="DA" description="Account closed by consumer"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906BB00040</CustomerNumber>
+              <Name>CITICARDS CBNA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">01/00/2011</DateOpened>
+            <AccountNumber>1234129000567</AccountNumber>
+            <CreditLimit currency="USD">000006000</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>05</MonthsReviewed>
+            <AccountDesignator code="A" description="Authorized User"/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+            <ActivityDesignator code="B" description="Paid and Closed"/>
+            <Narratives>
+              <Narrative code="DA" description="Account closed by consumer"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>404BB00612</CustomerNumber>
+              <Name>CITIBANK, N.A.</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">04/00/2002</DateOpened>
+            <AccountNumber>34561230000</AccountNumber>
+            <CreditLimit currency="USD">000000500</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>60</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906BB00289</CustomerNumber>
+              <Name>CITICARDS CBNA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">11/00/2003</DateOpened>
+            <AccountNumber>9000901234905</AccountNumber>
+            <CreditLimit currency="USD">000015900</CreditLimit>
+            <BalanceAmount currency="USD">000001783</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>90</MonthsReviewed>
+            <AccountDesignator code="A" description="Authorized User"/>
+            <DateOfLastActivity format="MM/DD/CCYY">01/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>401HZ00615</CustomerNumber>
+              <Name>CHASE/CIRCUIT CITY</Name>
+              <Industry code="HZ" description="Miscellaneous"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">04/00/2006</DateOpened>
+            <AccountNumber>34564556123470000</AccountNumber>
+            <CreditLimit currency="USD">000002800</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>23</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">02/00/2009</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>404DC01938</CustomerNumber>
+              <Name>MACYS/GEMB</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">07/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">08/00/2006</DateOpened>
+            <AccountNumber>1200123410000</AccountNumber>
+            <CreditLimit currency="USD">000000900</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>23</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">07/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>558FM01508</CustomerNumber>
+              <Name>WELLS FARGO HOME MOR</Name>
+              <Industry code="FM" description="Mortgage Cos."/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">07/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">09/00/2008</DateOpened>
+            <AccountNumber>34785600000</AccountNumber>
+            <HighCreditAmount>000142000</HighCreditAmount>
+            <BalanceAmount currency="USD">000140000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>07</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">07/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>133AS02573</CustomerNumber>
+              <Name>BURNS BROS INC</Name>
+              <Industry code="AS" description="Service Stations"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">04/00/2002</DateOpened>
+            <AccountNumber>34561230000</AccountNumber>
+            <CreditLimit currency="USD">000000500</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>60</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>180GZ00199</CustomerNumber>
+              <Industry code="GZ" description="Miscellaneous"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">02/00/2002</DateOpened>
+            <AccountNumber>5678123400000</AccountNumber>
+            <HighCreditAmount>000000800</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>99</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">07/00/2007</DateOfLastActivity>
+            <ActivityDesignator code="B" description="Paid and Closed"/>
+            <Narratives>
+              <Narrative code="DA" description="Account closed by consumer"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>155BB03747</CustomerNumber>
+              <Name>DISCOVER FINANCIAL S</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">07/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">06/00/2007</DateOpened>
+            <AccountNumber>3434231290126</AccountNumber>
+            <HighCreditAmount>000000160</HighCreditAmount>
+            <BalanceAmount currency="USD">000000160</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>29</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">07/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906DC00029</CustomerNumber>
+              <Name>CBUSASEARS</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">08/00/2009</DateReported>
+            <DateOpened format="MM/DD/CCYY">12/00/1996</DateOpened>
+            <AccountNumber>4054-645899726</AccountNumber>
+            <CreditLimit currency="USD">000003612</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>69</MonthsReviewed>
+            <AccountDesignator code="A" description="Authorized User"/>
+            <DateOfLastActivity format="MM/DD/CCYY">08/00/2009</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906DC00136</CustomerNumber>
+              <Name>GECRB/MONT WARDS</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">04/00/2009</DateReported>
+            <DateOpened format="MM/DD/CCYY">03/00/2004</DateOpened>
+            <AccountNumber>IV0G6759-275</AccountNumber>
+            <HighCreditAmount>000000920</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>42</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">12/00/2008</DateOfLastActivity>
+            <ActivityDesignator code="P" description="Paid"/>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>496ON00598</CustomerNumber>
+              <Name>CHASE NA</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">12/00/2006</DateReported>
+            <DateOpened format="MM/DD/CCYY">03/00/2004</DateOpened>
+            <AccountNumber>3478456</AccountNumber>
+            <CreditLimit currency="USD">000005500</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>12</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">12/00/2006</DateOfLastActivity>
+            <ActivityDesignator code="B" description="Paid and Closed"/>
+            <Narratives>
+              <Narrative code="DA" description="Account closed by consumer"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>155FC01444</CustomerNumber>
+              <Name>ALLIANT CREDIT UNION</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">07/00/2005</DateReported>
+            <DateOpened format="MM/DD/CCYY">05/00/2004</DateOpened>
+            <AccountNumber>232399121220000</AccountNumber>
+            <HighCreditAmount>000002444</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>03</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">04/00/2005</DateOfLastActivity>
+            <TermsDuration>18M</TermsDuration>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>615FF02929</CustomerNumber>
+              <Name>CHASE MANHATTAN MORT</Name>
+              <Industry code="FF" description="Sales Financing"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">10/00/1989</DateOpened>
+            <AccountNumber>78123470</AccountNumber>
+            <HighCreditAmount>000027400</HighCreditAmount>
+            <BalanceAmount currency="USD">000014939</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>99</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>161BB03921</CustomerNumber>
+              <Name>WELLS FARGO BANK AUT</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2010</DateReported>
+            <DateOpened format="MM/DD/CCYY">04/00/2010</DateOpened>
+            <AccountNumber>1212129078400</AccountNumber>
+            <HighCreditAmount>000015046</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="0" description="Too new to rate; Approved but not used"/>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2010</DateOfLastActivity>
+            <TermsDuration>36M</TermsDuration>
+            <ActivityDesignator code="P" description="Paid"/>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906BB02517</CustomerNumber>
+              <Name>BANK ONE</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">12/00/2003</DateOpened>
+            <AccountNumber>4-5494666698</AccountNumber>
+            <CreditLimit currency="USD">000020000</CreditLimit>
+            <BalanceAmount currency="USD">000017466</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>90</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>180FA00959</CustomerNumber>
+              <Name>TOYOTA MOTOR LEASING</Name>
+              <Industry code="FA" description="Auto Financing"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">09/00/2009</DateReported>
+            <DateOpened format="MM/DD/CCYY">01/00/2008</DateOpened>
+            <AccountNumber>78341200000</AccountNumber>
+            <HighCreditAmount>000012788</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>19</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">09/00/2009</DateOfLastActivity>
+            <ActivityDesignator code="P" description="Paid"/>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491AL77325</CustomerNumber>
+              <Name>K-B CORP T/A CENTRAL</Name>
+              <Industry code="AL" description="Truck Dealers"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">01/00/2008</DateReported>
+            <DateOpened format="MM/DD/CCYY">12/00/2005</DateOpened>
+            <AccountNumber>586-67666752130000</AccountNumber>
+            <HighCreditAmount>000008664</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>24</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">01/00/2008</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>155BB03747</CustomerNumber>
+              <Name>DISCOVER FINANCIAL S</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">09/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">03/00/2002</DateOpened>
+            <AccountNumber>3434230056</AccountNumber>
+            <HighCreditAmount>000000603</HighCreditAmount>
+            <BalanceAmount currency="USD">000000603</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>71</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">07/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>152BB10125</CustomerNumber>
+              <Name>BANK ONE AUTO</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">09/00/2009</DateOpened>
+            <AccountNumber>61562370000</AccountNumber>
+            <HighCreditAmount>000020558</HighCreditAmount>
+            <BalanceAmount currency="USD">000015311</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>09</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>152BB00399</CustomerNumber>
+              <Name>BANK ONE, NA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">03/00/2000</DateOpened>
+            <AccountNumber>124000</AccountNumber>
+            <CreditLimit currency="USD">000014600</CreditLimit>
+            <BalanceAmount currency="USD">000010539</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>43</MonthsReviewed>
+            <AccountDesignator code="S" description="Shared, but otherwise undesignated"/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>178GS00026</CustomerNumber>
+              <Industry code="GS" description="Supermarkets"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">07/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">03/00/2002</DateOpened>
+            <AccountNumber>34342300561200000</AccountNumber>
+            <HighCreditAmount>000000603</HighCreditAmount>
+            <BalanceAmount currency="USD">000000603</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>71</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">07/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>401AR00073</CustomerNumber>
+              <Name>TUNECO, INC</Name>
+              <Industry code="AR" description="Automotive Repair, Body Shops"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">04/00/2010</DateOpened>
+            <AccountNumber>121212907840000</AccountNumber>
+            <HighCreditAmount>000015000</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="0" description="Too new to rate; Approved but not used"/>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2010</DateOfLastActivity>
+            <TermsDuration>36M</TermsDuration>
+            <ActivityDesignator code="P" description="Paid"/>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>682VF05471</CustomerNumber>
+              <Name>AAFES/ARMY AIR FORCE</Name>
+              <Industry code="VF" description="Federal"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">05/00/2011</DateOpened>
+            <AccountNumber>481220000</AccountNumber>
+            <HighCreditAmount>000000500</HighCreditAmount>
+            <BalanceAmount currency="USD">000000267</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="0" description="Too new to rate; Approved but not used"/>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>426CS00572</CustomerNumber>
+              <Industry code="CS" description="Specialty - Shoe, Hat, Etc."/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">09/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">02/00/2003</DateOpened>
+            <AccountNumber>9800</AccountNumber>
+            <HighCreditAmount>000054321</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="3" description="Not more than three payments past due"/>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">11/00/2010</DateOfFirstDelinquency>
+            <ActivityDesignator code="P" description="Paid"/>
+            <Narratives>
+              <Narrative code="CY" description="Account charged to profit and loss"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>161BB05264</CustomerNumber>
+              <Name>CITICARDS CBNA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">01/00/2008</DateReported>
+            <DateOpened format="MM/DD/CCYY">03/00/2007</DateOpened>
+            <AccountNumber>1256565656003</AccountNumber>
+            <HighCreditAmount>000002500</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>10</MonthsReviewed>
+            <AccountDesignator code="A" description="Authorized User"/>
+            <DateOfLastActivity format="MM/DD/CCYY">01/00/2008</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906BB02525</CustomerNumber>
+              <Name>BANK ONE</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">01/00/2008</DateReported>
+            <DateOpened format="MM/DD/CCYY">12/00/2005</DateOpened>
+            <AccountNumber>586-67666752130000</AccountNumber>
+            <HighCreditAmount>000008664</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>24</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">01/00/2008</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>682VF05471</CustomerNumber>
+              <Name>AAFES/ARMY AIR FORCE</Name>
+              <Industry code="VF" description="Federal"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">12/00/2007</DateOpened>
+            <AccountNumber>131330000</AccountNumber>
+            <HighCreditAmount>000002800</HighCreditAmount>
+            <BalanceAmount currency="USD">000001948</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>31</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">05/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>180BB19097</CustomerNumber>
+              <Name>BANK OF AMERICA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">01/00/2008</DateOpened>
+            <AccountNumber>125</AccountNumber>
+            <CreditLimit currency="USD">000004000</CreditLimit>
+            <BalanceAmount currency="USD">000003721</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>40</MonthsReviewed>
+            <AccountDesignator code="J" description="Joint Account"/>
+            <DateOfLastActivity format="MM/DD/CCYY">05/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491FC28547</CustomerNumber>
+              <Name>NAVY FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">08/00/2010</DateOpened>
+            <AccountNumber>6330500000</AccountNumber>
+            <HighCreditAmount>000008255</HighCreditAmount>
+            <BalanceAmount currency="USD">000007192</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>03</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">12/00/2010</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>163BB26384</CustomerNumber>
+              <Name>PROVIDIAN BANCORP</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">08/00/2009</DateOpened>
+            <AccountNumber>000</AccountNumber>
+            <CreditLimit currency="USD">000005000</CreditLimit>
+            <BalanceAmount currency="USD">000002117</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>16</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">12/00/2010</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>426DC02401</CustomerNumber>
+              <Name>CRSI/NEXCOM</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">06/00/2007</DateOpened>
+            <AccountNumber>347890783430000</AccountNumber>
+            <HighCreditAmount>000001627</HighCreditAmount>
+            <BalanceAmount currency="USD">000001249</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>27</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>426DC02401</CustomerNumber>
+              <Name>CRSI/NEXCOM</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">06/00/2007</DateOpened>
+            <AccountNumber>347890783430000</AccountNumber>
+            <HighCreditAmount>000001627</HighCreditAmount>
+            <BalanceAmount currency="USD">000001249</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>27</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491FC28547</CustomerNumber>
+              <Name>NAVY FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">02/00/2011</DateOpened>
+            <AccountNumber>6330500000</AccountNumber>
+            <HighCreditAmount>000001000</HighCreditAmount>
+            <BalanceAmount currency="USD">000000767</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>03</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491FC28547</CustomerNumber>
+              <Name>NAVY FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">01/00/2011</DateOpened>
+            <AccountNumber>6330500000</AccountNumber>
+            <HighCreditAmount>000014297</HighCreditAmount>
+            <BalanceAmount currency="USD">000013074</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>04</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>827VS00113</CustomerNumber>
+              <Name>STATE AL DHR CHILD S</Name>
+              <Industry code="VS" description="State"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <AccountNumber>1230000</AccountNumber>
+            <HighCreditAmount>000000000</HighCreditAmount>
+            <BalanceAmount currency="USD">000026000</BalanceAmount>
+            <PastDueAmount currency="USD">000026000</PastDueAmount>
+            <PortfolioType code="O" description="Open Account"/>
+            <Status code="6" description="Collection account"/>
+            <MonthsReviewed>44</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">04/00/2007</DateOfFirstDelinquency>
+            <Narratives>
+              <Narrative code="CZ" description="Collection account"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>559TN00018</CustomerNumber>
+              <Name>SPRINGHILL</Name>
+              <Industry code="TN" description="Nursery &amp; Landscaping, Supplies &amp; Services"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <AccountNumber>1250000</AccountNumber>
+            <HighCreditAmount>000000113</HighCreditAmount>
+            <BalanceAmount currency="USD">000000113</BalanceAmount>
+            <PastDueAmount currency="USD">000000113</PastDueAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="6" description="Collection account"/>
+            <MonthsReviewed>05</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfFirstDelinquency format="MM/DD/CCYY">06/00/2010</DateOfFirstDelinquency>
+            <TermsDuration>25M</TermsDuration>
+            <Narratives>
+              <Narrative code="CZ" description="Collection account"/>
+            </Narratives>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>910UE01920</CustomerNumber>
+              <Name>PUBLIC SERVICE COMPA</Name>
+              <Industry code="UE" description="Electrical Light &amp; Power"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">02/00/2011</DateOpened>
+            <AccountNumber>6330500000</AccountNumber>
+            <HighCreditAmount>000001000</HighCreditAmount>
+            <BalanceAmount currency="USD">000000767</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>03</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>168WC00029</CustomerNumber>
+              <Industry code="WC" description="Clothing &amp; Dry Goods"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">01/00/2004</DateOpened>
+            <AccountNumber>6330500000</AccountNumber>
+            <HighCreditAmount>000014000</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>59</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">01/00/2009</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>906DC00029</CustomerNumber>
+              <Name>CBUSASEARS</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">05/00/2006</DateOpened>
+            <AccountNumber>4292-621275829</AccountNumber>
+            <CreditLimit currency="USD">000001344</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>25</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">04/00/2010</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491FC28547</CustomerNumber>
+              <Name>NAVY FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">05/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">11/00/2008</DateOpened>
+            <AccountNumber>6767160000</AccountNumber>
+            <HighCreditAmount>000002500</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>07</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">07/00/2009</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491FC28547</CustomerNumber>
+              <Name>NAVY FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">05/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">01/00/2008</DateOpened>
+            <AccountNumber>6767160000</AccountNumber>
+            <HighCreditAmount>000005453</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>08</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">09/00/2008</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491FC28547</CustomerNumber>
+              <Name>NAVY FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">10/00/2005</DateOpened>
+            <AccountNumber>7671620000</AccountNumber>
+            <HighCreditAmount>000002714</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>25</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">12/00/2007</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491ON24219</CustomerNumber>
+              <Name>NAVY FEDERAL CU</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">05/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">12/00/2000</DateOpened>
+            <AccountNumber>9034006712909</AccountNumber>
+            <CreditLimit currency="USD">000003800</CreditLimit>
+            <BalanceAmount currency="USD">000000386</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>99</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">05/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491FC13401</CustomerNumber>
+              <Name>NAVY FEDERAL CREDIT</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">05/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">09/00/2002</DateOpened>
+            <AccountNumber>7671620000</AccountNumber>
+            <CreditLimit currency="USD">000000500</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>53</MonthsReviewed>
+            <AccountDesignator code="C" description="Co-maker "/>
+            <DateOfLastActivity format="MM/DD/CCYY">01/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491FC13401</CustomerNumber>
+              <Name>NAVY FEDERAL CREDIT</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">05/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">06/00/1998</DateOpened>
+            <AccountNumber>7671620000</AccountNumber>
+            <CreditLimit currency="USD">000000500</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>80</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">01/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491FC28547</CustomerNumber>
+              <Name>NAVY FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">12/00/2009</DateOpened>
+            <AccountNumber>6767160000</AccountNumber>
+            <HighCreditAmount>000003000</HighCreditAmount>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <MonthsReviewed>10</MonthsReviewed>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">11/00/2010</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491AL77325</CustomerNumber>
+              <Name>K-B CORP T/A CENTRAL</Name>
+              <Industry code="AL" description="Truck Dealers"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">04/00/2011</DateOpened>
+            <AccountNumber>6767160000</AccountNumber>
+            <HighCreditAmount>000002000</HighCreditAmount>
+            <BalanceAmount currency="USD">000001528</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>682VF05471</CustomerNumber>
+              <Name>AAFES/ARMY AIR FORCE</Name>
+              <Industry code="VF" description="Federal"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">04/00/2011</DateOpened>
+            <AccountNumber>9041240000</AccountNumber>
+            <HighCreditAmount>000002400</HighCreditAmount>
+            <BalanceAmount currency="USD">000000077</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>605BB52453</CustomerNumber>
+              <Name>CHASE</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">05/00/2011</DateOpened>
+            <AccountNumber>34900090789000000</AccountNumber>
+            <CreditLimit currency="USD">000005000</CreditLimit>
+            <BalanceAmount currency="USD">000000000</BalanceAmount>
+            <PortfolioType code="R" description="Revolving"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491AL77325</CustomerNumber>
+              <Name>K-B CORP T/A CENTRAL</Name>
+              <Industry code="AL" description="Truck Dealers"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">02/00/2011</DateOpened>
+            <AccountNumber>6767160000</AccountNumber>
+            <HighCreditAmount>000002000</HighCreditAmount>
+            <BalanceAmount currency="USD">000001528</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+          <USTrade>
+            <CreditorId>
+              <CustomerNumber>491FC28547</CustomerNumber>
+              <Name>NAVY FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CreditorId>
+            <DateReported format="MM/DD/CCYY">06/00/2011</DateReported>
+            <DateOpened format="MM/DD/CCYY">02/00/2011</DateOpened>
+            <AccountNumber>6767160000</AccountNumber>
+            <HighCreditAmount>000002000</HighCreditAmount>
+            <BalanceAmount currency="USD">000001528</BalanceAmount>
+            <PortfolioType code="I" description="Installment"/>
+            <Status code="1" description="Pays account as agreed"/>
+            <AccountDesignator code="I" description="Individual Account."/>
+            <DateOfLastActivity format="MM/DD/CCYY">06/00/2011</DateOfLastActivity>
+          </USTrade>
+        </USTrades>
+        <USInquiries>
+          <USInquiry>
+            <DateOfInquiry format="MM/DD/CCYY">09/17/2011</DateOfInquiry>
+            <InquiryAbbreviation code="CR" description="Credit Report"/>
+            <CustomerId>
+              <CustomerNumber>999ZZ53368</CustomerNumber>
+              <Name>TSYS</Name>
+              <Industry code="ZZ" description="All Others     "/>
+            </CustomerId>
+          </USInquiry>
+          <USInquiry>
+            <DateOfInquiry format="MM/DD/CCYY">09/05/2011</DateOfInquiry>
+            <InquiryAbbreviation code="CR" description="Credit Report"/>
+            <CustomerId>
+              <CustomerNumber>648YC04764</CustomerNumber>
+              <Name>ICS</Name>
+              <Industry code="YC" description="Other"/>
+            </CustomerId>
+          </USInquiry>
+          <USInquiry>
+            <DateOfInquiry format="MM/DD/CCYY">08/12/2011</DateOfInquiry>
+            <InquiryAbbreviation code="CR" description="Credit Report"/>
+            <CustomerId>
+              <CustomerNumber>757YC00010</CustomerNumber>
+              <Name>CB OF MUSCLE SHOALS</Name>
+              <Industry code="YC" description="Other"/>
+            </CustomerId>
+          </USInquiry>
+          <USInquiry>
+            <DateOfInquiry format="MM/DD/CCYY">08/01/2011</DateOfInquiry>
+            <InquiryAbbreviation code="CR" description="Credit Report"/>
+            <CustomerId>
+              <CustomerNumber>682YC06997</CustomerNumber>
+              <Name>CRW FINANCIAL</Name>
+              <Industry code="YC" description="Other"/>
+            </CustomerId>
+          </USInquiry>
+          <USInquiry>
+            <DateOfInquiry format="MM/DD/CCYY">06/15/2011</DateOfInquiry>
+            <InquiryAbbreviation code="CR" description="Credit Report"/>
+            <CustomerId>
+              <CustomerNumber>101YC00777</CustomerNumber>
+              <Name>CREDIT RESEARCH BURE</Name>
+              <Industry code="YC" description="Other"/>
+            </CustomerId>
+          </USInquiry>
+          <USInquiry>
+            <DateOfInquiry format="MM/DD/CCYY">07/01/2010</DateOfInquiry>
+            <InquiryAbbreviation code="CR" description="Credit Report"/>
+            <CustomerId>
+              <CustomerNumber>833YC14470</CustomerNumber>
+              <Name>RRC</Name>
+              <Industry code="YC" description="Other"/>
+            </CustomerId>
+          </USInquiry>
+        </USInquiries>
+        <USConsumerStatements>
+          <USConsumerStatement>
+            <DateReported format="MM/DD/CCYY">09/01/2011</DateReported>
+            <DateToBePurged format="MM/DD/CCYY">09/01/2013</DateToBePurged>
+            <Statement>THIS IS A TEST STATEMENT</Statement>
+          </USConsumerStatement>
+        </USConsumerStatements>
+        <USBeacon>
+          <BeaconScore>00664</BeaconScore>
+          <ScoreReasons>
+            <ScoreReason code="00038" description="Serious delinquency and derogatory public record or collection filed" number="1"/>
+            <ScoreReason code="00010" description="Proportion of balances to credit limits is too high on bank revolving or other revolving accounts" number="2"/>
+            <ScoreReason code="00014" description="Length of time accounts have been established" number="3"/>
+            <ScoreReason code="00021" description="Amount past due on accounts" number="4"/>
+          </ScoreReasons>
+          <BeaconIndicator code="9" description="BEACON 09"/>
+        </USBeacon>
+        <USOnlineDirectories>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>155YC00897</CustomerNumber>
+              <Name>ARMOR SYSTEMS CORPOR</Name>
+              <Industry code="YC" description="Other"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8007858551</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>484BB01456</CustomerNumber>
+              <Name>CAPITAL ONE NATIONAL</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>906DC00656</CustomerNumber>
+              <Name>HSBC/NEIMAN MARCUS</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8008258255</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>701DC00529</CustomerNumber>
+              <Name>NORDSTROM FSB</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8009641800</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>444ON00358</CustomerNumber>
+              <Name>UNIVERSAL BANK-CUSTO</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>9049547500</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>404DC01938</CustomerNumber>
+              <Name>MACYS/GEMB</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>850BB01498</CustomerNumber>
+              <Name>CAPITAL ONE BANK USA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8009557070</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>496ON00309</CustomerNumber>
+              <Name>BANK OF AMERICA</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>3027914400</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>180BB19097</CustomerNumber>
+              <Name>BANK OF AMERICA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8002338181</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>180BB27499</CustomerNumber>
+              <Name>BANK OF AMERICA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>180FM00683</CustomerNumber>
+              <Name>CHASE</Name>
+              <Industry code="FM" description="Mortgage Cos."/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8187752001</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>163BB25287</CustomerNumber>
+              <Name>PROVIDIAN BANCORP</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>906FA00034</CustomerNumber>
+              <Name>GMAC</Name>
+              <Industry code="FA" description="Auto Financing"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8002004622</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>444DC10817</CustomerNumber>
+              <Name>FASHION BUG</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>805BB09224</CustomerNumber>
+              <Name>WACHOVIA BANK, NA/FT</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>152FC00936</CustomerNumber>
+              <Name>DESERT SCHOOLS FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>6024337000</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>667CG30059</CustomerNumber>
+              <Name>WFN EXPRESS/STRUCTUR</Name>
+              <Industry code="CG" description="General Clothing Stores"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>456FP04005</CustomerNumber>
+              <Name>SPRINGLEAF FIN SRVCS</Name>
+              <Industry code="FP" description="Personal Loans Cos."/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>2522468867</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>163BB17526</CustomerNumber>
+              <Name>HSBC BANK</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8004776000</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>906OC00024</CustomerNumber>
+              <Name>CHEVRON</Name>
+              <Industry code="OC" description="Oil Companies"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8002438766</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>906BB02525</CustomerNumber>
+              <Name>BANK ONE</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8008005626</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>644BB09613</CustomerNumber>
+              <Name>FNB OMAHA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>906BB00115</CustomerNumber>
+              <Name>CITICARDS CBNA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>152DC11085</CustomerNumber>
+              <Name>MACYS/FDSB</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>6029293300</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>906DC00755</CustomerNumber>
+              <Name>GEMB/DILLARDS</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8006438278</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>401HZ00615</CustomerNumber>
+              <Name>CHASE/CIRCUIT CITY</Name>
+              <Industry code="HZ" description="Miscellaneous"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8009559900</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>496ON00317</CustomerNumber>
+              <Name>FIRST USA BANK</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8009559900</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>180DC00127</CustomerNumber>
+              <Name>ROBINSONS-MAY</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8185095067</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>636PL00097</CustomerNumber>
+              <Name>IMMERMAN &amp; TOBIN CO.</Name>
+              <Industry code="PL" description="Legal &amp; Related Services"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>5133818430</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>701PZ00963</CustomerNumber>
+              <Name>AIRTOUCH</Name>
+              <Industry code="PZ" description="Miscellaneous"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8004458161</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>458ON02941</CustomerNumber>
+              <Name>FIRST USA BANK</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>3025944000</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>401BB00755</CustomerNumber>
+              <Name>WACHOVIA BANKCARD</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>288KZ00010</CustomerNumber>
+              <Name>C&amp;G SUSPENDED CEILIN</Name>
+              <Industry code="KZ" description="Miscellaneous"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>9784531535</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>674BB07922</CustomerNumber>
+              <Name>ADS/SERVICE MERCHADI</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>906ON00259</CustomerNumber>
+              <Name>AMERICAN EXPRESS</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>9545033787</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>906BB00040</CustomerNumber>
+              <Name>CITICARDS CBNA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>404BB00612</CustomerNumber>
+              <Name>CITIBANK, N.A.</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8007236694</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>906BB00289</CustomerNumber>
+              <Name>CITICARDS CBNA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>558FM01508</CustomerNumber>
+              <Name>WELLS FARGO HOME MOR</Name>
+              <Industry code="FM" description="Mortgage Cos."/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8002625294</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>133AS02573</CustomerNumber>
+              <Name>BURNS BROS INC</Name>
+              <Industry code="AS" description="Service Stations"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>5032387343</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>155BB03747</CustomerNumber>
+              <Name>DISCOVER FINANCIAL S</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>906DC00029</CustomerNumber>
+              <Name>CBUSASEARS</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>906DC00136</CustomerNumber>
+              <Name>GECRB/MONT WARDS</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8009500345</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>496ON00598</CustomerNumber>
+              <Name>CHASE NA</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8003565555</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>155FC01444</CustomerNumber>
+              <Name>ALLIANT CREDIT UNION</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>7734622000</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>615FF02929</CustomerNumber>
+              <Name>CHASE MANHATTAN MORT</Name>
+              <Industry code="FF" description="Sales Financing"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>9136610555</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>161BB03921</CustomerNumber>
+              <Name>WELLS FARGO BANK AUT</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8006422401</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>906BB02517</CustomerNumber>
+              <Name>BANK ONE</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>180FA00959</CustomerNumber>
+              <Name>TOYOTA MOTOR LEASING</Name>
+              <Industry code="FA" description="Auto Financing"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>491AL77325</CustomerNumber>
+              <Name>K-B CORP T/A CENTRAL</Name>
+              <Industry code="AL" description="Truck Dealers"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>7035695530</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>152BB10125</CustomerNumber>
+              <Name>BANK ONE AUTO</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>6022213629</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>152BB00399</CustomerNumber>
+              <Name>BANK ONE, NA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8008622427</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>401AR00073</CustomerNumber>
+              <Name>TUNECO, INC</Name>
+              <Industry code="AR" description="Automotive Repair, Body Shops"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>7704229545</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>682VF05471</CustomerNumber>
+              <Name>AAFES/ARMY AIR FORCE</Name>
+              <Industry code="VF" description="Federal"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8008354611</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>161BB05264</CustomerNumber>
+              <Name>CITICARDS CBNA</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8005335600</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>491FC28547</CustomerNumber>
+              <Name>NAVY FCU</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8003363333</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>163BB26384</CustomerNumber>
+              <Name>PROVIDIAN BANCORP</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>MAIL ONLY</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>426DC02401</CustomerNumber>
+              <Name>CRSI/NEXCOM</Name>
+              <Industry code="DC" description="Complete Dept. Stores"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>5166732387</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>827VS00113</CustomerNumber>
+              <Name>STATE AL DHR CHILD S</Name>
+              <Industry code="VS" description="State"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>3342420210</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>559TN00018</CustomerNumber>
+              <Name>SPRINGHILL</Name>
+              <Industry code="TN" description="Nursery &amp; Landscaping, Supplies &amp; Services"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>3096914610</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>491ON24219</CustomerNumber>
+              <Name>NAVY FEDERAL CU</Name>
+              <Industry code="ON" description="National Credit Card Cos."/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>8003363333</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>491FC13401</CustomerNumber>
+              <Name>NAVY FEDERAL CREDIT</Name>
+              <Industry code="FC" description="Credit Unions"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>7032558250</UnparsedTelephone>
+          </USOnlineDirectory>
+          <USOnlineDirectory>
+            <CustomerId>
+              <CustomerNumber>605BB52453</CustomerNumber>
+              <Name>CHASE</Name>
+              <Industry code="BB" description="All Banks"/>
+            </CustomerId>
+            <Telephone/>
+            <UnparsedTelephone>7135435510</UnparsedTelephone>
+          </USOnlineDirectory>
+        </USOnlineDirectories>
+        <USModelScores>
+          <USModelScore>
+            <ScoreFormatType>03</ScoreFormatType>
+            <ModelNumber>02784</ModelNumber>
+            <ModelId>1</ModelId>
+            <ScoreResult>00228</ScoreResult>
+            <ScoreReasons>
+              <ScoreReason code="00052" description="Number of Derogatory Public Records in the Past 24 Months" number="1"/>
+              <ScoreReason code="00019" description="Number of Bank Revolving Accounts With High Balances" number="2"/>
+              <ScoreReason code="00168" description="Number of accounts opened in the past 24 months" number="3"/>
+              <ScoreReason code="00090" description="Number of Department Store Accounts With High Balances" number="4"/>
+            </ScoreReasons>
+          </USModelScore>
+        </USModelScores>
+        <USIdentificationSSN>
+          <MDBSubjectSSN>799232221</MDBSubjectSSN>
+          <InquirySubjectSSN>799232221</InquirySubjectSSN>
+        </USIdentificationSSN>
+        <USConsumerReferral>
+          <BureauId>285</BureauId>
+          <Name>EQUIFAX INFORMATION SERVICES LLC</Name>
+          <AddressLine1>P O BOX 740241</AddressLine1>
+          <City>ATLANTA</City>
+          <State>GA</State>
+          <PostalCode>303740241</PostalCode>
+          <Telephone>
+            <UnparsedTelephone>8006851111</UnparsedTelephone>
+          </Telephone>
+        </USConsumerReferral>
+      </USConsumerCreditReport>
+    </USConsumerCreditReports>
+    <USPrintImage><![CDATA[1USER REF.XXXXXXXXXX            THIS FORM PRODUCED BY EQUIFAX                    *------------------------------------------------------------------------------ BNI 3.0 INCL BKR 30 SCORE:   228                                                REASON CODES: 00052/00019/00168/00090                                                                                                                           NARRATIVES:                                                                     NUMBER OF DEROGATORY PUBLIC RECORDS IN THE PAST 24 MONTHS                       NUMBER OF BANK REVOLVING ACCOUNTS WITH HIGH BALANCES                            NUMBER OF ACCOUNTS OPENED IN THE PAST 24 MONTHS                                 NUMBER OF DEPARTMENT STORE ACCOUNTS WITH HIGH BALANCES                                                                                                          *------------------------------------------------------------------------------ ** ADDRESS DISCREPANCY- NO SUBSTANTIAL DIFFERENCE OCCURRED                                                                                                      *------------------------------------------------------------------------------ ** ACTIVE MILITARY                                                                                                                                              ** EXTENDED FRAUD VICTIM                                                        *------------------------------------------------------------------------------ TRAINING FILE - NOT TO BE USED FOR CREDIT PURPOSES                                                                                                              *------------------------------------------------------------------------------ BEACON  09:                                                                                    00664   00038/00010/00014/00021                                  SERIOUS DELINQUENCY AND DEROGATORY PUBLIC RECORD OR COLLECTION FILED            PROPORTION OF BALANCES TO CREDIT LIMITS, TOO HIGH ON BANK/OTHER REVOLVING ACCTS LENGTH OF TIME ACCOUNTS HAVE BEEN ESTABLISHED                                   AMOUNT PAST DUE ON ACCOUNTS                                                                                                                                     *------------------------  IDENTIFICATION INFORMATION  ------------------------  FILE SINCE-05/01/2006  FAD-09/17/2011   FN-285   IN-                                                                                                            NAME:     BBIGFILETEST                                                                    BERTHA B                                                              ADDRESS:  12345678 SOME RANDOM RD PL                            VER:                      JONESBORO, AR 72401                 VARIANCE:         STD:                      FIRST RPTD:09/00/2011  LAST RPTD:09/03/2011  SOURCE:EFX                         TELEPHONE:                  RPTD:            SOURCE:                  FORMER :  987654 COUNTRY CROSSING RD                            VER:                      MEMPHIS, TN 38116                   VARIANCE:         STD:                      FIRST RPTD:09/00/2011  LAST RPTD:09/03/2011  SOURCE:EFX                         TELEPHONE:                  RPTD:            SOURCE:                  FORMER :  12345 WILD WEST HWY ST                                VER:                      PHOENIX, AZ 85029                   VARIANCE:         STD:                      FIRST RPTD:09/00/2011  LAST RPTD:09/03/2011  SOURCE:EFX                         TELEPHONE:                  RPTD:            SOURCE:                  FORMER :  BBIGGIE                                                                         B                                                                     FORMER :  BBIGGIRL                                                                        BERTHA                                                                FORMER :  BBANKSTEST                                                                      TEENY B                                                               FORMER :  BBANKSTEST                                                                      BERTHA                                                                FILE:SSN:799-23-2221  CFM-   MAT-   BDS:05/01/1971   DEATH NOTICE:              INQ: SSN:799-23-2221  SSN ISSUED:                 STATE ISSUED:                                            SSN DEATH:                STATE OF DEATH:                                                                                           *------------------------  REPORT SUMMARY  --------------------------                                                                                           SUM-          -09/00/2011   PR-005 COLL-001 ACCTS-097 HC-$        0-$   212000      MOP RATES:76-ONES   00-TWOS    03-THREES  00-FOURS  00-FIVES                              03-SIXES  02-SEVENS  00-EIGHTS  06-NINES  07-OTHER                    RATE HIST:          00-TWOS    00-THREES  00-FOURS  00-FIVES                              00-SIXES  00-SEVENS  00-EIGHTS  00-NINES                              INQUIRY ALERT - SUBJECT SHOWS 04  INQUIRIES SINCE 08/00/2011                                                                                                    SPECIAL:01/2011 ACTIVE DUTY ALERT                                                                                                                               SPECIAL:01/2011 EXTENDED FRAUD                                                                                                                                  SPECIAL:01/2011 PROMOTIONAL BLOCK                                                                                                                           ALERT CONTACT*-MILITARY      ,RPTD-01/15/2011,EFFECT:01/15/2011                   ADDRESS-                                                                                                                                                                                                                                        DAYTIME, (     )   -   -                                                        EVENING, (     )   -   -                                                        CELLULAR,(     )   -   -                                                        GEN INFO:                                                                                                                                                                                                                                     ALERT CONTACT*-EXTENDED FRAUD,RPTD-01/15/2011,EFFECT:01/15/2011                   ADDRESS-                                                                                                                                                                                                                                        DAYTIME, (     )   -   -                                                        EVENING, (     )   -   -                                                        CELLULAR,(     )   -   -                                                        GEN INFO:                                                                                                                                                                                                                                     *------------------------  PUBLIC RECORD INFORMATION  ---------------                                                                                           BKRPTCY-FILED:02/00/2003       404VF00025  FILED/TYPE:JOINT/PERSONAL    ASSET:          RPTD: 09/15/2011 CASE:00018993473                                               DISP: 11/00/2003 INTENT:CH-11 FILED      PRIOR INTENT:                          VER:             LIAB:$            ASSET:$            EXEMPT:$          BKRPTCY-FILED:11/00/2010       401VF00036  FILED/TYPE:INDIV/PERSONAL    ASSET:          RPTD: 09/15/2011 CASE:97-1234567890                                             DISP:            INTENT:CH-11 FILED      PRIOR INTENT:                          VER:             LIAB:$            ASSET:$            EXEMPT:$          CONSUMER SAYS PERSONAL BANKRUPTCY FILED DUE TO BUSINESS FAILURE                 LEGAL-  FILED:11/00/2010       401VS00014  TYPE:ABSTRACT JUDG    AMT:$000012345         RPTD:            CASE:97-1234567890                                             SAT:             PENDING                                                        VER:  02/00/2011 DEFENDANT:SUBJECT                                                               PLAINTIFF:SOCKITTOYA                                   PLTFF VERIFIED JUDGMNT PD/SATISFACTION NOT RECORD WITH COURT                    LEGAL-  FILED:11/00/2010       401VS00014  TYPE:SATISFIED JUDG   AMT:$000012345         RPTD:            CASE:97-1234567890                                             SAT:             DISMISSED                                                      VER:  02/00/2011 DEFENDANT:SUBJECT                                                               PLAINTIFF:SOCKITTOYA                                    LEGAL-  FILED:08/00/2006       152VS00525  TYPE:SATISFIED JUDG   AMT:$000000518         RPTD:            CASE:SC931410                                                  SAT:  09/00/2006 DISMISSED                                                      VER:             DEFENDANT:JURYHU PHHQD                                                          PLAINTIFF:KATHLEEN WINSTEAD                                                                                                            *------------------------  COLLECTION INFORMATION -------------------                                                                                           CL-RPTD: 03/00/2010  155YC00897  CLIENT:SWEDISH COVENAN                  ECOA:I    ASSGN:12/00/2009  STATUS:03/00/2010--NEW LISTING              AMT:$000000076    DFD:  11/00/2005  L PYMT:            CLASS:                   BAL:$000000076    ACCT: 197                                                                                                                                                    *------------------------  PAYMENT PRACTICE -------------------------                                                                                            REPORTED  !   BALANCE! DFD/DLA  !DURATION  !   DEFER  !MR/ECOA   !MAJ DEL       OPENED    ! HIGH CRDT! LAST PYMT!FREQUENCY !   BALLOON!PAST DUE  !CLASS         CLOSED    !CRDT LIMIT!  ACT PYMT!SCH PYMT  !   BALLOON!CHARGE OFF!ACTIVITY DES                                                                                 CAPITAL ONE NATIONAL/484BB01456  R1            #-1234237800127                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000001617!06/00/2011!          !          !22/JOINT  !              04/00/2006!$000002283!          !          !          !          !                        !          !          !          !          !          !              CREDIT CARD                                                                    HSBC/NEIMAN MARCUS  /906DC00656  R1            #-0-62364810000                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!06/00/2011!          !          !99/INDIVID!              08/00/1991!$000000593!          !          !          !          !                        !          !          !          !          !          !              CHARGE                                                                         NORDSTROM FSB       /701DC00529  R1            #-0-1972                                                                                                          PYMT HST-                                                    30-  /60-  /90-    09/00/2010!$000000000!09/00/2010!          !          !99/SHARED !              11/00/1999!$000000517!          !          !          !          !                        !          !          !          !          !          !             UNIVERSAL BANK-CUSTO/444ON00358  R9            #-1256901234900                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000002338!09/00/2005!          !          !  /INDIVID!              08/00/2004!$000002592!          !          !          !$000002338!                        !          !          !          !          !          !              CONSUMER DISPUTES-REINVESTIGATION IN PROCESS                                   MACYS/GEMB          /404DC01938  R1            #-1234001230000                                                                                                   PYMT HST-                                                    30-  /60-  /90-    07/00/2011!$000000000!07/00/2011!          !          !36/INDIVID!              08/00/1997!$000001625!          !          !          !          !                        !          !          !          !          !          !              CHARGE                                                                         CAPITAL ONE BANK USA/850BB01498    LST/STLN CD #-1234237812002                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!          !12/00/2009!          !          !  /       !              04/00/2006!          !          !          !          !          !                        !          !          !          !          !          !              CREDIT CARD                                                                    BANK OF AMERICA     /496ON00309  R9            #-9056785600787                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000003001!12/00/2005!          !          !  /INDIVID!              09/00/2003!$000003001!          !          !          !          !                        !          !          !          !          !          !              CONSUMER DISPUTES-REINVESTIGATION IN PROCESS                                    CHARGED OFF ACCOUNT                                                            BANK OF AMERICA     /180BB19097  R9            #-9056409034004                                                                                                   PYMT HST-                                                    30-  /60-  /90-    12/00/2005!$000000000!09/00/2005!          !          !  /INDIVID!              03/00/1997!$000005655!          !          !          !          !                        !          !          !          !          !          !              CONSUMER DISPUTES-REINVESTIGATION IN PROCESS                                   BANK OF AMERICA     /180BB27499  R9            #-5656403456341                                                                                                   PYMT HST-                                                    30-  /60-  /90-    12/00/2005!$000000000!09/00/2005!          !          !  /INDIVID!              11/00/2002!$000004653!          !          !          !          !                        !          !          !          !          !          !              CONSUMER DISPUTES-REINVESTIGATION IN PROCESS                                   CHASE               /180FM00683  I7            #-2301900130000                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000194000!09/00/2009!          !          !94/JOINT  !              07/00/2003!$000212000!          !          !          !          !                        !          !          !          !          !          !              CONSUMER DISPUTES-REINVESTIGATION IN PROCESS                                   PROVIDIAN BANCORP   /163BB25287   7            #-89                                                                                                              PYMT HST-                                                    30-  /60-  /90-    04/00/2007!$000009410!10/00/2005!          !          !01/INDIVID!              07/00/2004!$000009410!          !          !          !$000003193!                        !          !          !          !          !          !              BANKRUPTCY CHAPTER 13                                                                              /172WA00322    LST/STLN CD #-12342378120020000                                                                                               PYMT HST-                                                    30-  /60-  /90-    06/00/2011!          !12/00/2009!          !          !  /       !              04/00/2006!          !          !          !          !          !                        !          !          !          !          !          !                                 /169ZY00092  R1            #-0-62364810000                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!06/00/2011!          !          !99/INDIVID!              08/00/1991!$000000593!          !          !          !          !                        !          !          !          !          !          !                                 /163WH00508    INCL BKPTCY #-90345689901230000                                                                                               PYMT HST-                                                    30-  /60-  /90-    11/00/2010!          !10/00/2005!          !          !70/INDIVID!              07/00/2004!          !          !          !          !          !                        !          !          !          !          !          !             GMAC                /906FA00034  I1            #-655-6422-60000                                                                                                  PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000001198!05/00/2011!          !          !53/JOINT  !              12/00/2006!$000007989!          !          !          !          !                        !          !          !          !          !          !             FASHION BUG         /444DC10817  R9            #-34121234781210000                                                                                               PYMT HST-                                                    30-  /60-  /90-    05/00/2010!$000000383!03/00/2007!          !          !  /INDIVID!              12/00/2004!$000000492!          !          !          !          !                        !          !          !          !          !          !              CHARGED OFF ACCOUNT                                                            WACHOVIA BANK, NA/FT/805BB09224  R9            #-12909078348970000                                                                                               PYMT HST-                                                    30-  /60-  /90-    05/00/2007!$000000000!05/00/2007!          !          !  /INDIVID!              07/00/1982!          !          !          !          !          !                        !          !          !          !          !          !TRSF/SOLD/PD GMAC                /906FA00034  I1            #-655-6422-60000                                                                                                  PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000001198!05/00/2011!          !          !53/JOINT  !              12/00/2006!$000007989!          !          !          !          !                        !          !          !          !          !          !             DESERT SCHOOLS FCU  /152FC00936  I1            #-567850000                                                                                                       PYMT HST-                                                    30-  /60-  /90-    08/00/2009!$000000000!08/00/2009!          !          !11/INDIVID!              09/00/2008!$000017553!          !          !          !          !                        !          !          !          !          !          !PAID         WFN EXPRESS/STRUCTUR/667CG30059  R1            #-123513  3450000                                                                                                 PYMT HST-                                                    30-  /60-  /90-    12/00/2008!$000000000!12/00/2008!          !          !05/INDIVID!              07/00/2008!$000000500!          !          !          !          !                        !          !          !          !          !          !             DESERT SCHOOLS FCU  /152FC00936  I1            #-567850000                                                                                                       PYMT HST-                                                    30-  /60-  /90-    09/00/2008!$000000000!09/00/2008!          !          !07/INDIVID!              01/00/2008!$000008073!          !          !          !          !                        !          !          !          !          !          !PAID         SPRINGLEAF FIN SRVCS/456FP04005  I1            #-78457878343470000                                                                                               PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000015000!06/00/2011!          !          !25/JOINT  !              04/00/2009!$000016000!          !          !          !          !                        !          !          !          !          !          !             HSBC BANK           /163BB17526  R1            #-9034231250000                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!10/00/2010!          !          !37/INDIVID!              05/00/2008!          !          !          !          !          !                        !$000003500!          !          !          !          !             CHEVRON             /906OC00024  R6            #-56007800000                                                                                                     PYMT HST-                                                    30-  /60-  /90-    04/00/2011!$000000000!09/00/2010!          !          !24/INDIVID!              03/00/2009!$000000147!          !          !          !          !                        !          !          !          !          !          !PAID          PAID COLLECTION                                                                BANK ONE            /906BB02525  I1            #-3445006050000                                                                                                   PYMT HST-                                                    30-  /60-  /90-    10/00/2010!          !10/00/2010!          !          !13/INDIVID!              08/00/2009!$000014857!          !          !          !          !                        !          !          !          !          !          !             FNB OMAHA           /644BB09613  R1            #-3434780050000                                                                                                   PYMT HST-                                                    30-  /60-  /90-    10/00/2010!$000000000!03/00/2010!          !          !02/JOINT  !              12/00/2006!$000001300!          !          !          !          !                        !          !          !          !          !          !PD/CLOSED     ACCOUNT CLOSED BY CONSUMER                                                     DESERT SCHOOLS FCU  /152FC00936  I1            #-567850000                                                                                                       PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000013237!06/00/2011!          !          !08/INDIVID!              08/00/2010!$000015300!          !          !          !          !                        !          !          !          !          !          !             CITICARDS CBNA      /906BB00115  R1            #-9078909056569                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000877!06/00/2011!          !          !10/INDIVID!              08/00/2010!          !          !          !          !          !                        !$000001700!          !          !          !          !             MACYS/FDSB          /152DC11085  R1            #-5612789090000                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000293!06/00/2011!          !          !06/INDIVID!              11/00/2010!          !          !          !          !          !                        !$000000300!          !          !          !          !             GEMB/DILLARDS       /906DC00755  R1            #-787850000                                                                                                       PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!05/00/2009!          !          !26/INDIVID!              03/00/2009!$000000199!          !          !          !          !                        !          !          !          !          !          !             CHASE/CIRCUIT CITY  /401HZ00615  R1            #-34564578343410000                                                                                               PYMT HST-                                                    30-  /60-  /90-    07/00/2011!$000000000!05/00/2011!          !          !22/INDIVID!              09/00/2009!          !          !          !          !          !                        !$000001200!          !          !          !          !             DESERT SCHOOLS FCU  /152FC00936  R1            #-90121267125610000                                                                                               PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000002163!06/00/2011!          !          !41/INDIVID!              01/00/2008!          !          !          !          !          !                        !$000002500!          !          !          !          !             FIRST USA BANK      /496ON00317  R1            #-9012787856349                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000001358!05/00/2011!          !          !28/INDIVID!              02/00/2009!          !          !          !          !          !                        !$000003300!          !          !          !          !             ROBINSONS-MAY       /180DC00127  R1            #-7834561                                                                                                         PYMT HST-                                                    30-  /60-  /90-    07/00/2011!$000000000!11/00/2008!          !          !39/INDIVID!              03/00/2008!$000000504!          !          !          !          !                        !          !          !          !          !          !                                 /133MF00000  I1            #-3445006050000                                                                                                   PYMT HST-                                                    30-  /60-  /90-    10/00/2010!$000012000!10/00/2010!          !          !13/INDIVID!              08/00/2009!$000015000!          !          !          !          !                        !          !          !          !          !          !              MEDICAL                                                                                            /190PA00302  I1            #-567850000                                                                                                       PYMT HST-                                                    30-  /60-  /90-    08/00/2009!$000000000!08/00/2009!          !          !11/INDIVID!              09/00/2008!$000018000!          !          !          !          !                        !          !          !          !          !          !PAID         IMMERMAN & TOBIN CO./636PL00097  I1            #-567850000                                                                                                       PYMT HST-                                                    30-  /60-  /90-    09/00/2008!$000000000!09/00/2008!          !          !07/INDIVID!              01/00/2008!$000008073!          !          !          !          !                        !          !          !          !          !          !PAID         AIRTOUCH            /701PZ00963  O1            #-1210000                                                                                                         PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!06/00/2011!          !          !27/INDIVID!              02/00/2009!$000000136!          !          !          !          !                        !          !          !          !          !          !             FIRST USA BANK      /458ON02941  R1            #-9012785601780                                                                                                   PYMT HST-                                                    30-  /60-  /90-    05/00/2011!$000005957!05/00/2011!          !          !05/ATH USR!              12/00/2010!          !          !          !          !          !                        !$000008500!          !          !          !          !             WACHOVIA BANKCARD   /401BB00755  R3            #-12345                                                                                                           PYMT HST-                                                    30-  /60-  /90-    02/00/2011!$000043210!11/00/2010!          !          !  /JOINT  !              02/00/2003!$000054321!          !          !          !$000003210!                        !          !          !          !          !          !             WACHOVIA BANKCARD   /401BB00755  R3            #-12345                                                                                                           PYMT HST-                                                    30-  /60-  /90-    02/00/2011!$000043210!11/00/2010!          !          !  /JOINT  !              02/00/2003!$000054321!          !          !          !$000003210!                        !          !          !          !          !          !             C&G SUSPENDED CEILIN/288KZ00010  R1            #-90789090565690000                                                                                               PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000877!06/00/2011!          !          !10/INDIVID!              08/00/2010!          !          !          !          !          !                        !$000001700!          !          !          !          !             MACYS/FDSB          /152DC11085  R1            #-5678123400000                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!07/00/2007!          !          !99/JOINT  !              02/00/2002!$000000800!          !          !          !          !                        !          !          !          !          !          !PD/CLOSED     ACCOUNT CLOSED BY CONSUMER                                                     ADS/SERVICE MERCHADI/674BB07922  R1            #-1256903499001                                                                                                   PYMT HST-                                                    30-  /60-  /90-    04/00/2011!$000000000!01/00/2010!          !          !71/JOINT  !              04/00/2005!          !          !          !          !          !                        !$000001700!          !          !          !          !             AMERICAN EXPRESS    /906ON00259  O             #-87800000                                                                                                        PYMT HST-                                                    30-00/60-00/90-00  08/00/2009!$000000000!07/00/2009!          !          !48/INDIVID!              07/00/2005!$000000000!          !          !          !          !                        !          !          !          !          !          !PD/CLOSED     ACCOUNT CLOSED BY CONSUMER                                                     CITICARDS CBNA      /906BB00040  R1            #-1234129000567                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!06/00/2011!          !          !05/ATH USR!              01/00/2011!          !          !          !          !          !                        !$000006000!          !          !          !          !PD/CLOSED     ACCOUNT CLOSED BY CONSUMER                                                     CITIBANK, N.A.      /404BB00612  R1            #-34561230000                                                                                                     PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!06/00/2011!          !          !60/JOINT  !              04/00/2002!          !          !          !          !          !                        !$000000500!          !          !          !          !             CITICARDS CBNA      /906BB00289  R1            #-9000901234905                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000001783!01/00/2011!          !          !90/ATH USR!              11/00/2003!          !          !          !          !          !                        !$000015900!          !          !          !          !             CHASE/CIRCUIT CITY  /401HZ00615  R1            #-34564556123470000                                                                                               PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!02/00/2009!          !          !23/JOINT  !              04/00/2006!          !          !          !          !          !                        !$000002800!          !          !          !          !             MACYS/GEMB          /404DC01938  R1            #-1200123410000                                                                                                   PYMT HST-                                                    30-  /60-  /90-    07/00/2011!$000000000!07/00/2011!          !          !23/JOINT  !              08/00/2006!          !          !          !          !          !                        !$000000900!          !          !          !          !             WELLS FARGO HOME MOR/558FM01508  I1            #-34785600000                                                                                                     PYMT HST-                                                    30-  /60-  /90-    07/00/2011!$000140000!07/00/2011!          !          !07/JOINT  !              09/00/2008!$000142000!          !          !          !          !                        !          !          !          !          !          !             BURNS BROS INC      /133AS02573  R1            #-34561230000                                                                                                     PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!06/00/2011!          !          !60/JOINT  !              04/00/2002!          !          !          !          !          !                        !$000000500!          !          !          !          !                                 /180GZ00199  R1            #-5678123400000                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!07/00/2007!          !          !99/JOINT  !              02/00/2002!$000000800!          !          !          !          !                        !          !          !          !          !          !PD/CLOSED     ACCOUNT CLOSED BY CONSUMER                                                     DISCOVER FINANCIAL S/155BB03747  R1            #-3434231290126                                                                                                   PYMT HST-                                                    30-  /60-  /90-    07/00/2011!$000000160!07/00/2011!          !          !29/JOINT  !              06/00/2007!$000000160!          !          !          !          !                        !          !          !          !          !          !             CBUSASEARS          /906DC00029  R1            #-4054-645899726                                                                                                  PYMT HST-                                                    30-  /60-  /90-    08/00/2009!$000000000!08/00/2009!          !          !69/ATH USR!              12/00/1996!          !          !          !          !          !                        !$000003612!          !          !          !          !             GECRB/MONT WARDS    /906DC00136  R1            #-IV0G6759-275                                                                                                    PYMT HST-                                                    30-  /60-  /90-    04/00/2009!$000000000!12/00/2008!          !          !42/INDIVID!              03/00/2004!$000000920!          !          !          !          !                        !          !          !          !          !          !PAID         CHASE NA            /496ON00598  R1            #-3478456                                                                                                         PYMT HST-                                                    30-  /60-  /90-    12/00/2006!$000000000!12/00/2006!          !          !12/INDIVID!              03/00/2004!          !          !          !          !          !                        !$000005500!          !          !          !          !PD/CLOSED     ACCOUNT CLOSED BY CONSUMER                                                     ALLIANT CREDIT UNION/155FC01444  I1            #-232399121220000                                                                                                 PYMT HST-                                                    30-  /60-  /90-    07/00/2005!$000000000!04/00/2005! 18M      !          !03/INDIVID!              05/00/2004!$000002444!          !          !          !          !                        !          !          !          !          !          !             CHASE MANHATTAN MORT/615FF02929  I1            #-78123470                                                                                                        PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000014939!06/00/2011!          !          !99/JOINT  !              10/00/1989!$000027400!          !          !          !          !                        !          !          !          !          !          !             WELLS FARGO BANK AUT/161BB03921  I0            #-1212129078400                                                                                                   PYMT HST-                                                    30-  /60-  /90-    06/00/2010!$000000000!06/00/2010! 36M      !          !  /JOINT  !              04/00/2010!$000015046!          !          !          !          !                        !          !          !          !          !          !PAID         BANK ONE            /906BB02517  R1            #-4-5494666698                                                                                                    PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000017466!06/00/2011!          !          !90/JOINT  !              12/00/2003!          !          !          !          !          !                        !$000020000!          !          !          !          !             TOYOTA MOTOR LEASING/180FA00959  I1            #-78341200000                                                                                                     PYMT HST-                                                    30-  /60-  /90-    09/00/2009!$000000000!09/00/2009!          !          !19/JOINT  !              01/00/2008!$000012788!          !          !          !          !                        !          !          !          !          !          !PAID         K-B CORP T/A CENTRAL/491AL77325  I1            #-586-67666752130000                                                                                              PYMT HST-                                                    30-  /60-  /90-    01/00/2008!$000000000!01/00/2008!          !          !24/JOINT  !              12/00/2005!$000008664!          !          !          !          !                        !          !          !          !          !          !             DISCOVER FINANCIAL S/155BB03747  R1            #-3434230056                                                                                                      PYMT HST-                                                    30-  /60-  /90-    09/00/2011!$000000603!07/00/2011!          !          !71/JOINT  !              03/00/2002!$000000603!          !          !          !          !                        !          !          !          !          !          !             BANK ONE AUTO       /152BB10125  I1            #-61562370000                                                                                                     PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000015311!06/00/2011!          !          !09/JOINT  !              09/00/2009!$000020558!          !          !          !          !                        !          !          !          !          !          !             BANK ONE, NA        /152BB00399  R1            #-124000                                                                                                          PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000010539!06/00/2011!          !          !43/SHARED !              03/00/2000!          !          !          !          !          !                        !$000014600!          !          !          !          !                                 /178GS00026  R1            #-34342300561200000                                                                                               PYMT HST-                                                    30-  /60-  /90-    07/00/2011!$000000603!07/00/2011!          !          !71/JOINT  !              03/00/2002!$000000603!          !          !          !          !                        !          !          !          !          !          !             TUNECO, INC         /401AR00073  I0            #-121212907840000                                                                                                 PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!06/00/2010! 36M      !          !  /JOINT  !              04/00/2010!$000015000!          !          !          !          !                        !          !          !          !          !          !PAID         AAFES/ARMY AIR FORCE/682VF05471  R0            #-481220000                                                                                                       PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000267!06/00/2011!          !          !  /INDIVID!              05/00/2011!$000000500!          !          !          !          !                        !          !          !          !          !          !                                 /426CS00572  R3            #-9800                                                                                                            PYMT HST-                                                    30-  /60-  /90-    09/00/2011!$000000000!11/00/2010!          !          !  /JOINT  !              02/00/2003!$000054321!          !          !          !          !                        !          !          !          !          !          !PAID          ACCOUNT CHARGED TO PROFIT AND LOSS                                             CITICARDS CBNA      /161BB05264  R1            #-1256565656003                                                                                                   PYMT HST-                                                    30-  /60-  /90-    01/00/2008!$000000000!01/00/2008!          !          !10/ATH USR!              03/00/2007!$000002500!          !          !          !          !                        !          !          !          !          !          !             BANK ONE            /906BB02525  I1            #-586-67666752130000                                                                                              PYMT HST-                                                    30-  /60-  /90-    01/00/2008!$000000000!01/00/2008!          !          !24/JOINT  !              12/00/2005!$000008664!          !          !          !          !                        !          !          !          !          !          !             AAFES/ARMY AIR FORCE/682VF05471  R1            #-131330000                                                                                                       PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000001948!05/00/2011!          !          !31/INDIVID!              12/00/2007!$000002800!          !          !          !          !                        !          !          !          !          !          !             BANK OF AMERICA     /180BB19097  R1            #-125                                                                                                             PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000003721!05/00/2011!          !          !40/JOINT  !              01/00/2008!          !          !          !          !          !                        !$000004000!          !          !          !          !             NAVY FCU            /491FC28547  I1            #-6330500000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000007192!12/00/2010!          !          !03/INDIVID!              08/00/2010!$000008255!          !          !          !          !                        !          !          !          !          !          !             PROVIDIAN BANCORP   /163BB26384  R1            #-000                                                                                                             PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000002117!12/00/2010!          !          !16/INDIVID!              08/00/2009!          !          !          !          !          !                        !$000005000!          !          !          !          !             CRSI/NEXCOM         /426DC02401  R1            #-347890783430000                                                                                                 PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000001249!06/00/2011!          !          !27/INDIVID!              06/00/2007!$000001627!          !          !          !          !                        !          !          !          !          !          !             CRSI/NEXCOM         /426DC02401  R1            #-347890783430000                                                                                                 PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000001249!06/00/2011!          !          !27/INDIVID!              06/00/2007!$000001627!          !          !          !          !                        !          !          !          !          !          !             NAVY FCU            /491FC28547  I1            #-6330500000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000767!06/00/2011!          !          !03/INDIVID!              02/00/2011!$000001000!          !          !          !          !                        !          !          !          !          !          !             NAVY FCU            /491FC28547  I1            #-6330500000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000013074!06/00/2011!          !          !04/INDIVID!              01/00/2011!$000014297!          !          !          !          !                        !          !          !          !          !          !             STATE AL DHR CHILD S/827VS00113  O6            #-1230000                                                                                                         PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000026000!04/00/2007!          !          !44/INDIVID!                        !$000000000!          !          !          !$000026000!                        !          !          !          !          !          !              COLLECTION ACCOUNT                                                             SPRINGHILL          /559TN00018  I6            #-1250000                                                                                                         PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000113!06/00/2010! 25M      !          !05/INDIVID!                        !$000000113!          !          !          !$000000113!                        !          !          !          !          !          !              COLLECTION ACCOUNT                                                             PUBLIC SERVICE COMPA/910UE01920  I1            #-6330500000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000767!06/00/2011!          !          !03/INDIVID!              02/00/2011!$000001000!          !          !          !          !                        !          !          !          !          !          !                                 /168WC00029  I1            #-6330500000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!01/00/2009!          !          !59/INDIVID!              01/00/2004!$000014000!          !          !          !          !                        !          !          !          !          !          !             CBUSASEARS          /906DC00029  R1            #-4292-621275829                                                                                                  PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!04/00/2010!          !          !25/INDIVID!              05/00/2006!          !          !          !          !          !                        !$000001344!          !          !          !          !             NAVY FCU            /491FC28547  I1            #-6767160000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    05/00/2011!$000000000!07/00/2009!          !          !07/INDIVID!              11/00/2008!$000002500!          !          !          !          !                        !          !          !          !          !          !             NAVY FCU            /491FC28547  I1            #-6767160000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    05/00/2011!$000000000!09/00/2008!          !          !08/INDIVID!              01/00/2008!$000005453!          !          !          !          !                        !          !          !          !          !          !             NAVY FCU            /491FC28547  I1            #-7671620000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!12/00/2007!          !          !25/INDIVID!              10/00/2005!$000002714!          !          !          !          !                        !          !          !          !          !          !             NAVY FEDERAL CU     /491ON24219  R1            #-9034006712909                                                                                                   PYMT HST-                                                    30-  /60-  /90-    05/00/2011!$000000386!05/00/2011!          !          !99/INDIVID!              12/00/2000!          !          !          !          !          !                        !$000003800!          !          !          !          !             NAVY FEDERAL CREDIT /491FC13401  R1            #-7671620000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    05/00/2011!$000000000!01/00/2011!          !          !53/CO MAKR!              09/00/2002!          !          !          !          !          !                        !$000000500!          !          !          !          !             NAVY FEDERAL CREDIT /491FC13401  R1            #-7671620000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    05/00/2011!$000000000!01/00/2011!          !          !80/INDIVID!              06/00/1998!          !          !          !          !          !                        !$000000500!          !          !          !          !             NAVY FCU            /491FC28547  I1            #-6767160000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!11/00/2010!          !          !10/INDIVID!              12/00/2009!$000003000!          !          !          !          !                        !          !          !          !          !          !             K-B CORP T/A CENTRAL/491AL77325  I1            #-6767160000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000001528!06/00/2011!          !          !  /INDIVID!              04/00/2011!$000002000!          !          !          !          !                        !          !          !          !          !          !             AAFES/ARMY AIR FORCE/682VF05471  R1            #-9041240000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000077!06/00/2011!          !          !  /INDIVID!              04/00/2011!$000002400!          !          !          !          !                        !          !          !          !          !          !             CHASE               /605BB52453  R1            #-34900090789000000                                                                                               PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000000000!06/00/2011!          !          !  /INDIVID!              05/00/2011!          !          !          !          !          !                        !$000005000!          !          !          !          !             K-B CORP T/A CENTRAL/491AL77325  I1            #-6767160000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000001528!06/00/2011!          !          !  /INDIVID!              02/00/2011!$000002000!          !          !          !          !                        !          !          !          !          !          !             NAVY FCU            /491FC28547  I1            #-6767160000                                                                                                      PYMT HST-                                                    30-  /60-  /90-    06/00/2011!$000001528!06/00/2011!          !          !  /INDIVID!              02/00/2011!$000002000!          !          !          !          !                        !          !          !          !          !          !                                                                                             *------------------------  INQUIRY INFORMATION-----------------------                                                                                           09/17/2011 CR       999ZZ53368 TSYS                                             09/05/2011 CR       648YC04764 ICS                                              08/12/2011 CR       757YC00010 CB OF MUSCLE SHOALS                              08/01/2011 CR       682YC06997 CRW FINANCIAL                                    06/15/2011 CR       101YC00777 CREDIT RESEARCH BURE                             07/01/2010 CR       833YC14470 RRC                                                                                                                              *----------------------  ONLINE DIRECTORY INFORMATION----------------                                                                                           155YC00897 ARMOR SYSTEMS CORPOR  (800)785-8551                                  484BB01456 CAPITAL ONE NATIONAL    MAIL ONLY                                    906DC00656 HSBC/NEIMAN MARCUS    (800)825-8255                                  701DC00529 NORDSTROM FSB         (800)964-1800                                  444ON00358 UNIVERSAL BANK-CUSTO  (904)954-7500                                  404DC01938 MACYS/GEMB              MAIL ONLY                                    850BB01498 CAPITAL ONE BANK USA  (800)955-7070                                  496ON00309 BANK OF AMERICA       (302)791-4400                                  180BB19097 BANK OF AMERICA       (800)233-8181                                  180BB27499 BANK OF AMERICA         MAIL ONLY                                    180FM00683 CHASE                 (818)775-2001                                  163BB25287 PROVIDIAN BANCORP       MAIL ONLY                                    906FA00034 GMAC                  (800)200-4622                                  444DC10817 FASHION BUG             MAIL ONLY                                    805BB09224 WACHOVIA BANK, NA/FT    MAIL ONLY                                    152FC00936 DESERT SCHOOLS FCU    (602)433-7000                                  667CG30059 WFN EXPRESS/STRUCTUR    MAIL ONLY                                    456FP04005 SPRINGLEAF FIN SRVCS  (252)246-8867                                  163BB17526 HSBC BANK             (800)477-6000                                  906OC00024 CHEVRON               (800)243-8766                                  906BB02525 BANK ONE              (800)800-5626                                  644BB09613 FNB OMAHA               MAIL ONLY                                    906BB00115 CITICARDS CBNA          MAIL ONLY                                    152DC11085 MACYS/FDSB            (602)929-3300                                  906DC00755 GEMB/DILLARDS         (800)643-8278                                  401HZ00615 CHASE/CIRCUIT CITY    (800)955-9900                                  496ON00317 FIRST USA BANK        (800)955-9900                                  180DC00127 ROBINSONS-MAY         (818)509-5067                                  636PL00097 IMMERMAN & TOBIN CO.  (513)381-8430                                  701PZ00963 AIRTOUCH              (800)445-8161                                  458ON02941 FIRST USA BANK        (302)594-4000                                  401BB00755 WACHOVIA BANKCARD       MAIL ONLY                                    288KZ00010 C&G SUSPENDED CEILIN  (978)453-1535                                  674BB07922 ADS/SERVICE MERCHADI    MAIL ONLY                                    906ON00259 AMERICAN EXPRESS      (954)503-3787                                  906BB00040 CITICARDS CBNA          MAIL ONLY                                    404BB00612 CITIBANK, N.A.        (800)723-6694                                  906BB00289 CITICARDS CBNA                                                       558FM01508 WELLS FARGO HOME MOR  (800)262-5294                                  133AS02573 BURNS BROS INC        (503)238-7343                                  155BB03747 DISCOVER FINANCIAL S    MAIL ONLY                                    906DC00029 CBUSASEARS              MAIL ONLY                                    906DC00136 GECRB/MONT WARDS      (800)950-0345                                  496ON00598 CHASE NA              (800)356-5555                                  155FC01444 ALLIANT CREDIT UNION  (773)462-2000                                  615FF02929 CHASE MANHATTAN MORT  (913)661-0555                                  161BB03921 WELLS FARGO BANK AUT  (800)642-2401                                  906BB02517 BANK ONE                MAIL ONLY                                    180FA00959 TOYOTA MOTOR LEASING    MAIL ONLY                                    491AL77325 K-B CORP T/A CENTRAL  (703)569-5530                                  152BB10125 BANK ONE AUTO         (602)221-3629                                  152BB00399 BANK ONE, NA          (800)862-2427                                  401AR00073 TUNECO, INC           (770)422-9545                                  682VF05471 AAFES/ARMY AIR FORCE  (800)835-4611                                  161BB05264 CITICARDS CBNA        (800)533-5600                                  491FC28547 NAVY FCU              (800)336-3333                                  163BB26384 PROVIDIAN BANCORP       MAIL ONLY                                    426DC02401 CRSI/NEXCOM           (516)673-2387                                  827VS00113 STATE AL DHR CHILD S  (334)242-0210                                  559TN00018 SPRINGHILL            (309)691-4610                                  491ON24219 NAVY FEDERAL CU       (800)336-3333                                  491FC13401 NAVY FEDERAL CREDIT   (703)255-8250                                  605BB52453 CHASE                 (713)543-5510                                                                                                                  *------------------------  EMPLOYMENT INFORMATION -------------------                                                                                            EMPL:    CEO OF HULLA HOOP OPS                    VER:                                                                                                                                           EMP:            LEFT:                          FMR EMPL:HULLA HOOP SALES                         VER:                                                                                                                                           EMP:            LEFT:                          FMR EMPL:HULLA HOOP MAKER                         VER:                                                                                                                                           EMP:            LEFT:                                                                                                         *------------------------  CONSUMER STATEMENT -----------------------                                                                                           RPTD:09/2011  PURGE:09/2013                                                     0024THIS IS A TEST STATEMENT                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    *285 EQUIFAX INFORMATION SERVICES LLC,              P O BOX 740241,                 ,ATLANTA,GA,30374-0241,800/685-1111,WWW.EQUIFAX.COM/FCRA              &                                                                                     END OF REPORT EQUIFAX AND AFFILIATES - 11/29/2011                              ]]></USPrintImage>
+  </EfxReport>
+</EfxTransmit>

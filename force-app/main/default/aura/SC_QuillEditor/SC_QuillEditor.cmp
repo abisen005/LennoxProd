@@ -1,0 +1,21 @@
+<aura:component >
+
+
+
+    <ltng:require styles="{!$Resource.SC_quill + '/themes/quill.snow.css'}"
+                  scripts="{!$Resource.SC_quill + 'quill.min.js'}"/>
+
+
+    <aura:attribute name="value" type="String" description="HTML value" />
+
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+
+
+
+    <div id="editor">
+        {!v.value}
+    </div>
+
+</aura:component>

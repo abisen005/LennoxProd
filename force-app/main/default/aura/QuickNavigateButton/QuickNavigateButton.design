@@ -1,0 +1,4 @@
+<design:component>
+    <design:attribute name="label" label="Button Label" description="Label of the button" default="QuickNavigate"/>
+    <design:attribute name="url" label="URL" description="Visualforce page URL" default="/apex/YourVisualforcePage"/>
+</design:component>

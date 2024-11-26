@@ -1,0 +1,585 @@
+<apex:page standardController="FT_Field_Trial_Participant_Application__c" extensions="FT_FieldTrialParticipantAppController"
+           standardStylesheets="false" lightningStylesheets="true" showHeader="true">
+    <head>
+        <apex:includeScript value="{!$Resource.FT_JQuery}"/>
+        <apex:slds />
+        <style>
+            * { margin:0; padding:0; box-sizing: border-box; }
+            *:focus {outline:0;}
+            .bPageBlock.brandSecondaryBrd.bEditBlock.secondaryPalette { border-top: 0 none; background: #fff; border: 0 none; }
+            .bEditBlock .pbHeader>table, .apexp .bPageBlock.apexDefaultPageBlock .pbHeader>table, #ep.bLayoutBlock .pbHeader>table {border-bottom: 0 none;}
+            body .bEditBlock .pbBody > div { /*background: #f7f7f7; */margin-bottom: 15px; }
+            body .bEditBlock .pbBody .pbSubheader, body .bWizardBlock .pbBody .pbSubheader { background: #edecec; }
+            input:not([type="submit"]), select, textarea {background-color: #fff; border: 1px solid #dddbda; border-radius: .25rem; width: 100%; transition: border .1s linear,background-color .1s linear; display: inline-block; padding: 0 1rem 0 .75rem; line-height: 1.875rem; min-height: calc(1.875rem + 2px);}
+            .pbHeader .pbButton { display: none; }
+            span.lookupInput { display: block; margin-top: 6px; }
+            .picklistArrowLeft, .picklistArrowRight {display:none;}
+            span.lookupInput { display: block; position: relative; }
+            span.lookupInput > input { padding-right: 31px; }
+            span.lookupInput > a { position: absolute; right: 0; top: 2px;}
+            span.lookupInput > a > img {background: url({!URLFOR($Resource.SLDS221, 'assets/icons/utility/search_60.png')})no-repeat center bottom; background-size: 15px;}
+
+            .labelCol label {font-weight:400;}
+
+            .pbSubheader > h3 { font-size: 17px !important; line-height: 30px; }
+            /*.helpButton  {display:none;}*/
+
+            body .bPageTitle, .slds-vf-scope .bPageTitle { display: block; margin-bottom: .75rem; padding: 1rem; border-bottom: 1px solid rgb(221, 219, 218); border-radius: .25rem; background: rgb(243, 242, 242); background-clip: padding-box; -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.10); box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.10); border: 1px solid rgb(221, 219, 218); }
+            img.helpOrb { width: 15px; }
+
+            input[type="checkbox"] { -webkit-appearance: none; -moz-appearance: none; appearance: none; width: 18px; height: 18px; border: 1px solid #dddbda; line-height: normal; min-height: auto; border-radius: 3px; position: relative;}
+            input[type="checkbox"]:checked:after { display: block; content: ""; height: .25rem; width: .5rem; position: absolute; top: 50%; left: 50%; transform: translate3d(-50%,-50%,0) rotate(-45deg); border-bottom: 2px solid #0070d2; border-left: 2px solid #0070d2;}
+            body .bPageTitle, .slds-vf-scope .bPageTitle { display: block; margin-bottom: .75rem; padding: 1rem; border-bottom: 1px solid rgb(221, 219, 218); border-radius: .25rem; background: rgb(243, 242, 242); background-clip: padding-box; -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.10); box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.10); border: 1px solid rgb(221, 219, 218); }
+            body .bPageTitle .pageType, .slds-vf-scope .bPageTitle .pageType { font-size: 1.5rem; font-weight: 700; line-height: 1.25; }
+            body .bPageTitle .pageDescription, .slds-vf-scope .bPageTitle .pageDescription { font-size: .75rem; line-height: 1; }
+            body .multiSelectPicklistCell a,
+            .slds-vf-scope .multiSelectPicklistCell a {
+                -webkit-appearance: none; position: relative;
+                display: inline-block; border: 1px solid transparent;
+                padding: 0; font-size: .75rem; line-height: 1.875rem;
+                text-decoration: none; white-space: normal;
+                border-radius: .25rem; background: transparent;
+                background-clip: border-box; color: rgba(27, 82, 151, 1);
+                -webkit-user-select: none; -moz-user-select: none;
+                -ms-user-select: none; user-select: none;
+                -webkit-transition: color .05s linear,background-color .05s linear;
+                transition: color .05s linear,background-color .05s linear;
+                width: 2rem; height:2rem; display: -webkit-box; display:
+                -ms-flexbox; display: flex; -webkit-box-pack: center;
+                -ms-flex-pack: center; justify-content: center;
+                -ms-flex-line-pack: center; align-content: center;
+                -webkit-box-align: center; -ms-flex-align: center;
+                align-items: center; margin: auto; margin: .25rem;
+                line-height: 1; color: rgb(112, 110, 107);
+            }
+
+            img.picklistArrowRight  {
+            background: url({!URLFOR($Resource.SLDS221, 'assets/icons/utility/right_60.png')});
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 20px auto;
+            display: block;
+            }
+            img.picklistArrowLeft  {
+            background: url({!URLFOR($Resource.SLDS221, 'assets/icons/utility/left_60.png')});
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 20px auto;
+            display: block;
+            }
+
+            img.picklistArrowRight:hover,
+            img.picklistArrowLeft:hover{
+            background-position: center;
+            }
+            .multiSelectPicklistCell br {display:none;}
+
+            img.helpOrb {display:none;}
+            .slds-scope .slds-spinner_container .slds-backdrop { background: rgba(255, 255, 255, 0.82); }
+            /*.participantsystempanel .hideListButton { display : none; }*/
+            .systemblocktitle{ font-size: 18px; font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 10px;}
+            .systemwrap { padding: 10px; border: 1px solid #ccc; border-radius: 10px; margin: 20px 0 0 0; }
+            .bPageBlock .detailList .dataCol { width: 50% !important; }
+            /*.bPageBlock .detailList .labelCol { width: 29% !important; }*/
+            .errorMsg { color: #cc0000;/*font-weight: bold;*/ }
+            .pbSubheader { cursor: pointer; }
+            .Information table.detailList tr th {width: 25% !important;}
+            .Information table.detailList {margin-bottom: 10px;}
+            .Information table.detailList tr th, .Information table.detailList tr td {vertical-align: top;padding-bottom: 10px !important;}
+            .Information .pbBottomButtons table tr td:first-child {display: none;}
+            .Information .pbBottomButtons table tr td.pbButtonb {text-align: center;}
+        </style>
+    </head>
+
+    <div class="slds-scope">
+        <apex:outputPanel id="spinner">
+            <div id="Spinner" class="demo-only slds-hide" ><!--style="display:none;"-->
+                <div class="slds-spinner_container">
+                    <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                        <span class="slds-assistive-text">Loading</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                    <div class="slds-backdrop slds-backdrop_open"></div>
+                </div>
+            </div>
+        </apex:outputPanel>
+        <!-- success message -->
+        <div id="successContainer" class="demo-only slds-hide" style="height:4rem">
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_success" role="status">
+                    <span class="slds-assistive-text">success</span>
+                    <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                        <img style="width:30px;" src="{!URLFOR($Resource.SLDS221, 'assets/icons/standard/task2_60.png')}"/>
+                    </span>
+                    <div class="slds-notify__content">
+                        {!message}
+                    </div>
+                    <div class="slds-notify__close">
+                        <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close" onclick="hideMessage();">
+                            <img style="width:25px;" src="{!URLFOR($Resource.SLDS221, 'assets/icons/action/close_60.png')}"/>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- error message -->
+        <div id="errorContainer" class="demo-only slds-hide" style="height:4rem">
+            <div class="slds-notify_container slds-is-relative">
+                <div class="slds-notify slds-notify_toast slds-theme_error" role="status">
+                    <span class="slds-assistive-text">error</span>
+                    <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                        <img style="width:30px;" src="{!URLFOR($Resource.SLDS221, 'assets/icons/standard/unmatched_60.png')}"/>
+                    </span>
+                    <div class="slds-notify__content">
+                        {!message}
+                    </div>
+                    <div class="slds-notify__close">
+                        <button class="slds-button slds-button_icon slds-button_icon-inverse" title="Close" onclick="hideMessage();">
+                            <img style="width:25px;" src="{!URLFOR($Resource.SLDS221, 'assets/icons/action/close_60.png')}"/>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="header">
+            <img style="height:100px;" src="{!$Resource.FT_Lennox_Logo_for_Application}" alt="image"/>
+        </div>
+        <apex:form styleClass="containerForm">
+
+            <outputpanel id="mainPanel">
+                <div class="mainPanel Information">
+                    <div>
+                        <script>
+                        j$ = jQuery.noConflict();
+
+                        const fieldDependencies = {};
+                        let customValidations;
+
+                        j$(document).ready(function(){
+                            console.log('jQuery ' + j$.fn.jquery);
+
+                            j$('.mainPanel').on( 'click', '.tertiaryPalette', function() {
+                                var eId = j$(this).parent().attr('id');
+                                if (eId != null && eId != '') {
+                                    j$( document.getElementById(eId) ).find('.pbSubsection').toggle();
+
+                                    j$('.systemwrap .tertiaryPalette').each(function() {
+                                        var allId = j$(this).parent().attr('id');
+                                    	if (allId != null && allId != '' && eId != allId) {
+                                        	j$( document.getElementById(allId) ).find('.pbSubsection').css('display', 'none');
+                                        }
+                                    });
+                                }
+                            });
+
+                            hideSubSection();
+
+                            Visualforce.remoting.Manager.invokeAction(
+                                '{!$RemoteAction.FT_FieldTrialParticipantAppController.fetchCustomValidations}',
+                                function(result, event){
+                                    customValidations = result;
+
+                                    for (const field in result) {
+                                        const dependency =
+                                            result[field].requiredDependencyField;
+                                        const depValue =
+                                            result[field].requiredDependencyValue;
+
+                                        if (dependency && dependency in fieldDependencies) {
+                                            if (depValue in fieldDependencies[dependency]) {
+                                                fieldDependencies[dependency][depValue]
+                                                    .add(field);
+                                            } else {
+                                                fieldDependencies[dependency][depValue] =
+                                                    new Set([field]);
+                                            }
+                                        } else {
+                                            fieldDependencies[dependency] = {};
+                                            fieldDependencies[dependency][depValue] =
+                                                new Set([field]);
+                                        }
+                                    }
+                                }
+                            );
+                        });
+
+                        function hideSubSection() {
+                            j$('.systemwrap .pbSubsection').css('display', 'none');
+                        }
+
+                        function showLoader(){
+                            document.getElementById('Spinner').classList.remove('slds-hide');
+                        }
+
+                        function hideLoader(){
+                            if(document.getElementById('Spinner')){
+                                document.getElementById('Spinner').classList.add('slds-hide');
+                            }
+                        }
+
+                        function showMessage(type,response){
+                            if(type){
+                                if(document.getElementById('successContainer')){
+                                    document.getElementById('successContainer').classList.remove('slds-hide');
+                                    document.getElementById('successContainer').getElementsByClassName('slds-notify__content')[0].innerHTML = response.msg;
+                                }
+                                if(document.getElementById('errorContainer')){
+                                    document.getElementById('errorContainer').classList.add('slds-hide');
+                                }
+
+                            }else{
+                                if(document.getElementById('successContainer')){
+                                    document.getElementById('successContainer').classList.add('slds-hide');
+                                }
+                                if(document.getElementById('errorContainer')){
+                                    document.getElementById('errorContainer').classList.remove('slds-hide');
+                                    document.getElementById('errorContainer').getElementsByClassName('slds-notify__content')[0].innerHTML = response.msg ? response.msg : 'Please check for required fields';
+                                }
+                            }
+                        }
+
+                        function hideMessage(){
+                            document.getElementById('successContainer').classList.add('slds-hide');
+                            document.getElementById('errorContainer').classList.add('slds-hide');
+                        }
+                        function gup( name, url ) {
+                            if (!url) url = location.href;
+                            name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+                            var regexS = "[\\?&]"+name+"=([^&#]*)";
+                            var regex = new RegExp( regexS );
+                            var results = regex.exec( url );
+                            return results == null ? null : results[1];
+                        }
+                        function addUrlParam( paramName, paramVal ) {
+                            var url = window.location.href;
+                            if ( url.indexOf( '?' ) > -1 ){
+                                url += '&'+paramName+'='+paramVal;
+                            } else {
+                                url += '?'+paramName+'='+paramVal;
+                            }
+                            return url;
+                        }
+                        function onRequestComplete(resStr){
+                            console.log( 'in onRequestComplete' );
+                            var response = JSON.parse(resStr);
+                            console.log( 'response: ', response );
+                            showMessage(response.isSuccess, response);
+                            //hideLoader();
+
+                            if(response.isSuccess){
+                                //resetForm();
+                                /*if( response.data && gup( 'id' ) == null ) {
+                                    urlToRedirect = addUrlParam( 'id', response.data.Id );
+                                    console.log( 'urlToRedirect: ', urlToRedirect );
+                                    window.location.href = urlToRedirect;
+                                } else {
+                                    window.location.reload();
+                                }*/
+                                // window.location.reload();
+
+                                setTimeout(function() {
+                                    window.location.href = 'https://www.theliink.com/';
+                                }, 5000);
+
+                            } else {
+                                hideLoader();
+                            }
+
+                        }
+
+                        function validateForm(){
+                            let isValid = true;
+
+                            document.querySelectorAll('.errorMsg').forEach(e => e.remove());
+                            const inputs = document.querySelectorAll('input, select, textarea');
+                            for(let i = 0; i < inputs.length; ++i ) {
+                                isValid = validateInput(inputs[i]) && isValid;
+                            }
+                            if( isValid ) {
+                                save();
+                            } else {
+                                hideLoader();
+                                //alert( 'check for errors' );
+                                const respObj = {
+                                    isSuccess: false,
+                                    msg: 'Please fill all required fields and correct the errors'
+                                };
+                                showMessage(respObj.isSuccess, respObj);
+                            }
+                        }
+
+                        function twistSection( element ) {
+                        }
+
+                        function handleOnBlur(inputEl) {
+                            refreshRequiredDependencies(inputEl);
+                            validateInput(inputEl);
+                        }
+
+                        function refreshRequiredDependencies(inputEl) {
+                            const ip = j$(inputEl);
+                            const field = inputEl.classList[0];
+
+                            if (fieldDependencies[field]) {
+                                let section = ip
+                                    // Targets inner apex:pageblocksection
+                                    .closest('div[id*="systemSection"]')
+                                    .parent()
+                                    // Targets outer apex:pageblocksection,
+                                    // the one with the actual defined "id"
+                                    .closest('div[id*="systemSection"]');
+
+                                if (section.length === 0) {
+                                  section = ip
+                                      // Targets inner apex:pageblocksection
+                                      .closest('div[id*="participantSection"]')
+                                      .parent()
+                                      // Targets outer apex:pageblocksection,
+                                      // the one with the actual defined "id"
+                                      .closest('div[id*="participantSection"]');
+                                }
+
+                                // Resets in case of multiple values
+                                for (const value in fieldDependencies[field]) {
+                                    fieldDependencies[field][value]
+                                        .forEach(function(dependent) {
+                                            const input =
+                                                section.find('.' + dependent);
+
+                                            input.removeClass('Required');
+
+                                            const requiredInput =
+                                                input.parent();
+                                            if (requiredInput.hasClass('requiredInput')) {
+                                                requiredInput.replaceWith(input);
+                                            }
+                                    });
+                                }
+
+                                if (fieldDependencies[field][ip.val()]) {
+                                    fieldDependencies[field][ip.val()]
+                                        .forEach(function(dependent) {
+                                            const input =
+                                                section.find('.' + dependent);
+
+                                            input.addClass('Required');
+
+                                            const td = input.parent();
+
+                                            const requiredInput =
+                                                j$('<div>')
+                                                    .addClass('requiredInput');
+                                            const requiredBlock =
+                                                j$('<div>')
+                                                    .addClass('requiredBlock');
+                                            requiredInput.append(requiredBlock);
+
+                                            input.detach();
+                                            td.append(requiredInput);
+                                            requiredInput.append(input);
+                                    });
+                                }
+                            }
+                        }
+
+                        function validateInput(inputEl) {
+                            const ip = inputEl;
+                            const dType = ip.getAttribute('data-type');
+                            const field = ip.classList[0];
+                            let msg;
+
+                            for (let i = 0; i < ip.parentNode.childNodes.length; i++) {
+                                if (ip.parentNode.childNodes[i].classList &&
+                                  ip.parentNode.childNodes[i].classList.contains('errorMsg')) {
+                                    ip.parentNode.childNodes[i].remove();
+                                }
+                            }
+
+                            if( ip.classList.contains('Required') && dType !== 'MULTIPICKLIST' ) {
+                                const dTypeTextSet = new Set(['STRING', 'TEXTAREA']);
+
+                                if (!ip.value) {
+                                    //insert errorMsg div after input
+                                    msg = 'Please fill this field';
+                                } else if (dTypeTextSet.has(dType) &&
+                                  customValidations[field].requireMinimum3Characters &&
+                                  ip.value.length < 3) {
+                                    //insert errorMsg div after input
+                                    msg = 'A minimum of 3 characters are required';
+                                }
+                            }
+
+                            if (ip.value) {
+                                if (dType === 'EMAIL') {
+                                    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test( ip.value ) ) {
+                                        //insert errorMsg div after input
+                                        // msg = 'Please enter valid email';
+                                        msg = 'Proper email format must be used';
+                                    }
+                                } else if (dType === 'PHONE') {
+                                    const phoneNoRegx = /^\d{10}$/;
+                                    const phoneNpRegx1 = /^(\([0-9]{3}\)\s*|[0-9]{3}\-)[0-9]{3}-[0-9]{4}$/;
+                                    console.log( 'phone : ',ip.value.match(phoneNoRegx) );
+                                    console.log( 'phone 1: ',ip.value.match(phoneNpRegx1) );
+                                    if( !ip.value.match(phoneNoRegx) && !ip.value.match(phoneNpRegx1) ) {
+                                        //insert errorMsg div after input
+                                        // msg = 'Please enter 10 digit phone number';
+                                        msg = 'Proper phone number formatting must be used';
+                                    }
+                                } else if (dType === 'DOUBLE') {
+                                    if(isNaN(ip.value)) {
+                                        //insert errorMsg div after input
+                                        msg = 'Please enter a number';
+                                        if (!ip.classList.contains('Required')) {
+                                          msg += ', or leave blank';
+                                        }
+                                    }
+                                }
+                            }
+
+                            if( msg ) {
+                                const errorDivElm = document.createElement( 'div' );
+                                errorDivElm.innerHTML = msg;
+                                errorDivElm.classList.add( 'errorMsg' );
+                                ip.parentNode.insertBefore(errorDivElm, null);
+                            }
+
+                            // Returns whether it is valid or not:
+                            // if msg is set, it is not valid
+                            return !msg;
+                        }
+
+                        </script>
+                    </div>
+
+                    <apex:actionFunction name="save" action="{!saveCustom}" reRender="mainPanel" oncomplete="onRequestComplete('{!resStr}');"></apex:actionFunction>
+                    <apex:actionFunction name="resetForm" action="{!resetForm}" reRender="mainPanel" oncomplete="window.location.reload(true);"></apex:actionFunction>
+                    <apex:sectionheader title="Field Trial Participant Application" subtitle="{!if(fieldParticipant.Id==null,'Field Trial Participant Application',fieldParticipant.Name)}"></apex:sectionheader>
+                    <apex:pageblock mode="edit" id="fieldTrialParticipant" title="">
+                        <apex:variable var="indexFPS" value="{!1}" />
+                        <apex:pageblockbuttons >
+                            <apex:commandbutton style="width:auto;" onclick="showLoader();validateForm();window.scrollTo(0, 0);return false;"  value="Submit" styleClass="slds-button slds-button_brand"></apex:commandbutton>
+                            <apex:commandbutton action="{!cancel}" style="width:auto;" value="Cancel" styleClass="slds-button slds-button_neutral"></apex:commandbutton>
+                        </apex:pageblockbuttons>
+
+                        <apex:repeat value="{!participantAppFieldList}" var="section">
+
+                            <apex:pageblocksection id="participantSection" title="{!section.sectionName}"
+                                                   rendered="{!section.sectionName != 'System Information' && section.sectionName != 'Custom Links'}"
+                                                   columns="2" collapsible="false">
+
+                                <apex:repeat value="{!section.fieldsUiMap}" var="sectionIndex">
+                                    <apex:pageblocksection columns="1">
+                                        <apex:repeat value="{!section.fieldsUiMap[sectionIndex]}" var="field">
+                                            <apex:pageBlockSectionItem rendered="{!IF(MOD(field.fieldOrder, 2) == 1, 'true', 'false')}">
+
+                                                <apex:outputLabel value="{!field.fieldLabel}"/>
+                                                <apex:actionRegion >
+                                                    <apex:inputfield styleClass="{!field.fieldApiName} {!field.fieldBehaviour}"
+                                                                     required="{!field.fieldBehaviour == 'Required'}"
+                                                                     value="{!fieldParticipant[field.fieldApiName]}"
+                                                                     html-data-type="{!field.fieldType}"
+                                                                     html-autocomplete="dfds"
+                                                                     onblur="handleOnBlur(this)">
+                                                        <apex:actionSupport event="onchange"
+                                                                            action="{!getParticipantAppSystems}"
+                                                                            reRender="systemrecords"
+                                                                            rendered="{!if(field.fieldApiName=='FT_Number_of_Systems_in_the_home__c' , true ,false)}"
+                                                                            oncomplete="hideSubSection();"/>
+                                                    </apex:inputfield>
+                                                </apex:actionRegion>
+                                            </apex:pageBlockSectionItem>
+                                        </apex:repeat>
+                                    </apex:pageblocksection>
+
+                                    <apex:pageblocksection columns="1">
+                                        <apex:repeat value="{!section.fieldsUiMap[sectionIndex]}" var="field">
+                                            <apex:pageBlockSectionItem rendered="{!IF(MOD(field.fieldOrder, 2) == 0, 'true', 'false')}">
+
+                                                <apex:outputLabel value="{!field.fieldLabel}"/>
+                                                <apex:actionRegion >
+                                                    <apex:inputfield styleClass="{!field.fieldApiName} {!field.fieldBehaviour}"
+                                                                     required="{!field.fieldBehaviour == 'Required'}"
+                                                                     value="{!fieldParticipant[field.fieldApiName]}"
+                                                                     html-data-type="{!field.fieldType}"
+                                                                     html-autocomplete="dfds"
+                                                                     onblur="handleOnBlur(this)">
+                                                        <apex:actionSupport event="onchange"
+                                                                            action="{!getParticipantAppSystems}"
+                                                                            reRender="systemrecords"
+                                                                            rendered="{!if(field.fieldApiName=='FT_Number_of_Systems_in_the_home__c' , true ,false)}"
+                                                                            oncomplete="hideSubSection();"/>
+                                                    </apex:inputfield>
+                                                </apex:actionRegion>
+                                            </apex:pageBlockSectionItem>
+
+                                        </apex:repeat>
+                                    </apex:pageblocksection>
+                                </apex:repeat>
+                                <apex:variable var="indexFPS" value="{!indexFPS + section.fieldsCount}"/>
+                            </apex:pageblocksection>
+                        </apex:repeat>
+
+                        <apex:outputPanel id="systemrecords" styleClass="participantsystempanel">
+                            <apex:outputPanel rendered="{!IF(fieldParticipantSystemList.size  > 0, true, false)}">
+                                <span style="color: #cc0000; font-size: 14px; padding-bottom: 10px; display: block;">
+                                    Please click on section name to Collapse/Expand.
+                                </span>
+                            </apex:outputPanel>
+                            <apex:repeat value="{!fieldParticipantSystemList}" var="fieldParticipantSystem">
+                                <div class="systemwrap">
+                                    <div class="systemblocktitle">System #{!fieldParticipantSystem.FT_System__c}</div>
+
+                                    <apex:repeat value="{!participantAppSystemFieldList}" var="section">
+                                        <apex:pageblocksection id="systemSection" title="{!section.sectionName}"
+                                                               rendered="{!section.sectionName != 'System Information' && section.sectionName != 'Custom Links' && section.sectionName != 'System Number'}"
+                                                               columns="2" collapsible="false">
+
+                                            <apex:repeat value="{!section.fieldsUiMap}" var="sectionIndex">
+                                                <apex:pageblocksection columns="1">
+                                                    <apex:repeat value="{!section.fieldsUiMap[sectionIndex]}" var="field">
+                                                        <apex:inputfield styleClass="{!field.fieldApiName} {!field.fieldBehaviour}"
+                                                                         required="{!field.fieldBehaviour == 'Required'}"
+                                                                         value="{!fieldParticipantSystem[field.fieldApiName]}"
+                                                                         rendered="{!IF(MOD(field.fieldOrder, 2) == 1, 'true', 'false')}"
+                                                                         html-data-type="{!field.fieldType}"
+                                                                         html-tabIndex="{!indexFPS + field.fieldOrder}"
+                                                                         html-autocomplete="dfds"
+                                                                         onblur="handleOnBlur(this)"
+                                                                         onchange="refreshRequiredDependencies(this)">
+                                                        </apex:inputfield>
+                                                    </apex:repeat>
+                                                </apex:pageblocksection>
+
+                                                <apex:pageblocksection columns="1">
+                                                    <apex:repeat value="{!section.fieldsUiMap[sectionIndex]}" var="field">
+                                                        <apex:inputfield styleClass="{!field.fieldApiName} {!field.fieldBehaviour}"
+                                                                         required="{!field.fieldBehaviour == 'Required'}"
+                                                                         value="{!fieldParticipantSystem[field.fieldApiName]}"
+                                                                         rendered="{!IF(MOD(field.fieldOrder, 2) == 0, 'true', 'false')}"
+                                                                         html-data-type="{!field.fieldType}"
+                                                                         html-tabIndex="{!indexFPS + field.fieldOrder}"
+                                                                         html-autocomplete="dfds"
+                                                                         onblur="handleOnBlur(this)"
+                                                                         onchange="refreshRequiredDependencies(this)">
+                                                        </apex:inputfield>
+                                                    </apex:repeat>
+                                                </apex:pageblocksection>
+                                            </apex:repeat>
+                                            <apex:variable var="indexFPS" value="{!indexFPS + section.fieldsCount}"/>
+                                        </apex:pageblocksection>
+                                    </apex:repeat>
+                                </div>
+                            </apex:repeat>
+                        </apex:outputPanel>
+                    </apex:pageblock>
+                </div>
+            </outputpanel>
+        </apex:form>
+    </div>
+</apex:page>

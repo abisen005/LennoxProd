@@ -1,0 +1,7 @@
+.THIS .timePicker-openIcon,
+.THIS .uiInput--datetime + .datePicker-openIcon,
+.THIS .uiInput--datetime .datePicker-openIcon,
+.THIS .uiInput--datetime + .timePicker-openIcon,
+.THIS .uiInput--datetime .timePicker-openIcon {
+  left: 93% !important;
+  top: -23px !important; }

@@ -1,0 +1,344 @@
+<aura:component controller="SC_CoachingSessionController" access="GLOBAL" >
+
+    <!--
+        TODO:
+            -Check if the session has related assessments
+            -If there are no related assessments, let the Coach know that that planning
+                needs to happen before the start date. Leverage the new coaching session
+                component (or create a new one if too difficult) too allow Coach
+                to Review and Assess
+    -->
+
+    <aura:attribute name="id" type="String" description="Coaching session id" />
+    <aura:attribute name="isLoading" type="Boolean" default="false" />
+    <aura:attribute name="isCoach" type="Boolean" default="false" description="Is the current user a coach?" />
+    <aura:attribute name="session" type="SC_Coaching_Session__c" description="Session sobject with related attendees, assessments, notes, assignments." />
+    <aura:attribute name="sessionNotes" type="Object[]" description="Session notes grouped by category: {category: 'Objectives', notes: []}" />
+    <aura:attribute name="followThroughNote" type="Object" description="The follow through note for the coach. Structured the same as session notes." />
+    <aura:attribute name="relationId" type="String" description="Represents the EventRelation id of the attendee. Necessary for accepting and declining invitations." />
+     <aura:attribute name="UserId" type="String"/>
+    
+    <aura:attribute name="questions" type="SC_Initiative_Question__c[]" description="Questions related to the session initiative." />
+    <aura:attribute name="coachingInfo"
+                    type="CoachingInfo"
+                    description="An object with information about the current user's coaching role and related data." />
+    <aura:attribute name="newAssignment" type="Aura.Component[]" description="New Assignment Component" />
+    <aura:attribute name="hasAssessments" type="Boolean" description="Does the session have assessments yet?" />
+    <aura:attribute name="sessionDuration" type="Integer" access="PRIVATE" />
+    <aura:attribute name="sessionStartDate" type="Integer" access="PRIVATE" />
+    <aura:attribute name="isInPast" type="Boolean" default="false" access="PRIVATE" description="Indicates if the session start date has passed" />
+
+
+
+    <aura:handler name="change" value="{!v.coachingInfo}" action="{!c.handleCoachingInfoChange}" />
+    <aura:handler name="change" value="{!v.id}" action="{!c.handleIdChange}" />
+    <aura:handler name="change" value="{!v.isCoach}" action="{!c.handleIsCoachChange}" />
+    <aura:handler name="change" value="{!v.session}" action="{!c.handleSessionChange}" />
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler event="c:SC_CoachingInfoResponse" action="{!c.handleCoachingInfoResponse}" />
+    <aura:handler name="newAssignmentCreated" event="c:SC_EvtAssignmentCreated" action="{!c.handleAssignmentCreated}" includeFacets="true" />
+
+
+
+    <aura:registerEvent name="coachingInfoRequest" type="c:SC_CoachingInfoRequest" />
+    <aura:registerEvent name="routeNavBack" type="c:routeNavBack" />
+    <aura:registerEvent name="startNewCoachingSession" type="c:SC_StartNewCoachingSession" />
+	<aura:html tag="style">
+    	html, body{overflow:inherit;}
+    </aura:html>
+              
+	
+    <section>
+        <!-- HEADER -->
+        <div class="slds-page-header" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media slds-no-space slds-grow slds-media--center">
+                        <div class="slds-media__figure">
+                            <lightning:icon iconName="custom:custom15" />
+                        </div>
+                        <div class="slds-media__body">
+                            <p class="slds-text-title--caps slds-line-height--reset">Coaching Session</p>
+                            <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate" title="this should match the Record Title">
+                                {!v.session.Name}
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-grid slds-align-top">
+
+                    <lightning:buttonGroup >
+                        <aura:if isTrue="{!v.isCoach}">
+                            <lightning:button label="Delete" onclick="{!c.handlePromptDeletePress}"  />
+                            <lightning:button label="Reschedule" onclick="{!c.handleReschedulePress}"  />
+                        </aura:if>
+                        <aura:if isTrue="{!and(v.isCoach, v.isInPast)}">
+                            <lightning:button label="Schedule Next Session" onclick="{!c.handleScheduleNextSessionPress}" />
+                        </aura:if>
+                    </lightning:buttonGroup>
+
+                </div>
+            </div>
+            <ul class="slds-grid slds-page-header__detail-row">
+                <li class="slds-page-header__detail-block">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" title="Coach">Coach</p>
+                    <p class="slds-text-body--regular" >{!v.session.Owner.Name}</p>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" title="Individual(s)">Individual(s)</p>
+                    <p class="slds-text-body--regular" >
+                        <aura:iteration items="{!v.session.Coaching_Session_Attendees__r}" var="individual">
+                            <aura:if isTrue="{!v.isCoach || equals(v.coachingInfo.userId, individual.User__c)}">
+                                <c:Link to="{!'/coachee/' + individual.User__c}" label="{!individual.User__r.Name}">
+                                    {!individual.User__r.Name}
+                                </c:Link>
+                                <aura:set attribute="else">
+                                    {!individual.User__r.Name}
+                                </aura:set>
+                            </aura:if>
+                                <br />
+
+                        </aura:iteration>
+                    </p>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" title="Session Date">Session Date</p>
+                    <p class="slds-text-body--regular" >
+                        <ui:outputDateTime value="{!v.session.Start_Date__c}" />
+                    </p>
+                </li>
+                <li class="slds-page-header__detail-block">
+                    <p class="slds-text-title slds-truncate slds-m-bottom--xx-small" title="Initiative">Initiative</p>
+                    <p class="slds-text-body--regular" >
+                        <c:Link to="{!'/initiative-user/' + v.session.Initiative__c + '/' + v.UserId}"
+                                label="{!v.session.Initiative__r.Name}"
+                                class="slds-button">
+                            {!v.session.Initiative__r.Name}
+                        </c:Link>
+                    </p>
+                </li>
+            </ul>
+        </div>
+
+
+
+        <!-- BREADCRUMBS -->
+        <c:SC_Breadcrumbs class="slds-m-around--medium" />
+
+        <hr class="slds-m-around--none" />
+
+        <div class="{!'slds-box slds-theme--warning slds-m-around--small slds-p-around--small ' + (and(!v.hasAssessments, v.isCoach) ? '' : 'slds-hide')}">
+            <p>This session is scheduled, but you have not planned yet. Would you like to <a href="javascript:void(0)" onclick="{!c.handlePlanNowPress}">plan now</a>?</p>
+        </div>
+
+
+
+        <!-- SUGGESTIONS -->
+        <section class="{!empty(v.questions) ? 'slds-hide' : ''}">
+            <h2 class="slds-section-title--divider">{!v.isCoach ? 'Coach' : 'Coachee'} Suggestions</h2>
+
+            <ul class="slds-list--dotted slds-p-around--small">
+                <aura:iteration items="{!v.questions}" var="question">
+                    <li class="slds-p-bottom--x-small">{!question.Content__c}</li>
+                </aura:iteration>
+            </ul>
+        </section>
+
+        <!--
+            1. If coach, get all notes
+            2. if Coachee, get coach notes and my notes
+        -->
+        <section class="slds-p-around--small">
+            <aura:iteration items="{!v.sessionNotes}" var="sessionNote" indexVar="i">
+                <h2 class="slds-text-heading--medium">{!sessionNote.category}</h2>
+                <p>
+                    {!equals(sessionNote.category, 'Current Situation') ? 'What is the current situation?  Where are you and where do you want to go?' : ''}
+                    {!equals(sessionNote.category, 'Objectives') ? 'What would better look like? In what timeframe could that be accomplished?' : ''}
+                    {!equals(sessionNote.category, 'Action Plans') ? 'What are the actions you could do? What are the three most important actions? What action would you start with?' : ''}
+                </p>
+                <div class="slds-grid slds-wrap">
+                    <aura:iteration items="{!sessionNote.notes}" var="note">
+                            <div class="{!'slds-col slds-size--1-of-1 slds-medium-size--1-of-3 slds-p-around--medium slds-p-bottom--large ' +
+                                        (v.coachingInfo.userId == note.OwnerId ? 'slds-order--1' : 'slds-order--2')}">
+
+                                <c:SC_CoachingSessionNote note="{!note}"
+                                                          label="{!note.Owner.Name}"
+                                                          userId = "{!v.UserId}"/>
+                            </div>
+                    </aura:iteration>
+                </div>
+            </aura:iteration>
+        </section>
+
+
+        <!-- ASSIGNMENTS -->
+        <article class="slds-card slds-m-around--small">
+            <div class="slds-card__header slds-grid">
+                <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                    <div class="slds-media__figure">
+                        <lightning:icon iconName="custom:custom83" size="small" />
+                    </div>
+                    <div class="slds-media__body slds-truncate">
+                        <h2>
+                            <span class="slds-text-heading--small">Assignments</span>
+                        </h2>
+                    </div>
+                </header>
+                <div class="slds-no-flex">
+                    <lightning:button label="New" onclick="{!c.handleNewAssignmentPress}" />
+                </div>
+            </div>
+            <div class="slds-card__body">
+                <c:SC_UserAssignments aura:id="userAssignments" userId="{!v.UserId}" sessionId="{!v.session.Id}" showAll="true" />
+            </div>
+            <div class="slds-card__footer"></div>
+        </article>
+
+        <aura:if isTrue="{!v.isCoach}">
+            <c:SC_CoachingSessionAssessmentSkills CoachingSessionId="{!v.session.Id}" Editable="{!v.isCoach}" />
+            
+            <!-- FOLLOW THROUGH NOTE    -->
+            <section class="{!'slds-p-around--small ' + (v.isInPast ? '' : 'slds-hide')}">
+                
+                <h2 class="slds-text-heading--medium">{!v.followThroughNote.category}</h2>
+                <p>What progress have you seen? Are any adjustments needed to the action plans?</p>
+                <div class="slds-grid slds-wrap">
+                    <aura:iteration items="{!v.followThroughNote.notes}" var="note">
+                        <div class="slds-col slds-size--1-of-1 slds-p-around--medium slds-p-bottom--large">
+                            
+                            <c:SC_CoachingSessionNote note="{!note}"
+                                                      label="{!note.Owner.Name}"
+                                                      isMyNote="{!v.coachingInfo.userId == note.OwnerId}" />
+                            
+                            
+                        </div>
+                    </aura:iteration>
+                </div>
+            </section>
+        </aura:if>
+        
+        
+        
+        
+        <!-- LOADER -->
+        <span class="{!v.isLoading ? '' : 'slds-hide'}">
+            <c:SC_Loader />
+        </span>
+
+
+
+        <!-- NEW ASSIGNMENT -->
+        {!v.newAssignment}
+
+
+
+        <!-- DELETE -->
+        <c:SC_ModalOverlay aura:id="deleteModal">
+
+            <aura:set attribute="header">
+                Delete Session?
+            </aura:set>
+
+            <p>Are you sure you want to delete this session?</p>
+
+            <aura:set attribute="footer">
+                <lightning:button class="slds-button slds-button--neutral" label="Cancel" onclick="{!c.handleCancelDeletePress}" />
+                <lightning:button class="slds-button slds-button--destructive" label="Delete" onclick="{!c.handleDeletePress}" />
+            </aura:set>
+
+        </c:SC_ModalOverlay>
+
+
+
+        <!-- RESCHEDULE MODAL/OVERLAY -->
+        <c:SC_ModalOverlay aura:id="rescheduleModal">
+
+            <aura:set attribute="header">
+                Reschedule Session
+            </aura:set>
+
+            <div class="slds-box slds-theme--shade">
+                <p>All assignees will be notified.</p>
+            </div>
+
+            <div class="slds-form--stacked slds-m-top--medium">
+                <div class="slds-form-element">
+                    <label class="slds-form-element__label" ><span class="slds-required">*</span>Session Date/Time</label>
+                    <div class="slds-form-element__control">
+                        <ui:inputDateTime aura:id="sessionDate" value="{!v.sessionStartDate}" class="slds-input" displayDatePicker="true" />
+                    </div>
+                </div>
+                <div class="slds-form-element slds-m-bottom--medium">
+                    <label class="slds-form-element__label" ><span class="slds-required">*</span>Session Duration (minutes)</label>
+                    <div class="slds-form-element__control">
+                        <ui:inputText aura:id="sessionDuration" value="{!v.sessionDuration}" class="slds-input" />
+                    </div>
+                </div>
+            </div>
+
+            <aura:set attribute="footer">
+
+                <lightning:button variant="neutral" label="Cancel" onclick="{!c.handleCancelReschedulePress}" />
+                <lightning:button variant="brand" label="Save" onclick="{!c.handleSaveReschedulePress}" />
+
+            </aura:set>
+
+        </c:SC_ModalOverlay>
+
+
+        <!-- SCHEDULE NEW SESSION MODAL/OVERLAY -->
+        <c:SC_ModalOverlay aura:id="scheduleNewModal">
+
+            <aura:set attribute="header">
+                Schedule New Session
+            </aura:set>
+
+            <div class="slds-box slds-theme--shade">
+                <p>Do you want to schedule a session <a href="javascript:void(0)" onclick="{!c.handleScheduleWithPlanningPress}">with planning</a> or <a href="javascript:void(0)" onclick="{!c.handleScheduleWithoutPlanningPress}">without planning</a>?</p>
+            </div>
+
+        </c:SC_ModalOverlay>
+
+
+        <!-- HAS USER ACCEPTED INVITE? -->
+        <c:SC_ModalOverlay aura:id="acceptInviteModal">
+
+            <aura:set attribute="header">
+                Respond to the Session Invitation
+            </aura:set>
+
+            <p>You haven't responded to the session invitation yet. Would you like to accept the invitation?</p>
+
+            <ui:outputDateTime value="{!v.session.Start_Date__c}" />
+            <aura:set attribute="footer">
+                <lightning:button variant="brand" label="Accept" onclick="{!c.handleAcceptInvitePress}" />
+                <lightning:button label="Reschedule" onclick="{!c.handleRescheduleForCochee}"  />
+                <!-- <lightning:button variant="destructive" label="Decline" onclick="{!c.handleDeclineInvitePress}" /> -->
+               <!-- <aura:if isTrue="{!lessthan(v.session.Coaching_Session_Attendees__r.length, 2)}">
+                    <lightning:button label="Reschedule" onclick="{!c.handleRescheduleForCochee}"  />
+                </aura:if>  -->              
+            </aura:set>
+
+        </c:SC_ModalOverlay>
+
+        <!-- Has cochee rescheduled invite? -->
+        <c:SC_ModalOverlay aura:id="rescheduledInviteModal">
+
+            <aura:set attribute="header">
+                Respond to the Session Invitation
+            </aura:set>
+
+            <p>This Session has been rescheduled by cochee to <ui:outputDateTime value="{!v.session.Start_Date__c}" />.</p>
+
+            <aura:set attribute="footer">
+                <lightning:button variant="brand" label="Accept" onclick="{!c.handleAcceptRescheduledInviteForCoach}" />
+                <!-- <lightning:button variant="destructive" label="Decline" onclick="{!c.handleDeclineInvitePress}" /> -->
+                <lightning:button label="Re-schedule Session" onclick="{!c.handleRescheduleInviteForCoach}"  />
+            </aura:set>
+
+        </c:SC_ModalOverlay>
+        
+
+    </section>
+
+</aura:component>

@@ -1,0 +1,12 @@
+.THIS.main-container { background: #fff; position: relative; top: 20px;}
+.THIS .messageDiv {
+    display: none;
+    color:#fff;    
+}
+.THIS .messageCont{
+    width: fit-content;
+    min-width: unset !important;
+}
+.THIS .slds-spinner_container {
+    position: relative; top: 20px;
+}

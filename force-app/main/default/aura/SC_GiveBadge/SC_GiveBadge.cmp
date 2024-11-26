@@ -1,0 +1,106 @@
+<aura:component controller="SC_GiveBadgeController">
+
+
+    <aura:attribute name="isOpen" type="Boolean" default="false" />
+    <aura:attribute name="userId" type="String" />
+    <aura:attribute name="badges" type="Object[]" />
+    <aura:attribute name="activeBadge" type="Object" />
+    <aura:attribute name="badgeQueryString" type="String" default="" />
+    <aura:attribute name="thanksMsg" type="String" default="" />
+    <aura:attribute name="isLoading" type="Boolean" />
+    <aura:attribute name="isFiltering" type="Boolean" default="false" />
+    <aura:attribute name="isDone" type="Boolean" default="false" description="Is the badge selected and assigned?" />
+
+
+
+    <aura:handler name="change" value="{!v.isOpen}" action="{!c.handleIsOpenChange}" />
+    <aura:handler name="change" value="{!v.badgeQueryString}" action="{!c.handleBadgeQueryStringChange}" />
+
+
+
+    <aura:registerEvent name="badgeGiven" type="c:SC_EvtBadgeGiven" />
+
+
+
+    <c:SC_ModalOverlay isOpen="{!v.isOpen}" >
+
+        <aura:set attribute="header">
+            Give a Badge
+        </aura:set>
+
+        <section>
+
+            <div class="{!v.isDone ? 'slds-hide' : ''}">
+                <div class="{!!v.activeBadge ? '' : 'slds-hide'}" >
+
+                    <input value="{!v.badgeQueryString}"
+                           onkeyup="{!c.handleQueryKeyup}"
+                           class="slds-input slds-m-horizontal--small"
+                           placeholder="Press enter to search.."
+                           aura:id="badgeQueryString" />
+
+                    <div class="slds-grid slds-wrap slds-grid--pull-padded">
+
+                        <aura:iteration items="{!v.badges}" var="badge">
+                            <div class="{!'slds-p-around--small slds-size--1-of-2 slds-medium-size--1-of-4 slds-text-align--center ' + (badge.isHidden ? 'slds-hide' : '')}">
+                                <a href="#" onclick="{!c.handleBadgePress}" data-badge-id="{!badge.Id}" >
+                                    <img src="{!badge.ImageUrl}" alt="{!badge.Description}" width="75" height="75" data-badge-id="{!badge.Id}" />
+                                    <div class="slds-truncate" data-badge-id="{!badge.Id}" >{!badge.Name}</div>
+                                </a>
+                            </div>
+                        </aura:iteration>
+
+                    </div>
+
+                </div>
+
+                <div class="{!v.activeBadge ? '' : 'slds-hide'}" >
+                    <div class="slds-grid">
+                        <div class="slds-p-around--small slds-text-align--center">
+                            <img src="{!v.activeBadge.ImageUrl}" alt="{!v.activeBadge.Description}" width="75" height="75" data-badge-id="{!v.activeBadge.Id}" />
+                            <div class="slds-truncate" data-badge-id="{!v.activeBadge.Id}" >{!v.activeBadge.Name}</div>
+                            <lightning:button class="slds-m-top--medium"
+                                              label="Select another badge"
+                                              variant="base"
+                                              iconName="utility:close"
+                                              onclick="{!c.handleBackPress}" />
+                        </div>
+                        <div class="slds-form-element slds-col slds-m-top--medium">
+                            <label class="slds-form-element__label">What this badge means</label>
+                            <p class="slds-m-bottom--small">{!v.activeBadge.Description}</p>
+                            <label class="slds-form-element__label"><abbr class="slds-required" title="required">*</abbr> Message for Recipient</label>
+                            <div class="slds-form-element__control">
+                                <ui:inputTextarea value="{!v.thanksMsg}" class="slds-textarea" maxlength="255" updateOn="keyup" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="{!!v.isDone ? 'slds-hide' : ''}">
+                <div class="slds-p-around--small slds-text-align--center">
+                    <lightning:icon iconName="utility:success" class="success" size="large" />
+                    <div class="slds-truncate" >Success!</div>
+                </div>
+            </div>
+
+        </section>
+
+        <aura:set attribute="footer">
+            <div class="{!v.isDone ? 'slds-hide' : ''}">
+                <lightning:button class="slds-button slds-button--neutral" label="Cancel" onclick="{!c.handleCancelPress}" />
+                <lightning:button class="slds-button slds-button--brand"
+                                  label="Give Badge"
+                                  onclick="{!c.handleGiveBadgePress}"
+                                  disabled="{!!v.activeBadge || v.isLoading || v.thanksMsg.length == 0}" />
+            </div>
+            <div class="{!!v.isDone ? 'slds-hide' : ''}">
+                <lightning:button class="slds-button slds-button--neutral" label="Done" onclick="{!c.handleDonePress}" />
+            </div>
+        </aura:set>
+
+
+    </c:SC_ModalOverlay>
+
+</aura:component>

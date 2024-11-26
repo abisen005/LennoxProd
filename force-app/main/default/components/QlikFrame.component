@@ -1,0 +1,30 @@
+<apex:component controller="QlikFrameController">
+
+
+    <!--
+
+        Outputs an iframe with a url containing the correct query string parameter values
+        Used in the Qlik_Account_Transactional_Sales VF Page
+
+    -->
+
+    <apex:attribute name="url"
+                    type="String"
+                    description="Url with merge fields that should be replaced with the value of the customerNumber attribute"
+                    required="true"
+                    assignTo="{!urlVal}" />
+
+    <apex:attribute name="customerNumber"
+                    type="String"
+                    description="Customer Number"
+                    required="true"
+                    assignTo="{!customerNumberVal}" />
+
+
+
+    <apex:iframe src="{!InterpolatedUrl}"
+                 scrolling="true"
+                 height="400" />
+
+
+</apex:component>

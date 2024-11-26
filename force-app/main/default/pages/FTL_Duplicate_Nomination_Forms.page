@@ -1,0 +1,25 @@
+<apex:page standardController="FTL_Program_Form__c" extensions="FTL_Duplicate_Nomination_Controller" sidebar="false" showHeader="false" standardStylesheets="false">
+    <apex:slds />
+    <div class="slds-scope">
+        <apex:form >
+        	<apex:actionFunction name="updateSubmission" action="{!updateMultipleSubmissions}" rerender="dupPanel"/>
+        </apex:form>
+        <apex:outputpanel id="dupPanel">
+            <apex:pageBlock id="tabl">
+                <apex:pageBlockTable value="{!dupFormLst}" var="a" styleClass="slds-table slds-table--bordered slds-table--striped" rendered="{!dupFormLst.size > 0}"> <!-- rendered="{!not(empty(dupFormLst))}"-->           
+                    <apex:column headerValue="Name">
+                        <apex:outputLink target="_blank" value="/{!a.Id}">{!a.Name}</apex:outputLink>
+                    </apex:column>
+                    <apex:column headerValue="Nominee Name" value="{!a.Nominee_Name__c}"/>
+                    <apex:column headerValue="Address" value="{!a.Nominee_Address__c}"/>
+                    <apex:column headerValue="Assigned Dealer" value="{!a.Assigned_Dealer__r.Name}"/>
+                    <apex:column headerValue="Status" value="{!a.Status__c}" />
+                    <apex:column headerValue="Date" value="{!a.CreatedDate}" />
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+        </apex:outputpanel>
+    </div>
+    <script>
+    	updateSubmission();
+    </script>
+</apex:page>

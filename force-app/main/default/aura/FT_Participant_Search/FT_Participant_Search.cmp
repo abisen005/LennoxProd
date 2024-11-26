@@ -1,0 +1,43 @@
+<aura:component controller="FT_ParticipantSearchController" implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" access="global" >
+    
+    <aura:attribute name="matchingApplications" type="Object[]" />
+    <aura:attribute name="showSpinner" type="Boolean" default="true" />
+    <aura:attribute name="pageReference" type="Object"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.getMatchingApplications}"/>   
+    <aura:if isTrue="{!empty(v.matchingApplications)}">
+        <div style="background: #f7fafd!important; padding:10px; border-radius: 5px;">
+            No Records to display.
+        </div>
+    </aura:if>     
+    
+    <aura:if isTrue="{!not(v.showSpinner)}">
+        <div class="content">
+            <aura:if isTrue="{!not(empty(v.matchingApplications))}">
+                <div class="container" style="background: #f7fafd!important; padding:10px; border-radius: 5px;">
+                    <p class="instructionHeader">
+                        All Field Trial Applications meeting selected Field Trial criteria have been returned with the amount per state in the rows below.  Please enter the number you need per state in the “Participants Needed” column next to the state they are listed for.  If you do not have enough Applicants for a state you will need to adjust your criteria or find more people fitting the criteria to apply.  Pressing the “Create Candidate Field Trial Contacts” button at the bottom of the screen will create the Field Trial Contacts.  If for some reason you disqualify contacts to the point where you need more you may start this process again without it returning Field Trial Applications that have already been selected for review.
+                    </p>
+                    <br/>
+                    <lightning:accordion aura:id="accordion" allowMultipleSectionsOpen="true">
+                        <aura:iteration items="{!v.matchingApplications}" var="application">
+                            <lightning:accordionSection name="{!application.stateOrProvince}" label="{!application.stateOrProvince}">
+                                <aura:set attribute="actions">
+                                    <lightning:input type="number" label="Matching Applicants" 
+                                                     value="{!application.numberOfParticipants}" readonly="true" />
+                                    <lightning:input type="number" label="Participants Needed" 
+                                                     value="{!application.numberOfParticipantsRequired}"/>
+                                </aura:set>
+                            </lightning:accordionSection>
+                        </aura:iteration>
+                    </lightning:accordion>
+                    
+                    <lightning:button variant="destructive" label="Create Candidate Field Trial Contacts" title="Create Candidate Field Trial Contacts" onclick="{!c.createFieldTrialContact}"/>
+                </div>
+            </aura:if>
+        </div>
+        <aura:set attribute="else">
+            <lightning:spinner alternativeText="Loading" />
+        </aura:set>
+    </aura:if>
+</aura:component>

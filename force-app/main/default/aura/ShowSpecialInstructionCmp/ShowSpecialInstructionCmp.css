@@ -1,0 +1,16 @@
+.THIS.red{
+   background-color: rgb(194, 57, 52);
+}
+
+.THIS .uiOutputRichText.ol, .THIS .uiOutputRichText.ul {
+     list-style: unset !important; 
+}
+.THIS h2.richTxt ul > li {
+    list-style: circle;
+    text-align: left;
+    list-style-position: inside;
+}
+
+.THIS.white{
+   fill: rgb(255, 255, 255);
+}

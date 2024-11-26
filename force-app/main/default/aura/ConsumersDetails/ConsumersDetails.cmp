@@ -1,0 +1,238 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction,lightning:isUrlAddressable" 
+                access="global" controller="ConsumerDetailsController">
+    
+    
+    <aura:attribute name="sObjectName" type="String" />   
+    <aura:attribute name="isSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="validId" type="Boolean" default="false"/>
+    <aura:attribute name="isShowConfirmationPage" type="Boolean" default="false"/>
+    <aura:attribute name="isShowUploadFileSpinner" type="Boolean" default="false"/>
+    <aura:attribute name="isShowMainForm" type="Boolean" default="false"/>
+    <aura:attribute name="recordTypeId" type="String"/> 
+    <aura:attribute name="installationList" type="SObject[]"/>
+    <aura:attribute name="numberOfProducts" type="Integer" default="0"/>
+    <aura:attribute name="fileName" type="String" default=''/>
+    <aura:attribute name="mailAttachment" type="String"/>
+    <aura:attribute name="attachements" type="String[]"/> 
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="showInstructions" type="Boolean" default="false" />
+    <aura:attribute name="siteLocation" type="Home_Owners__c"/>
+    <aura:attribute name="lennoxFormList" type="SObject[]"/>
+    <aura:attribute name="summaryConcern" type="String"/>
+    <aura:attribute name="caseId" type="String"/>
+    <aura:attribute name="location" type="string" default=""/>
+    <aura:attribute name="placeDetails" type="String[]"/>
+    <aura:attribute name="showToast" type="Boolean" default="false"/>
+    <aura:attribute name="Errormsg" type="String" default="false"/>
+    <aura:attribute name="installingPhone" type="String" />
+    <aura:attribute name="servicingPhone" type="String" />
+    <aura:attribute name="formSubmitted" type="Boolean" default="true" />
+    <aura:attribute name="accept" type="List" default="['.jpg', '.jpeg','.pdf','.csv','.xlsx']"/>
+    <aura:attribute name="Likedisable" type="Boolean" default="false" />
+    <aura:attribute name="fileDetails" type="Object[]" />
+    <aura:attribute name="fileError" type="Boolean" default="false" />
+    <aura:attribute name="fileErrorMsg" type="Boolean" default="false" />
+    <aura:attribute name="Home_Phone__c" type="String" />
+    <aura:attribute name="Business_Phone__c" type="String" />
+    <aura:attribute name="isformSubmitted" type="boolean" default="false"/>
+    <aura:attribute name="chkSameAs" type="Boolean" default="false"/>
+    
+    
+
+    
+    <aura:handler name="change" value="{!v.showInstructions}" action="{!c.handleInstrChange}" />
+    <aura:handler name="change" value="{!v.numberOfProducts}" action="{!c.handleProductChange}" />
+    
+    
+    
+    <div class="container">
+        <div class="scrollDiv">
+            <aura:if isTrue="{!v.isSpinner}">
+                <div class="slds-spinner_container">
+                    <div role="status" class="slds-spinner slds-spinner_brand slds-spinner_large">
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </aura:if>
+            
+            <!-- toastMessage-->
+            
+            <aura:if isTrue="{!v.showToast}">
+                <div id="tosteMessage" class="tost-msg">
+                    <div class="demo-only" style="height:4rem">
+                        <div class="slds-notify_container slds-is-relative">
+                            <div class="slds-notify slds-notify_toast slds-theme_error" role="status">
+                                <span class="slds-assistive-text">error</span>
+                                <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                                    <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                        <lightning:icon iconName="utility:error" alternativeText="Error!" title="Error" />
+                                    </div>
+                                </span> 
+                                <div class="slds-notify__content">
+                                    <h2 class="slds-text-heading_small" style = "color: white;" >{!v.Errormsg}</h2>
+                                </div>
+                                <div class="slds-notify__close">
+                                    <button class="slds-button slds-button_icon slds-button_icon-inverse" onclick="{!c.closeToast}" title="Close">
+                                        <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                            <lightning:icon iconName="utility:close" alternativeText="Close!" title="Close" />
+                                        </div>
+                                        <span class="slds-assistive-text">Close</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aura:if>
+            
+            
+            <!-- -->
+            
+            <aura:if isTrue="{!v.isShowMainForm}">
+                <img src="{!$Resource.lennox_logo}" alt="" style="margin-top:20px;"/>
+                
+                <div class="inputLab">CONSUMER SUPPORT REQUEST FORM</div>
+                
+                <header class="slds-modal__header">CONSUMER DETAILS</header>
+                <lightning:recordEditForm 
+                                          onsuccess="{!c.handleOnSuccess}" 
+                                          objectApiName="Lennox_Form__c" 
+                                          aura:id="createLennoxForm" 
+                                          onsubmit="{!c.handleOnSubmit}"
+                                          onload="{!c.setDefaults}"
+                                          onerror="{!c.getError}"
+                                          recordTypeId="{!v.recordTypeId}">
+                    <div>
+                        <div class="inputText 12width">
+                            <lightning:inputField variant= "label-stacked" fieldName="First_Name__c" aura:id="First_Name__c"/>
+                        </div>
+                        <div class="inputText padding-left">
+                            <lightning:inputField variant= "label-stacked" fieldName="Last_Name__c" aura:id="Last_Name__c"/>
+                        </div>
+                        <div class="inputText 12width" style="visibility: hidden"><lightning:inputField variant= "label-stacked" fieldName="Site_Location__c" aura:id="Site_Location__c"/></div>
+                    </div>
+                    
+                    <div class="label-text">
+                        <label>Consumer Address  </label>
+                    </div>
+                    
+                    <c:AutoCompleteAddress searchKey="{!v.location}" placeDetails="{!v.placeDetails}"/>
+                  
+                    <div> 
+                        <div class="inputText">
+                            <lightning:inputField variant= "label-stacked" fieldName="Home_Phone__c" aura:id="Home_Phone__c" value ="{!v.Home_Phone__c}"  onkeyup = "{!c.homephoneMask}"/>
+                        </div>
+                        <div class="inputText padding-left">
+                            <lightning:inputField variant= "label-stacked" fieldName="Business_Phone__c" aura:id="Business_Phone__c" value ="{!v.Business_Phone__c}"  onkeyup = "{!c.businessphoneMask}"/>
+                        </div>
+                    </div>
+                    <!-- Side Panel -->
+                    <div class="instructionPanel">
+                        <c:SidePanelComponent 
+                                              aura:id="sidePanelCmp"
+                                              formType="Consumer Details" 
+                                              formTitle=""
+                                              isOpen="{!v.showInstructions}" />
+                        <button type="button" aura:id="sidePanelBtn" class="button-sidebar" onclick="{!c.toggleInstructions}">
+                            <span><img src="{!$Resource.instruction_img}" alt=""/> </span> </button>
+                    </div>
+                    
+                    <header class="slds-modal__header">INSTALLATION</header>
+                    <table style="width:100%">
+                            <tr style="padding-top: 5px;">
+                                <label for="name"><abbr class="slds-required" title="required">* </abbr> # of Products Installed </label>
+                            </tr>
+                            <tr>
+                                <lightning:select name="# of Products Installed" 
+                                                  value="{!v.numberOfProducts}"
+                                                  class="inputText product"
+                                                  aura:id="productInstall">
+                                    <option value="">choose any one...</option>
+                                    <option value="1">  1</option>                        
+                                    <option value="2"> 2</option>
+                                    <option value="3"> 3</option>
+                                </lightning:select>                           
+                            </tr>
+                    </table>
+                    
+                    <aura:iteration items="{!v.installationList}" var="installation">
+                        <div style="display:flex">
+                            <lightning:select variant= "label-stacked" aura:id="required" name="InstallationType" label="Installation Type" value="{!installation.Installation_Type__c}" class="slds-form-element_stacked inputText width padding-left">
+                                <option value="null" >choose any one...</option>
+                                <option value="Indoor" selected="true">  Indoor</option>                        
+                                <option value="Outdoor"> Outdoor</option>
+                                <option value="Accessories"> Accessories</option>
+                            </lightning:select>
+                            
+                            <lightning:input variant= "label-stacked" type= "Date" value="{!installation.Date_Installed__c}" label="Date Installed" class="inputText width padding-left"/>
+                            <lightning:input variant= "label-stacked" type= "Integer" value="{!installation.Serial_Number__c}" label="Serial Number" class="inputText width padding-left" maxlength="10" minlength="10"
+                                messageWhenTooShort="The serial number entered is not a valid Lennox serial number."
+                                messageWhenPatternMismatch="The serial number entered is not a valid Lennox serial number."
+                                pattern="(^\d{4}[A-Z]{1}\d{5}|^[A-Z]{1}\d{2}[A-Z]{1}\d{5}|^[A-Z]{2}\d{2}[A-z]{1}\d{5})"
+                            />
+                            <lightning:input variant= "label-stacked" type= "Text" value="{!installation.Model_Number__c}" label="Model Number" class="inputText width padding-left"/>
+                        </div>
+                    </aura:iteration> 
+                    <header class="slds-modal__header">CONTRACTOR DETAILS</header>
+                    
+                    <header class="slds-modal__header">Installing Contractor</header>
+                    <div class="inputText padding-right">
+                        <lightning:inputField variant= "label-stacked" aura:id="installingName" fieldName="Installing_Contractor_Name__c"/>                                                
+                    </div>
+                    <div class="inputText padding-left">
+                        <lightning:inputField variant= "label-stacked" aura:id="installingPhone" fieldName="Installing_Contractor_Phone__c" value ="{!v.installingPhone}"  onkeyup = "{!c.phoneMask}"/>                 
+                    </div>
+                    <header class="slds-modal__header">Servicing Contractor</header>
+                    <div class="inputText padding-right">
+                        <lightning:input type="checkbox" label="Same as Installing Contractor" aura:id="chkSameAs" onclick="{!c.sameAsClick}" /> <br/>
+                        <br/>
+                        <lightning:inputField variant= "label-stacked" aura:id="servicingName" fieldName="Servicing_Contractor_Name__c"/> 
+                    </div>
+                    <div class="inputText padding-left">
+                        <lightning:inputField variant="label-stacked" aura:id="servicingPhone" fieldName="Servicing_Contractor_Phone__c" value ="{!v.servicingPhone}"  onkeyup = "{!c.servicingPhoneMask}"/>
+                    </div>
+                    <header class="slds-modal__header" style="margin-top:22px;">SUMMARY OF CONCERNS</header>
+                    <header class="slds-modal__header" style="border-bottom:0; margin-bottom: 4px;margin-top: -18px;">Please summarize your concerns below.</header>
+                    <div style="margin-bottom: 10px;" >
+                        <label  for="summary"><abbr class="slds-required" title="required">* </abbr> Summary of Concerns</label>
+                        <lightning:textarea variant= "label-hidden" id="summary" class="height" name="Summary of Concerns" aura:id="Summary_of_Concerns__c" value="{!v.summaryConcern}"/>
+                    </div>
+                    <div class=" slds-box">
+                        <div class="slds-grid slds-wrap"> 
+                            <div>
+                                <lightning:input variant= "label-stacked" aura:id="fileId" onchange="{!c.handleFilesChange}" type="file" name="file" label="Upload Attachment" multiple="true"/>
+                                <div class="slds-text-body_small" style="height:100px;">{!v.fileName} </div>
+                                <aura:if isTrue = "{!v.fileError}">
+                                    <div class="slds-text-body_small" style="height:100px;">{!v.fileErrorMsg} </div>
+                                </aura:if>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <aura:if isTrue="{!v.isShowUploadFileSpinner}">
+                        <div class="slds-text-body_small slds-text-color_error">Uploading...! 
+                            <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>'
+                        </div>
+                    </aura:if>
+                    
+                    <div class="slds-m-top_medium">
+                        <div>
+                            <br/>
+                            <lightning:button variant="brand" type="submit" name="Submit" label="Submit" class="submitbtn" disabled="{!v.Likedisable}" />
+                            <br/><br/><br/><br/>
+                        </div>
+                    </div>
+                </lightning:recordEditForm>
+            </aura:if>
+            <!-- Show Confirmation message -->
+            <aura:if isTrue="{!v.isShowConfirmationPage}">
+                <c:ConfirmationPage title="CONSUMER SUPPORT REQUEST FORM"/>
+            </aura:if>
+            <!-- Show Error message if invalid id found in URL-->
+            <aura:if isTrue="{!v.validId}">
+                Case Id in URL is not valid, Please check again.
+            </aura:if>
+        </div>
+    </div> 
+</aura:component>

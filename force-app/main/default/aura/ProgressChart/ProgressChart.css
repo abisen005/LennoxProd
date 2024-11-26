@@ -1,0 +1,22 @@
+.THIS .chart-label {
+    fill: #0070D2;
+    font-size: 30px;
+    font-family: "Salesforce Sans", sans-serif;
+}
+.THIS .chart-label.success {
+    fill: #04844b;
+}
+.THIS .chart-label.warning {
+    fill: #FFB75D;
+}
+
+.THIS .chart-label.error {
+    fill: #c23934;
+}
+
+.THIS .chart-sub-label {
+    fill: #16325C;
+    font-size: 13px;
+    font-family: "Salesforce Sans", sans-serif;
+    font-weight: 400;
+}

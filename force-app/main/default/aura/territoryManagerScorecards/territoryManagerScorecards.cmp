@@ -1,0 +1,251 @@
+<aura:component implements="flexipage:availableForAllPageTypes"
+                controller="territoryManagerScorecardsLtngController"
+                access="global" >
+    
+    <aura:attribute name="wrap" type="Object" />
+    <aura:attribute name="wrapList" type="Object[]" />
+    <aura:attribute name="mode" type="String" />
+    <aura:attribute name="goalTableCaption" type="String" />
+    <aura:attribute name="showSalesGoals" type="boolean" default="{!$Label.c.show_TM_DM_Sales_Goals}" />
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    
+    <lightning:card title="Territory Manager Scorecard" footer="Card Footer">
+        <aura:set attribute="title">
+            <strong>Scorecard </strong>
+        </aura:set>
+
+        <aura:if isTrue="{!$Browser.formFactor == 'PHONE'}">
+            <div class="slds-text-heading_medium slds-text-align_center slds-border_top slds-border_right slds-border_bottom slds-border_left">
+                Oasis Sales</div>
+            <div class="dateHeader">
+                <lightning:formattedDateTime value="{!v.wrap.LastModifiedDate}"/>
+            </div>      
+            <div class="slds-text-align_center slds-text-title_bold slds-theme_shade slds-border_top slds-border_right slds-border_bottom slds-border_left">Sales</div>
+            <div class="slds-grid slds-wrap slds-border_top slds-border_right slds-border_bottom slds-border_left">
+                <div class="slds-col slds-size_1-of-2 slds-border_top">Daily Actual $</div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small">
+                    $<lightning:formattedNumber value="{!v.wrap.DailyActualSales}" style="decimal" maximumFractionDigits="0" />                    
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top">MTD Actual $</div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small">
+                    $<lightning:formattedNumber value="{!v.wrap.MTDActualSales}" style="decimal" maximumFractionDigits="0" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top">MTD Plan $</div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top  slds-text-align_right slds-p-right_small">
+                    $<lightning:formattedNumber value="{!v.wrap.MTDPlanSales}" style="decimal" maximumFractionDigits="0" />
+                </div>                
+                <div class="{! 'slds-col slds-size_1-of-2 slds-border_top ' + v.wrap.MTDColorSales }">MTD % to Plan</div>
+                <div class="{! 'slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small ' + v.wrap.MTDColorSales }">
+                    <lightning:formattedNumber value="{!v.wrap.MTDActualToPlanSales/100}" style="percent" maximumFractionDigits="1" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top">YTD Actual $</div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small">
+                    $<lightning:formattedNumber value="{!v.wrap.YTDActualSales}" style="decimal" maximumFractionDigits="0" />
+                </div>                
+                <div class="slds-col slds-size_1-of-2 slds-border_top">YTD Plan $</div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small">
+                    $<lightning:formattedNumber value="{!v.wrap.YTDPlanSales}" style="decimal" maximumFractionDigits="0" />
+                </div>
+                <div class="{! 'slds-col slds-size_1-of-2 slds-border_top ' + v.wrap.YTDColorSales }">YTD % to Plan</div>
+                <div class="{! 'slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small ' + v.wrap.YTDColorSales }">
+                    <lightning:formattedNumber value="{!v.wrap.YTDActualToPlanSales/100}" style="percent" maximumFractionDigits="1" />
+                </div>                
+            </div>   
+            <div class="slds-text-align_center slds-text-title_bold slds-theme_shade slds-border_top slds-border_right slds-border_bottom slds-border_left">GP</div>
+            <div class="slds-grid slds-wrap slds-border_top slds-border_right slds-border_bottom slds-border_left">
+                <div class="slds-col slds-size_1-of-2 slds-border_top">Daily Actual $</div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small">
+                    $<lightning:formattedNumber value="{!v.wrap.DailyActualMargin}" style="decimal" maximumFractionDigits="0" />                    
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top">MTD Actual $</div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small">
+                    $<lightning:formattedNumber value="{!v.wrap.MTDActualMargin}" style="decimal" maximumFractionDigits="0" />
+                </div>                
+                <div class="slds-col slds-size_1-of-2 slds-border_top">MTD Plan $</div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small">
+                    $<lightning:formattedNumber value="{!v.wrap.MTDPlanMargin}" style="decimal" maximumFractionDigits="0" />
+                </div>
+                <div class="{! 'slds-col slds-size_1-of-2 slds-border_top ' + v.wrap.MTDColorMargin }">MTD % to Plan</div>
+                <div class="{! 'slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small ' + v.wrap.MTDColorMargin }">
+                    <lightning:formattedNumber value="{!v.wrap.MTDActualToPlanMargin/100}" style="percent" maximumFractionDigits="1" />
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top">YTD Actual $</div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small">
+                    $<lightning:formattedNumber value="{!v.wrap.YTDActualMargin}" style="decimal" maximumFractionDigits="0" />
+                </div>                
+                <div class="slds-col slds-size_1-of-2 slds-border_top">YTD Plan $</div>
+                <div class="slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small">
+                    $<lightning:formattedNumber value="{!v.wrap.YTDPlanMargin}" style="decimal" maximumFractionDigits="0" />
+                </div>
+                <div class="{! 'slds-col slds-size_1-of-2 slds-border_top ' + v.wrap.YTDColorMargin }">YTD % to Plan</div>
+                <div class="{! 'slds-col slds-size_1-of-2 slds-border_top slds-text-align_right slds-p-right_small ' + v.wrap.YTDColorMargin }">
+                    <lightning:formattedNumber value="{!v.wrap.YTDActualToPlanMargin/100}" style="percent" maximumFractionDigits="1" />
+                </div>                
+            </div>   
+        </aura:if>
+        <aura:if isTrue="{!$Browser.formFactor != 'PHONE'}">
+            <table class="slds-max-medium-table_stacked">
+                <thead>
+                    <tr>
+                        <th colspan="8" class="tableHeading">
+                            Oasis sales
+                        </th>
+                    </tr>
+                    <tr class="hideOnMobile">
+                        <th class="blank"></th>
+                        <th>
+                            <div title="Last Modified Date"><lightning:formattedDateTime value="{!v.wrap.LastModifiedDate}"/></div>
+                        </th>
+                        <th colspan="3">
+                            <div title="Month to Date">Month to Date</div>
+                        </th>
+                        <th colspan="3">
+                            <div title="Year to Date">Year to Date</div>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col">
+                            <div title="Daily Actual $">Actual $</div>
+                        </th>
+                        <th scope="col">
+                            <div title="MTD Actual $">Actual $</div>
+                        </th>                        
+                        <th scope="col">
+                            <div title="MTD Plan $">Plan $</div>
+                        </th>
+                        <th scope="col">
+                            <div title="MTD % to Plan">% to Plan</div>
+                        </th>
+                        <th scope="col">
+                            <div title="Actual $">Actual $</div>
+                        </th>                        
+                        <th scope="col">
+                            <div title="Plan $">Plan $</div>
+                        </th>
+                        <th scope="col">
+                            <div title="% to Plan">% to Plan</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Sales</td>
+                        <td data-label="Daily Actual $">
+                            <div title="Daily Actual $" class="slds-text-align_right">
+                                $<lightning:formattedNumber value="{!v.wrap.DailyActualSales}" style="decimal" maximumFractionDigits="0" />
+                            </div>
+                        </td>
+                        <td data-label="MTD Actual $">
+                            <div title="MTD Actual $" class="slds-text-align_right">
+                                $<lightning:formattedNumber value="{!v.wrap.MTDActualSales}" style="decimal" maximumFractionDigits="0" />
+                            </div>
+                        </td>                        
+                        <td data-label="MTD Plan $">
+                            <div title="MTD Plan $" class="slds-text-align_right">
+                                $<lightning:formattedNumber value="{!v.wrap.MTDPlanSales}" style="decimal" maximumFractionDigits="0" />
+                            </div>
+                        </td>
+                        <td data-label="MTD % to Plan" class="{!v.wrap.MTDColorSales}">
+                            <div title="MTD % to Plan" class="slds-text-align_right"><lightning:formattedNumber value="{!v.wrap.MTDActualToPlanSales/100}" style="percent" maximumFractionDigits="1" /></div>
+                        </td>
+                        <td data-label="YTD Actual $">
+                            <div title="YTD Actual $" class="slds-text-align_right">
+                                $<lightning:formattedNumber value="{!v.wrap.YTDActualSales}" style="decimal" maximumFractionDigits="0" />
+                            </div>
+                        </td>                        
+                        <td data-label="YTD Plan $">
+                            <div title="YTD Plan $" class="slds-text-align_right">
+                                $<lightning:formattedNumber value="{!v.wrap.YTDPlanSales}" style="decimal" maximumFractionDigits="0" />
+                            </div>
+                        </td>
+                        <td data-label="YTD % to Plan" class="{!v.wrap.YTDColorSales}">
+                            <div title="YTD % to Plan" class="slds-text-align_right"><lightning:formattedNumber value="{!v.wrap.YTDActualToPlanSales/100}" style="percent" maximumFractionDigits="1" /></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>GP</td>
+                        <td data-label="Daily Actual Margin">
+                            <div title="Daily Actual Margin" class="slds-text-align_right">
+                                $<lightning:formattedNumber value="{!v.wrap.DailyActualMargin}" style="decimal" maximumFractionDigits="0" />
+                            </div>
+                        </td>
+                        <td data-label="MTD Actual Margin">
+                            <div title="MTD Actual Margin" class="slds-text-align_right">
+                                $<lightning:formattedNumber value="{!v.wrap.MTDActualMargin}" style="decimal" maximumFractionDigits="0" />
+                            </div>
+                        </td>                        
+                        <td data-label="MTD Plan Margin">
+                            <div title="MTD Plan Margin" class="slds-text-align_right">
+                                $<lightning:formattedNumber value="{!v.wrap.MTDPlanMargin}" style="decimal" maximumFractionDigits="0" />
+                            </div>
+                        </td>
+                        <td data-label="MTD % to Plan Margin" class="{!v.wrap.MTDColorMargin}">
+                            <div title="MTD % to Plan Margin" class="slds-text-align_right"><lightning:formattedNumber value="{!v.wrap.MTDActualToPlanMargin/100}" style="percent" maximumFractionDigits="1" /></div>
+                        </td>
+                        <td data-label="YTD Actual Margin">
+                            <div title="YTD Actual Margin" class="slds-text-align_right">
+                                $<lightning:formattedNumber value="{!v.wrap.YTDActualMargin}" style="decimal" maximumFractionDigits="0" />
+                            </div>
+                        </td>                        
+                        <td data-label="YTD Plan Margin">
+                            <div title="YTD Plan Margin" class="slds-text-align_right">
+                                $<lightning:formattedNumber value="{!v.wrap.YTDPlanMargin}" style="decimal" maximumFractionDigits="0" />
+                            </div>
+                        </td>
+                        <td data-label="YTD % to Plan Margin" class="{!v.wrap.YTDColorMargin}">
+                            <div title="YTD % to Plan Margin" class="slds-text-align_right"><lightning:formattedNumber value="{!v.wrap.YTDActualToPlanMargin/100}" style="percent" maximumFractionDigits="1" /></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <aura:if  isTrue="{!AND (OR(v.mode == 'TM' , v.mode == 'DM'), $Label.c.show_TM_DM_Sales_Goals )}" >
+                <br /><br />   
+                <table width="50%" border="1" cellpadding="0" cellspacing="0" class="list" id="tbl">
+                    <thead>
+                        <tr>
+                            <th colspan="8" class="tableHeading">
+                                {!v.goalTableCaption}
+                            </th>
+                        </tr>
+                        <tr class="hideOnMobile">
+                            <th>
+                                <div class="goalTitle">Goal</div>
+                            </th>
+                            <th width="120px">
+                                <div>Actual</div>
+                            </th>
+                            <th width="120px">
+                                <div>As of Date</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <aura:iteration items="{!v.wrapList}" var="goal">
+                            <tr>
+                                <td data-label="Goal">
+                                    <div class="goalTitle">{!goal.GoalName}</div>
+                                </td>
+                                <td data-label="Actual" class="{!goal.bgColor}">
+                                    <div class="slds-text-align_right">
+                                        <aura:if isTrue="{!equals(goal.displayType, 'currency')}">$</aura:if>
+                                        <lightning:formattedNumber value="{!goal.achievedScore}" 
+                                                                style="{!goal.displayStyle}" 
+                                                                maximumFractionDigits="{!equals(goal.displayType, 'currency') ? 0 : 1}"/>
+                                    </div>
+                                </td>
+                                <td data-label="As of Date">
+                                    <div title="As of Date"><ui:outputDate format="MM/dd/YYYY" value="{!goal.modifiedDate}"/></div>
+                                </td>
+                            </tr>
+                        </aura:iteration>
+                    </tbody>
+                </table>
+            </aura:if>
+        </aura:if>
+        <aura:set attribute="footer"></aura:set>
+    </lightning:card>
+    
+    
+</aura:component>

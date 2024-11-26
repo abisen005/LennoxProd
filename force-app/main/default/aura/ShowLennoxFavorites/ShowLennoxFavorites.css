@@ -1,0 +1,102 @@
+.THIS {
+}
+.THIS :focus {
+    outline-style:none !important;
+    box-shadow:none !important;
+    border-color:transparent !important;
+}
+.THIS table {
+    width: 96%;
+    margin: 0 2%;
+}
+.THIS th,
+.THIS tr,
+.THIS td {
+    text-align: center;
+}
+.THIS td,
+.THIS th {
+    border: 1px solid #ddd;
+    padding: 5px;
+}
+.THIS th.blank {
+    background-color: #eee;
+    border: 0;
+}
+
+.THIS .modal-table td,
+.THIS .modal-table th {
+    border: 0;
+    padding: 5px 10px;
+    vertical-align: top;
+}
+.THIS .slds-button.tmdm-button {
+    line-height: 1;
+    width: auto;
+    height: auto;
+    border: none;
+}
+.THIS .slds-button.tmdm-button .slds-icon {
+	margin: .75rem;   
+}
+.THIS .slds-button.tmdm-button .icon-territory-roll-up {
+    background-color: #43B5B5;
+}
+
+.THIS .favorites-section-title {
+    margin-bottom: .5rem;
+    font-size: .9rem;
+    font-weight: bold;
+}
+.THIS .favorites-content li {
+    margin-bottom: .15rem;
+    max-width: 95%;
+}
+.THIS .favorites-section li:focus {
+    outline-style:none;
+    box-shadow:none;
+    border-color:transparent;
+}
+.THIS .favorites-content li a:hover,
+.THIS .favorites-content li a:hover > div{
+    text-decoration: underline;
+}
+.THIS .tooltip {
+    position: relative;
+    display: inline-block;
+    max-width: 90%;
+}
+.THIS .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 180px;
+    background-color: #222;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 125; 
+    bottom: 150%;
+    left: 0;
+}
+.THIS .tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #222 transparent transparent transparent;
+}
+.THIS .tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+.THIS img.favorite-bullet {
+    vertical-align: top;
+}
+.THIS .iconClass{
+    padding: 3px;
+    margin-right: 3px;
+    border-radius:3px;
+}

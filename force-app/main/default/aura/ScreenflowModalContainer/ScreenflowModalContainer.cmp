@@ -1,0 +1,15 @@
+<aura:component description="LightningFlow"  implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction"
+                access="global">
+    <aura:attribute name="flowname" type="String"/>
+    <aura:attribute name="childValue1" type="String" />
+    <aura:attribute name="childValue2" type="String" />
+    <aura:attribute name="childValue3" type="String" />
+    <aura:attribute name="recordId" type="String" />
+     <aura:attribute name="customerNumber" type="String" />
+
+    <aura:attribute name="account" type="Account" />
+    
+    <aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+     
+    <lightning:flow aura:id="flowData"/>
+</aura:component>

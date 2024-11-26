@@ -1,0 +1,158 @@
+<!--
+@purpose : This cmp will show the favorite object's record
+@createdDate : 13 Apr 2018
+
+-->
+<aura:component implements="flexipage:availableForAllPageTypes"
+                access="global"
+                controller="ShowLennoxFavoritesController">
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="isOpen" type="boolean" default="false" />
+    <aura:attribute name="isExternalLink" type="boolean" default="false" />
+    <aura:attribute name="keyLinks" type="List" />
+    <aura:attribute name="reports" type="List" />
+    <aura:attribute name="content" type="List" />
+    <aura:attribute name="customLinks" type="List" />
+    <aura:attribute name="contentRecord" type="Object" />
+    <aura:attribute name="currentContentDocumentId" type="String" />
+    
+    <lightning:card title="Lennox Favorites" >
+        <aura:set attribute="title">
+            <!--  Title -->
+            <strong>Lennox Favorites</strong>
+        </aura:set>
+        <table>
+            <tbody>
+                <div class="slds-grid slds-wrap">
+                   <div class="slds-col--padded slds-p-left_none slds-size--1-of-1 slds-m-top--x-small">
+                        <aura:if isTrue="{!v.keyLinks.length > 0}">
+                        <div class="favorites-section-title">Key Links</div>
+                        <ul class="favorites-content">
+                                <aura:iteration items="{!v.keyLinks}" var="category">
+                                    <li>
+                                        <lightning:icon iconName="action:web_link" alternativeText="Web Link" size="x-small" class="iconClass" />
+                                        <!--<img src="/resource/LightningDesignSystem/icons/utility/favorite_60.png" width="15" height="15" class="favorite-bullet" />--> 
+                                        &nbsp;
+                                        <aura:if isTrue="{!category.externalLink}">
+                                            <a href="{!category.favoriteURL}" target="_blank">{!category.name}</a>
+                                            <aura:set attribute="else">
+                                                <a href="{!category.favoriteURL}" >{!category.name}</a>
+                                            </aura:set>
+                                        </aura:if>
+                                    </li>
+                                </aura:iteration>
+                            	<!--
+                                <aura:set attribute="else">
+                                    Key Links are not available
+                                </aura:set>
+								-->
+                        </ul>
+                        </aura:if>
+                    </div> 
+                    <div class="slds-col--padded slds-p-left_none slds-size--1-of-1 slds-m-top--x-small">
+                        <aura:if isTrue="{!v.reports.length > 0}">
+                        <div class="favorites-section-title">Reports/Dashboards</div>
+                        <ul class="favorites-content">
+                            
+                                <aura:iteration items="{!v.reports}" var="category">
+                                    <li>
+                                        <lightning:icon iconName="standard:report" alternativeText="Report" size="x-small" class="iconClass" />
+                                        <!--<img src="/resource/LightningDesignSystem/icons/utility/overflow_60.png" width="15" height="15" class="favorite-bullet" />-->
+                                        &nbsp;
+                                        <aura:if isTrue="{!category.externalLink}">
+                                            <a href="{!category.favoriteURL}" target="_blank">{!category.name}</a>
+                                            <aura:set attribute="else">
+                                                <a href="{!category.favoriteURL}" >{!category.name}</a>
+                                            </aura:set>
+                                        </aura:if>
+                                        
+                                    </li>
+                                </aura:iteration>
+                            	<!--
+								
+                                <aura:set attribute="else">
+                                    Reports/Dashboards are not available
+                                </aura:set>
+								-->
+                            
+                        </ul>
+                        </aura:if>
+                    </div> 
+                    <div class="slds-col--padded slds-p-left_none slds-size--1-of-1 slds-m-top--x-small favorites-content">
+                        <aura:if isTrue="{!v.content.length > 0}">
+                        <div class="favorites-section-title">Content</div>
+                        <ul class="favorites-content">
+                                <aura:iteration items="{!v.content}" var="category" indexVar="count">
+                                    <li>
+                                        <lightning:icon iconName="action:preview" alternativeText="Web Link" size="x-small" class="iconClass" />
+                                        <!--<img src="/resource/LightningDesignSystem/icons/doctype/attachment_120.png" width="15" height="15" class="favorite-bullet" />-->
+                                        &nbsp;
+                                        <a id="{!category.documentId}" onclick="{!c.handlePreviewFile}">
+                                            <div class="tooltip">{!category.name} &#9432;
+                                                <span class="tooltiptext">{!category.docDescription}</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </aura:iteration>
+                            	<!--
+                                <aura:set attribute="else">
+                                    Contents are not available
+                                </aura:set>
+								-->
+                        </ul>
+                        </aura:if>
+                   </div>
+                </div>
+                <div class="slds-col--padded slds-p-left_none slds-size--1-of-1 slds-m-top--x-small">
+                    <aura:if isTrue="{!v.customLinks.length > 0}">
+                    <div class="favorites-section-title">Custom Links</div>
+                    <ul class="favorites-content">
+                        
+                            <aura:iteration items="{!v.customLinks}" var="category">
+                                <li>
+                                    <lightning:icon iconName="standard:asset_relationship" alternativeText="Custom Links" size="x-small" class="iconClass" />
+                                    <!--<img src="/resource/LightningDesignSystem/icons/utility/overflow_60.png" width="15" height="15" class="favorite-bullet" />-->
+                                    &nbsp;
+                                        <a href="{!category.favoriteURL}" target="_blank">{!category.name}</a>
+                                </li>
+                            </aura:iteration>
+                            <!--
+                            
+                            <aura:set attribute="else">
+                                Reports/Dashboards are not available
+                            </aura:set>
+                            -->
+                        
+                    </ul>
+                    </aura:if>
+                </div> 
+
+            </tbody>
+        </table>
+        <aura:set attribute="footer"></aura:set>
+    </lightning:card>
+    
+    <!-- @tushar what is the purpose of this modal? (-tia) -->
+   <aura:if isTrue="{!v.isOpen}">
+        <div role="dialog" tabindex="-1" aria-labelledby="header99" class="slds-modal slds-fade-in-open ">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <button class="slds-button slds-modal__close slds-button--icon-inverse" title="Close" onclick="{!c.closeModal}">
+                        X
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="header99" class="slds-text-heading--medium"> {!v.contentRecord.docTitle} </h2>
+                </div>
+                <div class="slds-modal__content slds-p-around--medium"> 
+                    <p> {!v.contentRecord.docDescription} </p>
+                    <br />
+                    <lightning:fileCard fileId="{!v.contentRecord.documentId}"/>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button--brand" onclick="{!c.closeModal}">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div class="slds-backdrop slds-backdrop--open"></div>
+    </aura:if>
+</aura:component>

@@ -1,0 +1,23 @@
+<aura:component >
+    
+	<aura:attribute name="footer" type="Aura.Component[]"/>
+    
+    <aura:attribute name="title" type="String" />
+    
+    <div class="slds-card slds-p-around--small">
+        
+        <div class="slds-card--header">
+            <h1 class="slds-text-heading--label slds-truncate">{!v.title}</h1>
+        </div>
+        
+        <div class="slds-card--body">
+            {!v.body}
+        </div>
+        
+        <div class="slds-card--footer">
+            {!v.footer}
+        </div>
+        
+    </div>
+    
+</aura:component>

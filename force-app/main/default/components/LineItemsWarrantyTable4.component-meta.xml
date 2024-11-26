@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>51.0</apiVersion>
+    <description>Past 45 days claim (table)</description>
+    <label>LineItemsWarranty - Table 4</label>
+</ApexComponent>

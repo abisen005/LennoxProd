@@ -1,0 +1,15 @@
+<aura:component implements="flexipage:availableForRecordHome">
+    
+    <aura:attribute name="alertMessage" type="String"/>
+    <aura:attribute name="themeType" type="String"/>
+    <aura:attribute name="textColor" type="String"/>
+    <aura:attribute name="iconName" type="String" default="utility:warning"/>
+    
+    <div class="{!'slds-notify slds-notify_alert ' +v.themeType}" role="alert">
+        <span class="slds-assistive-text">warning</span>
+        <span class="slds-icon_container slds-icon-utility-warning slds-m-right_x-small" title="Warning">
+            <lightning:icon iconName="{!v.iconName}" size="xx-small" class="warning-icon"/>
+        </span>
+        <h2 class="{!v.textColor}">{!v.alertMessage}</h2>        
+    </div>
+</aura:component>

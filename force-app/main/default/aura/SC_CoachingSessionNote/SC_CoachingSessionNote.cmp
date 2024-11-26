@@ -1,0 +1,58 @@
+<aura:component controller="SC_CoachingSessionNoteController" access="GLOBAL">
+
+
+
+    <aura:attribute name="isMyNote" type="Boolean" description="Does the note belong to the current user?" />
+    <aura:attribute name="label" type="String" description="Note label value" />
+    <aura:attribute name="userId" type="String" description="current user id" />
+    <aura:attribute name="noteowner" type="String" description="note owner user id" />
+    <aura:attribute name="note" type="SC_Coaching_Session_Note__c" description="Session note object" />
+    <aura:attribute name="editingNoteValue" type="String" description="Store the new note value here before it is saved." />
+    <aura:attribute name="isEditing" type="Boolean" default="FALSE" description="Is current being edited." />
+    <aura:attribute name="isLoading" type="Boolean" default="FALSE" description="Is currently loading." />
+
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    
+        <div class="slds-form-element">
+            <aura:if isTrue="{!v.isMyNote}">
+
+                <label class="slds-form-element__label">
+                    My Notes
+                    <lightning:buttonIcon iconName="{!v.isEditing ? 'utility:close' : 'utility:edit'}"
+                                          variant="bare"
+                                          disabled="{!v.isLoading}"
+                                          onclick="{!c.handleEditPress}"
+                                          alternativeText="Edit Note" />
+                </label>
+                <div class="slds-form-element__control">
+
+                    <div class="{!v.isEditing ? '' : 'slds-hide'}">
+                        <ui:inputTextArea class="slds-textarea"
+                                          disabled="{!v.isLoading}"
+                                          value="{!v.editingNoteValue}" />
+                        <lightning:button class="slds-float--right slds-m-top--x-small"
+                                          variant="brand"
+                                          disabled="{!v.isLoading}"
+                                          onclick="{!c.handleSavePress}"
+                                          label="Save" />
+                    </div>
+                    <span class="{!v.isEditing ? 'slds-hide' : ''}">
+                        <p class="{!empty(v.note.Note__c) ? 'slds-show' : 'slds-hide'}"><i>No notes yet</i></p>
+                        <ui:outputText value="{!v.note.Note__c}" />
+                    </span>
+
+                </div>
+
+                <aura:set attribute="else">
+                    <label class="slds-form-element__label">{!v.label}</label>
+                    <p class="{!empty(v.note.Note__c) ? 'slds-show' : 'slds-hide'}"><i>No notes yet</i></p>
+                    <ui:outputText value="{!v.note.Note__c}" />
+                </aura:set>
+
+            </aura:if>
+        </div>
+
+
+</aura:component>

@@ -1,0 +1,44 @@
+.THIS .error {
+    color: #c23934;
+}
+
+.THIS .warning {
+    color: #FFB75D;
+}
+
+.THIS .success {
+    color: #04844b;
+}
+
+/* Fix positioning of date time calendar and time picker icons */
+.THIS .uiInputDateTime .dateTime-inputTime,
+.THIS .uiInputDateTime .dateTime-inputDate {
+    position: relative;
+}
+
+.THIS .uiInputDateTime+.datePicker-openIcon, 
+.THIS .uiInputDateTime .datePicker-openIcon, 
+.THIS .uiInputDateTime+.timePicker-openIcon, 
+.THIS .uiInputDateTime .timePicker-openIcon {
+    position: absolute;
+    left: 93%;
+    top: 10px;
+}
+
+/*
+.THIS .slds-modal__container {
+    margin-top: 0px!important;
+    max-height: 680px!important;
+    height: 100% !important;
+    top: 6% !important;
+}
+
+@media (max-width: 1400px)
+    {
+    .THIS .slds-modal__content 
+    {
+        max-height: 100% !important;
+        height: 100% !important;
+    }
+}
+*/

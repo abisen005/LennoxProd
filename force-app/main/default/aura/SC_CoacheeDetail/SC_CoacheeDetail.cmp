@@ -1,0 +1,163 @@
+<aura:component controller="SC_CoacheeDetailController" access="GLOBAL">
+
+
+
+    <aura:attribute name="activeRouteName" type="String" default="Coaching Sessions" />
+    <aura:attribute name="userId" type="String" description="User id of the Coachee" />
+    <aura:attribute name="coachee" type="User" description="Coachee" />
+    <aura:attribute name="initiative" type="SC_Initiative__c" description="Initiative in scope" />
+    <aura:attribute name="coachingSessionWizard" type="Aura.Component[]" access="GLOBAL" />
+    <aura:attribute name="isGivingBadge" type="Boolean" default="false" />
+    <aura:attribute name="isCoach" type="Boolean" default="false" />
+
+
+    <aura:registerEvent name="routeChangeAttempt" type="c:routeChangeAttempt" />
+
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler event="c:routeHistoryChangeSuccess" action="{!c.routeHistoryChangeSuccessHandler}" />
+    <aura:handler name="change" value="{!v.userId}" action="{!c.handleUserIdChange}" />
+    <aura:handler event="c:SC_CloseNewSession" action="{!c.handleCloseNewSessionEvent}"/>
+    
+    <div>
+        <div class="slds-page-header" role="banner">
+            <div class="slds-grid">
+                <div class="slds-col slds-has-flexi-truncate">
+                    <div class="slds-media slds-no-space slds-grow slds-media--center">
+                        <div class="slds-media__figure">
+                            <img src="{!v.coachee.SmallPhotoUrl}"
+                                 class="slds-avatar slds-avatar--circle slds-avatar--large" />
+                        </div>
+                        <div class="slds-media__body">
+                            <h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate"
+                                title="{!v.coachee.Name}">{!v.coachee.Name}</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-col slds-no-flex slds-grid slds-align-top">
+
+                    <lightning:buttonGroup >
+                        <lightning:button onclick="{!c.handleGiveBadgePress}" label="Give a Badge" />
+                        <lightning:button onclick="{!c.handleCoachPress}" label="Coach" />
+                    </lightning:buttonGroup>
+
+
+                </div>
+            </div>
+
+        </div>
+
+        <c:SC_Breadcrumbs class="slds-m-around--medium" />
+
+        <hr class="slds-m-around--none" />
+
+
+
+        <section class="{!'slds-grid slds-wrap slds-grid--vertical-stretch ' + ($Browser.formFactor != 'PHONE' ? 'slds-grid--frame' : '')}">
+
+            <aura:if isTrue="{!$Browser.formFactor != 'PHONE'}">
+
+                <div class="slds-size--1-of-1 slds-medium-size--3-of-12 slds-large-size--2-of-12 slds-col--rule-right">
+                    <nav class="slds-grid slds-grid--vertical">
+                        <ul class="slds-navigation-list--vertical slds-has-block-links">
+                            <li class="{!(v.activeRouteName == 'Coaching Sessions') ? 'slds-is-active' : ''}">
+                                <c:Link to="{!'coachee/sessions/' + v.userId}"
+                                        class="slds-navigation-list--vertical__action slds-text-link--reset slds-p-vertical--medium slds-p-horizontal--large">
+                                        Coaching Sessions
+                                </c:Link>
+                            </li>
+                            <li class="{!(v.activeRouteName == 'Assignments') ? 'slds-is-active' : ''}">
+                                <c:Link to="{!'coachee/assignments/' + v.userId}"
+                                        class="slds-navigation-list--vertical__action slds-text-link--reset slds-p-vertical--medium slds-p-horizontal--large">
+                                        Assignments
+                                </c:Link>
+                            </li>
+                            <aura:if isTrue = "{!v.isCoach}">
+                                <li class="{!(v.activeRouteName == 'Assessments') ? 'slds-is-active' : ''}">
+                                    <c:Link to="{!'coachee/assessments/' + v.userId}"
+                                            class="slds-navigation-list--vertical__action slds-text-link--reset slds-p-vertical--medium slds-p-horizontal--large">
+                                        Assessments
+                                    </c:Link>
+                                </li>
+                            </aura:if>
+                            
+                            <li class="{!(v.activeRouteName == 'Badges') ? 'slds-is-active' : ''}">
+                                <c:Link to="{!'coachee/badges/' + v.userId}"
+                                        class="slds-navigation-list--vertical__action slds-text-link--reset slds-p-vertical--medium slds-p-horizontal--large">
+                                        Badges
+                                </c:Link>
+                            </li>
+                            <li class="{!(v.activeRouteName == 'Planning') ? 'slds-is-active' : ''}">
+                                <c:Link to="{!'coachee/planning/' + v.userId + '/otherParamVal'}"
+                                        class="slds-navigation-list--vertical__action slds-text-link--reset slds-p-vertical--medium slds-p-horizontal--large">
+                                        Planning
+                                </c:Link>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <aura:set attribute="else">
+
+                        <nav class="slds-tabs slds-tabs--default slds-text-align--center slds-align-top slds-m-bottom--small" >
+                            <ul class="slds-tabs slds-tabs--default__nav slds-grid">
+                                <li class="{!'slds-col slds-tabs--default__item slds-text-title--caps  ' + (v.activeRouteName == 'Coaching Sessions' ? 'slds-active' : '')}">
+                                    <c:Link to="{!'coachee/sessions/' + v.userId}"
+                                            class="slds-tabs--default__link slds-p-horizontal--large">
+                                            Sessions
+                                    </c:Link>
+                                </li>
+                                <li class="{!'slds-col slds-tabs--default__item slds-text-title--caps  ' + (v.activeRouteName == 'Assignments' ? 'slds-active' : '')}">
+                                    <c:Link to="{!'coachee/assignments/' + v.userId}"
+                                            class="slds-tabs--default__link slds-p-horizontal--large">
+                                            Assignments
+                                    </c:Link>
+                                </li>
+                                <li class="{!'slds-col slds-tabs--default__item slds-text-title--caps  ' + (v.activeRouteName == 'Assessments' ? 'slds-active' : '')}">
+                                    <c:Link to="{!'coachee/assessments/' + v.userId}"
+                                            class="slds-tabs--default__link slds-p-horizontal--large">
+                                            Assessments
+                                    </c:Link>
+                                </li>
+                                <li class="{!'slds-col slds-tabs--default__item slds-text-title--caps  ' + (v.activeRouteName == 'Badges' ? 'slds-active' : '')}">
+                                    <c:Link to="{!'coachee/badges/' + v.userId}"
+                                            class="slds-tabs--default__link slds-p-horizontal--large">
+                                            Badges
+                                    </c:Link>
+                                </li>
+                                <li class="{!'slds-col slds-tabs--default__item slds-text-title--caps  ' + (v.activeRouteName == 'Planning' ? 'slds-active' : '')}">
+                                    <c:Link to="{!'coachee/planning/' + v.userId}"
+                                            class="slds-tabs--default__link slds-p-horizontal--large">
+                                            Planning
+                                    </c:Link>
+                                </li>
+                            </ul>
+                        </nav>
+
+                </aura:set>
+
+            </aura:if>
+
+            <div class="slds-size--1-of-1 slds-medium-size--9-of-12 slds-large-size--10-of-12">
+                <c:Router name="coachee">
+                    <c:Route name="Coaching Sessions" path="coachee/sessions/:userId" component="c:SC_CoacheeSessionsContainer" />
+                    <c:Route name="Assignments" path="coachee/assignments/:userId" component="c:SC_CoacheeAssignmentsContainer" />
+                    <c:Route name="Assessments" path="coachee/assessments/:userId" component="c:SC_Assessments" />
+                    <c:Route name="Badges" path="coachee/badges/:userId" component="c:SC_UserBadges" />
+                    <c:Route name="Planning" path="coachee/planning/:userId/:otherParam" component="c:SC_Planning" />
+                </c:Router>
+            </div>
+
+
+        </section>
+
+        {!v.coachingSessionWizard}
+
+        <c:SC_GiveBadge isOpen="{!v.isGivingBadge}" userId="{!v.userId}" />
+
+    </div>
+
+
+
+</aura:component>

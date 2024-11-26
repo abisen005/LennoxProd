@@ -1,0 +1,30 @@
+<aura:component controller="ConsumerDetailsController" implements="flexipage:availableForAllPageTypes" access="public">
+    
+    <!-- ATTRIBUTES -->
+    <aura:attribute name="formType" type="String" />
+    <aura:attribute name="formTitle" type="String" />
+    <aura:attribute name="isOpen" type="Boolean" default="false" />
+    <aura:attribute name="isLoading" type="Boolean" default="true" />
+    <aura:attribute name="data" type="Object[]" />
+
+    <!-- HANDLERS -->
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+
+    <!-- CMP MARKUP -->
+    <div style="margin-top:15px;" class="{!'slds-panel slds-panel_docked slds-panel_docked-right ' + (v.isOpen == true ? 'slds-is-open' : '')}" aria-hidden="false">
+        <div class="slds-panel__body">
+            <lightning:accordion aura:id="accordion" allowMultipleSectionsOpen="true">
+                <aura:iteration items="{!v.data}" var="e">
+                    <lightning:accordionSection label="{!e.Header__c}">
+                        <aura:unescapedHtml value="{!e.Instruction__c}"/>
+                    </lightning:accordionSection>
+                </aura:iteration>
+            </lightning:accordion>
+
+            <!-- SPINNER -->
+            <div class="{!'slds-align_absolute-center ' + (and(v.isLoading, v.isOpen) ? '' : 'slds-hide')}">
+                <lightning:spinner aura:id="spinner" variant="brand" size="large" alternativeText="One moment please..." />
+            </div>
+        </div>
+    </div>
+</aura:component>

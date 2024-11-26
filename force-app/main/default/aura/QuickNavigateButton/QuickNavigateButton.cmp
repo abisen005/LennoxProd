@@ -1,0 +1,8 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="label" type="String" default="QuickNavigate"/>
+    <aura:attribute name="url" type="String" default="/apex/YourVisualforcePage"/>
+    
+    <div class="container labsnavhelperQuickNavButton">
+        <lightning:button label="{!v.label}" class="slds-button slds-button_brand quickbutton-wide" onclick="{!c.navigateToVisualforcePage}" />
+    </div>
+</aura:component>

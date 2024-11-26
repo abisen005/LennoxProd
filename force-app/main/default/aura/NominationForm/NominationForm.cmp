@@ -1,0 +1,543 @@
+<!--
+  @description       : 
+  @author            : Amit Aher
+  @group             : 
+  @last modified on  : 13-12-2021 / Aug-12 /Aug-30 @Ventas
+  @last modified by  : Amit Aher
+-->
+<aura:component controller="NominationFormController" implements="force:appHostable,flexipage:availableForAllPageTypes">
+    <aura:attribute name="isSpinner" type="Boolean" default="false"/>
+    <!--  <aura:attribute name="state" type="string" default=""/> -->
+    <aura:attribute name="dealerName" type="string" default=""/> 
+    <aura:attribute name="DealerNumber" type="string" default=""/> 
+    <aura:attribute name="NominationForm" type="object"/>
+    <aura:attribute name="showOther" type="boolean" default="false"/>
+    <aura:attribute name="thanksdiv" type="boolean" default="false"/>
+    <aura:attribute name="showToast" type="boolean" default="false"/>
+    <aura:attribute name="showToast1" type="boolean" default="false"/>
+    <aura:attribute name="showToast3" type="boolean" default="false"/>
+    <aura:attribute name="nominatorlocation" type="string" default=""/>
+    <aura:attribute name="nominatorplaceDetails" type="String[]"/>
+    <aura:attribute name="nomineelocation" type="string" default=""/>
+    <aura:attribute name="nomineeplaceDetails" type="String[]"/>
+    <aura:attribute name="recordTypeId" type="String" />
+    <aura:attribute name="queueId" type="String" />
+    <aura:attribute name="nominatorPhone" type="string"/>
+    <aura:attribute name="nomineePhone" type="string"/>
+    <aura:attribute name="attemptedSubmit" type="Boolean" default="false"/>
+    
+    <aura:attribute name="submittedRecordId" type="String" />
+    
+    
+    
+    <aura:attribute name="condition1" type="Boolean" default="false"/>
+    <aura:attribute name="condition2" type="Boolean" default="false"/>
+    <aura:attribute name="condition3" type="Boolean" default="false"/>
+    <aura:attribute name="isProgramCheckboxDisabled" type="Boolean" default="true"/>
+    <aura:attribute name="isNominatorCheckboxDisabled" type="Boolean" default="true"/>
+    
+    
+    <aura:attribute name="approvedCondition1" type="Boolean" default="false"/>
+    <aura:attribute name="errorMessage" type="String" />
+    <aura:attribute name="errorMessagePhoneMask" type="String" />
+    <aura:attribute name="isSubmit" type="boolean" default="false"/>
+    <aura:attribute name="Reqfields" type="String[]" default="[]" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    
+    <aura:attribute name="FTLisQualified" type="Boolean" default="false"/>
+    
+    <aura:attribute name="FTLProgramForm" type="FTL_Program_Form__c" default="{}"/>    
+    <aura:if isTrue="{!v.isSpinner}">
+        <div class="slds-spinner_container">
+            <!--slds-spinner_brand slds-spinner_large -->
+            <div role="status" class="slds-spinner">
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <aura:html tag="style"> 
+        @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&amp;display=swap');
+        *{font-family: 'Open Sans', sans-serif;color: #000;}
+    </aura:html>
+    <div id ="NominationFormApp"></div> 
+    <lightning:recordEditForm aura:id="recordEditForm" 
+                              objectApiName="FTL_Program_Form__c"
+                              onsubmit = "{!c.onNextClick}"
+                              onsuccess="{!c.onSuccess}"
+                              onerror = "{!c.handleOnError}" 
+                              >
+        <aura:if isTrue="{!!v.thanksdiv}">
+            
+            <div Id='nominationFormDiv' class="slds-box">   
+                <div class="logo slds-text-align_center slds-m-top_medium">
+                    <img src="{!$Resource.LennoxLogo}" />
+                </div>
+                <h1 class="title-text">  Feel The Love Nomination Form </h1>
+                <h2 class="sub-title-text">  </h2> 
+                
+                <aura:if isTrue="{!v.showToast}">
+                    <div id="tosteMessage" aura:id="customToast" class="tost-msg">
+                        <div class="demo-only" style="height:4rem">
+                            <div class="slds-notify_container slds-is-relative">
+                                <div class="slds-notify slds-notify_toast slds-theme_error" role="status">
+                                    <span class="slds-assistive-text">error</span>
+                                    <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                                        <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                            <lightning:icon iconName="utility:error" alternativeText="Error!" title="Error" />
+                                        </div>
+                                    </span> 
+                                    <div class="slds-notify__content">
+                                        <h2 class="slds-text-heading_small" style = "color: white;" >Please Review The Form and Complete All Required Fields.</h2>
+                                    </div>
+                                    <div class="slds-notify__close">
+                                        <button class="slds-button slds-button_icon slds-button_icon-inverse" onclick="{!c.closeToast}" title="Close">
+                                            <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                                <lightning:icon iconName="utility:close" alternativeText="Close!" title="Close" />
+                                            </div>
+                                            <span class="slds-assistive-text">Close</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aura:if>
+                
+                
+                <aura:if isTrue="{!v.showToast1}">
+                    <div id="tosteMessage" class="tost-msg">
+                        <div class="demo-only" style="height:4rem">
+                            <div class="slds-notify_container slds-is-relative">
+                                <div class="slds-notify slds-notify_toast slds-theme_success" style="background: #ba3737" role="status">
+                                    <span class="slds-assistive-text">Info</span>
+                                    <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                                        <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                            <lightning:icon iconName="utility:success" alternativeText="Success!" title="Info" />
+                                        </div>
+                                    </span> 
+                                    <div class="slds-notify__content">
+                                        <h2 class="slds-text-heading_medium"  ><center style = "color:#fff;">Lennox Feel the Love</center></h2><br/>
+                                        <h2 class="slds-text-heading_small" style = "color: white;" ><br>'Thank you for your submission.</br><br/>
+                                            We apologize as your nomination is not able to be considered for the following reason(s): <br/><br/>
+                                            <aura:if isTrue='{!v.condition1}'>&nbsp;&nbsp;• {!$Label.c.FTL_Nomination_Form_Rental}<br/></aura:if>
+                                            <aura:if isTrue='{!v.condition2}'>&nbsp;&nbsp;• {!$Label.c.FTL_Nomination_Form_Declined}<br/></aura:if>
+                                            <aura:if isTrue='{!v.condition3}'>&nbsp;&nbsp;• {!$Label.c.FTL_Nomination_Form_Ductwork} <br/><br/></aura:if>
+                                            If one of these reasons does not apply to your nominee, please re-submit the form.<br/><br/>
+                                            Thank you,<br/>
+                                            Feel The Love Team<br/>
+                                            Follow us on Facebook<br/>
+                                        </h2>
+                                    </div>
+                                    <div class="slds-notify__close">
+                                        <button class="slds-button slds-button_icon slds-button_icon-inverse" onclick="{!c.closeToast1}" title="Close">
+                                            <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                                <lightning:icon iconName="utility:close" alternativeText="Close!" title="Close" />
+                                            </div>
+                                            <span class="slds-assistive-text">Close</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aura:if>
+                
+                <aura:if isTrue="{!v.approvedCondition1}">
+                    <div id="tosteMessage" class="tost-msg">
+                        <div class="demo-only" style="height:4rem">
+                            <div class="slds-notify_container slds-is-relative">
+                                <div class="slds-notify slds-notify_toast slds-theme_success"  role="status">
+                                    <span class="slds-assistive-text">Info</span>
+                                    <span class="slds-icon_container slds-icon-utility-success slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                                        <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                            <lightning:icon iconName="utility:success" alternativeText="Success!" title="Info" />
+                                        </div>
+                                    </span> 
+                                    <div class="slds-notify__content">
+                                        <h2 class="slds-text-heading_medium"><center style ="color:#fff;">Lennox Feel the Love</center></h2><br/>
+                                        
+                                        <h2 class="slds-text-heading_small" style = "color: white;" >
+                                            Thank you for partnering with the Feel The Love program by submitting your nomination.<br/><br/>
+                                            {!$Label.c.FTL_Nomination_Form_Approved}<br/><br/>
+                                            The nomination will be passed to a nearby participating dealer to review. If chosen as a finalist your nominee will be receiving a call to schedule a home visit.<br/>
+                                            Thank you,<br/><br/>
+                                            Feel The Love Team<br/>
+                                            Follow us on Facebook<br/>
+                                        </h2>
+                                    </div>
+                                    <div class="slds-notify__close">
+                                        <button class="slds-button slds-button_icon slds-button_icon-inverse" onclick="{!c.closeToast2}" title="Close">
+                                            <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                                <lightning:icon iconName="utility:close" alternativeText="Close!" title="Close" />
+                                            </div>
+                                            <span class="slds-assistive-text">Close</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </aura:if>    
+                
+                
+                <div id ='nominationForm' class="form-container">                
+                    <p class="info-text">
+                        Please provide the following information regarding the person or family you are nominating.
+                    </p>                          
+                    <!--  <lightning:recordEditForm aura:id="recordEditForm" 
+                                          objectApiName="FTL_Program_Form__c"
+                                          onsubmit = "{!c.handleOnSubmit}"
+                                          
+                                          onerror = "{!c.handleOnError}" 
+                                          >--> 
+                    <lightning:messages />
+                    
+                    <h4 class="form-title">Person Making The Nomination</h4>
+                    <div class="slds-form-element ">
+                        <label  for="name">
+                            <abbr class="slds-required" title="required">* </abbr> Nominator Name
+                        </label>                       
+                        <div class="slds-form-element__control">
+                            <lightning:inputField aura:id = "nominatorName" id = 'name'  variant="label-hidden" fieldName="Nominator_Name__c" />  
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required field</div>
+                    </div>
+                    <!-- <label  for="address"> <abbr class="slds-required" title="required">* </abbr>Nominator Address</label>
+                    <lightning:inputField aura:id = "required" Id = "address"  variant="label-hidden" fieldName="Nominator_Address__c" />
+                    
+                    <div class="label-text">
+                        <label> Nominator Address  </label>
+                    </div>
+                    
+                    <c:AutoCompleteAddress searchKey="{!v.nominatorlocation}" placeDetails="{!v.nominatorplaceDetails}"/>-->
+                    
+                    
+                    <!--<label for="City"> <abbr class="slds-required" title="required">* </abbr>Your City</label>
+                    <lightning:inputField aura:id = "required" Id = "City" variant="label-hidden" fieldName="Nominator_City__c" />
+                    
+                    <label for="zipCode"> <abbr class="slds-required" title="required">* </abbr>Your Zip code</label>
+                    <lightning:inputField aura:id = "required" Id = "zipCode"  variant="label-hidden" fieldName="Nominator_Zip_Code__c" /> -->
+                    
+                    <div class="slds-form-element ">
+                        <div class="lable-content ">
+                            <label for="telephone"> 
+                                <abbr class="slds-required" title="required">* </abbr>Nominator Telephone
+                            </label>
+                            <div class="tooltip-box">
+                                <button class="slds-button slds-button_icon slds-button slds-button_icon"  aria-describedby="help" aria-disabled="true" title="Help">
+                                    <lightning:icon iconName="utility:info" alternativeText="Info!" title="Info" size="xx-small"/>
+                                    <span class="slds-assistive-text">Help</span>
+                                </button>
+                                <div class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left tooltip-box-content" role="tooltip" aura:id = "NominatorTelephoneHelp">
+                                    <div class="slds-popover__body">Please enter only digits.  Example: 1112223333</div>
+                                </div>
+                            </div>  
+                        </div>
+                        <div class="slds-form-element__control">
+                            <lightning:inputField aura:id = "nominatorPhone" autocomplete="off" id='telephone' variant="label-hidden" fieldName="Nominator_Phone_Number__c" onchange = "{!c.phoneMask}"  value = "{!v.nominatorPhone}" />
+                            <aura:if isTrue="{!not(empty(v.errorMessage))}">
+                                <div class="slds-text-color_error">{!v.errorMessage}</div>
+                            </aura:if>
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required field</div>
+                    </div> 
+                    
+                    <div class="slds-form-element ">
+                        <label for="email"> <abbr class="slds-required" title="required">* </abbr>Nominator Email Address</label>
+                        <div class="slds-form-element__control">
+                            <lightning:inputField aura:id = "nominatorEmail" Id = "email"  variant="label-hidden" fieldName="Nominator_Email__c" />
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required field</div>
+                    </div>
+                    
+                    <div class="slds-form-element ">
+                        <label for="relationship"> <abbr class="slds-required" title="required">* </abbr>Relationship to nominee</label>
+                        <div class="slds-form-element__control">
+                            <lightning:inputField aura:id = "nominatorRelation" Id = "relationship"  variant="label-hidden" fieldName="Relationship_to_nominee__c" />
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required field</div>
+                    </div>
+                    
+                    <h4 class="form-title">Individual or Family Being Nominated</h4>
+                    
+                    <label for="textarea3">
+                        Lennox cares about privacy and is committed to protecting personal information in accordance to applicable privacy 
+                        laws and its <lightning:formattedUrl value="https://www.lennoxinternational.com/home/Home/privacy.html" label="privacy policy" target="_blank"/> found at <lightning:formattedUrl value="https://www.lennoxinternational.com/home/Home/privacy.html"/>.  
+                        Pursuant to the FEEL THE LOVE® Program Nominee Terms and Conditions, you may only provide information in relation 
+                        to a nominee if you have received permission from the nominee to provide his/her information to Lennox and its participating dealers.  
+                        Accordingly, when responding to the below Nomination Form, please limit disclosure of sensitive personal information like financial information, 
+                        race/ethnicity/sexual orientation, health data and/or private or personal matters concerning any person, including the nominee.</label>
+                    
+                    <div class="slds-form-element ">
+                        <label for="theirname"> <abbr class="slds-required" title="required">* </abbr>Their Name</label>
+                        <div class="slds-form-element__control">
+                            <lightning:inputField aura:id = "nomineeName" Id = "theirname"  variant="label-hidden" fieldName="Nominee_Name__c" />
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required Field</div>
+                    </div>
+                    <!--
+                    <label for="address"> <abbr class="slds-required" title="required">* </abbr>Their Address</label>
+                    <lightning:inputField aura:id = "required" Id = "address"  variant="label-hidden" fieldName="Nominee_Street_Address__c"/>
+                    -->
+                    <div class="slds-form-element ">
+                        <div class="label-text">
+                            <label> <abbr class="slds-required" title="required">* </abbr> Their Address  </label>
+                        </div>  
+                        <div class="slds-form-element__control">
+                            <c:AutoCompleteAddress searchKey="{!v.nomineelocation}" placeDetails="{!v.nomineeplaceDetails}" required="true" visited="{!v.attemptedSubmit}"/>
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required Field</div>
+                    </div>
+                    <!-- <label for="theircity"> <abbr class="slds-required" title="required">* </abbr>Their City</label>
+                    <lightning:inputField aura:id = "required" Id = "theircity"  variant="label-hidden" fieldName="Nominee_City__c"/>
+                    
+                    <label for="theirstate"> <abbr class="slds-required" title="required">* </abbr>Their State</label>
+                    <lightning:inputField aura:id = "required" Id = "theirstate"  variant="label-hidden" fieldName="Nominee_State__c" />
+                    
+                    <label for="theirzipcode"> <abbr class="slds-required" title="required">* </abbr>Their Zip code</label>
+                    <lightning:inputField aura:id = "required" Id = "theirzipcode" variant="label-hidden" fieldName="Nominee_Zip_Code__c"/> -->
+                    <div class="slds-form-element ">
+                        <div class="lable-content">
+                            <label for="theirtelephone"> <abbr class="slds-required" title="required">* </abbr>Their Telephone</label>
+                            <div class="tooltip-box">
+                                <button class="slds-button slds-button_icon slds-button slds-button_icon"  aria-describedby="help" aria-disabled="true" title="Help">
+                                    <lightning:icon iconName="utility:info" alternativeText="Info!" title="Info" size="xx-small"/>
+                                    <span class="slds-assistive-text">Help</span>
+                                </button>
+                                <div class="slds-popover slds-popover_tooltip slds-nubbin_bottom-left tooltip-box-content" role="tooltip" aura:id = "NominatorTelephoneHelp">
+                                    <div class="slds-popover__body">Please enter only digits.  Example: 1112223333</div>
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="slds-form-element__control">
+                            <lightning:inputField aura:id = "nomineePhone"  Id = "theirtelephone" autocomplete="off" variant="label-hidden" fieldName="Nominee_Phone_Number__c"  onkeyup = "{!c.nomineePhoneMask}" value="{!v.nomineePhone}" />
+                            <aura:if isTrue="{!not(empty(v.errorMessagePhoneMask))}">
+                                <div class="slds-text-color_error">{!v.errorMessagePhoneMask}</div>
+                            </aura:if>
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required Field</div>
+                    </div>
+                    
+                    <label for="theirEmail">  Their Email (if known)</label>
+                    <lightning:inputField aura:id ="NomineeEmail" Id = "theirEmail"  variant="label-hidden" fieldName="Nominee_Email__c"/>
+                    
+                    <div class="slds-form-element ">
+                        <label for="classify"> <abbr class="slds-required" title="required">* </abbr> How would you best classify the nominee?</label>
+                        <div class="slds-form-element__control">
+                            <lightning:inputField aura:id = "classifyNominee" Id = "classify"  variant="label-hidden" fieldName="Best_Classification_of_Nominee__c"/>
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required Field</div>
+                    </div>
+                    
+                    <!--<div class="slds-form-element ">
+                        <label for="textarea1" class="form-title"> <abbr class="slds-required" title="required">* </abbr>
+                            Tell us their story, including why this nominee deserves to be chosen as a 
+                            Feel The Love recipient and the impact that receiving a new furnace or A/C unit this year 
+                            would have.</label>
+                        <div class="slds-form-element__control">
+                            <lightning:inputField aura:id = "required" Id = "textarea1"  variant="label-hidden" fieldName="Nominee_Story__c"/>
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required Field</div>
+                    </div>-->
+                    <!--label for="textarea2" class="form-title"> <abbr class="slds-required" title="required">* </abbr> 
+                        List details about current heating / cooling system details if possible</label>
+                    <lightning:inputField aura:id = "required" Id = "textarea2"  variant="label-hidden" fieldName="Cooling_Heating_Details__c"/
+                    
+                    <label for="existing"> <abbr class="slds-required" title="required">* </abbr>
+                        Is this home in need of a replacement furnace and/or major service to the existing furnace? </label>
+                    <lightning:inputField aura:id = "required" Id = "existing"  variant="label-hidden" fieldName="Replacement_Furnace_Needed__c"/>-->
+                    <div class="slds-form-element ">
+                        <label for="family"> <abbr class="slds-required" title="required">* </abbr>
+                            Does nominee/family own this home?</label>
+                        <div class="slds-form-element__control">
+                            <lightning:inputField aura:id = "nomineeOwnHome" Id = "family"  variant="label-hidden" fieldName="Does_nominee_own_home__c" onchange="{!c.handleQualifyChange}"/>
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required Field</div>
+                    </div>
+                    
+                    <div class="slds-form-element ">
+                        <label for="manufactured"> <abbr class="slds-required" title="required">* </abbr> 
+                            Is the home a mobile home/manufactured housing?</label>
+                        <div class="slds-form-element__control">
+                            <lightning:inputField aura:id = "mobOrManufact" Id = "manufactured"  variant="label-hidden" fieldName="Mobile_or_Manufactured_Home__c" onchange="{!c.handleQualifyChange}"/>
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required Field</div>
+                    </div>
+                    <div class="slds-form-element ">
+                        <label for="baseboards"> <abbr class="slds-required" title="required">* </abbr>
+                            Does the home have a furnace with complete ductwork system in place, 
+                            i.e. a central forced air system? (Select no if the home has a boiler or hydronic system, 
+                            uses a wood stove, electric baseboards, or other heating method)</label>
+                        <div class="slds-form-element__control">
+                            <lightning:inputField aura:id = "completeDuctwork" Id = "baseboards"  variant="label-hidden" fieldName="Complete_ductwork_system_in_place__c" onchange="{!c.handleQualifyChange}"/>
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required Field</div>
+                    </div>
+                    
+                    
+                    <aura:if isTrue="{!v.FTLisQualified}">
+                        <div class="slds-form-element ">
+                            
+                            <label for="textarea1" class="form-title"><abbr class="slds-required" title="required">* </abbr>
+                                Tell us their story, including why this nominee deserves to be chosen as a 
+                                Feel The Love recipient and the impact that receiving a new furnace or A/C unit this year 
+                                would have.</label>
+                            <div class="slds-form-element__control">
+                                <lightning:textarea  aura:id = "story" Id = "textarea1"  variant="label-hidden" fieldName="Nominee_Story__c"  />
+                            </div>
+                            <div class="slds-form-element__help" id="form-error-01">Required Field</div>
+                        </div>
+                    </aura:if>
+                    
+                    <label for="aboutus" class="form-title">
+                        How Did You Hear About Us</label>
+                    <div class="slds-form-element__control">
+                        <lightning:inputField  Id = "aboutus" aura:id="aboutus" variant="label-hidden" fieldName="How_did_you_hear_about_us__c" onchange="{!c.aboutusFieldChange}"/>
+                    </div>
+                    
+                    <aura:if isTrue="{!v.showOther}">
+                        <div class="slds-form-element ">
+                            <label for="other"> <aura:if isTrue="{!v.showOther}"> <abbr  class="slds-required" title="required">* </abbr> </aura:if>
+                                Other (please specify in box below)</label>
+                            <div class="slds-form-element__control">
+                                <lightning:inputField Id = "other" aura:id="other" required="{!v.showOther}"  variant="label-hidden" fieldName="How_did_you_hear_about_us_Other__c"/>
+                            </div>
+                            <div class="slds-form-element__help" id="form-error-01">Required Field</div>
+                        </div>
+                    </aura:if>
+                    
+                    <label for="delarnumber">If from a Lennox Dealer, please enter the Dealer number here:</label>
+                    <lightning:inputField Id = "delarnumber"  aura:id="DealerNumber" variant="label-hidden" fieldName="Dealer_Number__c"  value="{!v.DealerNumber}"  onfocusout = ""/>
+                    
+                    <label for="delarname">If from a Lennox Dealer, please enter the Dealer name here:</label>
+                    <lightning:inputField Id = "delarname" aura:id="DealerName"  variant="label-hidden" fieldName="Dealer_Name__c" value="{!v.dealerName}"  onfocusout = ""/>
+                    <br/>
+                    
+                    <div class="slds-form-element ">
+                        <div class="checknox-section">                       
+                            <lightning:inputField class="checkbox-label" Id = "permissioncondition" aura:id ="hasReceivedPermisssion"  variant="label-hidden"
+                                                  fieldName="Nominator_Received_Permission__c" />
+                            
+                            <label 
+                                   for="permissioncondition"> <abbr class="slds-required" title="required">* </abbr> 
+                                <b>{!$Label.c.FTL_Nominee_Info_Sharing}</b>
+                            </label>
+                        </div>
+                        <div class="slds-form-element__help" id="form-error-01">Required Field</div>
+                    </div>
+                    
+                    <div class="checknox-section">                       
+                        <lightning:inputField class="checkbox-label" Id = "termsandcondition" aura:id ="hasAgree"  variant="label-hidden"
+                                              fieldName="Nomination_Form_Terms__c" disabled="{!v.isProgramCheckboxDisabled}" onchange="{!c.onchange}"/>
+                        
+                        <label 
+                               for="termsandcondition"> <abbr class="slds-required" title="required">* </abbr> 
+                            <b>I have reviewed and agree to program 
+                                <a href="javascript:void(0)" onclick="{!c.onClickOpenProgramTerms}">
+                                    terms and conditions.
+                                </a>
+                            </b>
+                        </label>
+                    </div>
+
+                    <div class="checknox-section">                       
+                        <lightning:inputField class="checkbox-label" Id = "termsandcondition" aura:id ="hasAgreeNominator"  variant="label-hidden"
+                                              fieldName="Nomination_Form_Terms__c" disabled="{!v.isNominatorCheckboxDisabled}"/>
+                        
+                        <label 
+                               for="termsandcondition"> <abbr class="slds-required" title="required">* </abbr> 
+                            <b>I have reviewed and agree to nominator  
+                                <a href="javascript:void(0)" onclick="{!c.onClickOpenNominatorTerms}">
+                                    terms and conditions.
+                                </a>
+                            </b>
+                        </label>
+                    </div>                    
+                    
+                    <br/>
+                    <div class="centered-text">
+                        All terms and conditions must be read before this form may be submitted. 
+                        Click "terms and conditions" to view.
+                    </div>
+                    <lightning:button class="slds-m-top_small submit-btn " aura:Id="nextSubmit" type="submit" label="SUBMIT"  /> 
+                </div>
+            </div>
+        </aura:if>
+        
+    </lightning:recordEditForm>
+    
+    
+    
+    <aura:if isTrue="{!v.showToast3}">
+        <div id="tosteMessage" class="tost-msg">
+            <div class="demo-only" style="height:4rem">
+                <div class="slds-notify_container slds-is-relative">
+                    <div class="slds-notify slds-notify_toast slds-theme_error" role="status">
+                        <span class="slds-assistive-text">error</span>
+                        <span class="slds-icon_container slds-icon-utility-error slds-m-right_small slds-no-flex slds-align-top" title="Description of icon when needed">
+                            <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                <lightning:icon iconName="utility:error" alternativeText="Error!" title="Error" />
+                            </div>
+                        </span> 
+                        <div class="slds-notify__content">
+                            <h2 class="slds-text-heading_small" style = "color: white;" >Please Review the Form and Complete the Required Field.</h2>
+                        </div>
+                        <div class="slds-notify__close">
+                            <button class="slds-button slds-button_icon slds-button_icon-inverse" onclick="{!c.closeToast}" title="Close">
+                                <div class="slds-button__icon slds-button__icon_large" aria-hidden="true">
+                                    <lightning:icon iconName="utility:close" alternativeText="Close!" title="Close" />
+                                </div>
+                                <span class="slds-assistive-text">Close</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <!--aura:if isTrue="{!v.isSubmit}">
+          <div  class="form-container">
+         <div Id='nominationFormDiv' class="form-container slds-box">  
+        <div class="slds-form-element ">
+            <label for="textarea1" class="form-title"> <abbr class="slds-required" title="required">* </abbr>
+                Tell us their story, including why this nominee deserves to be chosen as a 
+                Feel The Love recipient and the impact that receiving a new furnace or A/C unit this year 
+                would have.</label>
+            <div class="slds-form-element__control">
+                <lightning:textarea  aura:id = "story" Id = "textarea1"  variant="label-hidden" fieldName="Nominee_Story__c"/>
+            </div>
+            <div class="slds-form-element__help" id="form-error-01">Required Field</div>
+        </div>
+        
+          
+        
+            <lightning:button class="slds-m-top_small submit-btn " aura:Id="submit" type="button" label="SUBMIT NOMINATION" onclick="{!c.onSubmitClick}" />
+        </div>
+        </div>
+    </aura:if-->
+    
+    
+    <aura:if isTrue="{!v.thanksdiv}">
+        <div id ="thankyoudiv" class="thankyou-section">
+            <div class="slds-text-heading_medium">
+                Thank you for partnering with the Feel The Love program by submitting your nomination.
+            </div>
+            <div class="social-link">
+                
+                <button class="color1 buttoncls" onclick="{!c.share}" data-value="facebook"> 
+                    <img alt="facebook-white sharing button" src="https://platform-cdn.sharethis.com/img/facebook-white.svg"/> 
+                    Share
+                </button>
+                <button class="color2 buttoncls" onclick="{!c.share}" data-value="twitter"> <img alt="twitter-white sharing button" src="https://platform-cdn.sharethis.com/img/twitter-white.svg"/> Tweet</button>
+                <button class="color3 buttoncls" onclick="{!c.share}" data-value="email" > <lightning:icon iconName="utility:email" /> Email</button>
+                <button class="color4 buttoncls" onclick="{!c.share}" data-value="share" > <lightning:icon iconName="utility:socialshare" /> Share</button>
+                <button class="color5 buttoncls" onclick="{!c.share}" data-value="in"> <img alt="linkedin-white sharing button" src="https://platform-cdn.sharethis.com/img/linkedin-white.svg"/> Share</button>
+            </div>
+        </div>
+    </aura:if>
+    
+</aura:component>

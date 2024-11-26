@@ -1,0 +1,315 @@
+<aura:component controller="SC_NewCoachingSessionController">
+
+
+    <!--
+        TODO:
+            - Test that assessments are not created when hidePlanningSteps is true
+            - Provide a way to use this component when the session has already been created
+                but the planing has not been completed
+    -->
+
+
+    <aura:attribute name="users"
+                    type="User[]"
+                    description="The list of Users being coached." />
+
+    <aura:attribute name="initiative"
+                    type="SC_Initiative__c"
+                    description="The selected Initiative being coached on"
+                    default="{Name: '', Id: '' }" />
+
+    <aura:attribute name="hidePlanningSteps"
+                    type="Boolean"
+                    default="FALSE"
+                    description="If true, review and assessment steps will be hidden." />
+
+    <aura:attribute name="planningOnly"
+                    type="Boolean"
+                    default="FALSE"
+                    description="If true, it is assumed that the session already exists and the session id is provided
+                                 in the sessionId attribute." />
+
+     <aura:attribute name="session"
+                     type="SC_Coaching_Session__c"
+                     description="If provided and planningOnly is true, this session was already scheduled, but coach has not yet planned (reviewed and assessed)." />
+
+    <aura:attribute name="availableUsers"
+                    type="Object[]"
+                    description="The list of available users to coach." />
+
+    <aura:attribute name="wizardSteps"
+                    type="Object[]"
+                    description="Configuration for the steps required to create a coaching session" />
+
+    <aura:attribute name="activeStep"
+                    type="Object"
+                    description="Active step." />
+
+    <aura:attribute name="dashboardId"
+                    type="String"
+                    description="Related dashboard id for the initiative" />
+
+    <aura:attribute name="reportIds"
+                    type="String"
+                    description="Related report ids for the initiative" />
+
+    <aura:attribute name="reviewIframeSrc" type="String" default="" />
+
+    <aura:attribute name="assessmentSkills"
+                    type="SC_Assessment_Skill__c[]"
+                    description="List of assessment skills for each user being coached" />
+
+    <aura:attribute name="sessionEvent"
+                    type="Event"
+                    description="The Event object representing the Coaching Session"
+                    default="{DurationInMinutes: 60}" />
+
+    <aura:attribute name="isOpen"
+                    type="Boolean"
+                    description="Wizard is displayed on top of other content. If true, the cmp is rendered." />
+
+    <aura:attribute name="isLoading"
+                    type="Boolean"
+                    description="Is the wizard in a loading step?" />
+    <aura:attribute name="Disgard"
+                    type="Boolean"
+                    description="to show the disgard changes box " 
+                    default="FALSE"/>
+     <aura:attribute name="disgardChangesModule" type="Boolean" default="FALSE" />
+
+
+
+
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler name="change" value="{!v.initiative}" action="{!c.handleInitChange}" />
+    <aura:handler name="initiativeSelected" event="c:SC_EvtInitiativeSelected" action="{!c.handleInitiativeSelected}" includeFacets="true" />
+    <aura:handler name="assessmentSkillChange" event="c:SC_AssessmentSkillChange" action="{!c.handleAssessmentSkillChange}" includeFacets="true" />
+    <aura:handler event="c:SC_CoachingInfoResponse" action="{!c.handleCoachingInfoResponse}" />
+
+
+
+    <aura:registerEvent name="coachingInfoRequest" type="c:SC_CoachingInfoRequest" />
+    <aura:registerEvent name="closeSession" type="c:SC_CloseNewSession" />
+    <aura:registerEvent name="routeChangeAttempt" type="c:routeChangeAttempt" />
+
+
+    <section class="{!'sc-new-session sc-new-session--' + (v.isOpen ? 'open' : 'closed')}">
+
+        <div class="slds-page-header slds-p-around--small" role="banner">
+
+            <div class="slds-grid slds-grid--align-spread slds-grid--vertical-align-center">
+
+                <h1 class="slds-text-title--caps">New Coaching Session</h1>
+
+                <button class="slds-button slds-button--destructive" onclick="{!c.handleCancelPress}">
+                    Cancel
+                </button>
+            </div>
+
+        </div>
+
+        <div class="{!'slds-wizard slds-m-horizontal--small slds-m-bottom--medium slds-m-top--large ' + (equals(v.wizardSteps.length, 1) ? 'slds-hide' : '')}" role="navigation">
+            <ol class="slds-wizard__list">
+                <aura:iteration items="{!v.wizardSteps}" var="step" indexVar="i">
+                    <li class="{!'slds-wizard__item ' + (greaterthanorequal(v.activeStep.index, i) ? 'slds-is-active' : '')}">
+
+                            <span class="slds-wizard__marker"></span>
+                            <span class="slds-wizard__label slds-text-title--caps slds-truncate">{!step.title}</span>
+
+                    </li>
+                </aura:iteration>
+            </ol>
+            <span class="slds-wizard__progress">
+                <!--TODO: create an attribute for progress bar length-->
+                <span class="slds-wizard__progress-bar" style="{!'width: ' + (empty(v.wizardSteps) ? '0' : (v.activeStep.index  / (v.wizardSteps.length - 1)) * 100 )  + '%'}"></span>
+            </span>
+        </div>
+
+        <div class="cs-new-session__step-header slds-grid slds-grid--vertical-align-center slds-p-vertical--medium slds-p-horizontal--small ">
+            <div class="slds-col slds-size--5-of-6">
+                <h2 class="slds-text-heading--medium">{!v.activeStep.title}</h2>
+                <p class="slds-text-body--small">{!v.activeStep.description}</p>
+            </div>
+            <div class="slds-col slds-size--1-of-6">
+                <div class="slds-float--right">
+                    <!--TODO: replace these with the new button components in winter 17 -->
+                    <button class="{!'slds-button slds-button--neutral ' + (v.activeStep.index == 0 ? 'slds-hide' : '')}"
+                            onclick="{!c.handleBackPress}">
+                        <c:SC_svg class="slds-button__icon slds-button__icon--left" xlinkHref="/resource/SC_LightningDesignSystem/icons/utility-sprite/svg/symbols.svg#back" />
+                        <span class="slds-max-small-hide">Back</span>
+                    </button>
+                    <button class="{!'slds-button slds-button--brand ' + (v.activeStep.index == v.wizardSteps.length - 1 ? 'slds-hide' : '')}"
+                            disabled="{!!v.activeStep.valid}"
+                            onclick="{!c.handleNextPress}">
+                        <span class="slds-max-small-hide">Next</span>
+                        <c:SC_svg class="slds-button__icon slds-button__icon--right" xlinkHref="/resource/SC_LightningDesignSystem/icons/utility-sprite/svg/symbols.svg#forward" />
+                    </button>
+                    <button class="{!'slds-button slds-button--brand ' + (v.activeStep.index != v.wizardSteps.length - 1 ? 'slds-hide' : '')}"
+                            disabled="{!!v.activeStep.valid}"
+                            onclick="{!c.finishWizardPress}">
+                        Finish
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- SELECT INITIATIVES STEP -->
+        <div class="{!v.activeStep.title == $Label.c.SC_SelectInitiative ? '' : 'slds-hide'}">
+
+            <aura:if isTrue="{!v.initiative.Id == ''}">
+                <c:SC_SelectInitiatives />
+            </aura:if>
+
+            <div class="{!'slds-text-align--center slds-m-around--medium ' + (v.initiative.Id != '' ? '' : 'slds-hide')}">
+                <span class="slds-icon_container" title="Initiative Selected">
+                    <c:SC_svg class="slds-icon slds-icon--large sc-new-session-icon--success" xlinkHref="/resource/SC_LightningDesignSystem/icons/utility-sprite/svg/symbols.svg#check" />
+                </span>
+                <p class="slds-text-heading--medium slds-p-bottom--small">You selected {!v.initiative.Name}.</p>
+                <p><a href="#"
+                      class="slds-p-around--x-small slds-show--inline-block"
+                      onclick="{!c.handleNextStepPress}">Continue to the next step</a></p>
+                <p><a href="#"
+                      id="initCancel"
+                      class="slds-text-color--error slds-p-around--x-small slds-show--inline-block"
+                      onclick="{!c.handleInitCancelPress}">Select another Initiative</a></p>
+            </div>
+
+        </div>
+
+
+
+        <!-- SELECT EMPLOYEES STEP -->
+        <div class="{!v.activeStep.title == $Label.c.SC_SelectEmployees ? '' : 'slds-hide'}">
+            <ul class="slds-has-dividers--bottom">
+                <aura:iteration items="{!v.availableUsers}" var="coachee" >
+                    <li class="slds-item">
+                        <div class="slds-form-element">
+
+                                <label class="slds-checkbox--toggle slds-grid slds-grid--vertical-align-center slds-p-around--x-small">
+                                    <ui:inputCheckbox value="{!coachee.selected}" change="{!c.handleCoacheeSelectedChange}" />
+                                    <span id="toggle-desc" class="slds-checkbox--faux_container" aria-live="assertive">
+                                        <span class="slds-checkbox--faux"></span>
+                                        <span class="{!'slds-checkbox--' + (coachee.selected ? 'off' : 'on')}"></span>
+                                        <span class="{!'slds-checkbox--' + (coachee.selected ? 'on' : 'off')}"></span>
+                                    </span>
+                                    <span class="slds-form-element__label slds-m-left--medium slds-m-bottom--none">{!coachee.Name}</span>
+                                </label>
+
+                        </div>
+                    </li>
+                </aura:iteration>
+            </ul>
+        </div>
+
+
+
+        <!-- REVIEW STEP -->
+        <div class="{!v.activeStep.title == $Label.c.SC_Review ? '' : 'slds-hide'}">
+
+
+            <h2 class="slds-section-title--divider">Dashboard</h2>
+
+            <lightning:button onclick="{!c.handleDashboardPress}"
+                              label="{!'Review the ' + v.initiative.Name + ' Dashboard'}"
+                              class="{!empty(v.dashboardId) ? 'slds-hide' : 'slds-show slds-m-around--small'}" />
+
+            <div class="{!'slds-m-around--small ' + (empty(v.dashboardId) ? 'slds-show' : 'slds-hide')}">
+                <p>There are no dashboards to review for {!v.initiative.Name}</p>
+            </div>
+
+
+            <h2 class="slds-section-title--divider">Reports</h2>
+
+            <div class="{!'slds-m-around--small ' + (empty(v.reviewIframeSrc) ? 'slds-show' : 'slds-hide')}">
+                <p>There are no reports to review for {!v.initiative.Name}</p>
+            </div>
+
+            <div class="slds-grid">
+
+                <iframe src="{!v.reviewIframeSrc}"
+                        width="100%"
+                        height="1500"
+                        frameborder="0" />
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ASSESSMENT STEP -->
+        <div class="{!and(v.activeStep.title == $Label.c.SC_Assess, !v.hidePlanningSteps) ? '' : 'slds-hide'}">
+            <aura:iteration items="{!v.users}" var="user">
+                <div class="slds-container--medium slds-container--center slds-box slds-m-vertical--medium">
+                    <c:SC_CoacheeAssessment user="{!user}" initiative="{!v.initiative}" disgardChangesModule="{!v.disgardChangesModule}"/>
+                </div> 
+            </aura:iteration>
+        </div>
+
+        <!-- SCHEDULE STEP -->
+        <div class="{!v.activeStep.title == $Label.c.SC_Schedule ? '' : 'slds-hide'}">
+            <div class="slds-container--center slds-container--small">
+
+                <div class="slds-box slds-theme--shade slds-m-top--x-large">
+                    <p class="slds-p-around--small">
+                        {!v.users.length == 1 ? v.users[0].Name : v.users.length  + ' users ' } will receive a meeting invite upon finishing the plan wizard.
+                    </p>
+                </div>
+
+                <div class="slds-form--stacked  slds-m-top--x-large">
+                    <div class="slds-form-element slds-m-bottom--medium">
+                        <label class="slds-form-element__label" >Individual{!greaterthan(v.users.length, 1) ? 's' : ''}</label>
+                        <div class="slds-form-element__control">
+                            <ul>
+                                <aura:iteration items="{!v.users}" var="user">
+                                    <li>{!user.Name}</li>
+                                </aura:iteration>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="slds-form-element slds-m-bottom--medium">
+                        <label class="slds-form-element__label" >Coaching Initiative</label>
+                        <div class="slds-form-element__control">
+                            {!v.initiative.Name}
+                        </div>
+                    </div>
+
+                    <ui:inputDateTime aura:id="evtDateTime"
+                                      value="{!v.sessionEvent.StartDateTime}"
+                                      class="slds-input"
+                                      displayDatePicker="true"
+                                      label="Session Date/Time"
+                                      labelClass="slds-form-element__label"
+                                      required="true"
+                                      blur="{!c.handleEventInputChange}"
+                                      focus="{!c.handleEventInputChange}" />
+
+                    <div class="slds-form-element slds-m-bottom--medium">
+                        <label class="slds-form-element__label" >Session Duration (minutes)*</label>
+                        <div class="slds-form-element__control">
+                            <ui:inputText aura:id="evtDuration" value="{!v.sessionEvent.DurationInMinutes}" class="slds-input" required="true" change="{!c.handleEventInputChange}" />
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+
+
+
+        <!-- Loading -->
+        <span class="{!v.isLoading ? '' : 'slds-hide'}">
+            <c:SC_Loader />
+        </span>
+
+
+
+    </section>
+
+
+</aura:component>

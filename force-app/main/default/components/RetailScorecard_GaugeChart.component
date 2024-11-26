@@ -1,0 +1,48 @@
+<apex:component layout="none">
+    <apex:attribute name="chartName" type="String" description="Unique name for the chart.  Used to draw the gauge chart." />
+    <apex:attribute name="chartValue" type="Decimal" description="Value represented on gauge" />
+    <apex:attribute name="chartLabel" type="String" description="Label associated with chart value." />
+    <apex:attribute name="dangerThreshold" type="Decimal" description="Values less than this are considered in danger." />
+    <apex:attribute name="successThreshold" type="Decimal" description="Values greater than this are considered successful." />
+    <div id="{!chartName}" class="chart-container gauge">
+    </div>
+    <div class="gauge-chart-value">{!ROUND(chartValue,1)}%
+        <div class="gauge-chart-label">
+            {!chartLabel}
+        </div>
+    </div>
+    <script>
+    //var {!chartName}GaugeWidth = document.getElementById('{!chartName}').offsetWidth - 15  > 260 ? 260 : document.getElementById('{!chartName}').offsetWidth - 15,
+    var {!chartName}GaugeWidth = 180,
+        {!chartName}GaugeConfig = {
+            size: {!chartName}GaugeWidth,
+            clipWidth: {!chartName}GaugeWidth,
+            clipHeight: ({!chartName}GaugeWidth / 2) + 15,
+            groupingsWidth: [{!dangerThreshold}, {!successThreshold}, 1],
+            transitionMs: 0
+        },
+        render{!chartName}Gauge = function() {
+            var chart = document.getElementById('{!chartName}');
+            chart.removeChild(chart.childNodes[0]);
+            {!chartName} = gauge('#{!chartName}', {!chartName}GaugeConfig);
+            {!chartName}.render();
+            {!chartName}.update({!chartValue});
+        },
+            render{!chartName}GaugePrint = function() {
+                var chart = document.getElementById('{!chartName}'),
+                    {!chartName}GaugeConfigPrint = new Object({!chartName}GaugeConfig);
+                {!chartName}GaugeConfigPrint.clipWidth = 100;
+                {!chartName}GaugeConfigPrint.clipHeight = 45;
+                chart.removeChild(chart.childNodes[0]);
+                {!chartName} = gauge('#{!chartName}', {!chartName}GaugeConfig);
+                {!chartName}.render();
+                {!chartName}.update({!chartValue});
+            };
+    window.addEventListener('load', function() {
+        render{!chartName}Gauge({!chartName}GaugeConfig);
+        retailScorecardApp.addBeforePrintFunction(render{!chartName}Gauge);
+    });
+    
+    
+    </script>
+</apex:component>

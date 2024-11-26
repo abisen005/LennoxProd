@@ -1,0 +1,23 @@
+<aura:component >
+
+
+
+    <aura:attribute name="account" type="Account" />
+    <aura:attribute name="selected" type="Boolean" default="false" />
+
+
+
+    <aura:registerEvent name="ScanBusinessCardEvent" type="c:ScanBusinessCardEvent" />
+
+
+
+    <a class="{!'slds-box slds-show slds-m-bottom--medium ' + (v.selected ? 'selected' : '')}" onclick="{!c.handleAccountPress}">
+        <h1 class="slds-text-heading--small">{!v.account.Name}</h1>
+        <div class="slds-list--horizontal slds-wrap" id="{!v.account.Id}">
+            <div class="slds-item--label slds-text-color--weak slds-truncate" title="Customer Number">Customer Number:</div>
+            <div class="slds-item--detail slds-truncate">{!v.account.SAP_Customer_Number__c}</div>
+        </div>
+    </a>
+
+
+</aura:component>

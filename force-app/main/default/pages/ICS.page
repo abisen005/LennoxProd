@@ -1,0 +1,28 @@
+<apex:page contentType="text/Calendar" standardController="Event" extensions="ICSController" action="{!updateEvent}">
+BEGIN:VCALENDAR
+PRODID:-//GourmetPortal//NONSGML rr//DE
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+DTSTART;TZID=GMT:<apex:outputText value="{!SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(TEXT(Event.StartDateTime),':',''),'-',''),' ','T')}"/>
+DTEND;TZID=GMT:<apex:outputText value="{!SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(TEXT(Event.EndDateTime),':',''),'-',''),' ','T')}"/>
+DTSTAMP;TZID=GMT:<apex:outputText value="{!SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(TEXT(NOW()),':',''),'-',''),' ','T')}"/>
+
+UID:<apex:outputText value="{!Event.id}"/>
+CREATED;TZID=GMT:<apex:outputText value="{!SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(TEXT(NOW()),':',''),'-',''),' ','T')}"/>
+DESCRIPTION:Event Topics : <apex:outputText value="{!SUBSTITUTE(Event.Event_Topic__c,';',',')}" /> Event Description : <apex:outputText value="{!Event.Description}" escape="false"/>
+LAST-MODIFIED;TZID=GMT:<apex:outputText value="{!SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(TEXT(NOW()),':',''),'-',''),' ','T')}"/>
+LOCATION:<apex:outputText value="{!Event.Location}"/>
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:<apex:outputText value="{!Event.Subject}"/>
+TRANSP:OPAQUE
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:This is an event reminder
+TRIGGER:-P0DT0H30M0S
+END:VALARM
+END:VEVENT
+END:VCALENDAR
+</apex:page>

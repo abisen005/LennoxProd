@@ -1,0 +1,29 @@
+<apex:component controller="findWarranty" access="global">
+  <apex:attribute type="String" name="cId" assignTo="{!caseId}" description="Value to pass into the controller"/>
+<apex:dataTable value="{!Warranty}" var="cx" cellPadding="15" border="5" align="center">
+     
+
+        <apex:column >
+            <apex:facet name="header">Model Number</apex:facet>
+              <apex:outPutText value="{!cx.Model_Description__c}"/>
+        </apex:column>
+        
+                <apex:column >
+            <apex:facet name="header">Serial Number</apex:facet>
+              <apex:outPutText value="{!cx.Serial_Number__c}"/>
+        </apex:column>
+        
+                      
+                <apex:column >
+            <apex:facet name="header">Failed Part Serial #</apex:facet>
+           
+             <apex:outputtext value="{!cx.Open_Space__c}"/>
+        </apex:column>
+ 
+                 <apex:column >
+            <apex:facet name="header">Warranty Claim #</apex:facet>
+           
+             <apex:outputtext value="{!cx.Warranty_Claim__c}"/>
+        </apex:column>
+    </apex:dataTable>
+</apex:component>

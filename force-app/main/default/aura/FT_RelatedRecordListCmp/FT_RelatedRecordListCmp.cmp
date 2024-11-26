@@ -1,0 +1,89 @@
+<aura:component controller="FT_SObjectRelatedListController">
+    <aura:attribute name="parentId" type="String"/>
+    <aura:attribute name="objectApiName" type="String"/>
+    <aura:attribute name="objectName" type="String"/>
+    <aura:attribute name="recordList" type="Object"/>
+    <aura:attribute name="recordListLength" type="String" default="0"/>
+    <aura:attribute name="headers" type="Object"/>
+    <aura:attribute name="columns" type="Object"/>
+    <aura:attribute name="data" type="Object" />
+    <aura:attribute name="isSpinner" type="boolean" default="false" />
+    <aura:attribute name="sortBy" type="String" />
+    <aura:attribute name="sortDirection" type="String"  default="asc"/>
+    <aura:attribute name="previewFileId" type="String"/>
+    <aura:attribute name="previewFileDescription" type="String" />
+    <aura:attribute name="showPreview" type="Boolean" default="false"/>
+    <aura:attribute name='isCreatable' type="boolean" default="true"/>
+    <aura:attribute name='isUpdatable' type="boolean" default="true" /> 
+    <aura:attribute name="recordTypes" type="List" />
+    <aura:attribute name="selectedRecordTypeId" type="String"/>
+    <aura:attribute name="showRecordTypes" type="Boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="slds-card" style="border: 1px solid #dddbda; padding: 10px;">
+        <aura:if isTrue="{!v.isSpinner}">
+            <lightning:spinner alternativeText="Loading" size="small" variant="brand" />
+        </aura:if> 
+        
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media--center slds-has-flexi-truncate">
+                <div class="slds-media__figure slds-hide">
+                    <div class="extraSmall forceEntityIcon" style="background-color: #e25c80" data-aura-class="forceEntityIcon">
+                        <span  class="uiImage" data-aura-class="uiImage">
+                            <img src="https://lennox--VentasSB.cs62.my.salesforce.com/img/icon/t4v35/custom/custom49_120.png" class="icon " alt="" title="Equipment"/>
+                        </span>
+                    </div>
+                </div>
+                <div class="slds-media__body" >
+                    <h2 id="header_5" >
+                        <div class="slds-card__header-link baseCard__header-title-container">
+                            <span class="slds-card__header-title slds-truncate slds-m-right--xx-small" title="{!v.objectName}" >{!v.objectName}</span>
+                            <span class="slds-hide slds-card__header-title slds-shrink-none slds-m-right--xx-small" title="{! v.recordListLength }" > ({! v.recordListLength })</span>
+                        </div>
+                        
+                    </h2>
+                </div>
+                <aura:if isTrue="{!not(empty(v.data))}">
+                    <aura:if isTrue="{! v.isCreatable }">
+                        <aura:if isTrue="{!v.objectApiName == 'ContentDocumentLink'}">
+                            <lightning:fileUpload label="" name="fileUploader" recordId="{!v.parentId}"
+                                                  onuploadfinished="{!c.handleUploadFinished}" />
+                            <aura:set attribute="else">
+                                <lightning:button label="New" class="{!v.objectApiName}" onclick="{!c.createRecord}" />
+                            </aura:set>
+                        </aura:if>
+                    </aura:if>
+                </aura:if>
+            </header>
+        </div>
+        <div style="height: 200px">
+            <lightning:datatable data="{! v.data }" columns="{! v.columns }" keyField="id" hideCheckboxColumn="true"
+                                 onrowaction="{! c.handleRowAction }" sortedBy="{!v.sortBy}" sortedDirection="{!v.sortDirection}"
+                                 defaultSortDirection="asc" onsort="{!c.updateColumnSorting}" />
+        </div>        
+    </div>
+    
+    <aura:if isTrue="{!v.showRecordTypes}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate slds-text-heading_medium">New Field Trial Forms</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    
+                    <lightning:radioGroup name="radioGroup" 
+                                          options="{!v.recordTypes}"
+                                          value="{!v.selectedRecordTypeId}"
+                                          type="radio"/>
+                    
+                </div>
+                <footer class="slds-modal__footer" style="text-align: center;">
+                    <button class="slds-button slds-button_neutral" onclick="{!c.hideRecordTypeSelection}">Cancel</button>
+                    <button class="slds-button slds-button_brand" onclick="{!c.createRecord}">Next</button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>  
+</aura:component>

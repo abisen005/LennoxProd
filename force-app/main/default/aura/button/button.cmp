@@ -1,0 +1,10 @@
+<aura:component extends="ui:button">
+    
+    <aura:attribute name="param" 
+                    type="String" 
+                    required="true"
+                    description="Generic value that can be passed in and accessed from the press event's handler function." />
+    
+    {!v.body}
+	
+</aura:component>

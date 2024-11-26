@@ -1,0 +1,42 @@
+.THIS {
+}
+.THIS table {
+    width: 96%;
+    margin: 0 2%;
+}
+.THIS th,
+.THIS tr,
+.THIS td {
+    text-align: center;
+}
+.THIS td,
+.THIS th {
+    border: 1px solid #ddd;
+    padding: 5px;
+}
+.THIS th.blank {
+    background-color: #eee;
+    border: 0;
+}
+
+.THIS .modal-table td,
+.THIS .modal-table th {
+    border: 0;
+    padding: 5px 10px;
+    vertical-align: top;
+}
+.THIS .slds-button.tmdm-button {
+    line-height: 1;
+    width: auto;
+    height: auto;
+    border: none;
+}
+.THIS .slds-button.tmdm-button .slds-icon {
+	margin: .75rem;   
+}
+.THIS .slds-button.tmdm-button .icon-territory-roll-up {
+    background-color: #4ec4fa;
+}
+
+.THIS .slds-wrap{justify-content: center !important;}
+.THIS .hideDv{display:none;}

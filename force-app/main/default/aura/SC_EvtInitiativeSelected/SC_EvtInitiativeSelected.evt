@@ -1,0 +1,7 @@
+<aura:event type="COMPONENT" description="Fired when an initiative is selected from SC_SelectInitiatives">
+
+    <aura:attribute name="initiativeId" type="String" description="Id of the selected Initiative" />
+
+    <aura:attribute name="initiativeName" type="String" description="Name of the selected Initiative" />
+
+</aura:event>

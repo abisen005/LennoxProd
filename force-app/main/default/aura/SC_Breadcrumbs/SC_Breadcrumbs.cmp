@@ -1,0 +1,24 @@
+<aura:component >
+
+
+
+    <aura:attribute name="breadcrumbs" type="Object[]" />
+    <aura:attribute name="routerName" type="String" default="" />
+    <aura:attribute name="class" type="String" default="CSS class name to be applied to outermost element." />
+
+    <aura:handler event="c:routeHistoryChangeSuccess" action="{!c.routeHistoryChangeSuccess}" />
+
+    <nav role="navigation" aria-label="Breadcrumbs" class="{!v.class + (empty(v.breadcrumbs) ? ' slds-hide' : '')}">
+        <ol class="slds-breadcrumb slds-list--horizontal">
+            <aura:iteration items="{!v.breadcrumbs}" var="b" indexVar="i">
+                <c:SC_BreadcrumbItem label="{!b.label}"
+                                     name="{!b.name}"
+                                     routerName="{!v.routerName}"
+                                     routePath="{!b.path}"
+                                     historyIndex="{!i}"
+                                     isLast="{!v.breadcrumbs.length == i + 1}" />
+            </aura:iteration>
+        </ol>
+    </nav>
+
+</aura:component>

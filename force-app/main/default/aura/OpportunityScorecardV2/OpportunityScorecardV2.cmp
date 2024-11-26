@@ -1,0 +1,112 @@
+<aura:component controller="TMDMConsoleControllerV2" extends="c:ConsoleComponentV2">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:handler name="change" value="{!v.account}" action="{!c.handleAccountChange}"/>
+    
+    <aura:set attribute="accessLevel" value="1" />
+    
+    <aura:attribute name="scorecard" type="Scorecard__c" />
+    <aura:attribute name="newScorecardLink" type="String" />
+    <aura:attribute name="secondaryStatus" type="String" description="error, warning or success" />
+    <aura:attribute name="daysSinceUpdate" type="Integer" default="0" />
+    <aura:attribute name="isSf1" type="Boolean" />
+    <aura:attribute name="isModalOpen" type="Boolean" />
+    
+    <c:Card title="Opportunity Scorecard">
+        <div class="slds-text-heading--large">
+        	<aura:if isTrue="{!v.scorecard}">
+                    <span class="{!v.status}">
+                    {!v.scorecard.Scorecard_Grade__c == 'No Grade - Incomplete' ? 'No Grade' : v.scorecard.Scorecard_Grade__c}
+                    </span>
+            	<aura:set attribute="else">
+                	<span class="{!v.status}">
+                    No Scorecard
+                    </span>
+                </aura:set>
+            </aura:if>
+
+            <aura:if isTrue="{!v.scorecard.Adjusted_LNX_prods_purch_growth_opportun__c >= 1000}">
+                <span class="slds-m-left--small slds-badge">
+                    <ui:outputCurrency value="{!v.scorecard.Adjusted_LNX_prods_purch_growth_opportun__c / 1000}" format="$." />K
+                </span>
+
+                <aura:set attribute="else">
+                    <span class="slds-m-left--small slds-badge">
+                        <ui:outputCurrency value="{!v.scorecard.Adjusted_LNX_prods_purch_growth_opportun__c}" />
+                    </span>
+                </aura:set>
+            </aura:if>
+        </div>
+
+        <aura:set attribute="footer">
+            
+            <!-- HAS SCORECARD -->
+        	<aura:if isTrue="{!v.scorecard}">
+                
+                <!-- SCORECARD NOT UPDATED IN LAST 90 DAYS -->
+                <!--<aura:if isTrue="{!v.daysSinceUpdate > 90}">-->
+                    
+                    <aura:if isTrue="{!v.isSf1}">
+                        
+                        <ui:button class="slds-button slds-text-align--left slds-truncate" 
+                                   press="{!c.handleUpdateScorecard}">
+                            <i class="{!'slds-button__icon--left fa fa-' + (v.secondaryStatus == 'error' ? 'exclamation-circle ' : v.secondaryStus == 'warning' ? 'exclamation-circle ' : 'check-circle ') + v.secondaryStatus}"></i> 
+                            <c:DaysBetweenDates aura:id="daysSinceUpdate" firstDate="{!v.scorecard.Last_Changed_Date__c}" /> 
+                            Days Since Last Update
+                        </ui:button>
+                        
+                        
+                        <aura:set attribute="else">
+                            
+                            <a href="{!'/' + v.scorecard.Id}" 
+                               target="_parent"
+                               class="slds-button slds-text-align--left slds-truncate">
+                                <i class="{!'slds-button__icon--left fa fa-' + (v.secondaryStatus == 'error' ? 'exclamation-circle ' : v.secondaryStus == 'warning' ? 'exclamation-circle ' : 'check-circle ') + v.secondaryStatus}"></i> 
+                                <c:DaysBetweenDates aura:id="daysSinceUpdate" firstDate="{!v.scorecard.Last_Changed_Date__c}" /> Days Since Last Update
+                            </a>
+                            
+                        </aura:set>
+                        
+                    </aura:if>
+                    
+                    <!-- SCORECARD UPDATED IN LAST 90 DAYS -->
+                    <!--<aura:set attribute="else">
+                    
+                        <ui:button class="slds-button slds-text-align- -left slds-truncate" 
+                                   press="{!c.handleOpenModal}">
+                            <i class="{!'slds-button__icon- -left fa fa-' + (v.secondaryStatus == 'error' ? 'exclamation-circle ' : v.secondaryStus == 'warning' ? 'exclamation-circle ' : 'check-circle ') + v.secondaryStatus}"></i> 
+                            <c:DaysBetweenDates aura:id="daysSinceUpdate" firstDate="{!v.scorecard.Last_Changed_Date__c}" /> 
+                            Days Since Last Update
+                        </ui:button>
+                        
+                    </aura:set>-->
+                    
+                <!--</aura:if>-->
+                
+                <!-- NO SCORECARD -->
+                <aura:set attribute="else">
+                    
+                    <aura:if isTrue="{!v.isSf1}">
+                                            
+                        <ui:button class="slds-button" label="" press="{!c.handlecreateScorecardPress}">
+                            Create Scorecard
+                        </ui:button>
+                        
+                        <aura:set attribute="else">
+                            
+                            <a class="slds-button" target="_parent" href="{!v.createScorecardLink}">
+                                Create Scorecard
+                            </a>
+                            
+                        </aura:set>
+                        
+                    </aura:if>
+                </aura:set>
+            </aura:if>
+        </aura:set>
+    </c:Card>
+    
+    <c:ModalV2 isOpen="{!v.isModalOpen}" header="Update Account Opps &amp; Actions Plans">
+        <c:UpdateAccountOppsAndActionPlansV2 account="{!v.account}" isRendered="{!v.isModalOpen}" />                        
+    </c:ModalV2>
+</aura:component>

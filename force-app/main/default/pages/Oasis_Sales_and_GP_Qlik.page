@@ -1,0 +1,23 @@
+<apex:page showHeader="false"
+           standardStylesheets="false"
+           sidebar="false"
+           docType="html-5.0"
+           applyBodyTag="False"
+           applyHtmlTag="False">
+ 
+ <apex:slds />
+<body class="slds-scope">   
+<style type="text/css">
+.slds-tabs--scoped__content {
+    display: none;
+}
+    .slds-scope .slds-tabs--scoped__content {
+        padding: 0;
+    }
+</style>
+    
+<!-- uncomment this after 2024 <apex:iframe src="https://qlik.lennoxintl.com/aad/single/?appid=11af9d54-f8ae-4a29-9a34-fe717e74cc8e&sheet=76897031-789d-4c66-b748-492376fa93eb&opt=ctxmenu" /> -->
+<apex:iframe src="https://qlik.lennoxintl.com/aad/single/?appid=11af9d54-f8ae-4a29-9a34-fe717e74cc8e&sheet=f39810b7-4f6b-4c8c-a1e1-79675918a405&opt=ctxmenu" /> 
+
+</body>
+</apex:page>

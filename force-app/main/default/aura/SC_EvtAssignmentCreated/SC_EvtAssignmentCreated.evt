@@ -1,0 +1,1 @@
+<aura:event type="COMPONENT" description="Fired when a new assignment was successfully created from the SC_NewAssignment component." />

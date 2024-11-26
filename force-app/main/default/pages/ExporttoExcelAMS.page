@@ -1,0 +1,6 @@
+<apex:page standardController="Vendor_Direct__c" recordSetVar="projects"
+extensions="E2Ex.ExcelController" readOnly="true" language="{!deflocale}"
+contentType="application/vnd.ms-excel#{!etefileName}.xls" >
+<E2Ex:ExportToExcel ObjCode="{!keyCode}" ViewId="{!listid}"
+StdCtr="{!setCon}"></E2Ex:ExportToExcel>
+</apex:page>

@@ -1,0 +1,385 @@
+<apex:component layout="none" controller="MapToolController" >
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width" />
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+        <link href="https://api.tiles.mapbox.com/mapbox.js/v3.1.1/mapbox.css" rel="stylesheet" />
+        <link href="{!URLFOR($Resource.MapToolStyle)}" rel="stylesheet" />
+        <script>
+            var iconUrls = {
+                pd: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-premier-dlr-2x.png")}',
+                sd: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-strategic-dlr-2x.png")}',
+                aod: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-other-dlr-2x.png")}',
+                sp: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-strategic-prspct-2x.png")}',
+                aop: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-other-prspct-2x.png")}',
+                ha: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-house-account-2x.png")}',
+                ca: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-cash-account-2x.png")}',
+                cma: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-commercial-account.png")}', // commericial accounts
+                lpp: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-lpp-account.png")}',
+                lws: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-lowes.png")}',
+                hd: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-home-depot.png")}',
+                cc: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-costco.png")}',
+                lwsLegend: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-lowes-legend.png")}',
+                hdLegend: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-home-depot-legend.png")}',
+                ccLegend: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-costco-legend.png")}',
+                lppLegend: '{!URLFOR($Resource.ProspectToolAssets, "js/images/ico-lpp-account-legend.png")}'
+            }
+            var currentUser = {
+                id: '{!$User.Id}',
+                profile: '{!$Profile.Name}',
+                role: '{!$UserRole.Name}',
+                lat: {!IF(LEN($User.Latitude__c) = 0, 'undefined', $User.Latitude__c)},
+                lon: {!IF(LEN($User.Longitude__c) = 0, 'undefined', $User.Longitude__c)},
+                zoom: {!$User.Zoom__c},
+                postalCode: '{!$User.PostalCode}',
+                region: '{!$User.SAP_Sales_District__c}',
+                district: '{!$User.SAP_Sales_Office__c}'
+            }
+        </script>
+        <c:TrackPageView lenPageName="MAP Tool" />
+    </head>
+    <body ng-app="map" ng-controller="mapCtrl" >
+        <div class="map-tool" ng-style="mapStyle">
+            <div class="map-loader text-center" ng-if="mapLoading">
+                <div class="map-loader__body">
+                    <i class="fa fa-spinner fa-pulse"></i>
+                    <h1 ng-bind="mapLoadingContent"></h1>
+                </div>
+            </div>
+
+            <button class="map-set-location" ng-click="saveDefaultLocation()" tooltip-placement="right" tooltip="Save Default Location">
+                <img src="{!URLFOR($Resource.ProspectToolAssets, '/icons/icon-compass-24.png')}" />
+            </button>
+
+            <div class="map-redo-search fade-in-show-hide" ng-class="{'is-sidebar-open' : isSidebarOpen}" ng-show="showRedoSearchOnMapChange" ng-controller="redoSearchCtrl" >
+                <!-- hidden class added for now until feature becomes enabled later -->
+                <div class="map-count hidden">Showing {{resultCount | number}} Results</div>
+                <button class="btn" ng-click="showRedoSearch && !autoSearch ? redoSearch() : toggleAutoSearch()" ng-class="{'btn-success pulsate' : showRedoSearch && !autoSearch, 'btn-default' : !showRedoSearch || autoSearch}">
+                    <span ng-if="showRedoSearch && !autoSearch">Refresh Map</span><span ng-if="!showRedoSearch || autoSearch"><i class="fa" ng-class="{'fa-check-square-o' : autoSearch == true, 'fa-square-o' : autoSearch == false}"></i> Refresh When Map Moves</span>
+                </button>
+            </div>
+
+            <button ng-click="toggleSidebar()" class="open-sidebar btn btn-default">
+                <i class="fa fa-caret-left"></i> <span class="open-menu__label">Filter</span>
+            </button>
+
+            <div id="map" ng-class="{'sidebar-open' : isSidebarOpen, 'account-open' : isAccountOpen}"></div>
+
+            <div class="container-fluid" ng-controller="accountDetailCtrl">
+                <div class="map-account-detail" toggle-slide-right="isAccountOpen">
+                    <div class="map-account-detail__close">
+                        <button type="button" class="pull-right btn btn-unstyled" ng-click="closeAccountDetail()"><i class="fa fa-times text-danger"></i></button>
+                    </div>
+
+                    <div class="loader" ng-if="loading">
+                        <i class="fa fa-spinner fa-pulse"></i>
+                    </div>
+
+                    <div class="map-account-detail__body fade-in-if" ng-if="!loading">
+                        <h3><a ng-href="/{{account.accId}}" >{{account.name}}</a></h3>
+
+                        <address>
+                            {{account.shippingStreet}}<span ng-if="account.shippingStreet"><br /></span>
+                            {{account.shippingCity}}<span ng-if="account.shippingCity">,</span> {{account.shippingState}} {{account.shippingZip}}<span ng-if="account.phone"><br /></span>
+                            {{account.phone}}
+                        </address>
+                        <table class="table table-striped" ng-if="account.accountType !== 'lws' && account.accountType !== 'hd' && account.accountType !== 'cc' && account.accountType !== 'lpp'">
+                            <tr>
+                                <th>Salesforce<br />Owner</th>
+                                <td>{{account.owner}}</td>
+                            </tr>
+                            <tr ng-if="account.customerNumber">
+                                <th>Dealer #</th>
+                                <td>{{account.customerNumber}}</td>
+                            </tr>
+                            <tr>
+                                <th>Email</th>
+                                <td><a ng-if="account.email" href="mailto:{{account.email}}">{{account.email}}</a><span ng-if="!account.email">-</span></td>
+                            </tr>
+                            <tr ng-if="account.website">
+                                <th>Website</th>
+                                <td><a ng-if="account.website !== '-'" target="_blank" href="http://{{account.website}}">{{account.website}}</a></td>
+                            </tr>
+                        </table>
+                        <table class="table table-striped" ng-if="account.accountType !== 'lws' && account.accountType !== 'hd' && account.accountType !== 'cc' && account.accountType !== 'lpp'">
+
+                            <tr>
+                                <th>YTD Sales</th>
+                                <td>{{account.YTDSales | currency : '$' : 0 || 0}}</td>
+                            </tr>
+                            <tr>
+                                <th>Prior Year YTD Sales</th>
+                                <td>{{account.priorYTDSales | currency : '$' : 0 || 0}}</td>
+                            </tr>
+                            <tr>
+                                <th>Sales Delta YOY</th>
+                                <td>{{account.salesDeltaYOY | currency : '$' : 0 || 0}}</td>
+                            </tr>
+                            <tr>
+                                <th>New Cust Program</th>
+                                <td>{{account.newCustomerProgram || '-'}}</td>
+                            </tr>
+                            <tr>
+                                <th>Credit Limit</th>
+                                <td>{{account.creditLimit | currency : '$' : 0 || 0}}</td>
+                            </tr>
+                            <tr>
+                                <th>Est Annual HVAC<br />Purchases</th>
+                                <td>{{account.annualHVACPurchases | currency : '$' : 0 || 0}}</td>
+                            </tr>
+                            <tr>
+                                <th>Total # of<br />Employees</th>
+                                <td>{{account.employees | number : 0 || 0}}</td>
+                            </tr>
+                        </table>
+                        <div class="map-account-detail__body__btns">
+
+                            <div ng-if="account.accountType == 'lpp'">
+                                <a class="list-group-item list-group-item__header" ng-click="handleToggleFilterClick()">
+                                    <i class="fa list-group-item__icon" ng-class="{'fa-check-square': salesFilters.useSalesFilter == true, 'fa-square': salesFilters.useSalesFilter == false}"></i>
+                                    <span class="list-group-item__label"> Filter by Sales</span>
+                                </a>
+                                <div ng-show="salesFilters.useSalesFilter" class="list-group-item list-group-item__child" style="padding-left: 15px;">
+                                    <select class="form-control" ng-model="salesFilters.selectedFieldFilter" ng-options="filter.label for filter in fieldFilters">
+                                    </select>
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <label for="from" style="display: block">From</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input class="form-control" name="from" id="from" type="number" ng-model="salesFilters.minValue" placeholder="From" />
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <label for="to" style="display: block">To</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input class="form-control" name="to" id="to" type="number" ng-model="salesFilters.maxValue" placeholder="To" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <button class="btn btn-success" ng-click="handleShowStoreSMADealersClick(account.accId)">Show Store SMA Dealers</button>
+                            </div>
+
+                            <button class="btn btn-success" ng-if="account.hasScorecard && (account.accountType !== 'lws' && account.accountType !== 'hd' && account.accountType !== 'cc' && account.accountType !== 'lpp')" ng-click="viewRecord(account.scorecardId)">Update Scorecard</button>
+                            <button class="btn btn-success" ng-if="!account.hasScorecard && !sforceone && (account.accountType !== 'lws' && account.accountType !== 'hd' && account.accountType !== 'cc' && account.accountType !== 'lpp')" ng-click="createScorecard(account.name, account.accId)">Create Scorecard</button>
+                            <button class="btn btn-info" ng-if="!sforceone && account.accountType !== 'lpp'" ng-click="viewContacts(account.accId)">View Contacts</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container-fluid" >
+
+                <div class="map-sidebar" toggle-slide-right="isSidebarOpen">
+
+                    <div class="map-sidebar__close" >
+                        <button type="button" class="pull-right btn btn-unstyled" ng-click="toggleSidebar()" toggle-slide-right=""><i class="fa fa-times text-danger"></i></button>
+                    </div>
+
+                    <div class="map-sidebar__search" ng-controller="searchCtrl">
+                        <form class="input-group" name="searchForm" id="searchForm" ng-submit="changeLocation(searchVal)">
+                            <input type="text" name="zipcode" id="zipcode" class="form-control"  defaultvalue="75080"  ng-model="searchVal" />
+                            <span class="input-group-btn">
+                                <button type="submit" id="searchButton" class="btn btn-primary">Go</button>
+                            </span>
+                        </form>
+                    </div>
+
+                    <div class="map-sidebar__filters" ng-controller="filtersCtrl" >
+
+                        <div class="col-xs-12">
+
+                            <h1>
+                                <span ng-if="selection == 'Districts'">Select a District</span>
+                                <span ng-if="selection !== 'Districts'">Filter by <span ng-bind="selection"></span></span>
+                            </h1>
+
+                            <!-- loader -->
+                            <div class="loader" ng-if="loading">
+                                <i class="fa fa-spinner fa-pulse"></i>
+                            </div>
+
+                            <!-- filter by districts -->
+                            <div class="map-sidebar__filters__district fade-in-if" ng-if="selection == 'Districts' && mode == 'Global' && !loading">
+
+                                <div class="list-group">
+                                    <a class="list-group-item" ng-repeat="district in districts" ng-click="selectDistrict(district.dNumber, district.location)">
+                                        {{district.dNumber}} - {{district.location}}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- filter by territories-->
+                            <div class="map-sidebar__filters_territories fade-in-if" ng-if="selection == 'Territories' && (mode == 'Global' || mode == 'DM') && !loading">
+                                <div class="list-group">
+                                    <a ng-click="toggleCheckAllTerritories()" class="list-group-item list-group-item__header">
+                                        <i class="fa list-group-item__icon" ng-class="{'fa-check-square': territoriesCheckAll == false, 'fa-square': territoriesCheckAll == true}"></i>
+                                       <span class="list-group-item__label">All Territories</span>
+                                    </a>
+                                    <a class="list-group-item list-group-item__child" ng-repeat="territory in territories" ng-click="selectTerritory(territory)">
+                                         <i class="fa list-group-item__icon" ng-class="{'fa-check' : territory.selected, 'fa-square-o' : !territory.selected}"></i>
+                                         <span class="list-group-item__label">{{territory.territoryNumber}} - {{territory.userName}}</span>
+                                    </a>
+                                    <a class="list-group-item list-group-item__child" ng-click="uncheckAllTerritories()" ng-if="currentUser.role.indexOf('Res LPP SM') !== -1">
+                                         <i class="fa list-group-item__icon" ng-class="{'fa-circle' : (territories | filter:selected == true).length == territories.length, 'fa-circle-o' : (territories | filter:selected == true).length < territories.length}"></i>
+                                         <span class="list-group-item__label">None</span>
+                                    </a>
+                                </div>
+                                <div class="map-sidebar__filters__btns">
+                                    <button class="btn btn-info pull-left" ng-if="mode == 'Global'" ng-click="changeSelection('Districts')"><i class="fa fa-arrow-left"></i> Back</button>
+                                    <button class="btn btn-info pull-right" ng-click="changeSelection('Dealers')">Next <i class="fa fa-arrow-right"></i></button>
+                                </div>
+                            </div>
+
+                             <!-- filter by account dealer-->
+                            <div class="map-sidebar__filters__dealers fade-in-if" ng-if="selection == 'Dealers' && (mode == 'Global' || mode == 'DM' || mode == 'TM') && !loading">
+
+                                <a class="list-group-item list-group-item__header" ng-click="handleToggleFilterClick()">
+                                    <i class="fa list-group-item__icon" ng-class="{'fa-check-square': salesFilters.useSalesFilter == true, 'fa-square': salesFilters.useSalesFilter == false}"></i>
+                                    <span class="list-group-item__label"> Filter by Sales</span>
+                                </a>
+                                <div ng-show="salesFilters.useSalesFilter" class="list-group-item list-group-item__child" style="padding-left: 15px;">
+                                    <select class="form-control" ng-model="salesFilters.selectedFieldFilter" ng-options="filter.label for filter in fieldFilters">
+                                    </select>
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <label for="from" style="display: block">From</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input class="form-control" name="from" id="from" type="number" ng-model="salesFilters.minValue" placeholder="From" />
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <label for="to" style="display: block">To</label>
+                                            <div class="input-group">
+                                                <span class="input-group-addon">$</span>
+                                                <input class="form-control" name="to" id="to" type="number" ng-model="salesFilters.maxValue" placeholder="To" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-xs-12">
+                                            <button class="btn btn-success pull-right" ng-click="getAccounts()">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+
+                                <ul class="nav nav-tabs nav-justified">
+                                    <li ng-class="{'active' : dealerSelection == 'type'}" ><a ng-click="changeDealerSelection('type')">Type</a></li>
+                                    <li ng-class="{'active' : dealerSelection == 'attribute'}" ><a ng-click="changeDealerSelection('attribute')">Attribute</a></li>
+                                </ul>
+                                <div class="map-sidebar__filters__dealers__type fade-in-show-hide" ng-show="dealerSelection == 'type'">
+                                    <div class="list-group">
+                                        <a class="list-group-item list-group-item__header" ng-click="toggleCheckAll(filters.dealers)">
+                                            <span class="map-sidebar__filters__toggle-checked">
+                                               <i class="fa list-group-item__icon" ng-class="{'fa-check-square': filters.dealers.checkAll == false, 'fa-square': filters.dealers.checkAll == true}"></i>
+                                               <span class="list-group-item__label"> TM Owned Dealers</span>
+                                            </span>
+                                            <button class="map-sidebar__filters__toggle-collapse btn btn-unstyled pull-right" ng-click="toggleVisibility(filters.dealers, $event)">
+                                                <i class="fa" ng-class="{'fa-plus' : filters.dealers.optionsVisible == false, 'fa-minus' : filters.dealers.optionsVisible == true}"></i>
+                                            </button>
+                                        </a>
+                                        <a ng-repeat="item in filters.dealers.options" ng-click="selectCheckbox(item)" ng-hide="!filters.dealers.optionsVisible" ng-class="{'checkbox-inactive' : item.active == false}" class="list-group-item list-group-item__child">
+                                            <i class="fa list-group-item__icon" ng-class="{'fa-check' : item.active, 'fa-square-o' : !item.active}"></i>
+                                           <span class="list-group-item__label"> {{item.name}}</span>
+                                           <div class="pull-right list-group-item__legend-container"><img width="21" height="20" ng-src="{{item.icon}}" /></div>
+                                        </a>
+                                        <a class="list-group-item list-group-item__header" ng-click="toggleCheckAll(filters.prospects)">
+                                            <span class="map-sidebar__filters__toggle-checked">
+                                                <i class="fa list-group-item__icon" ng-class="{'fa-check-square': filters.prospects.checkAll == false, 'fa-square': filters.prospects.checkAll == true}"></i>
+                                                <span class="list-group-item__label">TM Owned Prospects</span>
+                                            </span>
+                                            <button class="map-sidebar__filters__toggle-collapse btn btn-unstyled pull-right" ng-click="toggleVisibility(filters.prospects, $event)">
+                                                <i class="fa" ng-class="{'fa-plus' : filters.prospects.optionsVisible == false, 'fa-minus' : filters.prospects.optionsVisible == true}"></i>
+                                            </button>
+                                        </a>
+                                        <a ng-repeat="item in filters.prospects.options" ng-click="selectCheckbox(item)" ng-hide="!filters.prospects.optionsVisible"  ng-class="{'checkbox-inactive' : item.active == false}" class="list-group-item list-group-item__child">
+                                            <i class="fa list-group-item__icon" ng-class="{'fa-check' : item.active, 'fa-square-o' : !item.active}"></i>
+                                            <span class="list-group-item__label">{{item.name}}</span>
+                                            <div class="pull-right list-group-item__legend-container"><img width="21" height="20" ng-src="{{item.icon}}" /></div>
+                                        </a>
+
+                                        <a class="list-group-item list-group-item__header" ng-click="toggleCheckAll(filters.otherAccounts)">
+                                            <span class="map-sidebar__filters__toggle-checked">
+                                                <i class="fa list-group-item__icon" ng-class="{'fa-check-square': filters.otherAccounts.checkAll == false, 'fa-square': filters.otherAccounts.checkAll == true}"></i>
+                                               <span class="list-group-item__label">Other Accounts</span>
+                                            </span>
+                                            <button class="map-sidebar__filters__toggle-collapse pull-right btn btn-unstyled" ng-click="toggleVisibility(filters.otherAccounts, $event)">
+                                                <i class="fa" ng-class="{'fa-plus' : filters.otherAccounts.optionsVisible == false, 'fa-minus' : filters.otherAccounts.optionsVisible == true}"></i>
+                                            </button>
+                                        </a>
+                                        <a ng-repeat="item in filters.otherAccounts.options" ng-click="selectCheckbox(item)" ng-hide="!filters.otherAccounts.optionsVisible" ng-class="{'checkbox-inactive' : item.active == false}" class="list-group-item list-group-item__child">
+                                            <i class="fa list-group-item__icon" ng-class="{'fa-check' : item.active, 'fa-square-o' : !item.active}"></i>
+                                            <span class="list-group-item__label">{{item.name}}</span>
+                                            <div class="pull-right list-group-item__legend-container"><img width="21" height="20" ng-src="{{item.icon}}" ng-class="{'ico-reposition' : item.id== 'lpp'}" /></div>
+                                        </a>
+                                        <a class="list-group-item list-group-item__header" ng-click="toggleCheckAll(filters.retailAccounts)">
+                                            <span class="map-sidebar__filters__toggle-checked">
+                                                <i class="fa list-group-item__icon" ng-class="{'fa-check-square': filters.retailAccounts.checkAll == false, 'fa-square': filters.retailAccounts.checkAll == true}"></i>
+                                               <span class="list-group-item__label">Retail Stores</span>
+                                            </span>
+                                            <button class="map-sidebar__filters__toggle-collapse pull-right btn btn-unstyled" ng-click="toggleVisibility(filters.retailAccounts, $event)">
+                                                <i class="fa" ng-class="{'fa-plus' : filters.retailAccounts.optionsVisible == false, 'fa-minus' : filters.retailAccounts.optionsVisible == true}"></i>
+                                            </button>
+                                        </a>
+                                        <a ng-repeat="item in filters.retailAccounts.options" ng-click="selectCheckbox(item)" ng-hide="!filters.retailAccounts.optionsVisible" ng-class="{'checkbox-inactive' : item.active == false}" class="list-group-item list-group-item__child">
+                                            <i class="fa list-group-item__icon" ng-class="{'fa-check' : item.active, 'fa-square-o' : !item.active}"></i>
+                                            <span class="list-group-item__label">{{item.name}}</span>
+                                            <div class="pull-right list-group-item__legend-container"><img ng-src="{{item.icon}}" ng-class="{'ico-reposition' : item.id == 'lpp' || item.id == 'hd'}" class="ico-reposition-retail" /></div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="map-sidebar__filters__dealers__attribute fade-in-show-hide" ng-show="dealerSelection == 'attribute'">
+                                    <div class="list-group">
+                                        <a ng-repeat="attribute in attributeFilters" ng-click="selectRadio(attribute, attributeFilters)"  class="list-group-item">
+                                            <i class="fa list-group-item__icon" ng-class="{'fa-circle' : attribute.active, 'fa-circle-o' : !attribute.active}"></i>
+                                            <span class="list-group-item__label">{{attribute.label}}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="map-sidebar__filters__btns">
+                                    <button class="btn btn-info pull-left" ng-if="mode !== 'TM'" ng-click="changeSelection('Territories')"><i class="fa fa-arrow-left"></i> Back</button>
+                                    <button class="btn btn-success pull-right" ng-click="getAccounts()">Submit</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.2/velocity.min.js"></script>
+        <script src="https://api.tiles.mapbox.com/mapbox.js/v3.1.1/mapbox.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-animate.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.6/angular-touch.min.js"></script>
+        <script src="{!URLFOR($Resource.uiBootstrapTooltip)}"></script>
+        <script src="{!URLFOR($Resource.lennoxMapApp2)}"></script>
+        <script> 
+            window.onload=function()       
+            {    
+                console.log("##### function init");
+                //if(currentUser.postalCode){
+                //    const el = document.querySelector("#zipcode");
+                //    angular.element(el).val(currentUser.postalCode).trigger('input');
+                //} else {
+                //    const el = document.querySelector("#zipcode");
+                //    angular.element(el).val("").trigger('input');                        
+                //} 
+                const el = document.querySelector("#zipcode");
+                angular.element(el).val("").trigger('input');               
+                document.getElementById("searchButton").click();
+            };
+        </script>        
+    </body>
+</html>
+</apex:component>

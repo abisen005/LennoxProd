@@ -1,0 +1,74 @@
+.THIS .ss-body {
+    background-color: rgba(0,0,0,.45);
+    background-attachment: scroll;
+    background-image: url(/resource/signatureSalesBackground);
+    background-position: center center;
+    background-repeat: none;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+.THIS .ss-nav {
+
+}
+.THIS .ss-nav ul {
+   height: 96.5vh;
+}
+.THIS .ss-nav li button {
+    background: white;
+    background: rgba(255, 255, 255, .8);
+    color: #000000;
+    font: 100%/1 "Salesforce Sans",Arial,sans-serif;
+    width: 100%;
+}
+.THIS .ss-nav li button:focus,
+.THIS .ss-nav li button:active {
+    background: rgba(255, 255, 255, .5);
+}
+
+/*.THIS .slds-icon__container {
+    display: block;
+}*/
+
+.THIS svg.oasis-sales {
+    fill: #FCB95B;
+}
+.THIS svg.sales-goals {
+    fill: #56AADF;
+}
+.THIS svg.view-calendar {
+    fill: #EB7092;
+}
+.THIS svg.view-open-tasks {
+    fill: #4BC076;
+}
+.THIS svg.search-dealers {
+    fill: #7F8DE1;
+}
+.THIS svg.update-forecasts {
+    fill: #E9696E;
+}
+.THIS svg.territory-roll-up {
+    fill: #3C97DD;
+}
+.THIS svg.launch-map-tool {
+    fill: #34BECD;
+}
+.THIS svg.use-dashboards {
+    fill: #EF6E64;
+}
+.THIS svg.use-reports {
+    fill: #2ECBBE;
+}
+.THIS svg.scan-bc {
+    fill: #0079bc;
+}
+
+.THIS iframe {
+    width: 100%;
+    height: 90vh;
+}
+.THIS .slds-list__item .slds-button {
+    width: 100%;
+}

@@ -1,0 +1,208 @@
+<apex:page standardcontroller="SPEED_Check_List__c" extensions="SPEEDCheckviewv2" sidebar="false" showHeader="false" lightningStylesheets="true" applyBodyTag="true" applyHtmlTag="true">
+    <head>
+        
+        <style>
+            .activeTab {background-color: #FFFFFF; color:white; background-image:none; padding-top:5px;height:15px;}
+            .inactiveTab { background-color: #FFFFFF; color:black; background-image:none;padding-top:5px;height:15px;}
+            .freezedCell{z-index: 1000; position:relative;}
+            
+            
+            .secondaryPalette { border: 0 none !important; }
+            td.borderTable .secondaryPalette  { border-top: 2px solid #ba3b3b !important; }
+            table {border-collapse:collapse !important;}
+            @page{size:landscape; margin:15px;}
+            @media print{ 
+            * { font-size:10px !important; margin:0; padding:0; border-color:transparent !important;}
+            td, th {font-size:11px !important; }
+            .hidden-print, .rich-tab-bottom-line, .pbButton, .pbButtonb,  .overlayDialog.cssDialog.inlineEditDialog  {display : none;}
+            table.rich-tabpanel tr td { background: none; }
+            .bPageBlock.brandSecondaryBrd.apexDefaultPageBlock.secondaryPalette { background: #fff; margin:0 -15px;}
+            .rich-tabpanel-content {background:#000; border:0 none;}
+            table {width:100%; border-collapse:collapse;}
+            input.btn {display : none;}
+            table.tableStyle tr th, table.tableStyle tr td { font-size: 11px !important; font-weight:normal !important;  text-align:left; padding:5px !important;border: 1px solid #000 !important; }
+            table.tableStyle tr td {vertical-align:top;}
+            .headerRow > div {font-size:9px !important;}
+            .headerRow {padding:10px 5px;}
+            table.list.tableStyle {width:100%; margin:0; border-collapse:collapse !important; border-spacing:0; border:1px solid #000; }
+            .rich-tabpanel-content {padding:60px;}
+            .dataCell span {font-size:9px !important;}
+            textarea, input, select { border: 1px solid #000; padding: 5px !important; width:75px; font-size:9px;  }
+            td.rich-tabpanel-content, h2.mainTitle { padding: 0; margin:0; }
+            table.list.tableStyle tr th:first-child, table.list.tableStyle tr td:first-child { display: none; }
+            td.rich-tabpanel-content {padding:15px;}
+            table.tableStyle tr  {page-break-inside: avoid; margin-top:-1px;}
+            td, th{white-space:normal;}
+            table.tableStyle tr th:nth-child(2), table.tableStyle tr td:nth-child(2) {width:5%;}
+            table.tableStyle tr th:nth-child(4), table.tableStyle tr td:nth-child(4),
+            table.tableStyle tr th:nth-child(5), table.tableStyle tr td:nth-child(5){ width:20%; }
+            table.tableStyle tr td:last-child, table.tableStyle tr th:last-child {width:10%;}
+            
+            .apexp .bPageBlock.apexDefaultPageBlock .pbBody {margin:0;}
+            .pbBody {border:0 none;}
+            textarea, select {border:1px solid #000 !important; } 
+            .printBtn {display:none;}
+            select{width:100%;}
+            }
+        </style>
+   
+    </head>
+    <apex:form >
+        <apex:actionFunction action="{!save}" name="createRec" reRender="none" oncomplete="redirectBack()" />
+        <apex:actionFunction action="{!returntorecord}" name="createRec" oncomplete="redirectBack()"/ >
+            <apex:outputPanel >
+                <apex:outputField value="{!SPEED_Check_List__c.id}" id="repo" rendered="false"/>
+            </apex:outputPanel>
+            <apex:pageMessages />
+            
+            <apex:tabPanel switchType="client" selectedTab="sch" tabClass="activeTab" inactiveTabClass="inactiveTab">
+                <div class="row hidden-print">
+                    <c:printPDF buttonClass="btn btn-small print pull-right" name="Speed Checklist" orientation="Landscape" border="20px"/>
+                </div>
+                <apex:tab label="Showroom Checklist" name="sh" styleClass="borderTable">
+                    <apex:pageBlock title="Showroom Checklist" >
+                        <apex:pageBlockTable value="{!showroomlist}" var="showlist" id="sch" width="100%" styleClass="tableStyle">
+                            <apex:column styleClass="" >
+                                <apex:outputField value="{!showlist.Section__c}" id="repo" rendered="false"/>
+                            </apex:column>
+                            <apex:column headerValue="Audit" >
+                                <apex:outputField value="{!showlist.Audit__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Audit Category" >
+                                <apex:outputField value="{!showlist.AuditCategory__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Business Requirements" >
+                                <apex:outputField value="{!showlist.Business_Requirements__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Pass Fail Criteria" >
+                                <apex:outputField value="{!showlist.PassFailCriteria__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Assessor Action" >
+                                <apex:outputField value="{!showlist.AssessorAction__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Additional Info" >
+                                <apex:outputField value="{!showlist.AdditionalInformation__c}" rendered="{!if(isblank(showlist.AdditionalInformation__c), false,true)}"/>
+                                </apex:column>
+                                <apex:column headerValue="URL" >
+                                <apex:outputLink value="{!showlist.URL__c}" rendered="{!if(isblank(showlist.URL__c), false,true)}">
+                                    <apex:outputText value="{!showlist.URL_Name__c}" rendered="{!if(isblank(showlist.URL__c), false,true)}"/>
+                                </apex:outputLink>
+                            </apex:column>
+                            <apex:column headerValue="Comments" >
+                                <apex:inputField value="{!showlist.Report_Comments__c}" rendered="{!SPEED_Check_List__c.Status__c !='Submitted'}"/>
+                                <apex:outputField value="{!showlist.Report_Comments__c}" rendered="{!SPEED_Check_List__c.Status__c == 'Submitted'}"/>
+                            </apex:column>
+                            <apex:column headerValue="Pass Fail" >
+                                <apex:inputField value="{!showlist.PF__c}" rendered="{!SPEED_Check_List__c.Status__c !='Submitted'}"/>
+                                <apex:outputField value="{!showlist.PF__c}" rendered="{!SPEED_Check_List__c.Status__c == 'Submitted'}"/>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                        <apex:pageBlockButtons >
+                            <apex:commandButton value="Save" action="{!save}" oncomplete="redirectBack()" styleClass="slds-vf-button_brand" rendered="{!if(SPEED_Check_List__c.Status__c == 'Submitted', false, true)}"/>
+                            <apex:commandButton action="{!returntorecord}" value="Return to Summary" oncomplete="redirectBack()"  id="theButton1"  styleClass="slds-vf-button_brand" rendered="{!if(SPEED_Check_List__c.Status__c == 'Submitted', true, false)}"/> 
+                        </apex:pageBlockButtons>
+                    </apex:pageBlock>
+                </apex:tab>
+
+                <apex:tab label="Reports Checklist" name="re">
+                    <apex:pageBlock title="Reports Checklist">
+                        <apex:pageBlockTable value="{!reportlist}" var="checklist" styleclass="freezedcell tableStyle">
+                            <apex:column >
+                                <apex:outputField value="{!Checklist.Section__c}" id="repo" rendered="false"/>
+                            </apex:column>
+                            <apex:column headerValue="Audit" >
+                                <apex:outputField value="{!checklist.Audit__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Audit Category" >
+                                <apex:outputField value="{!checklist.AuditCategory__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Business Requirements" >
+                                <apex:outputField value="{!checklist.Business_Requirements__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Pass Fail Criteria" >
+                                <apex:outputField value="{!checklist.PassFailCriteria__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Assessor Action" >
+                                <apex:outputField value="{!checklist.AssessorAction__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Additional Info" >
+                                <apex:outputField value="{!checklist.AdditionalInformation__c}" rendered="{!if(isblank(checklist.AdditionalInformation__c), false,true)}"/>
+                                 </apex:column>
+                                  <apex:column headerValue="URL" >
+                                <apex:outputLink value="{!checklist.URL__c}" rendered="{!if(isblank(checklist.URL__c), false,true)}">
+                                    <apex:outputText value="{!checklist.URL_Name__c}" rendered="{!if(isblank(checklist.URL__c), false,true)}"/>
+                                </apex:outputLink>
+                            </apex:column>
+                            <apex:column headerValue="Comments" >
+                                <apex:inputField value="{!checklist.Report_Comments__c}" rendered="{!SPEED_Check_List__c.Status__c !='Submitted'}"/>
+                                <apex:outputField value="{!checklist.Report_Comments__c}" rendered="{!SPEED_Check_List__c.Status__c == 'Submitted'}"/>
+                            </apex:column>
+                            <apex:column headerValue="Pass Fail" >
+                                <apex:inputField value="{!checklist.PF__c}" rendered="{!SPEED_Check_List__c.Status__c !='Submitted'}"/>
+                                <apex:outputField value="{!checklist.PF__c}" rendered="{!SPEED_Check_List__c.Status__c == 'Submitted'}"/>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                        <apex:pageBlockButtons >
+                            <apex:commandButton value="Save" action="{!save}" oncomplete="redirectBack()" styleClass="slds-vf-button_brand" rendered="{!if(SPEED_Check_List__c.Status__c == 'Submitted', false, true)}"/>
+                            <apex:commandButton action="{!returntorecord}" value="Return to Summary" id="theButton1"  styleClass="slds-vf-button_brand" rendered="{!if(SPEED_Check_List__c.Status__c == 'Submitted', true, false)}"/> 
+                        </apex:pageBlockButtons>   
+                    </apex:pageBlock>
+                </apex:tab>
+                <apex:tab label="Discussion Checklist" name="di">
+                    <apex:pageBlock title="Discussion Checklist">
+                        <apex:pageBlockTable value="{!discussionslist}" var="discussion" styleClass="tableStyle">
+                            <apex:column >
+                                <apex:outputField value="{!discussion.Section__c}" id="repo" rendered="false"/>
+                            </apex:column>
+                            <apex:column headerValue="Audit" >
+                                <apex:outputField value="{!discussion.Audit__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Audit Category" >
+                                <apex:outputField value="{!discussion.AuditCategory__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Business Requirements" >
+                                <apex:outputField value="{!discussion.Business_Requirements__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Pass Fail Criteria" >
+                                <apex:outputField value="{!discussion.PassFailCriteria__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Assessor Action" >
+                                <apex:outputField value="{!discussion.AssessorAction__c}" />
+                            </apex:column>
+                            <apex:column headerValue="Additional Info" >
+                                <apex:outputField value="{!discussion.AdditionalInformation__c}" rendered="{!if(isblank(discussion.AdditionalInformation__c), false,true)}"/>
+                                </apex:column>
+                                <apex:column headerValue="URL" >
+                                <apex:outputLink value="{!discussion.URL__c}" rendered="{!if(isblank(discussion.URL__c), false,true)}">
+                                    <apex:outputText value="{!discussion.URL_Name__c}" rendered="{!if(isblank(discussion.URL__c), false,true)}"/>
+                                </apex:outputLink>
+                            </apex:column>
+                            <apex:column headerValue="Comments" >
+                                <apex:inputField value="{!discussion.Report_Comments__c}" rendered="{!SPEED_Check_List__c.Status__c !='Submitted'}"/>
+                                <apex:outputField value="{!discussion.Report_Comments__c}" rendered="{!SPEED_Check_List__c.Status__c == 'Submitted'}"/>
+                            </apex:column>
+                            <apex:column headerValue="Pass Fail" >
+                                <apex:inputField value="{!discussion.PF__c}" rendered="{!SPEED_Check_List__c.Status__c !='Submitted'}"/>
+                                <apex:outputField value="{!discussion.PF__c}" rendered="{!SPEED_Check_List__c.Status__c == 'Submitted'}"/>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                        <apex:pageBlockButtons >
+                            <apex:commandButton value="Save" action="{!save}" oncomplete="redirectBack()" styleClass="slds-vf-button_brand" rendered="{!if(SPEED_Check_List__c.Status__c == 'Submitted', false, true)}"/>
+                            <apex:commandButton action="{!returntorecord}" value="Return to Summary" id="theButton1"  styleClass="slds-vf-button_brand" rendered="{!if(SPEED_Check_List__c.Status__c == 'Submitted', true, false)}"/> 
+                        </apex:pageBlockButtons>    
+                    </apex:pageBlock>
+                </apex:tab>
+                <apex:pageblock >
+                    <apex:actionFunction action="{!setActiveTab}" name="setActiveTab">
+                        <apex:param id="tabname" assignTo="{!var}" value="" />
+                    </apex:actionFunction>
+                </apex:pageblock>
+            </apex:tabPanel>
+        </apex:form>
+        <script type="text/javascript">
+        function printFuntion(){
+            window.print();
+        };
+        
+        </script>
+</apex:page>

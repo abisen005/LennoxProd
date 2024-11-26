@@ -1,0 +1,15 @@
+.THIS {
+  border-top: 0 !important;
+  border-right: 0 !important;
+  border-left: 0 !important;
+  border-bottom-width: token(borderWidthThin) !important;
+  border-bottom-color: token(colorBorder) !important;
+  border-radius: 0 !important;
+  color: token(colorTextActionLabelActive) !important;
+  width: 100% !important;
+  text-align: left !important; }
+  .THIS .list-item-action__label {
+    font-size: 1rem;
+    line-height: 1.25rem; }
+  .THIS .list-item-action__content {
+    font-size: 0.875rem; }

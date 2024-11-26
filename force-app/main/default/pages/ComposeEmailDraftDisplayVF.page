@@ -1,0 +1,19 @@
+<apex:page standardController="Case" standardStylesheets="false" showHeader="false" sidebar="false">
+     <apex:slds />
+     <apex:includeLightning />
+    
+     <div id="ComposeEmailDraftDisplayId"></div>
+    <script>
+    
+    $Lightning.use("c:ComposeEmailDraftDisplayApp", function() {
+       
+        $Lightning.createComponent("c:ComposeEmailDraft",
+                                   {
+                                       "recordId" : "{!$CurrentPage.parameters.id}"
+                                   },
+                                   "ComposeEmailDraftDisplayId",
+                                   function(component) {
+                                   });
+    });
+    </script>
+</apex:page>

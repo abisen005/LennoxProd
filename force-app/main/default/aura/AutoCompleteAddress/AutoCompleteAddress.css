@@ -1,0 +1,6 @@
+.THIS .slds-has-inline-listbox {border:0 none;}
+.THIS .slds-has-inline-listbox .slds-input.addinput { border: 1px solid #dddbda; }
+.THIS .addinput.slds-has-error { height: 35px; border: 1px solid rgb(194, 57, 52)!important; box-shadow: rgb(194, 57, 52) 0 0 0 1px inset; min-height: unset; }
+.THIS .addinput.slds-has-error:focus,
+.THIS .addinput.slds-has-error:active,
+.THIS .addinput.slds-has-error:hover{box-shadow: rgb(194, 57, 52) 0 0 0 1px inset;}

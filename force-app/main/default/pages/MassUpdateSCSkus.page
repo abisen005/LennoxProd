@@ -1,0 +1,43 @@
+<apex:page standardController="SCSkus__c" recordSetVar="unused" sidebar="false">
+
+<!-- for this page to work with a specific custom object, change standController="entityname" to custom object api name  
+    For example, if custom object name is Warehouse__c, change first part of the first line to standardController="warehouse__c" -->
+
+    
+<apex:includeScript value="{!$Resource.UtilJS}" />
+<apex:form >
+<apex:pageBlock >
+<apex:pageMessages />
+<apex:pageBlock >
+Note: All modifications made on the page will be lost if Return button is clicked without clicking the Save button first. 
+</apex:pageBlock>
+<apex:pageBlockButtons >
+<apex:commandButton value="Save" action="{!save}"/>
+<apex:commandButton value="Return" action="{!cancel}"/>
+</apex:pageBlockButtons>
+<apex:pageBlockTable value="{!selected}" var="a" id="table">
+<apex:column headerValue="Name">
+<apex:inputField value="{!a.name}"/>
+</apex:column>
+<apex:column headerValue="Status">
+<apex:inputField value="{!a.Status__c}"/>
+</apex:column>
+<apex:column headerValue="Store">
+<apex:inputField value="{!a.Storea__c}"/>
+</apex:column>
+<apex:column headerValue="Routed To">
+<apex:inputField value="{!a.Re_route_to__c}"/>
+</apex:column>
+<apex:column headerValue="Product Division">
+<apex:inputField value="{!a.ProductDivision__c}"/>
+</apex:column>
+<apex:column headerValue="Internal Comments">
+<apex:inputField value="{!a.Internal_Comments__c}"/>
+</apex:column>
+<apex:column headerValue="SCL Comments">
+<apex:inputField value="{!a.SCLComments__c}"/>
+</apex:column>
+</apex:pageBlockTable>
+</apex:pageBlock>
+</apex:form>
+</apex:page>

@@ -1,0 +1,8 @@
+.THIS:hover {
+    text-decoration: none !important;
+}
+.THIS.selected,
+.THIS.selected .slds-text-color--weak {
+    background-color: #7f8de1;
+    color: white !important;
+}

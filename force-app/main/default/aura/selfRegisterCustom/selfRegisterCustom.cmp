@@ -1,0 +1,147 @@
+<aura:component controller="LightningSelfRegisterController" implements="forceCommunity:availableForAllPageTypes">
+    <!--developer added attributes start-->
+    <aura:attribute name="isValidId" type="String" default="new" description="set once it is determined if the user has entered a valid customer ID"/>
+    <aura:attribute name="customerIdLabel" type="String" default="Customer ID #" description="Label for customer ID #"/>
+    <aura:attribute name="customerId" type="String" />
+    <aura:attribute name="acnt" type="object" default="{}" />
+    <aura:attribute name="form" type="object" default="{}" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="hasError" type="list" default="['false','false']" />
+    <aura:attribute name="idWasBlank" type="boolean" default="false" />
+    <aura:attribute name="wasSuccessful" type="Boolean" default="false"/>
+    <aura:attribute name="alreadyProv" type="Boolean" default="false"/>
+    <aura:attribute name="fName" type="String" />
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <!--developer added attributes end-->
+    <aura:handler name="init" value="{!this}" action="{!c.initialize}"/>
+     <!--loading spinner start... style=Brand Medium (blue dots)-->
+    <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if>
+    <aura:renderIf isTrue="{!v.isValidId != 'true'}">
+        <div class="cSelfRegister">
+            
+            <div id="sfdc_username_container" class="{!v.idWasBlank ? 'sfdc-container sfdc has-error' : 'sfdc-container sfdc'}">
+                <ui:inputText value="{!v.customerId}" aura:id="customerIdNum" placeholder="{!v.customerIdLabel}" maxlength="16" keyup="{!c.onKeyUp}" class="input sfdc_usernameinput sfdc"/>
+            </div>
+            <div class="sfdc">
+                <ui:button aura:id="submitButton" label="Verify Customer ID #" press="{!c.checkCustomerId}" class="sfdc_button"/>
+            </div>
+        </div>
+    </aura:renderIf>
+    <aura:renderIf isTrue="{!v.isValidId=='false'}">
+        Thank you for your interest in Feel The Love! Please email FeelTheLove@Lennox.com and notify them that you have received an error message and they will adjust what is needed on the backend. Thank you and sorry for the inconvenience.
+    </aura:renderIf>
+    <aura:renderIf isTrue="{!v.isValidId=='nonexistent'}">
+        Thank you for your interest in Feel The Love! Please email FeelTheLove@Lennox.com and notify them that you have received an error message and they will adjust what is needed on the backend. Thank you and sorry for the inconvenience.
+    </aura:renderIf>
+    <aura:renderIf isTrue="{!v.alreadyProv}">
+        <div class="alert-error">
+            The account you are trying to signup is already in the system. 
+            Please select the back button or select cancel and use the forgot password option.  
+            If you have any issues, please contact the Feel The Love Program team.
+        </div>
+        <div class="sfdc">
+            <lightning:button onclick="{!c.goBack}" name="Back" label="Back" class="sfdc_button"/>
+        </div>
+        <div class="sfdc">
+            <a href="https://www.feelthelove.com/">
+                <lightning:button name="cancel" label="Cancel" class="sfdc_button cancel_button"/>
+            </a>
+        </div>
+    </aura:renderIf>
+    <aura:renderIf isTrue="{!and(v.isValidId == 'true', !v.wasSuccessful)}">
+        <aura:renderIf isTrue="{!!v.alreadyProv}">
+            
+            <div>Company Name: <ui:outputText value="{!v.acnt.Name}" /></div>
+            <lightning:recordEditForm aura:id="editForm" objectApiName="FTL_Dealer_Signup_Form__c" onsubmit="{!c.handleSubmit}">
+                <div class="slds-grid">
+                    <div class="slds-col slds-size_6-of-12">
+                        <label for="Point_of_Contact_First_Name__c" class="slds-form-element__label slds-no-flex">Point of Contact First Name<span>*</span></label>
+                        <div  class="{!v.hasError[0] == 'true' ? 'sfdc-container margin-right has-error' : 'sfdc-container margin-right'}">
+                            <lightning:input name="firstName" maxlength="40" aura:id="firstName" style="margin-top: -21px"/>
+                            <lightning:inputField variant="label-hidden" aura:id="required" name="Point_of_Contact_First_Name__c" fieldName="Point_of_Contact_First_Name__c" value="{!v.form.Point_of_Contact_First_Name__c}" style="display:none;"/>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <label for="Point_of_Contact_Last_Name__c" class="slds-form-element__label slds-no-flex">Point of Contact Last Name<span>*</span></label>
+                        <div class="{!v.hasError[1] == 'true' ? 'sfdc-container margin-left has-error' : 'sfdc-container margin-left'}">
+                            <lightning:input name="lastName" maxlength="40" aura:id="lastName" style="margin-top: -21px"/>
+                            <lightning:inputField variant="label-hidden" aura:id="required" name="Point_of_Contact_Last_Name__c" fieldName="Point_of_Contact_Last_Name__c" value="{!v.form.Point_of_Contact_Last_Name__c}" style="display:none;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-grid">
+                    <div class="slds-col slds-size_12-of-12">
+                        <label for="Point_of_Contact_Email__c" class="slds-form-element__label slds-no-flex">Point of Contact Email<span>*</span></label>
+                        <div class="{!v.hasError[2] == 'true' ? 'sfdc-container has-error' : 'sfdc-container'}">
+                            <lightning:inputField type="email" variant="label-hidden" aura:id="required" name="Point_of_Contact_Email__c" fieldName="Point_of_Contact_Email__c" value="{!v.form.Point_of_Contact_Email__c}" class="input sfdc_usernameinput sfdc label-hidden"/>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="slds-grid">
+                    <div class="slds-col slds-size_12-of-12">
+                        <label for="Business_Address__c" class="slds-form-element__label slds-no-flex">Business Address<span>*</span></label>
+                        <div class="{!v.hasError[4] == 'true' ? 'sfdc-container has-error' : 'sfdc-container'}">
+                            <lightning:inputField variant="label-hidden" aura:id="required" name="Business_Address__c" fieldName="Business_Address__c" value="{!v.form.Business_Address__c}" class="input sfdc_usernameinput sfdc label-hidden"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-grid">
+                    <div class="slds-col slds-size_6-of-12">
+                        <label for="Business_City__c" class="slds-form-element__label slds-no-flex">Business City<span>*</span></label>
+                        <div class="{!v.hasError[5] == 'true' ? 'sfdc-container margin-right has-error' : 'sfdc-container margin-right'}">
+                            <lightning:inputField variant="label-hidden" aura:id="required" name="Business_City__c" fieldName="Business_City__c" value="{!v.form.Business_City__c}" class="input sfdc_usernameinput sfdc label-hidden"/>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_6-of-12">
+                        <label for="Business_State__c" class="slds-form-element__label slds-no-flex">Business State<span>*</span></label>
+                        <div class="{!v.hasError[6] == 'true' ? 'sfdc-container margin-left has-error' : 'sfdc-container margin-left'}">
+                            <lightning:inputField variant="label-hidden" aura:id="required" name="Business_State__c" fieldName="Business_State__c" value="{!v.form.Business_State__c}" class="input sfdc_usernameinput sfdc label-hidden"/>
+                        </div>
+                    </div>
+                </div>
+                <label for="Business_Zip_Code__c" class="slds-form-element__label slds-no-flex">Business Zip Code<span>*</span></label>
+                <div class="{!v.hasError[7] == 'true' ? 'sfdc-container has-error' : 'sfdc-container'}">
+                    <lightning:inputField variant="label-hidden" aura:id="required" name="Business_Zip_Code__c" fieldName="Business_Zip_Code__c" value="{!v.form.Business_Zip_Code__c}" class="input sfdc_usernameinput sfdc label-hidden"/>
+                </div>
+                <!--
+                <label for="Role__c" class="slds-form-element__label slds-no-flex">Role<span>*</span></label>
+                <div class="{!v.hasError[8] == 'true' ? 'sfdc-container has-error' : 'sfdc-container'}">
+                    <lightning:inputField variant="label-hidden" aura:id="required" name="Role__c" fieldName="Role__c" value="{!v.form.Role__c}" class="input sfdc_usernameinput sfdc label-hidden"/>
+                </div>
+                <label for="Receive_Emails__c" class="slds-form-element__label slds-no-flex">Receive Emails</label>
+                <div class="{!v.hasError[9] == 'true' ? 'sfdc-container has-error' : 'sfdc-container'}">
+                    <lightning:inputField variant="label-hidden" aura:id='Receive_Emails__c' name="Receive_Emails__c" fieldName="Receive_Emails__c" checked="{!v.form.Receive_Emails__c}" class="input sfdc_usernameinput sfdc label-hidden"/>
+                </div>
+                -->
+                <div class="sfdc">
+                    <lightning:button type="submit" name="save" label="Submit" class="sfdc_button"/>
+                </div>
+                <div class="sfdc">
+                    <a href="https://www.feelthelove.com/">
+                        <lightning:button name="cancel" label="Cancel" class="sfdc_button cancel_button"/>
+                    </a>
+                </div>
+            </lightning:recordEditForm>
+        </aura:renderIf>
+    </aura:renderIf>
+    <!--section that displays success-->
+    <aura:renderIf isTrue="{!v.wasSuccessful}">
+        <div class="alert_success">
+            Thank you for your interest in the Feel The Love Program. In the coming week you should receive a DocuSign agreement. Once we receive the signed form for your company you will receive your login credentials via email allowing you full access to our Dealer Headquarters.
+        </div>
+        <div class="sfdc">
+            <a href="https://www.feelthelove.com/">
+                <lightning:button name="Home" label="Home" class="sfdc_button"/>
+            </a>
+        </div>
+    </aura:renderIf>
+</aura:component>

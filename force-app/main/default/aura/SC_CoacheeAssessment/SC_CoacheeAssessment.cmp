@@ -1,0 +1,231 @@
+<aura:component controller="SC_CoacheeAssessmentController">
+
+
+    <aura:attribute name="user"
+                    type="User"
+                    description="The user being assessed." />
+
+    <aura:attribute name="initiative"
+                    type="SC_Initiative__c"
+                    description="The initiative the user is being assessed on." />
+    
+    <aura:attribute name = "alredyExistingSkills"
+                    type="SC_Assessment_Skill__c[]"
+                    description = "alredy present skills to reset the assessment skills"/>
+
+    <aura:attribute name="skillsToMaster"
+                    type="SC_Assessment_Skill__c[]"
+                    description="The existing assessment skill record or the assessment skill records to create." />
+
+    <aura:attribute name="skillsAlreadyMastered"
+                    type="SC_Assessment_Skill__c[]"
+                    description="The existing assessment skill record or the assessment skill records to create." />
+
+    <aura:attribute name="skillsOngoing"
+                    type="SC_Assessment_Skill__c[]"
+                    description="The Ongoing assessment skill records" /> 
+    <aura:attribute name="isLoading" type="Boolean" default="true" />
+    <aura:attribute name="buttonDiv" type="Boolean" default="false" /> 
+    <aura:attribute name="disgardChangesModule" type="Boolean" />
+    
+    <aura:handler name="change" value="{!v.disgardChangesModule}" action="{!c.disgardChanges}"/>
+    <aura:handler name="change" value="{!v.user}" action="{!c.handleUserChange}" />
+    <aura:handler name="change" value="{!v.initiative}" action="{!c.handleInitChange}" />
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+
+
+    <aura:registerEvent name="assessmentSkillChange" type="c:SC_AssessmentSkillChange" />
+	<aura:html tag="style">
+    	.slds-container--medium{max-width:85% !important;}
+        html, body {overflow: inherit;}
+    </aura:html>
+    
+    <div class="{!'slds-m-around--small ' + (and(empty(v.skillsToMaster), empty(v.skillsAlreadyMastered), empty(v.skillsOngoing)) ? '' : 'slds-hide')}">
+        <p>
+            There are no skills to assess for this initiative.
+        </p>
+    </div>
+
+
+    <div class="slds-text-align--center slds-p-top--medium slds-theme--shade">
+        <img src="{!v.user.SmallPhotoUrl}"
+             class="slds-avatar slds-avatar--circle slds-avatar--medium" />
+        <h1 class="slds-text-heading--medium">{!v.user.Name} Assessment</h1>
+        <hr class="slds-m-bottom--none slds-m-top--small" />
+    </div>
+    <div>
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered skill-table">
+            <thead>
+                <tr class="slds-line-height_reset">
+                    <th class="" scope="col">
+                        <div class="slds-truncate" title="SKILLS TO FOCUS ON IN COACHING">
+                            SKILLS TO FOCUS ON IN COACHING
+                            <span class="table-sub-head-text">Click the slider for the Skills you want to focus on in this session.</span>
+                        </div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate" title="Already Mastered">Already Mastered</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate" title="Last Coached">Last Coached</div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <aura:iteration items="{!v.skillsToMaster}" var="skill" >
+                    <tr class="slds-hint-parent">
+                        <td scope="row">
+                            <div class="slds-form-element">
+                                <label class="slds-checkbox--toggle slds-grid slds-grid--vertical-align-center slds-p-around--x-small">
+                                    <ui:inputCheckbox value="{!skill.selected}" change="{!c.handleCompleteChange}" />
+                                    <span id="toggle-desc" class="slds-checkbox--faux_container" aria-live="assertive">
+                                        <span class="slds-checkbox--faux"></span>
+                                        <span class="{!'slds-checkbox--' + (skill.Complete__c ? 'off' : 'on')}"></span>
+                                        <span class="{!'slds-checkbox--' + (skill.Complete__c ? 'on' : 'off')}"></span>
+                                    </span>
+                                    <span class="slds-form-element__label slds-m-left--medium slds-m-bottom--none">{!skill.Description__c}</span>
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" title="-">
+                                <lightning:input type="checkbox" label="" variant="label-hidden" onchange="{!c.handleCompleteChange}"
+                                                 checked="{!skill.alreadyMastered}"/>
+                            </div>
+                        </td>
+                        <td data-label="Last Coached">
+                            <div class="slds-truncate">
+                                <ui:outputDate value="{!skill.Date_Last_Coached__c}" format="MM-dd-yyyy"/>
+                            </div>
+                        </td>
+                    </tr>
+                </aura:iteration>
+                <aura:if isTrue="{!empty(v.skillsToMaster)}">
+                    <div class="slds-m-around--small">
+                        <p>{!v.user.Name} has mastered all the skills.</p>
+                    </div>
+                </aura:if>
+                <!-- SKILLS IN PROGRESS FROM PRIOR COACHING-->
+                <tr class="slds-hint-parent">               
+                    <th class="" scope="col">
+                        <div class="slds-truncate">SKILLS IN PROGRESS FROM PRIOR COACHING</div>
+                        <span class="table-sub-head-text">These skills have been selected for an upcoming session or focused on in prior coaching sessions, but not yet mastered.
+                        </span>                        
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate"></div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Date Scheduled</div>
+                    </th>
+                </tr>
+                <aura:iteration items="{!v.skillsOngoing}" var="skill" >
+                    
+                    <tr class="slds-hint-parent">
+                        <td scope="row">
+                            <div class="slds-form-element input-element-yellow">
+                                
+                                <label class="slds-checkbox--toggle slds-grid slds-grid--vertical-align-center slds-p-around--x-small">
+                                    <ui:inputCheckbox value="true" change="{!c.handleCompleteChange}" disabled="true"/>
+                                    <span id="toggle-desc" class="slds-checkbox--faux_container" aria-live="assertive">
+                                        <span class="slds-checkbox--faux"></span>
+                                        <span class="{!'slds-checkbox--' + (skill.Complete__c ? 'off' : 'on')}"></span>
+                                        <span class="{!'slds-checkbox--' + (skill.Complete__c ? 'on' : 'off')}"></span>
+                                    </span>
+                                    <span class="slds-form-element__label slds-m-left--medium slds-m-bottom--none">{!skill.Description__c}</span>
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate"></div>
+                        </td>
+                        <td data-label="">
+                            <div class="slds-truncate" title="Date Scheduled">
+                            <ui:outputDate value="{!skill.Session_Date_Time__c}" format="MM-dd-yyyy"/>
+                            </div>
+                        </td>
+                    </tr>
+                </aura:iteration>
+                 <aura:if isTrue="{!empty(v.skillsOngoing)}">
+                    <div class="slds-m-around--small">
+                        <p>{!v.user.Name} has no skills in progress.</p>
+                    </div>
+                </aura:if>
+                
+                <!-- SKILLS ALREADY CONFIRMED AS BEING MASTERED-->               
+                <tr class="slds-hint-parent">               
+                    <th class="" scope="col">
+                        <div class="slds-truncate">SKILLS ALREADY CONFIRMED AS BEING MASTERED</div>
+                        <span class="table-sub-head-text">These skills have been confirmed in prior coaching sessions as being mastered by the individual.
+                        </span>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Reset Mastery</div>
+                    </th>
+                    <th class="" scope="col">
+                        <div class="slds-truncate">Date of Mastery</div>
+                    </th>
+                </tr>
+                <aura:iteration items="{!v.skillsAlreadyMastered}" var="skill" >
+                    
+                    <tr class="slds-hint-parent input-element-green">
+                        <td scope="row">
+                            <div class="slds-form-element">
+                                
+                                <label class="slds-checkbox--toggle slds-grid slds-grid--vertical-align-center slds-p-around--x-small">
+                                    <ui:inputCheckbox value="true" change="{!c.handleCompleteChange}" disabled="true"/>
+                                    <span id="toggle-desc" class="slds-checkbox--faux_container" aria-live="assertive">
+                                        <span class="slds-checkbox--faux"></span>
+                                        <span class="{!'slds-checkbox--' + (skill.Complete__c ? 'off' : 'on')}"></span>
+                                        <span class="{!'slds-checkbox--' + (skill.Complete__c ? 'on' : 'off')}"></span>
+                                    </span>
+                                    <span class="slds-form-element__label slds-m-left--medium slds-m-bottom--none">{!skill.Description__c}</span>
+                                </label>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="slds-truncate" title="-">
+                                <lightning:input type="checkbox" label="" variant="label-hidden"
+                                                 checked="{!skill.resetMastery}" onchange="{!c.handleCompleteChange}"/>
+                            </div>
+                        </td>
+                        <td data-label="Date of Mastery">
+                            <div class="slds-truncate" title="">
+                                <ui:outputDate value="{!skill.Date_Mastery_Achieved__c}" format="MM-dd-yyyy"/>
+                            </div>
+                        </td>
+                    </tr>
+                </aura:iteration>
+				 <aura:if isTrue="{!empty(v.skillsAlreadyMastered)}">
+                    <div class="slds-m-around--small">
+                        <p>{!v.user.Name} has not mastered any skills yet.</p>
+                    </div>
+                </aura:if>
+            </tbody>
+        </table>
+    </div>
+    
+    
+    <!--  -->
+        <c:SC_ModalOverlay aura:id="disgard">
+            <aura:set attribute="header">
+                Confirm Cancellation
+            </aura:set>
+            
+            <p>Would you like to save the Skill Mastery Reset updates you’ve made? </p>
+            
+            <aura:set attribute="footer">
+                <center>
+                    <lightning:button variant="brand" label="Save the Skill Mastery Reset Update" onclick="{!c.handleAssessmentSaveClick}"/>
+                    <lightning:button variant="brand" label="Discard the Skill Mastery Reset Update" onclick="{!c.disgardResetMastery}"/>
+                </center>
+            </aura:set>
+        </c:SC_ModalOverlay>
+    <!--  -->
+    
+    
+    <!-- Loading -->
+    <span class="{!v.isLoading ? '' : 'slds-hide'}">
+        <c:SC_Loader />
+    </span>
+</aura:component>

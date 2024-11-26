@@ -1,0 +1,7 @@
+<aura:event type="APPLICATION" description="Event fired from selectPrecallPlannerScenario cmp">
+
+    <aura:attribute name="shouldRefresh"
+        type="Boolean" 
+        description="If true, the Pre Call Planner VF page will reload." />
+
+</aura:event>
