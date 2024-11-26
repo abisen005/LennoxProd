@@ -2,7 +2,7 @@ public without sharing class AccountTriggerHandler {
 
     /*
 * @description Insert a custom sales area record if none exist already based on the value of SAP Sales org
-* @param accounts List of accounts in scope
+* @param accounts List of accounts in scop
 */
     public static void insertCustomerSalesArea(List<Account> accounts) {
 
