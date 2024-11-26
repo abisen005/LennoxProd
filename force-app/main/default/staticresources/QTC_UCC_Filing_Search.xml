@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?><soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsse="http://schemas.xmlsoap.org/ws/2002/04/secext"><soap:Body><UCCSearch2ResponseEx xmlns="http://webservices.seisint.com/WsAccurint"><response><Header><TransactionId>18071087R2081441</TransactionId><QueryId>9132068873424791964</QueryId>
+ <Status>0</Status>
+</Header>
+<RecordCount>4</RecordCount><Records>
+ <Record>
+  <Debtors>
+   <Debtor>
+    <Addresses>
+     <Address>
+      <OrigStreetAddress1>6893 LAKE ST. LOUIS BLVD.</OrigStreetAddress1>
+      <StreetName>LAKE SAINT LOUIS</StreetName>
+      <City>LAKE ST LOUIS</City>
+      <State>MO</State>
+      <StreetNumber>6893</StreetNumber>
+      <Zip5>63367</Zip5>
+      <Zip4>1891</Zip4>
+      <StreetAddress1>6893 LAKE SAINT LOUIS BLVD</StreetAddress1>
+      <StreetSuffix>BLVD</StreetSuffix>
+      <StreetAddress2>LAKE SAINT LOUIS, MO 63367</StreetAddress2>
+     </Address>
+    </Addresses>
+    <ParsedParties>
+     <Party>
+      <BusinessId>000979309736</BusinessId>
+     </Party>
+    </ParsedParties>
+    <OriginName>SURVANT AIR SYSTEMS, INC.</OriginName>
+   </Debtor>
+  </Debtors>
+  <OriginFilingDate>
+   <Day>7</Day>
+   <Month>11</Month>
+   <Year>2011</Year>
+  </OriginFilingDate>
+  <OriginFilingNumber>20110120502F</OriginFilingNumber>
+  <Filings>
+   <Filing>
+    <Type>INITIAL FILING</Type>
+    <Number>20110120502F</Number>
+    <Date>
+     <Day>7</Day>
+     <Month>11</Month>
+     <Year>2011</Year>
+    </Date>
+    <ExpirationDate>
+     <Day>7</Day>
+     <Month>11</Month>
+     <Year>2016</Year>
+    </ExpirationDate>
+   </Filing>
+  </Filings>
+  <FilingJurisdiction>MO</FilingJurisdiction>
+  <MatchedParty>
+   <PartyType>D</PartyType>
+   <Address>
+    <StreetName>LAKE SAINT LOUIS</StreetName>
+    <City>LAKE SAINT LOUIS</City>
+    <State>MO</State>
+    <StreetNumber>6893</StreetNumber>
+    <Zip5>63367</Zip5>
+    <Zip4>1891</Zip4>
+    <StreetSuffix>BLVD</StreetSuffix>
+   </Address>
+   <OriginName>SURVANT AIR SYSTEMS, INC.</OriginName>
+  </MatchedParty>
+  <Secureds>
+   <Secured>
+    <Addresses>
+     <Address>
+      <OrigStreetAddress1>2100 LAKE PARK BLVD.</OrigStreetAddress1>
+      <StreetName>LAKE PARK</StreetName>
+      <City>RICHARDSON</City>
+      <State>TX</State>
+      <StreetNumber>2100</StreetNumber>
+      <Zip5>75080</Zip5>
+      <Zip4>2254</Zip4>
+      <StreetAddress1>2100 LAKE PARK BLVD</StreetAddress1>
+      <StreetSuffix>BLVD</StreetSuffix>
+      <StreetAddress2>RICHARDSON, TX 75080</StreetAddress2>
+     </Address>
+    </Addresses>
+    <ParsedParties>
+     <Party>
+      <BusinessId>000066413619</BusinessId>
+     </Party>
+    </ParsedParties>
+    <OriginName>LENNOX INDUSTRIES, INC.</OriginName>
+   </Secured>
+  </Secureds>
+  <Collaterals>
+   <Collateral>
+    <Description>11/07/2011 20110120502F - NEGOTIABLE INSTRUMENTS AND PROCEEDS;CHATTEL PAPER AND PROCEEDS;ACCOUNTS RECEIVABLE AND PROCEEDS;ACCOUNT(S) AND PROCEEDS;INVENTORY AND PROCEEDS;GENERAL INTANGIBLE(S) AND PROCEEDS;COMPUTER EQUIPMENT AND PROCEEDS;EQUIPMENT AND PROCEEDS</Description>
+   </Collateral>
+  </Collaterals>
+  <ExternalKey>DNB20110120502F20111107</ExternalKey>
+  <FilingJurisdictionName>MISSOURI</FilingJurisdictionName>
+  <FilingOffices>
+   <Office>
+    <Address>
+     <Zip5>65101</Zip5>
+     <StreetAddress1>600 W MAIN ST RM302</StreetAddress1>
+     <City>JEFFERSON CITY</City>
+     <State>MO</State>
+    </Address>
+    <FilingAgency>SECRETARY OF STATE/UCC DIVISION</FilingAgency>
+   </Office>
+  </FilingOffices>
+  <TMSId>DNB20110120502F20111107</TMSId>
+ </Record>
+ <Record>
+  <OriginFilingDate>
+   <Day>16</Day>
+   <Month>8</Month>
+   <Year>2011</Year>
+  </OriginFilingDate>
+  <Collaterals>
+   <Collateral>
+    <Description>08/16/2011 20110089878F - COMMUNICATIONS EQUIPMENT</Description>
+   </Collateral>
+  </Collaterals>
+  <Assignees>
+   <Assignee>
+    <Addresses>
+     <Address>
+      <StreetPreDirection>E</StreetPreDirection>
+      <StreetName>MAIN</StreetName>
+      <City>UNION</City>
+      <OrigStreetAddress1>15 EAST MAIN</OrigStreetAddress1>
+      <State>MO</State>
+      <StreetNumber>15</StreetNumber>
+      <Zip5>63084</Zip5>
+      <Zip4>1615</Zip4>
+      <StreetAddress1>15 E MAIN ST</StreetAddress1>
+      <StreetSuffix>ST</StreetSuffix>
+      <StreetAddress2>UNION, MO 63084</StreetAddress2>
+     </Address>
+    </Addresses>
+    <ParsedParties>
+     <Party>
+      <BusinessId>000066771304</BusinessId>
+     </Party>
+    </ParsedParties>
+    <OriginName>UNITED BANK OF UNION</OriginName>
+   </Assignee>
+  </Assignees>
+  <ExternalKey>DNB20110089878F20110816</ExternalKey>
+  <FilingJurisdictionName>MISSOURI</FilingJurisdictionName>
+  <Debtors>
+   <Debtor>
+    <Addresses>
+     <Address>
+      <OrigStreetAddress1>6893 LAKE ST. LOUIS BLVD.</OrigStreetAddress1>
+      <StreetName>LAKE SAINT LOUIS</StreetName>
+      <City>LAKE ST LOUIS</City>
+      <State>MO</State>
+      <StreetNumber>6893</StreetNumber>
+      <Zip5>63367</Zip5>
+      <Zip4>1891</Zip4>
+      <StreetAddress1>6893 LAKE SAINT LOUIS BLVD</StreetAddress1>
+      <StreetSuffix>BLVD</StreetSuffix>
+      <StreetAddress2>LAKE SAINT LOUIS, MO 63367</StreetAddress2>
+     </Address>
+    </Addresses>
+    <ParsedParties>
+     <Party>
+      <BusinessId>000979309736</BusinessId>
+     </Party>
+    </ParsedParties>
+    <OriginName>SURVANT AIR SYSTEMS, INC.</OriginName>
+   </Debtor>
+  </Debtors>
+  <OriginFilingNumber>20110089878F</OriginFilingNumber>
+  <Filings>
+   <Filing>
+    <Type>ASSIGNMENT</Type>
+    <Date>
+     <Day>21</Day>
+     <Month>9</Month>
+     <Year>2011</Year>
+    </Date>
+    <Number>20110102885K</Number>
+   </Filing>
+   <Filing>
+    <Type>INITIAL FILING</Type>
+    <Number>20110089878F</Number>
+    <Date>
+     <Day>16</Day>
+     <Month>8</Month>
+     <Year>2011</Year>
+    </Date>
+    <ExpirationDate>
+     <Day>16</Day>
+     <Month>8</Month>
+     <Year>2016</Year>
+    </ExpirationDate>
+    <ContractType>SALE</ContractType>
+   </Filing>
+  </Filings>
+  <FilingJurisdiction>MO</FilingJurisdiction>
+  <MatchedParty>
+   <PartyType>D</PartyType>
+   <Address>
+    <StreetName>LAKE SAINT LOUIS</StreetName>
+    <City>LAKE SAINT LOUIS</City>
+    <State>MO</State>
+    <StreetNumber>6893</StreetNumber>
+    <Zip5>63367</Zip5>
+    <Zip4>1891</Zip4>
+    <StreetSuffix>BLVD</StreetSuffix>
+   </Address>
+   <OriginName>SURVANT AIR SYSTEMS, INC.</OriginName>
+  </MatchedParty>
+  <Secureds>
+   <Secured>
+    <Addresses>
+     <Address>
+      <StreetAddress2>SAINT LOUIS, MO 63128</StreetAddress2>
+      <OrigStreetAddress1>10024 OFFICE CENTER AVE. STE. 150</OrigStreetAddress1>
+      <StreetName>OFFICE CENTER</StreetName>
+      <City>SAINT LOUIS</City>
+      <State>MO</State>
+      <UnitNumber>150</UnitNumber>
+      <StreetNumber>10024</StreetNumber>
+      <Zip5>63128</Zip5>
+      <Zip4>1391</Zip4>
+      <StreetAddress1>10024 OFFICE CENTER AVE STE 150</StreetAddress1>
+      <StreetSuffix>AVE</StreetSuffix>
+      <UnitDesignation>STE</UnitDesignation>
+     </Address>
+    </Addresses>
+    <ParsedParties>
+     <Party>
+      <BusinessId>000056219255</BusinessId>
+     </Party>
+    </ParsedParties>
+    <OriginName>KING COMMERCIAL FINANCE LLC</OriginName>
+   </Secured>
+  </Secureds>
+  <FilingOffices>
+   <Office>
+    <Address>
+     <Zip5>65101</Zip5>
+     <StreetAddress1>600 W MAIN ST RM302</StreetAddress1>
+     <City>JEFFERSON CITY</City>
+     <State>MO</State>
+    </Address>
+    <FilingAgency>SECRETARY OF STATE/UCC DIVISION</FilingAgency>
+   </Office>
+  </FilingOffices>
+  <TMSId>DNB20110089878F20110816</TMSId>
+ </Record>
+ <Record>
+  <Debtors>
+   <Debtor>
+    <Addresses>
+     <Address>
+      <OrigStreetAddress1>6893 LAKE ST. LOUIS BLVD.</OrigStreetAddress1>
+      <StreetName>LAKE SAINT LOUIS</StreetName>
+      <City>LAKE ST LOUIS</City>
+      <State>MO</State>
+      <StreetNumber>6893</StreetNumber>
+      <Zip5>63367</Zip5>
+      <Zip4>1891</Zip4>
+      <StreetAddress1>6893 LAKE SAINT LOUIS BLVD</StreetAddress1>
+      <StreetSuffix>BLVD</StreetSuffix>
+      <StreetAddress2>LAKE SAINT LOUIS, MO 63367</StreetAddress2>
+     </Address>
+    </Addresses>
+    <ParsedParties>
+     <Party>
+      <BusinessId>000979309736</BusinessId>
+     </Party>
+    </ParsedParties>
+    <OriginName>SURVANT AIR SYSTEMS, INC.</OriginName>
+   </Debtor>
+  </Debtors>
+  <OriginFilingDate>
+   <Day>30</Day>
+   <Month>4</Month>
+   <Year>2010</Year>
+  </OriginFilingDate>
+  <OriginFilingNumber>20100045124M</OriginFilingNumber>
+  <Filings>
+   <Filing>
+    <Type>INITIAL FILING</Type>
+    <Number>20100045124M</Number>
+    <Date>
+     <Day>30</Day>
+     <Month>4</Month>
+     <Year>2010</Year>
+    </Date>
+    <ExpirationDate>
+     <Day>30</Day>
+     <Month>4</Month>
+     <Year>2015</Year>
+    </ExpirationDate>
+   </Filing>
+  </Filings>
+  <FilingJurisdiction>MO</FilingJurisdiction>
+  <MatchedParty>
+   <PartyType>D</PartyType>
+   <Address>
+    <StreetName>LAKE SAINT LOUIS</StreetName>
+    <City>LAKE SAINT LOUIS</City>
+    <State>MO</State>
+    <StreetNumber>6893</StreetNumber>
+    <Zip5>63367</Zip5>
+    <Zip4>1891</Zip4>
+    <StreetSuffix>BLVD</StreetSuffix>
+   </Address>
+   <OriginName>SURVANT AIR SYSTEMS, INC.</OriginName>
+  </MatchedParty>
+  <Secureds>
+   <Secured>
+    <Addresses>
+     <Address>
+      <OrigStreetAddress1>ONE MONTGOMERY BANK PLAZA</OrigStreetAddress1>
+      <StreetName>MONTGOMERY BANK PLAZA</StreetName>
+      <City>SIKESTON</City>
+      <State>MO</State>
+      <StreetNumber>1</StreetNumber>
+      <Zip5>63801</Zip5>
+      <Zip4>3069</Zip4>
+      <StreetAddress1>1 MONTGOMERY BANK PLAZA ST</StreetAddress1>
+      <StreetSuffix>ST</StreetSuffix>
+      <StreetAddress2>SIKESTON, MO 63801</StreetAddress2>
+     </Address>
+    </Addresses>
+    <ParsedParties>
+     <Party>
+      <BusinessId>000363771896</BusinessId>
+     </Party>
+    </ParsedParties>
+    <OriginName>MONTGOMERY BANK, NA</OriginName>
+   </Secured>
+  </Secureds>
+  <Collaterals>
+   <Collateral>
+    <Description>04/30/2010 20100045124M - CHATTEL PAPER ALL AND PROCEEDS;ACCOUNT(S) ALL AND PROCEEDS;GENERAL INTANGIBLE(S) ALL AND PROCEEDS;INVENTORY ALL AND PROCEEDS;EQUIPMENT ALL AND PROCEEDS</Description>
+   </Collateral>
+  </Collaterals>
+  <ExternalKey>DNB20100045124M20100430</ExternalKey>
+  <FilingJurisdictionName>MISSOURI</FilingJurisdictionName>
+  <FilingOffices>
+   <Office>
+    <Address>
+     <Zip5>65101</Zip5>
+     <StreetAddress1>600 W MAIN ST RM302</StreetAddress1>
+     <City>JEFFERSON CITY</City>
+     <State>MO</State>
+    </Address>
+    <FilingAgency>SECRETARY OF STATE/UCC DIVISION</FilingAgency>
+   </Office>
+  </FilingOffices>
+  <TMSId>DNB20100045124M20100430</TMSId>
+ </Record>
+ <Record>
+  <Debtors>
+   <Debtor>
+    <Addresses>
+     <Address>
+      <OrigStreetAddress1>6893 LAKE ST. LOUIS BLVD.</OrigStreetAddress1>
+      <StreetName>LAKE SAINT LOUIS</StreetName>
+      <City>LAKE ST LOUIS</City>
+      <State>MO</State>
+      <StreetNumber>6893</StreetNumber>
+      <Zip5>63367</Zip5>
+      <Zip4>1891</Zip4>
+      <StreetAddress1>6893 LAKE SAINT LOUIS BLVD</StreetAddress1>
+      <StreetSuffix>BLVD</StreetSuffix>
+      <StreetAddress2>LAKE SAINT LOUIS, MO 63367</StreetAddress2>
+     </Address>
+    </Addresses>
+    <ParsedParties>
+     <Party>
+      <BusinessId>000979309736</BusinessId>
+     </Party>
+    </ParsedParties>
+    <OriginName>SURVANT AIR SYSTEMS, INC.</OriginName>
+   </Debtor>
+  </Debtors>
+  <OriginFilingDate>
+   <Day>7</Day>
+   <Month>12</Month>
+   <Year>2006</Year>
+  </OriginFilingDate>
+  <OriginFilingNumber>20060131272F</OriginFilingNumber>
+  <Filings>
+   <Filing>
+    <Type>INITIAL FILING</Type>
+    <Number>20060131272F</Number>
+    <Date>
+     <Day>7</Day>
+     <Month>12</Month>
+     <Year>2006</Year>
+    </Date>
+    <ExpirationDate>
+     <Day>7</Day>
+     <Month>12</Month>
+     <Year>2011</Year>
+    </ExpirationDate>
+   </Filing>
+  </Filings>
+  <FilingJurisdiction>MO</FilingJurisdiction>
+  <MatchedParty>
+   <PartyType>D</PartyType>
+   <Address>
+    <StreetName>LAKE SAINT LOUIS</StreetName>
+    <City>LAKE SAINT LOUIS</City>
+    <State>MO</State>
+    <StreetNumber>6893</StreetNumber>
+    <Zip5>63367</Zip5>
+    <Zip4>1891</Zip4>
+    <StreetSuffix>BLVD</StreetSuffix>
+   </Address>
+   <OriginName>SURVANT AIR SYSTEMS, INC.</OriginName>
+  </MatchedParty>
+  <Secureds>
+   <Secured>
+    <Addresses>
+     <Address>
+      <StreetPostDirection>N</StreetPostDirection>
+      <OrigStreetAddress1>1140 WEST LOOP NORTH</OrigStreetAddress1>
+      <StreetName>WEST</StreetName>
+      <City>HOUSTON</City>
+      <State>TX</State>
+      <StreetNumber>1140</StreetNumber>
+      <Zip5>77055</Zip5>
+      <Zip4>7218</Zip4>
+      <StreetAddress1>1140 WEST LOOP N</StreetAddress1>
+      <StreetSuffix>LOOP</StreetSuffix>
+      <StreetAddress2>HOUSTON, TX 77055</StreetAddress2>
+     </Address>
+    </Addresses>
+    <ParsedParties>
+     <Party>
+      <BusinessId>000072733148</BusinessId>
+     </Party>
+    </ParsedParties>
+    <OriginName>INTER-TEL LEASING, INC</OriginName>
+   </Secured>
+  </Secureds>
+  <Collaterals>
+   <Collateral>
+    <Description>12/07/2006 20060131272F - COMMUNICATIONS EQUIPMENT LEASED</Description>
+   </Collateral>
+  </Collaterals>
+  <ExternalKey>DNB20060131272F20061207</ExternalKey>
+  <FilingJurisdictionName>MISSOURI</FilingJurisdictionName>
+  <FilingOffices>
+   <Office>
+    <Address>
+     <Zip5>65101</Zip5>
+     <StreetAddress1>600 W MAIN ST RM302</StreetAddress1>
+     <City>JEFFERSON CITY</City>
+     <State>MO</State>
+    </Address>
+    <FilingAgency>SECRETARY OF STATE/UCC DIVISION</FilingAgency>
+   </Office>
+  </FilingOffices>
+  <TMSId>DNB20060131272F20061207</TMSId>
+ </Record>
+</Records>
+</response></UCCSearch2ResponseEx></soap:Body></soap:Envelope>

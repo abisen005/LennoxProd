@@ -1,0 +1,125 @@
+body {
+	font-family: sans-serif;
+	margin-top: 1em;
+}
+h1 {
+	font-weight: bold;
+	margin: 0;
+	padding-top: 5px;
+}
+h4 {
+	margin: 0;
+}
+hr {
+	border-bottom: 3px solid #000;
+	margin-bottom: 0;
+}
+.panel {
+	margin-top: 2em;
+}
+.panel-default>.panel-heading {
+	background-color: #ddd8c2;
+	font-weight: bold;
+}
+.last-panel {
+	margin-bottom: 6em;
+}
+.output-text {
+	margin-top: 8px;
+}
+textarea.form-control {
+	height: 150px;
+}
+textarea.form-control.long-textarea {
+	height: 300px;
+}
+.container {
+	margin-bottom: 2em;
+}
+
+.notification {
+	background-color: black;
+	background-color: rgba(0, 148, 41, .7);
+	color: white;
+	display: none;
+	font-weight: bold;
+	position: fixed;
+	text-align: center;
+	top: 10px;
+	right: 10px;
+	width: 150px;
+	-webkit-border-radius: 7px;
+	-moz-border-radius: 7px;
+	border-radius: 7px;
+}
+p.notification__msg {
+	padding: 10px 20px 0 20px;
+}
+.page-break {
+	display: none;
+}
+.table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+	padding: 10px 15px;
+}
+.navbar-default {
+	border: none;
+	background-color: rgba(248, 248, 248, .9);
+	padding-top: 30px;
+}
+
+
+@page {
+	size: 8.5in 11in; margin: .75cm .5cm;
+}
+@media print {
+	body {
+    	font-size: 65%;
+    }
+	h1 {
+        font-size: 9pt;
+    }
+    h3.panel-title {
+        font-size: 7pt;
+    }
+    input.form-control {
+        height: auto;
+    }
+    input.form-control,
+    textarea.form-control,
+    label,
+	.sfdc_richtext {
+     	font-size: 6pt;
+    }
+	/* hide the rich text editor controls */
+	.cke_top,
+	.cke_reset_all {
+		display: none !important;
+	}
+	.form-control {
+		border: none;
+		padding: 0;
+		resize: none;
+	}
+	textarea.form-control {
+		height: 110px;
+	}
+	.page-break {
+		display: block;
+		page-break-before: always;
+	}
+	.panel-heading, .list-group-item, .table>thead>tr>th, .table>tbody>tr>th, .table>tfoot>tr>th, .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td {
+		padding: 5px 7px;
+	}
+	.last-panel {
+		margin-bottom: 0;
+	}
+	.visible-print.hidden {
+		display: none !important;
+	}
+	.hidden-print {
+		display: none;
+	}
+	.print-output {
+		height: 170px; /* force print outputs to be the same height a rich inputs */
+	}
+}

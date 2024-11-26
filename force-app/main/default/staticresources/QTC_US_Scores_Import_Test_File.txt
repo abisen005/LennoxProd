@@ -1,0 +1,2 @@
+Customer Number|EFXID|Dealer|Business Address|Business City|Business State|Business Zip|Business Delinquency Score( SCR0063)|Score Value|Reason Code 1|Reason Code 2|Reason Code 3|Reason Code 4|Risk Class|Reject Code|Reject Description|Business Failure Score (SCR0064)|Score Value|Reason Code 1|Reason Code 2|Reason Code 3|Reason Code 4|Risk Class|Reject Code|Reject Description
+B19462|528478929|A-1 Heating & Cooling|175 Osceola Ave|Bogart|GA|30622-1506|Business Delinquency Score|453|G0017|C1209|C0172|D1288|3|||Business Failure Score|1401|G0017|G1175|C1209|G1330|1||

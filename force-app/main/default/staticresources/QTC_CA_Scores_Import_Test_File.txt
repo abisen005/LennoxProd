@@ -1,0 +1,3 @@
+LENNOX_REF	Match Subject Nbr	CDS Model Number	CDS Reject Indicat.	CDS Reject Code	CDS Score Value	CDS Reason Code 1	CDS Reason Code 2	CDS Reason Code 3	CDS Reason Code 4	BFRS Model Number	BFRS Reject Indicat.	BFRS Reject Code	BFRS Score Value	BFRS Reason Code 1	BFRS Reason Code 2	BFRS Reason Code 3	BFRS Reason Code 4
+I02740	AAF994	40200	N	00	401	2	17	15	13	40600	N	00	1384	4	45	42	21
+
