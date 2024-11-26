@@ -1,0 +1,256 @@
+[
+    {
+      "ActivityDate" : "2017-08-11",
+      "Ventas_Actual_Hours__c" : 2,
+      "Comments" : "Worked on coaching email alerts",
+      "WhatId" : "500C0000019hZ5L"
+    },
+    {
+      "ActivityDate" : "2017-08-15",
+      "Ventas_Actual_Hours__c" : 3,
+      "Comments" : "Email Templates; Workflow Rules Build; Testing",
+      "WhatId" : "500C0000019hZ5L"
+    },
+    {
+      "ActivityDate" : "2017-08-28",
+      "Ventas_Actual_Hours__c" : 0.5,
+      "Comments" : "Coaching workflow/email changes",
+      "WhatId" : "500C0000019hZ5L"
+    },
+    {
+      "ActivityDate" : "2017-08-31",
+      "Ventas_Actual_Hours__c" : 1,
+      "Comments" : "Deployed coaching changes; met with Patrick",
+      "WhatId" : "500C0000019hZ5L"
+    },
+    {
+      "ActivityDate" : "2017-08-03",
+      "Ventas_Actual_Hours__c" : 2,
+      "Comments" : "Worked on changes to benefit report",
+      "WhatId" : "500C0000018YSPC"
+    },
+    {
+      "ActivityDate" : "2017-08-04",
+      "Ventas_Actual_Hours__c" : 2,
+      "Comments" : "Worked on changes to benefit report",
+      "WhatId" : "500C0000018YSPC"
+    },
+    {
+      "ActivityDate" : "2017-08-07",
+      "Ventas_Actual_Hours__c" : 1.5,
+      "Comments" : "Worked on print stylesheet for DBR",
+      "WhatId" : "500C0000018YSPC"
+    },
+    {
+      "ActivityDate" : "2017-08-08",
+      "Ventas_Actual_Hours__c" : 4,
+      "Comments" : "Worked on DBR changes",
+      "WhatId" : "500C0000018YSPC"
+    },
+    {
+      "ActivityDate" : "2017-08-09",
+      "Ventas_Actual_Hours__c" : 2,
+      "Comments" : "Worked on print pdf fixes",
+      "WhatId" : "500C0000018YSPC"
+    },
+    {
+      "ActivityDate" : "2017-08-10",
+      "Ventas_Actual_Hours__c" : 2,
+      "Comments" : "Worked on print pdf fixes",
+      "WhatId" : "500C0000018YSPC"
+    },
+    {
+      "ActivityDate" : "2017-08-15",
+      "Ventas_Actual_Hours__c" : 2.5,
+      "Comments" : "Worked on test classes for email pdf functionality; worked on change set",
+      "WhatId" : "500C0000018YSPC"
+    },
+    {
+      "ActivityDate" : "2017-08-01",
+      "Ventas_Actual_Hours__c" : 1.5,
+      "Comments" : "Reviewed readiness report and determined effort of each section",
+      "WhatId" : "500C0000016p0Zd"
+    },
+    {
+      "ActivityDate" : "2017-08-03",
+      "Ventas_Actual_Hours__c" : 1,
+      "Comments" : "Call to discuss lightning experience migration",
+      "WhatId" : "500C0000016p0Zd"
+    },
+    {
+      "ActivityDate" : "2017-08-21",
+      "Ventas_Actual_Hours__c" : 0.5,
+      "Comments" : "Reviewed visualforce readiness report",
+      "WhatId" : "500C0000016p0Zd"
+    },
+    {
+      "ActivityDate" : "2017-08-23",
+      "Ventas_Actual_Hours__c" : 2.5,
+      "Comments" : "Call to discuss lightning migration plan",
+      "WhatId" : "500C0000016p0Zd"
+    },
+    {
+      "ActivityDate" : "2017-08-17",
+      "Ventas_Actual_Hours__c" : 2,
+      "Comments" : "Map tool",
+      "WhatId" : "500C0000018lKNq"
+    },
+    {
+      "ActivityDate" : "2017-08-18",
+      "Ventas_Actual_Hours__c" : 2,
+      "Comments" : "Map tool",
+      "WhatId" : "500C0000018lKNq"
+    },
+    {
+      "ActivityDate" : "2017-08-24",
+      "Ventas_Actual_Hours__c" : 3,
+      "Comments" : "Worked on map tool updates",
+      "WhatId" : "500C0000018lKNq"
+    },
+    {
+      "ActivityDate" : "2017-08-29",
+      "Ventas_Actual_Hours__c" : 1,
+      "Comments" : "Worked on map tool",
+      "WhatId" : "500C0000018lKNq"
+    },
+    {
+      "ActivityDate" : "2017-08-30",
+      "Ventas_Actual_Hours__c" : 2,
+      "Comments" : "Worked on map tool",
+      "WhatId" : "500C0000018lKNq"
+    },
+    {
+      "ActivityDate" : "2017-08-04",
+      "Ventas_Actual_Hours__c" : 0.5,
+      "Comments" : "Status call",
+      "WhatId" : "500C0000019hYrO"
+    },
+    {
+      "ActivityDate" : "2017-08-11",
+      "Ventas_Actual_Hours__c" : 0.5,
+      "Comments" : "Status call",
+      "WhatId" : "500C0000019hYrO"
+    },
+    {
+      "ActivityDate" : "2017-08-18",
+      "Ventas_Actual_Hours__c" : 0.5,
+      "Comments" : "Status call",
+      "WhatId" : "500C0000019hYrO"
+    },
+    {
+      "ActivityDate" : "2017-08-21",
+      "Ventas_Actual_Hours__c" : 0.5,
+      "Comments" : "Looked into geocoding addresses on custom objects",
+      "WhatId" : "500C0000019hYrO"
+    },
+    {
+      "ActivityDate" : "2017-07-31",
+      "Ventas_Actual_Hours__c" : 1,
+      "Comments" : "Worked on precal planner changes",
+      "WhatId" : "500C0000018YSYJ"
+    },
+    {
+      "ActivityDate" : "2017-08-03",
+      "Ventas_Actual_Hours__c" : 3,
+      "Comments" : "Worked on precall planner template updates",
+      "WhatId" : "500C0000018YSYJ"
+    },
+    {
+      "ActivityDate" : "2017-08-04",
+      "Ventas_Actual_Hours__c" : 4,
+      "Comments" : "Worked on updating scenario options",
+      "WhatId" : "500C0000018YSYJ"
+    },
+    {
+      "ActivityDate" : "2017-08-10",
+      "Ventas_Actual_Hours__c" : 2,
+      "Comments" : "Worked on pre-call planner scenario",
+      "WhatId" : "500C0000018YSYJ"
+    },
+    {
+      "ActivityDate" : "2017-08-11",
+      "Ventas_Actual_Hours__c" : 1,
+      "Comments" : "Update to precall planner permission",
+      "WhatId" : "500C0000018YSYJ"
+    },
+    {
+      "ActivityDate" : "2017-08-15",
+      "Ventas_Actual_Hours__c" : 2.5,
+      "Comments" : "Worked on pre call planner templates; worked on documentation; final changes; ",
+      "WhatId" : "500C0000018YSYJ"
+    },
+    {
+      "ActivityDate" : "2017-07-31",
+      "Ventas_Actual_Hours__c" : 1,
+      "Comments" : "Looked into error message on vendavo page; researched issue with not being able to delete job",
+      "WhatId" : "500C0000019hZ2H"
+    },
+    {
+      "ActivityDate" : "2017-08-01",
+      "Ventas_Actual_Hours__c" : 1,
+      "Comments" : "More research on deleting job... found code solution and executed",
+      "WhatId" : "500C0000019hZ2H"
+    },
+    {
+      "ActivityDate" : "2017-08-01",
+      "Ventas_Actual_Hours__c" : 1.5,
+      "Comments" : "Researched issue with Vendavo button not working; made change to new cdq page in dev2",
+      "WhatId" : "500C0000019hZ2H"
+    },
+    {
+      "ActivityDate" : "2017-08-02",
+      "Ventas_Actual_Hours__c" : 0.5,
+      "Comments" : "Updated new cdq page to prevent errors with account names with special characters",
+      "WhatId" : "500C0000019hZ2H"
+    },
+    {
+      "ActivityDate" : "2017-08-08",
+      "Ventas_Actual_Hours__c" : 1,
+      "Comments" : "Looked into issue regarding duplicate vendavo deals",
+      "WhatId" : "500C0000019hZ2H"
+    },
+    {
+      "ActivityDate" : "2017-08-10",
+      "Ventas_Actual_Hours__c" : 0.5,
+      "Comments" : "Worked on vendavo landing page filter",
+      "WhatId" : "500C0000019hZ2H"
+    },
+    {
+      "ActivityDate" : "2017-08-11",
+      "Ventas_Actual_Hours__c" : 0.5,
+      "Comments" : "Email correspondence regarding Vendavo page filter; updated controller",
+      "WhatId" : "500C0000019hZ2H"
+    },
+    {
+      "ActivityDate" : "2017-08-21",
+      "Ventas_Actual_Hours__c" : 1.5,
+      "Comments" : "Met with Chris about duplicate vendavo deal issue",
+      "WhatId" : "500C0000019hZ2H"
+    },
+    {
+      "ActivityDate" : "2017-08-29",
+      "Ventas_Actual_Hours__c" : 1.5,
+      "Comments" : "Worked on vendavo filter",
+      "WhatId" : "500C0000019hZ2H"
+    },
+    {
+      "ActivityDate" : "2017-08-14",
+      "Ventas_Actual_Hours__c" : 0.5,
+      "Comments" : "Coaching changes",
+    },
+    {
+      "ActivityDate" : "2017-08-18",
+      "Ventas_Actual_Hours__c" : 1,
+      "Comments" : "Testing coaching rules",
+  },
+  {
+    "ActivityDate" : "2017-08-22",
+    "Ventas_Actual_Hours__c" : 7,
+    "Comments" : "Chris on site",
+  },
+  {
+    "ActivityDate" : "2017-08-23",
+    "Ventas_Actual_Hours__c" : 4,
+    "Comments" : "Chris on site",
+  }
+  ]

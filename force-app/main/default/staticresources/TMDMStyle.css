@@ -1,0 +1,101 @@
+/* Global styles for signature sales console */
+
+
+
+/*
+ * UTILITY/GENERAL OVERRIDES AND STYLE FIXES 
+ */
+
+/* Always hide .assistiveText */
+.assistiveText {
+    display: none;
+}
+
+/* slds-button--icon-inverse icon should always be white.  This prevents other styles from overriding it */
+
+.slds .slds-button--icon-inverse svg {
+    fill: white !important;
+}
+
+/*
+ * DEFAULT DATEPICKER STYLE CHANGES
+ */
+
+/* Fix margins on month title */
+.uiDatePicker--default .dateBar h2.monthYear {
+    margin: 0
+}
+
+
+
+/*
+ * UI:BUTTON STYLE OVERRIDES
+ */
+
+/* reset ui button styles so slds styles are the only ones used */
+.slds .uiButton--default {
+    font-weight: inherit;
+    margin: 0;
+    box-shadow: inherit;
+    text-shadow: inherit;
+}
+
+/* remove text shadow on hover, focus */
+.slds .uiButton--default:hover, 
+.slds .uiButton--default:focus, 
+.slds .uiButton--default.is-selected {
+    text-shadow: inherit;
+}
+
+/* inherit color form slds on hover, focus */
+.slds .uiButton--default:hover .label, 
+.slds .uiButton--default:focus .label {
+    color: inherit;
+}
+
+/* use slds styles, not black */
+.slds .uiButton--default .label {
+    color: inherit;
+}
+
+
+.slds .tmdm-theme--light {
+    border: none;
+    background-color: #FBFBFB;
+}
+
+
+
+
+/*
+ * ANIMATION KEYFRAMES 
+ */
+@-webkit-keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-moz-keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@-o-keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes fadeIn {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.fade-in {
+  -webkit-animation: fadeIn .25s; /* Safari 4+ */
+  -moz-animation:    fadeIn .25s; /* Fx 5+ */
+  -o-animation:      fadeIn .25s; /* Opera 12+ */
+  animation:         fadeIn .25s; /* IE 10+, Fx 29+ */
+}
+
+@media screen and (max-width:1400px){
+    .slds .slds-modal__content {max-height:290px !important; }
+    .slds-modal__container {margin-top:82px !important;}
+    .panel.slds-modal .slds-modal__container{margin-top:0!important;}
+}
